@@ -1,6 +1,7 @@
 library(tidyverse)
 library(lubridate)
 library(estimatr)
+library(fixest)
 library(modelsummary)
 library(kableExtra)
 library(RCTtoolbox)
