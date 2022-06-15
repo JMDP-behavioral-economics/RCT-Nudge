@@ -45,7 +45,7 @@ shape_rawdt <- rawdt %>%
     male = if_else(sex == "M", 1, 0),
     reply = if_else(reply == "有", 1, 0),
     days_reply = if_else(days_reply != "-", as.numeric(days_reply), NA_real_),
-    intention = if_else(reply == "希望する", 1, 0),
+    intention = if_else(intention == "希望する", 1, 0),
     test = if_else(test == "有", 1, 0),
     candidate = if_else(candidate == "有", 1, 0),
     consent = if_else(consent == "有", 1, 0),
