@@ -104,3 +104,21 @@ shape_schedule_dt <- schedule_dt %>%
     start_date,
     end_date
   )
+
+#+ include = FALSE
+combine <- shape_schedule_dt %>%
+  right_join(shape_rawdt, by = c("year", "month", "treat"))
+
+#+ include = FALSE
+write.csv(
+  combine,
+  file = here(root, "shaped.csv"),
+  fileEncoding = "CP932",
+  quote = FALSE,
+  row.names = FALSE
+)
+
+write_csv(
+  shape_schedule_dt,
+  file = here(root, "RCT-schedule.csv")
+)
