@@ -50,11 +50,15 @@ shape_rawdt <- rawdt %>%
     candidate = if_else(candidate == "有", 1, 0),
     consent = if_else(consent == "有", 1, 0),
     donate = if_else(donate == "有", 1, 0),
+    sentenceB = if_else(treat %in% c("B", "D"), 1, 0),
+    sentenceC = if_else(treat %in% c("C", "D"), 1, 0),
   ) %>%
   select(
     year,
     month,
     treat,
+    sentenceB,
+    sentenceC,
     prefecture,
     male,
     age,
