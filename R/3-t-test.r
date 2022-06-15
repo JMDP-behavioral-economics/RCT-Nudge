@@ -95,9 +95,9 @@ show_ttest_info <- ttest_info %>%
     y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02,
     y = if_else(id == 21 | id == 33, y + 0.02, y),
     sign = case_when(
-      p <= 0.01 ~ "***",
-      p <= 0.05 ~ "**",
-      p <= 0.1 ~ "*",
+      p < 0.01 ~ "***",
+      p < 0.05 ~ "**",
+      p < 0.1 ~ "*",
       TRUE ~ "",
     )
   )
@@ -130,7 +130,7 @@ stat %>%
     labs(
       x = "Experimental Arms",
       y = "Sample average",
-      caption = "*** p \u2266 0.01, ** p \u2266 0.05, * p \u2266 0.1"
+      caption = "*** p < 0.01, ** p < 0.05, * p < 0.1"
     ) +
     simplegg(caption_size = 13)
 
