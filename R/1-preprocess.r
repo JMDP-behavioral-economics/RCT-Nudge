@@ -71,3 +71,36 @@ shape_rawdt <- rawdt %>%
     plan_method,
     method
   )
+
+#+ include = FALSE
+shape_schedule_dt <- schedule_dt %>%
+  select(
+    ymd = 日付,
+    treat = パターン
+  ) %>%
+  mutate(
+    ymd = ymd(ymd),
+    month = month(ymd(ymd))
+  ) %>%
+  group_by(month, treat) %>%
+  summarize(
+    year = year(ymd),
+    start_date = min(ymd),
+    end_date = max(ymd)
+  ) %>%
+  ungroup() %>%
+  arrange(start_date) %>%
+  distinct() %>%
+  group_by(month) %>%
+  mutate(week = 1:n()) %>%
+  ungroup() %>%
+  mutate(RCTweek = 1:n()) %>%
+  select(
+    year,
+    month,
+    treat,
+    week,
+    RCTweek,
+    start_date,
+    end_date
+  )
