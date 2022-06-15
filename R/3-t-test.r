@@ -51,8 +51,36 @@ stat <- use %>%
     )
   )
 
+#+
+ttest_info <- expand.grid(
+  outcome = c(
+    "reply", "intention", "test",
+    "candidate", "consent", "donate"
+  ),
+  group1 = LETTERS[1:4],
+  group2 = LETTERS[1:4],
+  stringsAsFactors = FALSE) %>%
+  dplyr::filter(group1 < group2) %>%
+  arrange(outcome) %>%
+  mutate(id = seq(n()))
+
+ttest <- ttest_info %>%
+  group_by(id) %>%
+  do(test = t.test(
+    use[use$treat == .$group1, .$outcome],
+    use[use$treat == .$group2, .$outcome]
+  )) %>%
+  summarize(
+    id = id,
+    p = test$p.value
+  )
+
+show_ttest_info <- ttest_info %>%
+  dplyr::left_join(ttest, by = "id") %>%
+  dplyr::filter(p <= 0.1)
+
 #+ fig.cap = "Sample Average of Outcomes before Donor Candidate Selection"
-base_plot <- stat %>%
+stat %>%
   dplyr::filter(outcome %in% levels(stat$outcome)[1:3]) %>%
   ggplot(aes(x = outcome, y = mean, group = treat)) +
     geom_bar(
