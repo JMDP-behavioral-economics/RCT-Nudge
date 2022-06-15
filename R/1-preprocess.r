@@ -17,3 +17,57 @@ schedule_dt <- read_csv(
   here(root, "original", schedule),
   locale = locale(encoding = "cp932")
 )
+
+#+ include = FALSE
+shape_rawdt <- rawdt %>%
+  rename(
+    ym = 発送年月,
+    treat = パターン,
+    prefecture = ﾄﾞﾅｰ都道府県,
+    sex = ﾄﾞﾅｰ性別,
+    age = `ﾄﾞﾅｰ年齢(発送時)`,
+    coordinate = コーディネート回数,
+    reply = 返信有無,
+    days_reply = 返信までの日数,
+    intention = 希望の有無,
+    test = 確認検査実施の有無,
+    candidate = 第一候補選定の有無,
+    consent = 最終同意の有無,
+    donate = 採取の有無,
+    reasonBM = 終了理由BM,
+    reasonPB = 終了理由PB,
+    plan_method = 開始時採取方法,
+    method = 終了時採取方法
+  ) %>%
+  mutate(
+    year = year(ym(ym)),
+    month = month(ym(ym)),
+    male = if_else(sex == "M", 1, 0),
+    reply = if_else(reply == "有", 1, 0),
+    days_reply = if_else(days_reply != "-", as.numeric(days_reply), NA_real_),
+    intention = if_else(reply == "希望する", 1, 0),
+    test = if_else(test == "有", 1, 0),
+    candidate = if_else(candidate == "有", 1, 0),
+    consent = if_else(consent == "有", 1, 0),
+    donate = if_else(donate == "有", 1, 0),
+  ) %>%
+  select(
+    year,
+    month,
+    treat,
+    prefecture,
+    male,
+    age,
+    coordinate,
+    reply,
+    days_reply,
+    intention,
+    test,
+    candidate,
+    consent,
+    donate,
+    reasonBM,
+    reasonPB,
+    plan_method,
+    method
+  )
