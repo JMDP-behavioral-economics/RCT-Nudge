@@ -15,6 +15,21 @@ use <- rawdt %>%
     treat = factor(treat, levels = LETTERS[1:4])
   )
 
+#+ include = FALSE
+out_lev <- c(
+  "reply", "intention", "test",
+  "candidate", "consent", "donate"
+)
+
+out_lab <- c(
+  "Reply to invitation",
+  "Intention",
+  "Confirmatory typing",
+  "Candidate",
+  "Final consent",
+  "Donation"
+)
+
 #+
 stat <- use %>%
   group_by(treat) %>%
@@ -34,21 +49,7 @@ stat <- use %>%
   mutate(
     lwr.mean = mean - se,
     upr.mean = mean + se,
-    outcome = factor(
-      outcome,
-      levels = c(
-        "reply", "intention", "test",
-        "candidate", "consent", "donate"
-      ),
-      labels = c(
-        "Reply to invitation",
-        "Intention",
-        "Confirmatory typing",
-        "Candidate",
-        "Final consent",
-        "Donation"
-      )
-    )
+    outcome = factor(outcome, out_lev, out_lab)
   )
 
 #+
@@ -77,44 +78,73 @@ ttest <- ttest_info %>%
 
 show_ttest_info <- ttest_info %>%
   dplyr::left_join(ttest, by = "id") %>%
-  dplyr::filter(p <= 0.1)
+  dplyr::filter(p <= 0.1) %>%
+  mutate_at(vars(group1, group2), list(~factor(., levels = LETTERS[1:4]))) %>%
+  mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
+  group_by(id) %>%
+  do(data.frame(
+    outcome = .$outcome,
+    group1 = .$group1,
+    group2 = .$group2,
+    p = .$p,
+    y_g1 = subset(stat, outcome == .$outcome & treat == .$group1)$upr.mean,
+    y_g2 = subset(stat, outcome == .$outcome & treat == .$group2)$upr.mean
+  )) %>%
+  ungroup() %>%
+  mutate(
+    y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02,
+    y = if_else(id == 21 | id == 33, y + 0.02, y),
+    sign = case_when(
+      p <= 0.01 ~ "***",
+      p <= 0.05 ~ "**",
+      p <= 0.1 ~ "*",
+      TRUE ~ "",
+    )
+  )
 
 #+ fig.cap = "Sample Average of Outcomes before Donor Candidate Selection"
 stat %>%
   dplyr::filter(outcome %in% levels(stat$outcome)[1:3]) %>%
-  ggplot(aes(x = outcome, y = mean, group = treat)) +
+  ggplot(aes(x = treat, y = mean)) +
     geom_bar(
-      aes(fill = treat),
-      color = "black", stat = "identity", position = "dodge"
+      color = "black",
+      fill = "grey80",
+      stat = "identity"
     ) +
     geom_errorbar(
       aes(ymin = lwr.mean, ymax = upr.mean),
       width = 0.5, position = position_dodge(0.9)
     ) +
-    scale_fill_grey(start = 1, end = 0.4) +
+    geom_signif(
+      data = show_ttest_info,
+      aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
+      textsize = 8, tip_length = 0.01,
+      manual = TRUE
+    ) +
+    facet_wrap(~ outcome) +
     labs(
-      x = "Stage",
+      x = "Experimental Arms",
       y = "Sample average",
       fill = "Experimental Arms"
     ) +
     simplegg()
 
-
 #+ fig.cap = "Sample Average of Outcomes after Donor Candidate Selection"
 stat %>%
   dplyr::filter(outcome %in% levels(stat$outcome)[4:6]) %>%
-  ggplot(aes(x = outcome, y = mean, group = treat)) +
+  ggplot(aes(x = treat, y = mean)) +
     geom_bar(
-      aes(fill = treat),
-      color = "black", stat = "identity", position = "dodge"
+      color = "black",
+      fill = "grey80",
+      stat = "identity"
     ) +
     geom_errorbar(
       aes(ymin = lwr.mean, ymax = upr.mean),
       width = 0.5, position = position_dodge(0.9)
     ) +
-    scale_fill_grey(start = 1, end = 0.4) +
+    facet_wrap(~ outcome) +
     labs(
-      x = "Stage",
+      x = "Experimental Arms",
       y = "Sample average",
       fill = "Experimental Arms"
     ) +
