@@ -108,12 +108,16 @@ stat %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
       color = "black",
-      fill = "grey80",
+      fill = "grey90",
       stat = "identity"
     ) +
     geom_errorbar(
       aes(ymin = lwr.mean, ymax = upr.mean),
       width = 0.5, position = position_dodge(0.9)
+    ) +
+    geom_text(
+      aes(label = sprintf("%1.3f", mean)),
+      vjust = 3, size = 5
     ) +
     geom_signif(
       data = show_ttest_info,
@@ -122,12 +126,13 @@ stat %>%
       manual = TRUE
     ) +
     facet_wrap(~ outcome) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     labs(
       x = "Experimental Arms",
       y = "Sample average",
-      fill = "Experimental Arms"
+      caption = "*** p \u2266 0.01, ** p \u2266 0.05, * p \u2266 0.1"
     ) +
-    simplegg()
+    simplegg(caption_size = 13)
 
 #+ fig.cap = "Sample Average of Outcomes after Donor Candidate Selection"
 stat %>%
@@ -135,14 +140,19 @@ stat %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
       color = "black",
-      fill = "grey80",
+      fill = "grey90",
       stat = "identity"
     ) +
     geom_errorbar(
       aes(ymin = lwr.mean, ymax = upr.mean),
       width = 0.5, position = position_dodge(0.9)
     ) +
+    geom_text(
+      aes(label = sprintf("%1.3f", mean)),
+      vjust = 4, size = 5
+    ) +
     facet_wrap(~ outcome) +
+    scale_y_continuous(breaks = seq(0, 0.1, 0.01)) +
     labs(
       x = "Experimental Arms",
       y = "Sample average",
