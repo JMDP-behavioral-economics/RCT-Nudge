@@ -70,28 +70,24 @@ testCD <- lapply(est$est, function(x) lincom_fixest(
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 #+
-show_est <- est$est
-names(show_est) <- paste(
-  est$outcome, "\n", paste0("(", seq(length(show_est)), ")")
-)
-
-modelsummary(
-  show_est,
-  stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-  coef_map = c(
-    "treatB" = "Treatment B",
-    "treatC" = "Treatment C",
-    "treatD" = "Treatment D"
-  ),
-  gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
-  add_rows = tribble(
-    ~terms, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-    "Male dummy, age, prefecture dummies", "X", "X", "X", "X", "X", "X",
-    "Week and month fixed effect", "X", "X", "X", "X", "X", "X"
+est %>%
+  pull(est, name = outcome) %>%
+  modelsummary(
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
+    add_rows = tribble(
+      ~terms, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
+      "Male dummy, age, prefecture dummies", "X", "X", "X", "X", "X", "X",
+      "Week and month fixed effect", "X", "X", "X", "X", "X", "X"
+    ) %>%
+    rbind(c("B = C", testBC)) %>%
+    rbind(c("B = D", testBD)) %>%
+    rbind(c("C = D", testCD))
   ) %>%
-  rbind(c("B = C", testBC)) %>%
-  rbind(c("B = D", testBD)) %>%
-  rbind(c("C = D", testCD))
-) %>%
-kableExtra::kable_styling() %>%
-kableExtra::group_rows("F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE)
+  kableExtra::kable_styling() %>%
+  kableExtra::group_rows("F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE)
