@@ -3,7 +3,7 @@ library(here)
 source(here("R", "_library.r"))
 
 #+ include = FALSE
-root <- "D:/JMDPフィールド実験"
+root <- "E:/JMDPフィールド実験"
 raw <- "raw.csv"
 schedule <- "schedule.csv"
 
@@ -47,6 +47,7 @@ shape_rawdt <- rawdt %>%
     days_reply = if_else(days_reply != "-", as.numeric(days_reply), NA_real_),
     intention = if_else(intention == "希望する", 1, 0),
     test = if_else(test == "有", 1, 0),
+    test = if_else(days_reply == 0 & intention == 1, 1, test),
     candidate = if_else(candidate == "有", 1, 0),
     consent = if_else(consent == "有", 1, 0),
     donate = if_else(donate == "有", 1, 0),
