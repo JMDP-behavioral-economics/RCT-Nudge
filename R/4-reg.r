@@ -46,27 +46,28 @@ est <- use %>%
     week,
     prefecture,
     male,
-    age
+    age,
+    coordinate
   ) %>%
   pivot_longer(reply:donate, names_to = "outcome", values_to = "value") %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(outcome) %>%
   do(est = feols(
-    value ~ treat + age + male + prefecture | month + week,
+    value ~ treat + age + male + coordinate + prefecture | month + week,
     cluster = ~ week,
     data = .
   ))
 
 testBC <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(1, -1, 0, rep(0, 49)), ncol = 1), x
+  matrix(c(1, -1, 0, rep(0, 50)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 testBD <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(1, 0, -1, rep(0, 49)), ncol = 1), x
+  matrix(c(1, 0, -1, rep(0, 50)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 testCD <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(0, 1, -1, rep(0, 49)), ncol = 1), x
+  matrix(c(0, 1, -1, rep(0, 50)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 #+
@@ -82,7 +83,7 @@ est %>%
     gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
     add_rows = tribble(
       ~terms, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-      "Male dummy, age, prefecture dummies", "X", "X", "X", "X", "X", "X",
+      "Covariates", "X", "X", "X", "X", "X", "X",
       "Week and month fixed effect", "X", "X", "X", "X", "X", "X"
     ) %>%
     rbind(c("B = C", testBC)) %>%
@@ -90,4 +91,6 @@ est %>%
     rbind(c("C = D", testCD))
   ) %>%
   kableExtra::kable_styling() %>%
-  kableExtra::group_rows("F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE)
+  kableExtra::group_rows(
+    "F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE
+  )

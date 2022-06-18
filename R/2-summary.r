@@ -17,8 +17,8 @@ use <- rawdt %>%
 
 #+
 balance_test <- use %>%
-  select(male, age, treat, week) %>%
-  pivot_longer(male:age, values_to = "value", names_to = "vars") %>%
+  select(male, age, coordinate, treat, week) %>%
+  pivot_longer(male:coordinate, values_to = "value", names_to = "vars") %>%
   group_by(vars) %>%
   do(est = lm_robust(
     value ~ treat,
@@ -53,7 +53,9 @@ note <- paste(
 )
 
 datasummary(
-  (`Age` = age) + (`1 = Male` = male) ~ mean * treat,
+  (`Age` = age) +
+  (`Number of coordinations` = coordinate) +
+  (`1 = Male` = male) ~ mean * treat,
   data = use,
   title = "Overview of Field Experiment",
   add_rows = size,
@@ -64,5 +66,5 @@ kableExtra::kable_styling() %>%
 add_header_above(c(" " = 1, "Experimental Arms" = 4, " " = 1)) %>%
 group_rows("Intervention: Contents of Invitation", 1, 3) %>%
 group_rows("Sample Size", 4, 4) %>%
-group_rows("Covariate", 5, 6) %>%
+group_rows("Covariate", 5, 7) %>%
 kableExtra::footnote(note, general_title = "")
