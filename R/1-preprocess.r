@@ -65,6 +65,15 @@ shape_rawdt <- rawdt %>%
     candidate = if_else(candidate == "有", 1, 0),
     consent = if_else(consent == "有", 1, 0),
     donate = if_else(donate == "有", 1, 0),
+    stage = case_when(
+      reply == 0 ~ 0,
+      reply == 1 & intention == 0 ~ 1,
+      intention == 1 & test == 0 ~ 2,
+      test == 1 & candidate == 0 ~ 3,
+      candidate == 1 & consent == 0 ~ 4,
+      consent == 1 & donate == 0 ~ 5,
+      donate == 1 ~ 6
+    ),
     sentenceB = if_else(treat %in% c("B", "D"), 1, 0),
     sentenceC = if_else(treat %in% c("C", "D"), 1, 0),
   ) %>%
@@ -85,6 +94,7 @@ shape_rawdt <- rawdt %>%
     candidate,
     consent,
     donate,
+    stage,
     reasonBM,
     reasonPB,
     plan_method,
