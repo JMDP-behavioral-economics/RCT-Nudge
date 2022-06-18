@@ -93,7 +93,8 @@ show_ttest_info <- ttest_info %>%
   ungroup() %>%
   mutate(
     y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02,
-    y = if_else(id == 21 | id == 33, y + 0.02, y),
+    y = if_else(id == 21, y + 0.02, y),
+    y = if_else(id == 34, y + 0.06, y),
     sign = case_when(
       p < 0.01 ~ "***",
       p < 0.05 ~ "**",
