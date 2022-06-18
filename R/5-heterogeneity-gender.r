@@ -157,35 +157,31 @@ plotdt <- est %>%
 #+
 plotdt %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
-  ggplot(aes(x = treat, y = coef)) +
+  ggplot(aes(x = male, y = coef)) +
   geom_hline(aes(yintercept = 0), linetype = 2) +
   geom_pointrange(
-    aes(ymin = lwr.coef, ymax = upr.coef, shape = male, color = male),
-    position = position_dodge(0.9),
+    aes(ymin = lwr.coef, ymax = upr.coef),
     size = 1
   ) +
-  scale_color_manual(values = c("blue", "red")) +
-  facet_wrap(~ outcome) +
+  facet_grid(treat ~ outcome) +
   labs(
-    x = "Experimental Arms (Control group = A)",
-    y = "Coefficients (95%CI)"
+    x = "Gender",
+    y = "Estimated treatment effect (95%CI)"
   ) +
   simplegg()
 
 #+
 plotdt %>%
   dplyr::filter(!(outcome %in% out_lab[1:3])) %>%
-  ggplot(aes(x = treat, y = coef)) +
+  ggplot(aes(x = male, y = coef)) +
   geom_hline(aes(yintercept = 0), linetype = 2) +
   geom_pointrange(
-    aes(ymin = lwr.coef, ymax = upr.coef, shape = male, color = male),
-    position = position_dodge(0.9),
+    aes(ymin = lwr.coef, ymax = upr.coef),
     size = 1
   ) +
-  scale_color_manual(values = c("blue", "red")) +
-  facet_wrap(~ outcome) +
+  facet_grid(treat ~ outcome) +
   labs(
-    x = "Experimental Arms (Control group = A)",
-    y = "Coefficients (95%CI)"
+    x = "Gender",
+    y = "Estimated treatment effect (95%CI)"
   ) +
   simplegg()

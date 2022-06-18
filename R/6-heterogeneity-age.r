@@ -129,7 +129,7 @@ plotdt %>%
   geom_line() +
   scale_x_continuous(labels = scale_x_dt$label) +
   facet_grid(treat ~ outcome) +
-  labs(x = "Age group", y = "Estimated treatment effect") +
+  labs(x = "Age group", y = "Estimated treatment effect (95%CI)") +
   simplegg() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
@@ -142,6 +142,6 @@ plotdt %>%
   geom_line() +
   scale_x_continuous(labels = scale_x_dt$label) +
   facet_grid(treat ~ outcome) +
-  labs(x = "Age group", y = "Estimated treatment effect") +
+  labs(x = "Age group", y = "Estimated treatment effect (95%CI)") +
   simplegg() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
