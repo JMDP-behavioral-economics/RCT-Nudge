@@ -78,7 +78,9 @@ est %>%
     coef_map = c(
       "treatB" = "Treatment B",
       "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
+      "treatD" = "Treatment D",
+      "male" = "Male",
+      "age" = "Age"
     ),
     gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
     add_rows = tribble(
@@ -92,5 +94,5 @@ est %>%
   ) %>%
   kableExtra::kable_styling() %>%
   kableExtra::group_rows(
-    "F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE
+    "F-tests, p-value", 15, 17, bold = FALSE, italic = TRUE
   )
