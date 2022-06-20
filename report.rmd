@@ -1,0 +1,43 @@
+---
+title: |
+  骨髄バンクにおけるナッジ・メッセージの効果検証
+date: "`r format(Sys.time(), '%Y/%m/%d')`"
+author:
+  - Hiroki Kato
+  - Fumio Ohtake
+output:
+  bookdown::html_document2:
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+---
+
+```{r render, eval = FALSE, include = FALSE, echo = FALSE}
+library(here)
+rmarkdown::render(
+  input = here("report.rmd"),
+  output_format = "all",
+  output_file = "report",
+  output_dir = "docs/html-preview"
+)
+```
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE,
+  cache = FALSE,
+  include = TRUE,
+  fig.pos = "t",
+  fig.width = 10,
+  fig.height = 8
+)
+
+options(
+  knitr.kable.NA = " ",
+  knitr.table.format = "latex",
+  modelsummary_stars_note = FALSE,
+  modelsummary_format_numeric_latex = "plain"
+)
+```
