@@ -15,6 +15,46 @@ use <- rawdt %>%
     treat = factor(treat, levels = LETTERS[1:4])
   )
 
+schedule <- read_csv(here(root, "RCT-schedule.csv"))
+
+#+
+treat_value <- function(x) {
+  x <- as.character(x)
+  switch(x,
+    "1" = "A",
+    "2" = "B",
+    "2" = "B",
+    "3" = "C",
+    "4" = "D"
+  )
+}
+
+schedule %>%
+  mutate(
+    my = paste0(month, "/", year - 2000),
+    my = factor(
+      my,
+      levels = c("9/21", "10/21", "11/21", "12/21", "1/22", "2/22")
+    ),
+    week = factor(week, levels = 1:4),
+    treat = case_when(
+      treat == "A" ~ 1,
+      treat == "B" ~ 2,
+      treat == "C" ~ 3,
+      treat == "D" ~ 4
+    )
+  ) %>%
+  datasummary(
+    week ~ treat * treat_value * my,
+    data = .,
+    title = "Assignment of Treatments",
+    align = "ccccccc"
+  ) %>%
+  kableExtra::kable_styling() %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "Month/Year" = 6
+  ))
+
 #+
 balance_test <- use %>%
   select(male, age, coordinate, treat, week) %>%
