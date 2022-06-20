@@ -24,7 +24,7 @@ out_lev <- c(
 )
 
 out_lab <- c(
-  "Reply to invitation",
+  "Reply to notification",
   "Intention",
   "Confirmatory typing",
   "Candidate",
@@ -32,6 +32,8 @@ out_lab <- c(
   "Donation"
 )
 
+#' 性別によってサブサンプルを構築して、固定効果モデルを推定した。
+#'
 #+
 est <- use %>%
   select(
@@ -71,7 +73,7 @@ testCD <- lapply(est$est, function(x) lincom_fixest(
   matrix(c(0, 1, -1, rep(0, 47)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
-#+
+#+ eval = FALSE
 est %>%
   dplyr::filter(male == 1) %>%
   pull(est, name = outcome) %>%
@@ -97,7 +99,7 @@ est %>%
     "F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE
   )
 
-#+
+#+ eval = FALSE
 est %>%
   dplyr::filter(male == 0) %>%
   pull(est, name = outcome) %>%
@@ -154,7 +156,13 @@ plotdt <- est %>%
     treat = factor(treat, levels = LETTERS[2:4])
   )
 
-#+
+#'
+#' 図\@ref(fig:hetero-gender-1-3step)にドナー候補者選定前のアウトカムに対するトリートメントの効果をプロットした。
+#'
+#' - 男性について、介入B群は確認検査の実施に正の効果を持ち、介入D群は返信に正の効果を持っている
+#' - 女性について、介入D群は確認検査の実施に正の効果を持っている
+#' 
+#+ hetero-gender-1-3step, fig.cap = "Heterogenous Effect by Gender on Outcomes before Donor Candidate Selection"
 plotdt %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
   ggplot(aes(x = treat, y = coef)) +
@@ -169,8 +177,13 @@ plotdt %>%
     y = "Estimated treatment effect (95%CI)"
   ) +
   simplegg()
-  
-#+
+
+#'
+#' 図\@ref(fig:hetero-gender-4-6step)にドナー候補者選定後のアウトカムに対するトリートメントの効果をプロットした。
+#'
+#' - 男性について、介入C群は最終同意に負の効果を持っている
+#'
+#+ hetero-gender-4-6step, fig.cap = "Heterogenous Effect by Gender on Outcomes after Donor Candidate Selection"
 plotdt %>%
   dplyr::filter(!(outcome %in% out_lab[1:3])) %>%
   ggplot(aes(x = treat, y = coef)) +

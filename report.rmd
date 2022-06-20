@@ -61,3 +61,13 @@ knitr::spin_child(here("R", "3-t-test.r"))
 ```{r}
 knitr::spin_child(here("R", "4-reg.r"))
 ```
+
+## Heterogenous Effect
+
+```{r}
+knitr::spin_child(here("R", "5-heterogeneity-gender.r"))
+```
+
+```{r}
+knitr::spin_child(here("R", "6-heterogeneity-age.r"))
+```

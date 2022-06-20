@@ -24,7 +24,7 @@ out_lev <- c(
 )
 
 out_lab <- c(
-  "Reply to invitation",
+  "Reply to notification",
   "Intention",
   "Confirmatory typing",
   "Candidate",
@@ -32,6 +32,8 @@ out_lab <- c(
   "Donation"
 )
 
+#' サンプルを年齢順に4等分して、各サブサンプルで固定効果モデルを推定した。
+#'
 #+
 est <- use %>%
   select(
@@ -120,7 +122,11 @@ scale_x_dt <- est %>%
     label = paste0("[", min, ", ", max, "]")
   )
 
-#+
+#' 図\@ref(fig:hetero-age-1-3step)にドナー候補者選定前のアウトカムに対するトリートメントの効果をプロットした。
+#'
+#' - 39～46歳のグループについて、介入B群は意向と確認検査の実施に正の効果を持つ
+#'
+#+ hetero-age-1-3step, fig.cap = "Heterogenous Effect by Age on Outcomes before Donor Candidate Selection"
 plotdt %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
   mutate(age = factor(age, levels = 1:4, labels = scale_x_dt$label)) %>%
@@ -132,7 +138,11 @@ plotdt %>%
   labs(x = "Treatment", y = "Estimated treatment effect (95%CI)") +
   simplegg()
 
-#+
+#' 図\@ref(fig:hetero-age-4-6step)にドナー候補者選定後のアウトカムに対するトリートメントの効果をプロットした。
+#'
+#' - どの年齢層でも、介入群はアウトカムに影響を与えない
+#'
+#+ hetero-age-4-6step, fig.cap = "Heterogenous Effect by Age on Outcomes after Donor Candidate Selection"
 plotdt %>%
   dplyr::filter(!(outcome %in% out_lab[1:3])) %>%
   mutate(age = factor(age, levels = 1:4, labels = scale_x_dt$label)) %>%
