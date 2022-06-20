@@ -3,7 +3,7 @@ library(here)
 source(here("R", "_library.r"))
 
 #+ include = FALSE
-root <- "E:/JMDPフィールド実験"
+root <- "D:/JMDPフィールド実験"
 raw <- "raw.csv"
 schedule <- "schedule.csv"
 
