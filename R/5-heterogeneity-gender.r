@@ -157,31 +157,31 @@ plotdt <- est %>%
 #+
 plotdt %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
-  ggplot(aes(x = male, y = coef)) +
+  ggplot(aes(x = treat, y = coef)) +
   geom_hline(aes(yintercept = 0), linetype = 2) +
   geom_pointrange(
     aes(ymin = lwr.coef, ymax = upr.coef),
     size = 1
   ) +
-  facet_grid(treat ~ outcome) +
+  facet_grid(male ~ outcome) +
   labs(
-    x = "Gender",
+    x = "Treatment",
     y = "Estimated treatment effect (95%CI)"
   ) +
   simplegg()
-
+  
 #+
 plotdt %>%
   dplyr::filter(!(outcome %in% out_lab[1:3])) %>%
-  ggplot(aes(x = male, y = coef)) +
+  ggplot(aes(x = treat, y = coef)) +
   geom_hline(aes(yintercept = 0), linetype = 2) +
   geom_pointrange(
     aes(ymin = lwr.coef, ymax = upr.coef),
     size = 1
   ) +
-  facet_grid(treat ~ outcome) +
+  facet_grid(male ~ outcome) +
   labs(
-    x = "Gender",
+    x = "Treatment",
     y = "Estimated treatment effect (95%CI)"
   ) +
   simplegg()

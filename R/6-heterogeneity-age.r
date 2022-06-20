@@ -123,25 +123,23 @@ scale_x_dt <- est %>%
 #+
 plotdt %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
-  ggplot(aes(x = age, y = coef)) +
+  mutate(age = factor(age, levels = 1:4, labels = scale_x_dt$label)) %>%
+  ggplot(aes(x = treat, y = coef)) +
   geom_hline(aes(yintercept = 0), linetype = 2) +
   geom_pointrange(aes(ymin = lwr.coef, ymax = upr.coef)) +
-  geom_line() +
-  scale_x_continuous(labels = scale_x_dt$label) +
-  facet_grid(treat ~ outcome) +
-  labs(x = "Age group", y = "Estimated treatment effect (95%CI)") +
-  simplegg() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+  # scale_x_continuous(labels = scale_x_dt$label) +
+  facet_grid(age ~ outcome) +
+  labs(x = "Treatment", y = "Estimated treatment effect (95%CI)") +
+  simplegg()
 
 #+
 plotdt %>%
   dplyr::filter(!(outcome %in% out_lab[1:3])) %>%
-  ggplot(aes(x = age, y = coef)) +
+  mutate(age = factor(age, levels = 1:4, labels = scale_x_dt$label)) %>%
+  ggplot(aes(x = treat, y = coef)) +
   geom_hline(aes(yintercept = 0), linetype = 2) +
   geom_pointrange(aes(ymin = lwr.coef, ymax = upr.coef)) +
-  geom_line() +
-  scale_x_continuous(labels = scale_x_dt$label) +
-  facet_grid(treat ~ outcome) +
-  labs(x = "Age group", y = "Estimated treatment effect (95%CI)") +
-  simplegg() +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+  # scale_x_continuous(labels = scale_x_dt$label) +
+  facet_grid(age ~ outcome) +
+  labs(x = "Treatment", y = "Estimated treatment effect (95%CI)") +
+  simplegg()
