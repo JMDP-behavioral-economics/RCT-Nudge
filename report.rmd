@@ -47,3 +47,17 @@ options(
 ```{r}
 knitr::spin_child(here("R", "2-summary.r"))
 ```
+
+# Results
+
+## Difference-in-mean Test
+
+```{r}
+knitr::spin_child(here("R", "3-t-test.r"))
+```
+
+## Regression Analysis
+
+```{r}
+knitr::spin_child(here("R", "4-reg.r"))
+```
