@@ -9,7 +9,7 @@ output:
   bookdown::html_document2:
     toc: yes
     toc_float: yes
-    number_sections: yes
+    number_sections: no
 ---
 
 ```{r render, eval = FALSE, include = FALSE, echo = FALSE}
@@ -40,4 +40,10 @@ options(
   modelsummary_stars_note = FALSE,
   modelsummary_format_numeric_latex = "plain"
 )
+```
+
+# Field Experiment
+
+```{r}
+knitr::spin_child(here("R", "2-summary.r"))
 ```
