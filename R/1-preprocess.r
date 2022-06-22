@@ -31,7 +31,7 @@ schedule_dt <- read_csv(
 #' - 検査省略ケースを除く
 #' 第一候補に選定されていないのに、最終同意を取ることはあるのか（N = 2）
 #' 最終同意なしに採血することはあるのか（N = 1）
-#' 
+#'
 #+ include = FALSE
 shape_rawdt <- rawdt %>%
   rename(
@@ -76,6 +76,56 @@ shape_rawdt <- rawdt %>%
     ),
     sentenceB = if_else(treat %in% c("B", "D"), 1, 0),
     sentenceC = if_else(treat %in% c("C", "D"), 1, 0),
+    reasonBM = if_else(is.na(reasonBM), "PB単独コーディネート", reasonBM),
+    reasonPB = if_else(is.na(reasonPB), "BM単独コーディネート", reasonPB),
+    exg_stop_reply = case_when(
+      reply == 1 ~ 0,
+      method == "PB" & reasonPB == "患者理由" ~ 1,
+      method == "MB" & reasonBM == "患者理由" ~ 1,
+      reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
+      TRUE ~ 0
+    ),
+    exg_stop_intention = case_when(
+      intention == 1 ~ 0,
+      method == "PB" & reasonPB == "患者理由" ~ 1,
+      method == "MB" & reasonBM == "患者理由" ~ 1,
+      reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
+      TRUE ~ 0
+    ),
+    exg_stop_test = case_when(
+      test == 1 ~ 0,
+      method == "PB" & reasonPB == "患者理由" ~ 1,
+      method == "MB" & reasonBM == "患者理由" ~ 1,
+      reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
+      TRUE ~ 0
+    ),
+    exg_stop_candidate = case_when(
+      candidate == 1 ~ 0,
+      method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      method == "MB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      (reasonPB == "患者理由" | reasonPB == "健康上理由") &
+        (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
+      TRUE ~ 0
+    ),
+    exg_stop_consent = case_when(
+      consent == 1 ~ 0,
+      method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      method == "MB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      (reasonPB == "患者理由" | reasonPB == "健康上理由") &
+        (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
+      TRUE ~ 0
+    ),
+    exg_stop_donate = case_when(
+      donate == 1 ~ 0,
+      method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      method == "MB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      (reasonPB == "患者理由" | reasonPB == "健康上理由") &
+        (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
+      TRUE ~ 0
+    ),
+    ongoing = if_else(
+      donate == 0 & (reasonPB == "Co中" | reasonBM == "Co中"), 1, 0
+    )
   ) %>%
   select(
     year,
@@ -95,6 +145,13 @@ shape_rawdt <- rawdt %>%
     consent,
     donate,
     stage,
+    exg_stop_reply,
+    exg_stop_intention,
+    exg_stop_test,
+    exg_stop_candidate,
+    exg_stop_consent,
+    exg_stop_donate,
+    ongoing,
     reasonBM,
     reasonPB,
     plan_method,
