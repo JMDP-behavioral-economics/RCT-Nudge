@@ -40,34 +40,8 @@ out_lab <- c(
   "Donation"
 )
 
-#+
-stat <- use %>%
-  group_by(treat) %>%
-  summarize_at(
-    vars(reply, intention, test, candidate, consent, donate),
-    list(
-      mean =~mean(.),
-      se =~se(.)
-    )
-  ) %>%
-  pivot_longer(
-    -treat,
-    names_to = c("outcome", "stat"),
-    names_pattern = "(.*)_(.*)"
-  ) %>%
-  pivot_wider(names_from = "stat", values_from = "value") %>%
-  mutate(
-    lwr.mean = mean - se,
-    upr.mean = mean + se,
-    outcome = factor(outcome, out_lev, out_lab)
-  )
-
-#+
 ttest_info <- expand.grid(
-  outcome = c(
-    "reply", "intention", "test",
-    "candidate", "consent", "donate"
-  ),
+  outcome = out_lev,
   group1 = LETTERS[1:4],
   group2 = LETTERS[1:4],
   stringsAsFactors = FALSE) %>%
@@ -75,19 +49,52 @@ ttest_info <- expand.grid(
   arrange(outcome) %>%
   mutate(id = seq(n()))
 
-ttest <- ttest_info %>%
+
+#+
+outcomes <- use %>%
+  select(id, male, treat, reply, intention:donate) %>%
+  pivot_longer(reply:donate, names_to = "outcome")
+
+exclude <- use %>%
+  select(id, starts_with("exg_stop")) %>%
+  pivot_longer(
+    -id, names_to = "outcome", values_to = "exclude",
+    names_prefix = "exg_stop_"
+  )
+
+testdt <- outcomes %>%
+  dplyr::left_join(exclude, by = c("id", "outcome"))
+
+#+
+full_stat <- testdt %>%
+  group_by(outcome, treat) %>%
+  summarize(mean = mean(value), se = se(value)) %>%
+  ungroup() %>%
+  mutate(
+    lwr.mean = mean - se,
+    upr.mean = mean + se,
+    outcome = factor(outcome, out_lev, out_lab)
+  )
+
+full_ttest <- ttest_info %>%
   group_by(id) %>%
   do(test = t.test(
-    use[use$treat == .$group1, .$outcome],
-    use[use$treat == .$group2, .$outcome]
+    subset(
+      testdt, treat == .$group1 & outcome == .$outcome
+    )$value,
+    subset(
+      testdt, treat == .$group2 & outcome == .$outcome
+    )$value
   )) %>%
   summarize(
     id = id,
-    p = test$p.value
+    p = test$p.value,
+    est1 = test$estimate[1],
+    est2 = test$estimate[2]
   )
 
-show_ttest_info <- ttest_info %>%
-  dplyr::left_join(ttest, by = "id") %>%
+full_ttest_info <- ttest_info %>%
+  dplyr::left_join(full_ttest, by = "id") %>%
   dplyr::filter(p <= 0.1) %>%
   mutate_at(vars(group1, group2), list(~factor(., levels = LETTERS[1:4]))) %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
@@ -129,7 +136,7 @@ show_ttest_info <- ttest_info %>%
 #'   およびD群とコントロール群の差（2.6%ポイント）は統計的に5%水準で有意である。
 #'
 #+ ttest-1-3step, fig.cap = "Sample Average of Outcomes before Donor Candidate Selection"
-stat %>%
+full_stat %>%
   dplyr::filter(outcome %in% levels(stat$outcome)[1:3]) %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
@@ -146,7 +153,7 @@ stat %>%
       vjust = 3, size = 5
     ) +
     geom_signif(
-      data = show_ttest_info,
+      data = full_ttest_info,
       aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
       textsize = 8, tip_length = 0.01,
       manual = TRUE
@@ -166,7 +173,7 @@ stat %>%
 #' - いずれの介入も候補者選定・最終同意・提供に影響を与えていない
 #' 
 #+ ttest-4-6step, fig.cap = "Sample Average of Outcomes after Donor Candidate Selection"
-stat %>%
+full_stat %>%
   dplyr::filter(outcome %in% levels(stat$outcome)[4:6]) %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
