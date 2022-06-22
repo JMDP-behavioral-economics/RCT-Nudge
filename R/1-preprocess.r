@@ -54,6 +54,7 @@ shape_rawdt <- rawdt %>%
     method = 終了時採取方法
   ) %>%
   mutate(
+    id = 1:n(),
     year = year(ym(ym)),
     month = month(ym(ym)),
     male = if_else(sex == "M", 1, 0),
@@ -128,6 +129,7 @@ shape_rawdt <- rawdt %>%
     )
   ) %>%
   select(
+    id,
     year,
     month,
     treat,
