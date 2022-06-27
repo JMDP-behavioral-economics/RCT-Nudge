@@ -123,6 +123,9 @@ show_ttest_info <- ttest_info %>%
     )
   )
 
+#'
+#' ## 男性１
+#'
 #+ ttest-1-3step-male-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Males"
 stat %>%
   dplyr::filter(male == 1) %>%
@@ -157,6 +160,9 @@ stat %>%
     ) +
     simplegg(caption_size = 13)
 
+#'
+#' ## 男性２
+#'
 #+ ttest-4-6step-male-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Males"
 stat %>%
   dplyr::filter(male == 1) %>%
@@ -192,6 +198,9 @@ stat %>%
     ) +
     simplegg()
 
+#'
+#' ## 女性１
+#'
 #+ ttest-1-3step-female-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Females"
 stat %>%
   dplyr::filter(male == 0) %>%
@@ -226,6 +235,9 @@ stat %>%
     ) +
     simplegg(caption_size = 13)
 
+#'
+#' ## 女性２
+#'
 #+ ttest-4-6step-female-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Females"
 stat %>%
   dplyr::filter(male == 0) %>%

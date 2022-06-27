@@ -10,15 +10,17 @@ output:
     toc: yes
     toc_float: yes
     number_sections: no
+  powerpoint_presentation:
+    slide_level: 2
 ---
 
 ```{r render, eval = FALSE, include = FALSE, echo = FALSE}
 library(here)
 rmarkdown::render(
   input = here("report.rmd"),
-  output_format = "all",
+  output_format = "powerpoint_presentation",
   output_file = "report",
-  output_dir = "docs/html-preview"
+  output_dir = "docs/pptx"
 )
 ```
 
@@ -30,8 +32,9 @@ knitr::opts_chunk$set(
   cache = FALSE,
   include = TRUE,
   fig.pos = "t",
-  fig.width = 10,
-  fig.height = 8
+  fig.width = 15,
+  fig.asp=0.5,
+  dpi=300
 )
 
 options(
@@ -42,32 +45,12 @@ options(
 )
 ```
 
-# Field Experiment
-
 ```{r}
 knitr::spin_child(here("R", "2-summary.r"))
 ```
 
-# Results
 
-## Difference-in-mean Test
 
 ```{r}
-knitr::spin_child(here("R", "3-t-test.r"))
-```
-
-## Regression Analysis
-
-```{r}
-knitr::spin_child(here("R", "4-reg.r"))
-```
-
-## Heterogenous Effect
-
-```{r}
-knitr::spin_child(here("R", "5-heterogeneity-gender.r"))
-```
-
-```{r}
-knitr::spin_child(here("R", "6-heterogeneity-age.r"))
+knitr::spin_child(here("R", "9-t-test-exg-gender-first.r"))
 ```

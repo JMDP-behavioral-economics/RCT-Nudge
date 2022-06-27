@@ -18,6 +18,7 @@ use <- rawdt %>%
 schedule <- read_csv(here(root, "RCT-schedule.csv"))
 
 #'
+#' <!---
 #' フィールド実験の対象者は骨髄バンクドナー確定後に「適合通知」を受け取るドナー候補者である。
 #' ドナー候補者確定後、骨髄バンクは対象者に幹細胞提供を依頼する「適合通知」および
 #' それを郵送した旨を伝えるSNSメーセージを送付する。
@@ -50,6 +51,9 @@ schedule <- read_csv(here(root, "RCT-schedule.csv"))
 #' 表\@ref(tab:assignment-schedule)に示されているように、我々は週単位で実験群を割り当てる。
 #' このとき、月の固定効果と週の固定効果を取り除くために、
 #' 実験群が月単位・各月の週単位でバランスされるように設計した。
+#' --->
+#'
+#' ## 割り当てスケジュール
 #'
 #+ assignment-schedule
 treat_value <- function(x) {
@@ -87,9 +91,11 @@ schedule %>%
   kableExtra::kable_styling() %>%
   kableExtra::add_header_above(c(
     " " = 1, "Month/Year" = 6
-  ))
+  )) %>%
+  kableExtra::as_image(cliprect = c(40, 300, 400, 250))
 
-#'
+#' 
+#' <!---
 #' 表\@ref(tab:overview-field-exp)にフィールド実験の概要を示した。
 #'
 #' - 実験期間中に合計11,154件の適合通知を送付し、
@@ -97,6 +103,9 @@ schedule %>%
 #' それぞれ2,559件、3,075件、2,754件、2,766件である
 #' - 性別の比率・年齢は実験群間でバランスされているが、
 #' コーディネーション回数はバランスされていない
+#' ---->
+#'
+#' ## フィールド実験概要
 #'
 #+ overview-field-exp
 balance_test <- use %>%
@@ -149,4 +158,5 @@ kableExtra::kable_styling() %>%
 add_header_above(c(" " = 1, "Experimental Arms" = 4, " " = 1)) %>%
 group_rows("A. Intervention", 1, 3) %>%
 group_rows("B. Sample Size", 4, 4) %>%
-group_rows("C. Covariate", 5, 7)
+group_rows("C. Covariate", 5, 7) %>%
+kableExtra::as_image(cliprect = c(40, 250, 500, 410))
