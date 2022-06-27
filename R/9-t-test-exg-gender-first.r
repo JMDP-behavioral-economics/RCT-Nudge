@@ -14,6 +14,26 @@ use <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
   dplyr::filter(coordinate == 1)
 
+#'
+#' ## アウトカム変数(1)
+#'
+#' 1. 返信：適合通知に返信したならば1を取る二値変数
+#' 1. 意向あり：提供の意向を示して適合通知に返信したならば1を取る二値変数
+#' 1. 確認検査：確認検査を実施したならば1を取る二値変数
+#' （確認検査が省略されたケースは実施したとみなす）
+#'
+#' ドナーの意向と無関係な理由（患者理由）によって、
+#' 返信や確認検査をできなかった人を分析対象から除外する
+#'
+#' ## アウトカム変数(2)
+#'
+#' 4. 第一候補：第一候補に選ばれたならば1を取る二値変数
+#' 5. 最終同意：最終同意まで至ったら1を取る二値変数
+#' 6. 採取：採取まで至ったら1を取る二値変数
+#'
+#' ドナーの意向と無関係な理由（患者理由・ドナー健康理由）によって、
+#' 第一候補や採取まで至らなかった人を分析対象から除外する
+#'
 #+ include = FALSE
 out_lev <- c(
   "reply", "intention", "test",
@@ -21,12 +41,12 @@ out_lev <- c(
 )
 
 out_lab <- c(
-  "Reply to notification",
-  "Intention",
-  "Confirmatory typing",
-  "Candidate",
-  "Final consent",
-  "Donation"
+  "返信",
+  "意向あり",
+  "確認検査",
+  "第一候補",
+  "最終同意",
+  "採取"
 )
 
 ttest_info <- expand.grid(
@@ -124,7 +144,13 @@ show_ttest_info <- ttest_info %>%
   )
 
 #'
-#' ## 男性１
+#' ## Difference-in-mean Test
+#'
+#' - 二群の平均値の差がゼロであるという帰無仮説をt検定で検定した
+#' - 初めてコーディネートを経験する人に限定した
+#' - 男性と女性にサンプルを分けて、分析した
+#' 
+#' ## 結果：返信～確認検査（男性）
 #'
 #+ ttest-1-3step-male-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Males"
 stat %>%
@@ -161,7 +187,7 @@ stat %>%
     simplegg(caption_size = 13)
 
 #'
-#' ## 男性２
+#' ## 結果：第一候補～採取（男性）
 #'
 #+ ttest-4-6step-male-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Males"
 stat %>%
@@ -199,7 +225,7 @@ stat %>%
     simplegg()
 
 #'
-#' ## 女性１
+#' ## 結果：返信～確認検査（女性）
 #'
 #+ ttest-1-3step-female-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Females"
 stat %>%
@@ -236,7 +262,7 @@ stat %>%
     simplegg(caption_size = 13)
 
 #'
-#' ## 女性２
+#' ## 結果：第一候補～採取（女性）
 #'
 #+ ttest-4-6step-female-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Females"
 stat %>%
