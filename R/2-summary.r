@@ -18,6 +18,24 @@ use <- rawdt %>%
 schedule <- read_csv(here(root, "RCT-schedule.csv"))
 
 #'
+#' ## フィールド実験の介入
+#'
+#' - 対象：骨髄バンクドナー確定後に「適合通知」を受け取るドナー候補者（$N = 11,154$）
+#' - 介入：ドナー候補者確定後に送付する「適合通知」の内容に以下のメッセージを加える
+#'   - 確率メッセージ：「１人の登録患者さんとHLA型が一致するドナー登録者は数百〜数万人に1人です。
+#'   ドナー候補者が複数みつかる場合もありますが、多くはないこともご理解頂ければ幸いです。」
+#'   - 移植患者情報：「骨髄バンクを介して移植ができる患者さんは現在約6割にとどまっています。
+#'   骨髄等を提供するドナーが早く見つかれば、その比率を高めることができます。」
+#'
+#' ## 実験群
+#' 
+#' - A群（コントロール）：通常の適合通知
+#' - B群（トリートメント1）：通常の適合通知＋確率メッセージ
+#' - C群（トリートメント2）：通常の適合通知＋移植患者情報
+#' - D群（トリートメント3）：通常の適合通知＋確率メッセージ＋移植患者情報
+#'
+#' 実験は2021/9～2022/2で実施し、週単位で実験群を割り当てた
+#' 
 #' <!---
 #' フィールド実験の対象者は骨髄バンクドナー確定後に「適合通知」を受け取るドナー候補者である。
 #' ドナー候補者確定後、骨髄バンクは対象者に幹細胞提供を依頼する「適合通知」および
@@ -83,14 +101,14 @@ schedule %>%
     )
   ) %>%
   datasummary(
-    week ~ treat * treat_value * my,
+    (`週` = week) ~ treat * treat_value * my,
     data = .,
     title = "Assignment Schedule",
     align = "ccccccc"
   ) %>%
   kableExtra::kable_styling() %>%
   kableExtra::add_header_above(c(
-    " " = 1, "Month/Year" = 6
+    " " = 1, "月/年" = 6
   )) %>%
   kableExtra::as_image(cliprect = c(40, 300, 400, 250))
 
@@ -130,10 +148,10 @@ size <- with(use, sprintf("%1d", table(treat))) %>%
   {
     tribble(
       ~terms, ~A, ~B, ~C, ~D, ~"p-value",
-      "Basic notification", "X", "X", "X", "X", "",
-      "One chance in million", "", "X", "", "X", "",
-      "Transplant recipient", "", "", "X", "X", "",
-      "Number of observations", .[1], .[2], .[3], .[4], ""
+      "通常の適合通知", "X", "X", "X", "X", "",
+      "確率メッセージ", "", "X", "", "X", "",
+      "移植患者情報", "", "", "X", "X", "",
+      "サンプルサイズ", .[1], .[2], .[3], .[4], ""
     )
   }
 
@@ -145,9 +163,9 @@ note <- paste(
 )
 
 datasummary(
-  (`Age` = age) +
-  (`Number of coordinations` = coordinate) +
-  (`1 = Male` = male) ~ mean * treat,
+  (`年齢` = age) +
+  (`過去のコーディネーション回数` = coordinate) +
+  (`1 = 男性` = male) ~ mean * treat,
   data = use,
   title = "Overview of Field Experiment",
   add_rows = size,
@@ -155,8 +173,8 @@ datasummary(
   align = "lccccc"
 ) %>%
 kableExtra::kable_styling() %>%
-add_header_above(c(" " = 1, "Experimental Arms" = 4, " " = 1)) %>%
-group_rows("A. Intervention", 1, 3) %>%
-group_rows("B. Sample Size", 4, 4) %>%
-group_rows("C. Covariate", 5, 7) %>%
+add_header_above(c(" " = 1, "実験群" = 4, " " = 1)) %>%
+group_rows("A. 介入", 1, 3) %>%
+group_rows("B. サンプルサイズ", 4, 4) %>%
+group_rows("C. 共変量", 5, 7) %>%
 kableExtra::as_image(cliprect = c(40, 250, 500, 410))
