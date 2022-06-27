@@ -15,7 +15,8 @@ use <- rawdt %>%
     treat = factor(treat, levels = LETTERS[1:4]),
     prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
     age = (age - median(rawdt$age)) / 100
-  )
+  ) %>%
+  dplyr::filter(coordinate == 1)
 
 #+ include = FALSE
 out_lev <- c(
@@ -46,7 +47,6 @@ main <- use %>%
     prefecture,
     male,
     age,
-    coordinate,
     reply,
     intention:donate
   ) %>%
@@ -67,22 +67,22 @@ est <- estdt %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(outcome, male) %>%
   do(est = feols(
-    value ~ treat + poly(age, 2, raw = TRUE) + coordinate + prefecture |
+    value ~ treat + poly(age, 2, raw = TRUE) + prefecture |
       month + week,
     cluster = ~ week,
     data = subset(., exclude == 0)
   ))
 
 testBC <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(1, -1, 0, rep(0, 49)), ncol = 1), x
+  matrix(c(1, -1, 0, rep(0, 48)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 testBD <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(1, 0, -1, rep(0, 49)), ncol = 1), x
+  matrix(c(1, 0, -1, rep(0, 48)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 testCD <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(0, 1, -1, rep(0, 49)), ncol = 1), x
+  matrix(c(0, 1, -1, rep(0, 48)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 #+ eval = FALSE
@@ -102,7 +102,7 @@ est %>%
     gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
     add_rows = tribble(
       ~terms, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-      "Number of coordination, prefecture dummies",
+      "Prefecture dummies",
       "X", "X", "X", "X", "X", "X",
       "Week and month fixed effect", "X", "X", "X", "X", "X", "X"
     ) %>%
@@ -132,7 +132,7 @@ est %>%
     gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
     add_rows = tribble(
       ~terms, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-      "Number of coordination, prefecture dummies",
+      "Prefecture dummies",
       "X", "X", "X", "X", "X", "X",
       "Week and month fixed effect", "X", "X", "X", "X", "X", "X"
     ) %>%
