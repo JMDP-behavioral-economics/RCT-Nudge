@@ -115,15 +115,14 @@ show_ttest_info <- ttest_info %>%
   ungroup() %>%
   mutate(
     y = if_else(outcome %in% out_lab[4:6], y - 0.015, y),
-    y = if_else(id == 52, y + 0.05, y),
-    # y = if_else(id == 54, )
+    y = if_else(id == 47 | id == 70, y + 0.05, y),
     label = case_when(
       p < 0.01 ~ "p < 0.01",
       TRUE ~ sprintf("p = %1.3f", p)
     )
   )
 
-#+ ttest-1-3step-male-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Males"
+#+ ttest-1-3step-male-second, fig.cap = "Average of Outcomes before Donor Candidate Selection among Males"
 stat %>%
   dplyr::filter(male == 1) %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
@@ -157,7 +156,7 @@ stat %>%
     ) +
     simplegg(caption_size = 13)
 
-#+ ttest-4-6step-male-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Males"
+#+ ttest-4-6step-male-second, fig.cap = "Average of Outcomes after Donor Candidate Selection among Males"
 stat %>%
   dplyr::filter(male == 1) %>%
   dplyr::filter(outcome %in% out_lab[4:6]) %>%
@@ -192,7 +191,7 @@ stat %>%
     ) +
     simplegg()
 
-#+ ttest-1-3step-female-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Females"
+#+ ttest-1-3step-female-second, fig.cap = "Average of Outcomes before Donor Candidate Selection among Females"
 stat %>%
   dplyr::filter(male == 0) %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
@@ -226,7 +225,7 @@ stat %>%
     ) +
     simplegg(caption_size = 13)
 
-#+ ttest-4-6step-female-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Females"
+#+ ttest-4-6step-female-second, fig.cap = "Average of Outcomes after Donor Candidate Selection among Females"
 stat %>%
   dplyr::filter(male == 0) %>%
   dplyr::filter(outcome %in% out_lab[4:6]) %>%
@@ -242,7 +241,7 @@ stat %>%
     ) +
     geom_text(
       aes(label = sprintf("%1.3f", mean)),
-      vjust = 10, size = 5
+      vjust = 12, size = 5
     ) +
     geom_signif(
       data = subset(
