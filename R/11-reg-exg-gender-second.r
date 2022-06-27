@@ -16,7 +16,7 @@ use <- rawdt %>%
     prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
     age = (age - median(rawdt$age)) / 100
   ) %>%
-  dplyr::filter(coordinate == 1)
+  dplyr::filter(coordinate > 1)
 
 #+ include = FALSE
 out_lev <- c(
