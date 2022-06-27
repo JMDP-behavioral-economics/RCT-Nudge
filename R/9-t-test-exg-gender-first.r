@@ -11,7 +11,8 @@ rawdt <- read_csv(
 )
 
 use <- rawdt %>%
-  mutate(treat = factor(treat, levels = LETTERS[1:4]))
+  mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
+  dplyr::filter(coordinate == 1)
 
 #+ include = FALSE
 out_lev <- c(
@@ -107,127 +108,25 @@ show_ttest_info <- ttest_info %>%
     )$upr.mean
   )) %>%
   ungroup() %>%
-  arrange(male) %>%
+  # arrange(male) %>%
+  group_by(outcome, male) %>%
+  mutate(y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02) %>%
+  mutate(y = max(y)) %>%
+  ungroup() %>%
   mutate(
-    y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02,
     y = if_else(outcome %in% out_lab[4:6], y - 0.015, y),
-    sign = case_when(
-      p < 0.01 ~ "***",
-      p < 0.05 ~ "**",
-      p < 0.1 ~ "*",
-      TRUE ~ "",
+    y = if_else(id == 52, y + 0.05, y),
+    # y = if_else(id == 54, )
+    label = case_when(
+      p < 0.01 ~ "p < 0.01",
+      TRUE ~ sprintf("p = %1.3f", p)
     )
   )
 
-#+ ttest-1-3step-male, fig.cap = "Average of Outcomes before Donor Candidate Selection among Males"
+#+ ttest-1-3step-male-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Males"
 stat %>%
   dplyr::filter(male == 1) %>%
   dplyr::filter(outcome %in% out_lab[1:3]) %>%
-  ggplot(aes(x = treat, y = mean)) +
-    geom_bar(
-      color = "black",
-      fill = "grey90",
-      stat = "identity"
-    ) +
-    geom_errorbar(
-      aes(ymin = lwr.mean, ymax = upr.mean),
-      width = 0.5, position = position_dodge(0.9)
-    ) +
-    geom_text(
-      aes(label = sprintf("%1.3f", mean)),
-      vjust = 3, size = 5
-    ) +
-    geom_signif(
-      data = subset(
-        show_ttest_info, outcome %in% out_lab[1:3] & male == 1
-      ),
-      aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
-      textsize = 8, tip_length = 0.01,
-      manual = TRUE
-    ) +
-    facet_wrap(~ outcome) +
-    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
-    labs(
-      x = "Experimental Arms",
-      y = "Sample average",
-      caption = "*** p < 0.01, ** p < 0.05, * p < 0.1"
-    ) +
-    simplegg(caption_size = 13)
-
-#+ ttest-4-6step-male, fig.cap = "Average of Outcomes after Donor Candidate Selection among Males"
-stat %>%
-  dplyr::filter(male == 1) %>%
-  dplyr::filter(outcome %in% out_lab[4:6]) %>%
-  ggplot(aes(x = treat, y = mean)) +
-    geom_bar(
-      color = "black",
-      fill = "grey90",
-      stat = "identity"
-    ) +
-    geom_errorbar(
-      aes(ymin = lwr.mean, ymax = upr.mean),
-      width = 0.5, position = position_dodge(0.9)
-    ) +
-    geom_text(
-      aes(label = sprintf("%1.3f", mean)),
-      vjust = 4, size = 5
-    ) +
-    geom_signif(
-      data = subset(
-        show_ttest_info, outcome %in% out_lab[4:6] & male == 1
-      ),
-      aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
-      textsize = 8, tip_length = 0.01,
-      manual = TRUE
-    ) +
-    facet_wrap(~ outcome) +
-    scale_y_continuous(breaks = seq(0, 0.2, 0.02)) +
-    labs(
-      x = "Experimental Arms",
-      y = "Sample average",
-      fill = "Experimental Arms"
-    ) +
-    simplegg()
-
-#+ ttest-1-3step-female, fig.cap = "Average of Outcomes before Donor Candidate Selection among Females"
-stat %>%
-  dplyr::filter(male == 0) %>%
-  dplyr::filter(outcome %in% out_lab[1:3]) %>%
-  ggplot(aes(x = treat, y = mean)) +
-    geom_bar(
-      color = "black",
-      fill = "grey90",
-      stat = "identity"
-    ) +
-    geom_errorbar(
-      aes(ymin = lwr.mean, ymax = upr.mean),
-      width = 0.5, position = position_dodge(0.9)
-    ) +
-    geom_text(
-      aes(label = sprintf("%1.3f", mean)),
-      vjust = 3, size = 5
-    ) +
-    geom_signif(
-      data = subset(
-        show_ttest_info, outcome %in% out_lab[1:3] & male == 0
-      ),
-      aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
-      textsize = 8, tip_length = 0.01,
-      manual = TRUE
-    ) +
-    facet_wrap(~ outcome) +
-    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
-    labs(
-      x = "Experimental Arms",
-      y = "Sample average",
-      caption = "*** p < 0.01, ** p < 0.05, * p < 0.1"
-    ) +
-    simplegg(caption_size = 13)
-
-#+ ttest-4-6step-female, fig.cap = "Average of Outcomes after Donor Candidate Selection among Females"
-stat %>%
-  dplyr::filter(male == 0) %>%
-  dplyr::filter(outcome %in% out_lab[4:6]) %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
       color = "black",
@@ -244,10 +143,113 @@ stat %>%
     ) +
     geom_signif(
       data = subset(
+        show_ttest_info, outcome %in% out_lab[1:3] & male == 1
+      ),
+      aes(xmin = group1, xmax = group2, annotations = label, y_position = y),
+      textsize = 5, tip_length = 0.01,
+      manual = TRUE
+    ) +
+    facet_wrap(~ outcome) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    labs(
+      x = "Experimental Arms",
+      y = "Sample average"
+    ) +
+    simplegg(caption_size = 13)
+
+#+ ttest-4-6step-male-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Males"
+stat %>%
+  dplyr::filter(male == 1) %>%
+  dplyr::filter(outcome %in% out_lab[4:6]) %>%
+  ggplot(aes(x = treat, y = mean)) +
+    geom_bar(
+      color = "black",
+      fill = "grey90",
+      stat = "identity"
+    ) +
+    geom_errorbar(
+      aes(ymin = lwr.mean, ymax = upr.mean),
+      width = 0.5, position = position_dodge(0.9)
+    ) +
+    geom_text(
+      aes(label = sprintf("%1.3f", mean)),
+      vjust = 8, size = 5
+    ) +
+    geom_signif(
+      data = subset(
+        show_ttest_info, outcome %in% out_lab[4:6] & male == 1
+      ),
+      aes(xmin = group1, xmax = group2, annotations = label, y_position = y),
+      textsize = 5, tip_length = 0.01,
+      manual = TRUE
+    ) +
+    facet_wrap(~ outcome) +
+    scale_y_continuous(breaks = seq(0, 0.2, 0.02)) +
+    labs(
+      x = "Experimental Arms",
+      y = "Sample average",
+      fill = "Experimental Arms"
+    ) +
+    simplegg()
+
+#+ ttest-1-3step-female-first, fig.cap = "Average of Outcomes before Donor Candidate Selection among Females"
+stat %>%
+  dplyr::filter(male == 0) %>%
+  dplyr::filter(outcome %in% out_lab[1:3]) %>%
+  ggplot(aes(x = treat, y = mean)) +
+    geom_bar(
+      color = "black",
+      fill = "grey90",
+      stat = "identity"
+    ) +
+    geom_errorbar(
+      aes(ymin = lwr.mean, ymax = upr.mean),
+      width = 0.5, position = position_dodge(0.9)
+    ) +
+    geom_text(
+      aes(label = sprintf("%1.3f", mean)),
+      vjust = 5, size = 5
+    ) +
+    geom_signif(
+      data = subset(
+        show_ttest_info, outcome %in% out_lab[1:3] & male == 0
+      ),
+      aes(xmin = group1, xmax = group2, annotations = label, y_position = y),
+      textsize = 5, tip_length = 0.01,
+      manual = TRUE
+    ) +
+    facet_wrap(~ outcome) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    labs(
+      x = "Experimental Arms",
+      y = "Sample average"
+    ) +
+    simplegg(caption_size = 13)
+
+#+ ttest-4-6step-female-first, fig.cap = "Average of Outcomes after Donor Candidate Selection among Females"
+stat %>%
+  dplyr::filter(male == 0) %>%
+  dplyr::filter(outcome %in% out_lab[4:6]) %>%
+  ggplot(aes(x = treat, y = mean)) +
+    geom_bar(
+      color = "black",
+      fill = "grey90",
+      stat = "identity"
+    ) +
+    geom_errorbar(
+      aes(ymin = lwr.mean, ymax = upr.mean),
+      width = 0.5, position = position_dodge(0.9)
+    ) +
+    geom_text(
+      aes(label = sprintf("%1.3f", mean)),
+      vjust = 10, size = 5
+    ) +
+    geom_signif(
+      data = subset(
         show_ttest_info, outcome %in% out_lab[4:6] & male == 0
       ),
-      aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
-      textsize = 8, tip_length = 0.01,
+      aes(xmin = group1, xmax = group2, annotations = label, y_position = y),
+      textsize = 5, tip_length = 0.01,
       manual = TRUE
     ) +
     facet_wrap(~ outcome) +
