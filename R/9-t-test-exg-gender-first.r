@@ -79,7 +79,7 @@ testdt <- outcomes %>%
 stat <- testdt %>%
   dplyr::filter(exclude == 0) %>%
   group_by(outcome, male, treat) %>%
-  summarize(mean = mean(value), se = se(value)) %>%
+  summarize(mean = mean(value), se = se(value), n = n()) %>%
   ungroup() %>%
   mutate(
     lwr.mean = mean - se,
@@ -167,8 +167,8 @@ stat %>%
       width = 0.5, position = position_dodge(0.9)
     ) +
     geom_text(
-      aes(label = sprintf("%1.3f", mean)),
-      vjust = 5, size = 5
+      aes(label = sprintf("%1.3f\nN=%1d", mean, n)),
+      vjust = 3, size = 5
     ) +
     geom_signif(
       data = subset(
@@ -204,8 +204,8 @@ stat %>%
       width = 0.5, position = position_dodge(0.9)
     ) +
     geom_text(
-      aes(label = sprintf("%1.3f", mean)),
-      vjust = 8, size = 5
+      aes(label = sprintf("%1.3f\nN=%1d", mean, n)),
+      vjust = 5, size = 5
     ) +
     geom_signif(
       data = subset(
@@ -242,8 +242,8 @@ stat %>%
       width = 0.5, position = position_dodge(0.9)
     ) +
     geom_text(
-      aes(label = sprintf("%1.3f", mean)),
-      vjust = 5, size = 5
+      aes(label = sprintf("%1.3f\nN=%1d", mean, n)),
+      vjust = 2, size = 5
     ) +
     geom_signif(
       data = subset(
@@ -279,8 +279,8 @@ stat %>%
       width = 0.5, position = position_dodge(0.9)
     ) +
     geom_text(
-      aes(label = sprintf("%1.3f", mean)),
-      vjust = 10, size = 5
+      aes(label = sprintf("%1.3f\nN=%1d", mean, n)),
+      vjust = 5, size = 5
     ) +
     geom_signif(
       data = subset(
