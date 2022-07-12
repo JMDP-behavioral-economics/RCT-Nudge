@@ -10,15 +10,17 @@ output:
     toc: yes
     toc_float: yes
     number_sections: no
+  powerpoint_presentation:
+    slide_level: 2
 ---
 
 ```{r render, eval = FALSE, include = FALSE, echo = FALSE}
 library(here)
 rmarkdown::render(
   input = here("report.rmd"),
-  output_format = "all",
+  output_format = "powerpoint_presentation",
   output_file = "report",
-  output_dir = "docs/html-preview"
+  output_dir = "docs/pptx"
 )
 ```
 
@@ -30,8 +32,9 @@ knitr::opts_chunk$set(
   cache = FALSE,
   include = TRUE,
   fig.pos = "t",
-  fig.width = 10,
-  fig.height = 8
+  fig.width = 15,
+  fig.asp=0.5,
+  dpi=300
 )
 
 options(
@@ -42,32 +45,21 @@ options(
 )
 ```
 
-# Field Experiment
-
 ```{r}
 knitr::spin_child(here("R", "2-summary.r"))
 ```
 
-# Results
-
-## Difference-in-mean Test
-
 ```{r}
-knitr::spin_child(here("R", "3-t-test.r"))
+knitr::spin_child(here("R", "9-t-test-exg-gender-first.r"))
 ```
 
-## Regression Analysis
+## 結果の要約
 
-```{r}
-knitr::spin_child(here("R", "4-reg.r"))
-```
+- 男性：移植希望患者とマッチする確率が低いことを強調したメッセージが返信・意向・確認検査の実施に正の影響を与えた
+  - この結果は年齢・都道府県・月の固定効果・週の固定効果をコントロールした回帰分析でも同じ結果となった
+- 女性：回帰分析では、t検定で統計的に有意な群間の差が統計的に非有意となるので、頑健なメッセージの効果を得られなかった
 
-## Heterogenous Effect
+## 今後の課題
 
-```{r}
-knitr::spin_child(here("R", "5-heterogeneity-gender.r"))
-```
-
-```{r}
-knitr::spin_child(here("R", "6-heterogeneity-age.r"))
-```
+- 地域や年齢の視点からメッセージ効果の異質性を詳細に検討する。
+- Random causal forest (Wager and Athey, 2015)を用いた分析も検討する。

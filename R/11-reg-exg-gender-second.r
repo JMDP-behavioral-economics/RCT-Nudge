@@ -14,8 +14,9 @@ use <- rawdt %>%
   mutate(
     treat = factor(treat, levels = LETTERS[1:4]),
     prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
-    age = age - median(rawdt$age)
-  )
+    age = (age - median(rawdt$age)) / 100
+  ) %>%
+  dplyr::filter(coordinate > 1)
 
 #+ include = FALSE
 out_lev <- c(
@@ -35,42 +36,53 @@ out_lab <- c(
 #' 性別によってサブサンプルを構築して、固定効果モデルを推定した。
 #'
 #+
-est <- use %>%
+main <- use %>%
+  dplyr::filter(prefecture != "海外") %>%
+  mutate(prefecture = droplevels(prefecture)) %>%
   select(
-    reply,
-    intention,
-    test,
-    candidate,
-    consent,
-    donate,
+    id,
     treat,
     month,
     week,
     prefecture,
     male,
-    age
+    age,
+    reply,
+    intention:donate
   ) %>%
-  dplyr::filter(prefecture != "海外") %>%
-  mutate(prefecture = droplevels(prefecture)) %>%
-  pivot_longer(reply:donate, names_to = "outcome", values_to = "value") %>%
+  pivot_longer(reply:donate, names_to = "outcome")
+
+exclude <- use %>%
+  select(id, starts_with("exg_stop")) %>%
+  pivot_longer(
+    -id, names_to = "outcome", values_to = "exclude",
+    names_prefix = "exg_stop_"
+  )
+
+estdt <- main %>%
+  dplyr::left_join(exclude, by = c("id", "outcome"))
+
+#+
+est <- estdt %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(outcome, male) %>%
   do(est = feols(
-    value ~ treat + age + prefecture | month + week,
+    value ~ treat + poly(age, 2, raw = TRUE) + prefecture |
+      month + week,
     cluster = ~ week,
-    data = .
+    data = subset(., exclude == 0)
   ))
 
 testBC <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(1, -1, 0, rep(0, 47)), ncol = 1), x
+  matrix(c(1, -1, 0, rep(0, 48)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 testBD <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(1, 0, -1, rep(0, 47)), ncol = 1), x
+  matrix(c(1, 0, -1, rep(0, 48)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 testCD <- lapply(est$est, function(x) lincom_fixest(
-  matrix(c(0, 1, -1, rep(0, 47)), ncol = 1), x
+  matrix(c(0, 1, -1, rep(0, 48)), ncol = 1), x
 )) %>% as_vector() %>% sprintf("%1.3f", .)
 
 #+ eval = FALSE
@@ -78,25 +90,29 @@ est %>%
   dplyr::filter(male == 1) %>%
   pull(est, name = outcome) %>%
   modelsummary(
+    title = "Regression Results among Males",
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
       "treatB" = "Treatment B",
       "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
+      "treatD" = "Treatment D",
+      "poly(age, 2, raw = TRUE)1" = "Age",
+      "poly(age, 2, raw = TRUE)2" = "Squared age"
     ),
     gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
     add_rows = tribble(
       ~terms, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-      "Age, prefecture dummies", "X", "X", "X", "X", "X", "X",
+      "Prefecture dummies",
+      "X", "X", "X", "X", "X", "X",
       "Week and month fixed effect", "X", "X", "X", "X", "X", "X"
     ) %>%
     rbind(c("B = C", testBC)) %>%
     rbind(c("B = D", testBD)) %>%
-  rbind(c("C = D", testCD))
+    rbind(c("C = D", testCD))
   ) %>%
   kableExtra::kable_styling() %>%
   kableExtra::group_rows(
-    "F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE
+    "F-tests, p-value", 15, 17, bold = FALSE, italic = TRUE
   )
 
 #+ eval = FALSE
@@ -104,25 +120,29 @@ est %>%
   dplyr::filter(male == 0) %>%
   pull(est, name = outcome) %>%
   modelsummary(
+    title = "Regression Results among Females",
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
       "treatB" = "Treatment B",
       "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
+      "treatD" = "Treatment D",
+      "poly(age, 2, raw = TRUE)1" = "Age",
+      "poly(age, 2, raw = TRUE)2" = "Squared age"
     ),
     gof_omit = "R2 Adj.|R2 Within|R2 Pseudo|AIC|BIC|Log|Std|FE",
     add_rows = tribble(
       ~terms, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-      "Age, prefecture dummies", "X", "X", "X", "X", "X", "X",
+      "Prefecture dummies",
+      "X", "X", "X", "X", "X", "X",
       "Week and month fixed effect", "X", "X", "X", "X", "X", "X"
     ) %>%
     rbind(c("B = C", testBC)) %>%
     rbind(c("B = D", testBD)) %>%
-  rbind(c("C = D", testCD))
+    rbind(c("C = D", testCD))
   ) %>%
   kableExtra::kable_styling() %>%
   kableExtra::group_rows(
-    "F-tests, p-value", 11, 13, bold = FALSE, italic = TRUE
+    "F-tests, p-value", 15, 17, bold = FALSE, italic = TRUE
   )
 
 #+
