@@ -1,0 +1,4 @@
+output_dir: "docs/slide"
+rmd_files:
+  - index.Rmd
+  - Rmd/1-summary.rmd

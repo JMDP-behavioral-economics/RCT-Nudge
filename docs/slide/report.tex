@@ -1,0 +1,184 @@
+\documentclass[
+      aspectratio=169,
+        12pt,
+    ]{beamer}
+
+% font
+\usefonttheme[onlymath]{serif}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[scale = 1.0]{tgheros} %Sans serif
+\usepackage[scaled]{beramono}
+\usepackage{luatexja-otf}
+\usepackage[match, deluxe, expert, noto-otf]{luatexja-preset}
+\renewcommand{\kanjifamilydefault}{\gtdefault}
+
+% math packages
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+
+% comment out package
+\usepackage{comment}
+
+% tables
+\usepackage{longtable, booktabs, array}
+\usepackage{threeparttable, threeparttablex, multirow}
+\newcolumntype{d}{S[input-symbols = ()]}
+
+% figures
+\usepackage{graphics, graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+% navigation symbol
+\setbeamertemplate{navigation symbols}{}
+
+% page numbers
+\setbeamertemplate{footline}[frame number]
+
+% itemize
+\setbeamercolor{item}{fg=black}
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[circle]
+\setbeamertemplate{itemize subsubitem}[circle]
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% title design
+\setbeamerfont{title}{size=\Large,series=\bfseries}
+\setbeamerfont{subtitle}{series=\bfseries}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+
+% header includes
+
+% Title information
+  \title{骨髄バンクナッジ介入実験}
+  \subtitle{解析結果途中報告}
+  \author{%
+        加藤 大貴
+    \and
+      }
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\end{frame}
+
+\hypertarget{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux306eux6982ux8981}{%
+\section{フィールド実験の概要}\label{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux306eux6982ux8981}}
+
+\begin{frame}{フィールド実験の介入}
+\protect\hypertarget{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux306eux4ecbux5165}{}
+\begin{itemize}
+\tightlist
+\item
+  対象：骨髄バンクドナー確定後に「適合通知」を受け取るドナー候補者（\(N = 11,154\)）
+\item
+  ドナー候補者確定後、骨髄バンクは対象者に幹細胞提供を依頼する「適合通知」および
+  それを郵送した旨を伝えるSNSメーセージを送付
+\item
+  行動科学の知見に基づいたメッセージを適合通知に加える介入を実施E
+\end{itemize}
+\end{frame}
+
+\begin{frame}{通常の適合通知の内容}
+\protect\hypertarget{ux901aux5e38ux306eux9069ux5408ux901aux77e5ux306eux5185ux5bb9}{}
+\begin{quote}
+この度、あなたと骨髄バンクの登録患者さんのHLA型（白血球の型）が一致し、
+ドナー候補者のおひとりに選ばれました。
+今後、ご提供に向け詳しい検査や面談を希望されるかをお伺いしたく連絡させていただきました。
+同封の資料をよくお読みいただき、コーディネートが可能かどうか検討の上、
+この案内が届いてから７日以内に返信用紙ほかをご返送ください。
+返送後、コーディネートを進めさせていただく場合は、
+担当者よりご相談のお電話を差し上げますのでよろしくお願い申し上げます。
+\end{quote}
+\end{frame}
+
+\begin{frame}{介入内容}
+\protect\hypertarget{ux4ecbux5165ux5185ux5bb9}{}
+\begin{enumerate}
+[a.]
+\tightlist
+\item
+  確率メッセージ：「１人の登録患者さんとHLA型が一致するドナー登録者は数百〜数万人に1人です。
+  ドナー候補者が複数みつかる場合もありますが、多くはないこともご理解頂ければ幸いです。」
+\item
+  移植患者情報：「骨髄バンクを介して移植ができる患者さんは現在約6割にとどまっています。
+  骨髄等を提供するドナーが早く見つかれば、その比率を高めることができます。」
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{実験群}
+\protect\hypertarget{ux5b9fux9a13ux7fa4}{}
+\begin{itemize}
+\tightlist
+\item
+  A群（コントロール）：通常の適合通知
+\item
+  B群（トリートメント1）：通常の適合通知＋確率メッセージ
+\item
+  C群（トリートメント2）：通常の適合通知＋移植患者情報
+\item
+  D群（トリートメント3）：通常の適合通知＋確率メッセージ＋移植患者情報
+\end{itemize}
+\end{frame}
+
+\begin{frame}{介入スケジュール}
+\protect\hypertarget{ux4ecbux5165ux30b9ux30b1ux30b8ux30e5ux30fcux30eb}{}
+週・月の固定効果を取り除くために、実験群は月・週でバランスするように週単位で割り当てた
+
+\begin{table}
+\centering
+\begin{tabular}[t]{ccccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{月/年} \\
+\cmidrule(l{3pt}r{3pt}){2-7}
+週 & 9/21 & 10/21 & 11/21 & 12/21 & 1/22 & 2/22\\
+\midrule
+1 & B & C & C & D & B & A\\
+2 & D & B & A & A & C & B\\
+3 & A & D & B & C & D & C\\
+4 & C & A & D & B & A & D\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{フィールド実験概要}
+\protect\hypertarget{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux6982ux8981}{}
+\begin{table}
+\centering
+\begin{tabular}[t]{lccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{実験群} & \multicolumn{1}{c}{ } \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+  & A & B & C & D & p-value\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{A. 介入}}\\
+\hspace{1em}通常の適合通知 & X & X & X & X & \\
+\hspace{1em}確率メッセージ &  & X &  & X & \\
+\hspace{1em}移植患者情報 &  &  & X & X & \\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{B. サンプルサイズ}}\\
+\hspace{1em}サンプルサイズ & 2559 & 3075 & 2754 & 2766 & \\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{C. 共変量}}\\
+\hspace{1em}年齢 & \num{38.38} & \num{38.13} & \num{37.43} & \num{37.99} & \num{0.06}\\
+\hspace{1em}過去のコーディネーション回数 & \num{1.61} & \num{1.59} & \num{1.63} & \num{1.56} & \num{0.36}\\
+\hspace{1em}1 = 男性 & \num{0.62} & \num{0.63} & \num{0.63} & \num{0.61} & \num{0.40}\\
+\bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\end{document}

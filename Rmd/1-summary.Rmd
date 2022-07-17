@@ -1,0 +1,153 @@
+## フィールド実験の介入
+
+- 対象：骨髄バンクドナー確定後に「適合通知」を受け取るドナー候補者（$N = 11,154$）
+- ドナー候補者確定後、骨髄バンクは対象者に幹細胞提供を依頼する「適合通知」および
+それを郵送した旨を伝えるSNSメーセージを送付
+- 行動科学の知見に基づいたメッセージを適合通知に加える介入を実施E
+
+## 通常の適合通知の内容
+
+> この度、あなたと骨髄バンクの登録患者さんのHLA型（白血球の型）が一致し、
+ドナー候補者のおひとりに選ばれました。
+今後、ご提供に向け詳しい検査や面談を希望されるかをお伺いしたく連絡させていただきました。
+同封の資料をよくお読みいただき、コーディネートが可能かどうか検討の上、
+この案内が届いてから７日以内に返信用紙ほかをご返送ください。
+返送後、コーディネートを進めさせていただく場合は、
+担当者よりご相談のお電話を差し上げますのでよろしくお願い申し上げます。
+
+## 介入内容
+
+a. 確率メッセージ：「１人の登録患者さんとHLA型が一致するドナー登録者は数百〜数万人に1人です。
+ドナー候補者が複数みつかる場合もありますが、多くはないこともご理解頂ければ幸いです。」
+b. 移植患者情報：「骨髄バンクを介して移植ができる患者さんは現在約6割にとどまっています。
+骨髄等を提供するドナーが早く見つかれば、その比率を高めることができます。」
+
+## 実験群
+
+- A群（コントロール）：通常の適合通知
+- B群（トリートメント1）：通常の適合通知＋確率メッセージ
+- C群（トリートメント2）：通常の適合通知＋移植患者情報
+- D群（トリートメント3）：通常の適合通知＋確率メッセージ＋移植患者情報
+
+```{r load-packages, include = FALSE}
+library(here)
+source(here("R", "_library.r"))
+```
+
+```{r load-data, include = FALSE}
+root <- "D:/JMDPフィールド実験"
+
+rawdt <- read_csv(
+  here(root, "shaped.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  mutate(
+    treat = factor(treat, levels = LETTERS[1:4])
+  )
+
+schedule <- read_csv(here(root, "RCT-schedule.csv"))
+```
+
+## 介入スケジュール
+
+週・月の固定効果を取り除くために、実験群は月・週でバランスするように週単位で割り当てた
+
+```{r assignment-schedule}
+treat_value <- function(x) {
+  x <- as.character(x)
+  switch(x,
+    "1" = "A",
+    "2" = "B",
+    "2" = "B",
+    "3" = "C",
+    "4" = "D"
+  )
+}
+
+schedule %>%
+  mutate(
+    my = paste0(month, "/", year - 2000),
+    my = factor(
+      my,
+      levels = c("9/21", "10/21", "11/21", "12/21", "1/22", "2/22")
+    ),
+    week = factor(week, levels = 1:4),
+    treat = case_when(
+      treat == "A" ~ 1,
+      treat == "B" ~ 2,
+      treat == "C" ~ 3,
+      treat == "D" ~ 4
+    )
+  ) %>%
+  datasummary(
+    (`週` = week) ~ treat * treat_value * my,
+    data = .,
+    # title = "Assignment Schedule",
+    align = "ccccccc"
+  ) %>%
+  kableExtra::kable_styling() %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "月/年" = 6
+  ))
+```
+
+
+## フィールド実験概要
+
+
+```{r overview-field-exp}
+balance_test <- use %>%
+  select(male, age, coordinate, treat, RCTweek) %>%
+  pivot_longer(male:coordinate, values_to = "value", names_to = "vars") %>%
+  group_by(vars) %>%
+  do(est = lm_robust(
+    value ~ treat,
+    clusters = RCTweek,
+    se_type = "CR0",
+    data = .
+  )) %>%
+  summarize(
+    vars = vars,
+    f = summary(est)$fstatistic[1],
+    numdf = summary(est)$fstatistic[2],
+    dendf = summary(est)$fstatistic[3],
+    "p-value" = pf(f, numdf, dendf, lower.tail = FALSE)
+  )
+
+size <- with(use, sprintf("%1d", table(treat))) %>%
+  {
+    tribble(
+      ~terms, ~A, ~B, ~C, ~D, ~"p-value",
+      "通常の適合通知", "X", "X", "X", "X", "",
+      "確率メッセージ", "", "X", "", "X", "",
+      "移植患者情報", "", "", "X", "X", "",
+      "サンプルサイズ", .[1], .[2], .[3], .[4], ""
+    )
+  }
+
+attr(size, "position") <- seq(nrow(size))
+
+note <- paste(
+  "Note: p値はバランステストの結果である。",
+  "バランステストは実験群を共変量に線形回帰したF検定を用いている。"
+)
+
+datasummary(
+  (`年齢` = age) +
+  (`過去のコーディネーション回数` = coordinate) +
+  (`1 = 男性` = male) ~ mean * treat,
+  data = use,
+  # title = "Overview of Field Experiment",
+  add_rows = size,
+  add_columns = balance_test[, 5],
+  align = "lccccc"
+) %>%
+kableExtra::kable_styling() %>%
+add_header_above(c(" " = 1, "実験群" = 4, " " = 1)) %>%
+group_rows("A. 介入", 1, 3) %>%
+group_rows("B. サンプルサイズ", 4, 4) %>%
+group_rows("C. 共変量", 5, 7)
+```
+

@@ -1,0 +1,125 @@
+\documentclass[
+  $if(aspectratio)$
+    aspectratio=$aspectratio$,
+  $endif$
+  $if(fontsize)$
+    $fontsize$pt,
+  $endif$
+  $for(classoption)$
+    $classoption$$sep$,
+  $endfor$
+]{beamer}
+
+% font
+\usefonttheme[onlymath]{serif}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[scale = 1.0]{tgheros} %Sans serif
+\usepackage[scaled]{beramono}
+\usepackage{luatexja-otf}
+\usepackage[match, deluxe, expert, noto-otf]{luatexja-preset}
+\renewcommand{\kanjifamilydefault}{\gtdefault}
+
+% math packages
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+
+% comment out package
+\usepackage{comment}
+
+% tables
+\usepackage{longtable, booktabs, array}
+\usepackage{threeparttable, threeparttablex, multirow}
+\newcolumntype{d}{S[input-symbols = ()]}
+
+% figures
+\usepackage{graphics, graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+% navigation symbol
+\setbeamertemplate{navigation symbols}{}
+
+% page numbers
+\setbeamertemplate{footline}[frame number]
+
+% itemize
+\setbeamercolor{item}{fg=black}
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[circle]
+\setbeamertemplate{itemize subsubitem}[circle]
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% title design
+\setbeamerfont{title}{size=\Large,series=\bfseries}
+\setbeamerfont{subtitle}{series=\bfseries}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+
+% header includes
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+% Title information
+$if(title)$
+  \title{$title$}
+$endif$
+$if(subtitle)$
+  \subtitle{$subtitle$}
+$endif$
+$if(author)$
+  \author{%
+    $for(author)$
+    $author$
+    \and
+    $endfor$
+  }
+$endif$
+$if(date)$
+\date{$date$}
+$endif$
+
+\begin{document}
+
+\frame{\titlepage}
+
+$for(include-before)$
+$include-before$
+
+$endfor$
+$if(toc)$
+$if(toc-title)$
+\renewcommand*\contentsname{$toc-title$}
+$endif$
+$if(beamer)$
+\begin{frame}[allowframebreaks]
+$if(toc-title)$
+  \frametitle{$toc-title$}
+$endif$
+  \tableofcontents[hideallsubsections]
+\end{frame}
+$else$
+{
+$if(colorlinks)$
+\hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$$endif$}
+$endif$
+\setcounter{tocdepth}{$toc-depth$}
+\tableofcontents
+}
+$endif$
+$endif$
+$body$
+
+$for(include-after)$
+$include-after$
+
+$endfor$
+\end{document}
