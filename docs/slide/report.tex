@@ -209,4 +209,52 @@
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-4-6step-1} \end{center}
 \end{frame}
 
+\begin{frame}{線形確率モデル}
+\protect\hypertarget{ux7ddaux5f62ux78baux7387ux30e2ux30c7ux30eb}{}
+\(m\)月の第\(w\)週に適合通知を受け取った個人\(i\)について、
+
+\[
+  Y_{imw} =
+  \beta_1 \cdot \text{B}_{mw} + \beta_2 \cdot \text{C}_{mw}
+  + \beta_3 \cdot \text{D}_{mw}
+  + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
+\]
+
+\begin{itemize}
+\tightlist
+\item
+  \(X_i\)は性別・年齢・居住する都道府県・コーディネーション回数
+\item
+  \(\lambda_m\)と\(\theta_w\)は週・月の固定効果
+\end{itemize}
+\end{frame}
+
+\begin{frame}{モデル推定結果}
+\protect\hypertarget{ux30e2ux30c7ux30ebux63a8ux5b9aux7d50ux679c}{}
+\begin{table}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
+\toprule
+  & Reply to notification & Intention & Confirmatory typing & Candidate & Final consent & Donation\\
+\midrule
+B & \num{0.013}** & \num{0.019} & \num{0.034}*** & \num{0.002} & \num{0.002} & \num{0.003}\\
+ & (\num{0.006}) & (\num{0.013}) & (\num{0.009}) & (\num{0.009}) & (\num{0.007}) & (\num{0.007})\\
+C & \num{0.002} & \num{-0.005} & \num{0.015} & \num{-0.010} & \num{-0.009} & \num{-0.007}\\
+ & (\num{0.005}) & (\num{0.011}) & (\num{0.010}) & (\num{0.009}) & (\num{0.007}) & (\num{0.008})\\
+D & \num{0.006} & \num{0.006} & \num{0.032}*** & \num{0.008} & \num{0.011} & \num{0.002}\\
+ & (\num{0.005}) & (\num{0.010}) & (\num{0.010}) & (\num{0.008}) & (\num{0.007}) & (\num{0.008})\\
+\midrule
+Num.Obs. & \num{11093} & \num{11051} & \num{10560} & \num{5772} & \num{5750} & \num{5646}\\
+\addlinespace[0.3em]
+\multicolumn{7}{l}{\textit{F-tests, p-value}}\\
+\hspace{1em}B = C & \num{0.015} & \num{0.007} & \num{0.084} & \num{0.293} & \num{0.230} & \num{0.152}\\
+\hspace{1em}B = D & \num{0.233} & \num{0.114} & \num{0.856} & \num{0.495} & \num{0.325} & \num{0.917}\\
+\hspace{1em}C = D & \num{0.277} & \num{0.164} & \num{0.148} & \num{0.068} & \num{0.018} & \num{0.220}\\
+\bottomrule
+\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\end{table}
+\end{frame}
+
 \end{document}
