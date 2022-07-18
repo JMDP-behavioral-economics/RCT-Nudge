@@ -195,7 +195,8 @@ shape_schedule_dt <- schedule_dt %>%
 
 #+ include = FALSE
 combine <- shape_schedule_dt %>%
-  right_join(shape_rawdt, by = c("year", "month", "treat"))
+  right_join(shape_rawdt, by = c("year", "month", "treat")) %>%
+  dplyr::filter(prefecture != "海外")
 
 #+ include = FALSE
 write.csv(
