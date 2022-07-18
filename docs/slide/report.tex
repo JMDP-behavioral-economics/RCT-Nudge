@@ -73,9 +73,6 @@
 \begin{frame}
 \end{frame}
 
-\hypertarget{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux306eux6982ux8981}{%
-\section{フィールド実験の概要}\label{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux306eux6982ux8981}}
-
 \begin{frame}{フィールド実験の介入}
 \protect\hypertarget{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux306eux4ecbux5165}{}
 \begin{itemize}
@@ -170,15 +167,46 @@
 \hspace{1em}移植患者情報 &  &  & X & X & \\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textbf{B. サンプルサイズ}}\\
-\hspace{1em}サンプルサイズ & 2559 & 3075 & 2754 & 2766 & \\
+\hspace{1em}サンプルサイズ & 2558 & 3075 & 2754 & 2766 & \\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textbf{C. 共変量}}\\
-\hspace{1em}年齢 & \num{38.38} & \num{38.13} & \num{37.43} & \num{37.99} & \num{0.06}\\
+\hspace{1em}年齢 & \num{38.37} & \num{38.13} & \num{37.43} & \num{37.99} & \num{0.06}\\
 \hspace{1em}過去のコーディネーション回数 & \num{1.61} & \num{1.59} & \num{1.63} & \num{1.56} & \num{0.36}\\
 \hspace{1em}1 = 男性 & \num{0.62} & \num{0.63} & \num{0.63} & \num{0.61} & \num{0.40}\\
 \bottomrule
 \end{tabular}
 \end{table}
+\end{frame}
+
+\begin{frame}{アウトカム変数}
+\protect\hypertarget{ux30a2ux30a6ux30c8ux30abux30e0ux5909ux6570}{}
+アウトカム変数は提供に至るまでのプロセスであり、具体的に以下の6つの工程がある。
+
+\begin{itemize}
+\tightlist
+\item
+  Reply to notification: 適合通知に返信したならば1を取る二値変数
+\item
+  Intention: 提供を希望するという意向を示して返信したならば1を取る二値変数
+\item
+  Confirmatory typing: 確認検査を実施したならば1を取る二値変数
+\item
+  Candidate: 第一候補者に選定されたならば1を取る二値変数
+\item
+  Final consent: 最終同意をしたならば1を取る二値変数
+\item
+  Donation: 採取をしたならば1を取る二値変数
+\end{itemize}
+\end{frame}
+
+\begin{frame}{返信～確認検査の二群比較の検定}
+\protect\hypertarget{ux8fd4ux4fe1ux78baux8a8dux691cux67fbux306eux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9a}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-1-3step-1} \end{center}
+\end{frame}
+
+\begin{frame}{候補者選定～採血までの二群比較の検定}
+\protect\hypertarget{ux5019ux88dcux8005ux9078ux5b9aux63a1ux8840ux307eux3067ux306eux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9a}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-4-6step-1} \end{center}
 \end{frame}
 
 \end{document}

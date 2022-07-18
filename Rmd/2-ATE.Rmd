@@ -132,7 +132,7 @@ stat %>%
     ) +
     geom_text(
       aes(y = 0, label = sprintf("%1.3f\nN=%1d", mean, n)),
-      vjust = -1, size = 3
+      vjust = -1, size = 4
     ) +
     geom_signif(
       data = show_ttest_info,
@@ -167,7 +167,7 @@ stat %>%
     ) +
     geom_text(
       aes(y = 0, label = sprintf("%1.3f\nN=%1d", mean, n)),
-      vjust = -1, size = 3
+      vjust = -1, size = 4
     ) +
     facet_wrap(~ outcome) +
     scale_y_continuous(

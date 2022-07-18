@@ -7,6 +7,7 @@ fontsize: 12
 ---
 
 ```{r include = FALSE, eval = FALSE, echo = FALSE}
+options(knitr.duplicate.label = "allow")
 bookdown::render_book(output_file = "report")
 ```
 
@@ -19,6 +20,7 @@ knitr::opts_chunk$set(
   cache = FALSE,
   include = TRUE,
   fig.pos = "t",
-  fig.width = 15
+  fig.align = "center",
+  out.width = "75%"
 )
 ```
