@@ -19,9 +19,20 @@ use <- rawdt %>%
 outcomes <- use %>%
   select(
     id,
-    treat,
     reply,
-    intention:donate
+    intention,
+    test,
+    candidate,
+    consent,
+    donate,
+    treat,
+    RCTweek,
+    month,
+    week,
+    prefecture,
+    male,
+    age,
+    coordinate
   ) %>%
   pivot_longer(reply:donate, names_to = "outcome")
 
@@ -182,3 +193,82 @@ stat %>%
     simplegg()
 ```
 
+## 線形確率モデル
+
+$m$月の第$w$週に適合通知を受け取った個人$i$について、
+
+$$
+  Y_{imw} =
+  \beta_1 \cdot \text{B}_{mw} + \beta_2 \cdot \text{C}_{mw}
+  + \beta_3 \cdot \text{D}_{mw}
+  + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
+$$
+
+- $X_i$は性別・年齢・居住する都道府県・コーディネーション回数
+- $\lambda_m$と$\theta_w$は週・月の固定効果
+
+## モデル推定結果
+
+```{r lpm}
+model <- value ~ treat + age + male + coordinate1 + prefecture +
+  factor(month) + factor(week)
+
+est <- testdt %>%
+  mutate(
+    outcome = factor(outcome, out_lev, out_lab),
+    prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
+    age = age - mean(rawdt$age),
+    coordinate1 = if_else(coordinate == 1, 1, 0)
+  ) %>%
+  group_by(outcome) %>%
+  do(
+    est = lm_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      data = .
+    ),
+    ftestBC = lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatB - treatC = 0",
+      data = .
+    )$lh,
+    ftestBD = lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatB - treatD = 0",
+      data = .
+    )$lh,
+    ftestCD = lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatC - treatD = 0",
+      data = .
+    )$lh
+  )
+
+est %>%
+  pull(est, name = outcome) %>%
+  modelsummary(
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    coef_map = c(
+      "treatB" = "B",
+      "treatC" = "C",
+      "treatD" = "D"
+    ),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE",
+    add_rows = bind_rows(est$ftestBC)[, 4] %>%
+      rbind(bind_rows(est$ftestBD)[, 4]) %>%
+      rbind(bind_rows(est$ftestCD)[, 4]) %>%
+      data.frame(term = c("B = C", "B = D", "C = D"), .)
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) %>%
+  kableExtra::column_spec(2:7, width = "5em") %>%
+  kableExtra::group_rows(
+    "F-tests, p-value", 8, 10, bold = FALSE, italic = TRUE
+  )
+```
