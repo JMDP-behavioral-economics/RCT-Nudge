@@ -25,6 +25,7 @@ outcomes <- use %>%
     candidate,
     consent,
     donate,
+    days_reply,
     treat,
     RCTweek,
     month,
@@ -271,4 +272,43 @@ est %>%
   kableExtra::group_rows(
     "F-tests, p-value", 8, 10, bold = FALSE, italic = TRUE
   )
+```
+
+## 返信スピードに対する効果
+
+```{r log-rank-test}
+log.rank <- testdt %>%
+  dplyr::filter(outcome == "reply" & exclude == 0) %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survdiff(Surv(days_reply, value) ~ treat, data = .)
+
+p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
+```
+
+返信スピードに実験群間で統計的に有意な差がない
+(ログランク検定：`r sprintf("chi-square = %1.3f; p-value = %1.3f", log.rank$chisq, p.log.rank)`)
+
+```{r plot-reply-speed}
+testdt %>%
+  dplyr::filter(outcome == "reply" & exclude == 0) %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survfit(Surv(days_reply, value) ~ treat, data = .) %>%
+  tidy() %>%
+  mutate(treat = str_extract(strata, "[A-D]")) %>%
+  select(-strata) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
 ```
