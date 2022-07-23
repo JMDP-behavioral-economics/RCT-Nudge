@@ -4,10 +4,10 @@ out_lev <- c(
 )
 
 out_lab <- c(
-  "Reply to notification",
+  "Reply",
   "Intention",
-  "Confirmatory typing",
+  "CT",
   "Candidate",
-  "Final consent",
+  "Consent",
   "Donation"
 )

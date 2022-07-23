@@ -52,11 +52,11 @@ testdt <- outcomes %>%
 
 アウトカム変数は提供に至るまでのプロセスであり、具体的に以下の6つの工程がある。
 
-- Reply to notification: 適合通知に返信したならば1を取る二値変数
+- Reply: 適合通知に返信したならば1を取る二値変数
 - Intention: 提供を希望するという意向を示して返信したならば1を取る二値変数
-- Confirmatory typing: 確認検査を実施したならば1を取る二値変数
+- CT: 確認検査を実施したならば1を取る二値変数
 - Candidate: 第一候補者に選定されたならば1を取る二値変数
-- Final consent: 最終同意をしたならば1を取る二値変数
+- Consent: 最終同意をしたならば1を取る二値変数
 - Donation: 採取をしたならば1を取る二値変数
 
 ```{r ttest, include = FALSE}
