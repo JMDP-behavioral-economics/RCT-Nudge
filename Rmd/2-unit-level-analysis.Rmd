@@ -289,8 +289,7 @@ log.rank <- testdt %>%
 p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
 ```
 
-返信スピードに実験群間で統計的に有意な差がない
-(ログランク検定：`r sprintf("chi-square = %1.3f; p-value = %1.3f", log.rank$chisq, p.log.rank)`)
+ログランク検定：`r sprintf("chi-square = %1.3f; p-value = %1.3f", log.rank$chisq, p.log.rank)`
 
 ```{r plot-reply-speed}
 testdt %>%
@@ -313,7 +312,7 @@ testdt %>%
     simplegg()
 ```
 
-## 特定日数までの返信率
+## 特定日数までの返信に対する効果
 
 ```{r reply-until-days}
 est_until_reply <- testdt %>%
@@ -336,6 +335,10 @@ est_until_reply <- testdt %>%
     names_to = "until",
     names_prefix = "value"
   ) %>%
+  mutate(until = factor(
+    until,
+    levels = c("10", "20", "30", "40", "85")
+  )) %>%
   group_by(until) %>%
   do(
     est = lm_robust(
@@ -385,10 +388,11 @@ est_until_reply %>%
   ) %>%
   kableExtra::kable_styling(font_size = 9) %>%
   kableExtra::add_header_above(c(
-    " " = 1, "\u2266 10days" = 1, "\u2266 20days" = 1, "\u2266 30days" = 1,
+    " " = 1, "\u2266 10days" = 1,
+    "\u2266 20days" = 1, "\u2266 30days" = 1,
     "\u2266 40days" = 1, "\u2266 85days" = 1
   )) %>%
-  kableExtra::column_spec(2:5, width = "6em") %>%
+  kableExtra::column_spec(2:6, width = "5em") %>%
   kableExtra::group_rows(
     "F-tests, p-value", 8, 10,
     bold = FALSE, italic = TRUE

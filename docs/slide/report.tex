@@ -185,15 +185,15 @@
 \begin{itemize}
 \tightlist
 \item
-  Reply to notification: 適合通知に返信したならば1を取る二値変数
+  Reply: 適合通知に返信したならば1を取る二値変数
 \item
   Intention: 提供を希望するという意向を示して返信したならば1を取る二値変数
 \item
-  Confirmatory typing: 確認検査を実施したならば1を取る二値変数
+  CT: 確認検査を実施したならば1を取る二値変数
 \item
   Candidate: 第一候補者に選定されたならば1を取る二値変数
 \item
-  Final consent: 最終同意をしたならば1を取る二値変数
+  Consent: 最終同意をしたならば1を取る二値変数
 \item
   Donation: 採取をしたならば1を取る二値変数
 \end{itemize}
@@ -236,7 +236,7 @@
 \fontsize{9}{11}\selectfont
 \begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
 \toprule
-  & Reply to notification & Intention & Confirmatory typing & Candidate & Final consent & Donation\\
+  & Reply & Intention & CT & Candidate & Consent & Donation\\
 \midrule
 B & \num{0.013}** & \num{0.019} & \num{0.034}*** & \num{0.002} & \num{0.002} & \num{0.003}\\
  & (\num{0.006}) & (\num{0.013}) & (\num{0.009}) & (\num{0.009}) & (\num{0.007}) & (\num{0.007})\\
@@ -253,6 +253,43 @@ Num.Obs. & \num{11093} & \num{11051} & \num{10560} & \num{5772} & \num{5750} & \
 \hspace{1em}C = D & \num{0.277} & \num{0.164} & \num{0.148} & \num{0.068} & \num{0.018} & \num{0.220}\\
 \bottomrule
 \multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{返信スピードに対する効果}
+\protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux306bux5bfeux3059ux308bux52b9ux679c}{}
+ログランク検定：chi-square = 0.883; p-value = 0.829
+
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-speed-1} \end{center}
+\end{frame}
+
+\begin{frame}{特定日数までの返信に対する効果}
+\protect\hypertarget{ux7279ux5b9aux65e5ux6570ux307eux3067ux306eux8fd4ux4fe1ux306bux5bfeux3059ux308bux52b9ux679c}{}
+\begin{table}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{≦ 10days} & \multicolumn{1}{c}{≦ 20days} & \multicolumn{1}{c}{≦ 30days} & \multicolumn{1}{c}{≦ 40days} & \multicolumn{1}{c}{≦ 85days} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
+  & (1) & (2) & (3) & (4) & (5)\\
+\midrule
+B & \num{-0.044}*** & \num{0.013} & \num{0.015}** & \num{0.012}* & \num{0.013}**\\
+ & (\num{0.014}) & (\num{0.009}) & (\num{0.007}) & (\num{0.006}) & (\num{0.006})\\
+C & \num{0.002} & \num{0.007} & \num{0.004} & \num{0.001} & \num{0.002}\\
+ & (\num{0.015}) & (\num{0.007}) & (\num{0.006}) & (\num{0.005}) & (\num{0.005})\\
+D & \num{-0.028}* & \num{0.018}** & \num{0.007} & \num{0.007} & \num{0.006}\\
+ & (\num{0.014}) & (\num{0.007}) & (\num{0.005}) & (\num{0.005}) & (\num{0.005})\\
+\midrule
+Num.Obs. & \num{11093} & \num{11093} & \num{11093} & \num{11093} & \num{11093}\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
+\hspace{1em}B = C & \num{0.004} & \num{0.282} & \num{0.028} & \num{0.021} & \num{0.015}\\
+\hspace{1em}B = D & \num{0.259} & \num{0.474} & \num{0.135} & \num{0.351} & \num{0.233}\\
+\hspace{1em}C = D & \num{0.064} & \num{0.022} & \num{0.463} & \num{0.165} & \num{0.277}\\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \end{table}
 \end{frame}

@@ -2,4 +2,4 @@ output_dir: "docs/slide"
 rmd_files:
   - index.Rmd
   - Rmd/1-summary.rmd
-  - Rmd/2-ATE.rmd
+  - Rmd/2-unit-level-analysis.rmd
