@@ -261,7 +261,7 @@ est %>%
       "treatC" = "C",
       "treatD" = "D"
     ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE",
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
     add_rows = bind_rows(est$ftestBC)[, 4] %>%
       rbind(bind_rows(est$ftestBD)[, 4]) %>%
       rbind(bind_rows(est$ftestCD)[, 4]) %>%
@@ -380,7 +380,7 @@ est_until_reply %>%
       "treatC" = "C",
       "treatD" = "D"
     ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE",
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
     add_rows = bind_rows(est_until_reply$ftestBC)[, 4] %>%
       rbind(bind_rows(est_until_reply$ftestBD)[, 4]) %>%
       rbind(bind_rows(est_until_reply$ftestCD)[, 4]) %>%

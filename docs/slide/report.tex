@@ -59,10 +59,17 @@
 % header includes
 
 % Title information
-  \title{骨髄バンクナッジ介入実験}
-  \subtitle{解析結果途中報告}
+  \title{骨髄バンクメッセージ介入実験}
   \author{%
         加藤 大貴
+    \and
+        大竹 文雄
+    \and
+        黒澤 彩子
+    \and
+        吉内 一浩
+    \and
+        福田 隆浩
     \and
       }
 
@@ -167,10 +174,10 @@
 \hspace{1em}移植患者情報 &  &  & X & X & \\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textbf{B. サンプルサイズ}}\\
-\hspace{1em}サンプルサイズ & 2558 & 3075 & 2754 & 2766 & \\
+\hspace{1em}サンプルサイズ & 2559 & 3075 & 2754 & 2766 & \\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textbf{C. 共変量}}\\
-\hspace{1em}年齢 & \num{38.37} & \num{38.13} & \num{37.43} & \num{37.99} & \num{0.06}\\
+\hspace{1em}年齢 & \num{38.38} & \num{38.13} & \num{37.43} & \num{37.99} & \num{0.06}\\
 \hspace{1em}過去のコーディネーション回数 & \num{1.61} & \num{1.59} & \num{1.63} & \num{1.56} & \num{0.36}\\
 \hspace{1em}1 = 男性 & \num{0.62} & \num{0.63} & \num{0.63} & \num{0.61} & \num{0.40}\\
 \bottomrule
@@ -245,11 +252,11 @@ C & \num{0.002} & \num{-0.005} & \num{0.015} & \num{-0.010} & \num{-0.009} & \nu
 D & \num{0.006} & \num{0.006} & \num{0.032}*** & \num{0.008} & \num{0.011} & \num{0.002}\\
  & (\num{0.005}) & (\num{0.010}) & (\num{0.010}) & (\num{0.008}) & (\num{0.007}) & (\num{0.008})\\
 \midrule
-Num.Obs. & \num{11093} & \num{11051} & \num{10560} & \num{5772} & \num{5750} & \num{5646}\\
+Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \num{5647}\\
 \addlinespace[0.3em]
 \multicolumn{7}{l}{\textit{F-tests, p-value}}\\
 \hspace{1em}B = C & \num{0.015} & \num{0.007} & \num{0.084} & \num{0.293} & \num{0.230} & \num{0.152}\\
-\hspace{1em}B = D & \num{0.233} & \num{0.114} & \num{0.856} & \num{0.495} & \num{0.325} & \num{0.917}\\
+\hspace{1em}B = D & \num{0.233} & \num{0.114} & \num{0.857} & \num{0.495} & \num{0.325} & \num{0.917}\\
 \hspace{1em}C = D & \num{0.277} & \num{0.164} & \num{0.148} & \num{0.068} & \num{0.018} & \num{0.220}\\
 \bottomrule
 \multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
@@ -259,7 +266,7 @@ Num.Obs. & \num{11093} & \num{11051} & \num{10560} & \num{5772} & \num{5750} & \
 
 \begin{frame}{返信スピードに対する効果}
 \protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux306bux5bfeux3059ux308bux52b9ux679c}{}
-ログランク検定：chi-square = 0.883; p-value = 0.829
+ログランク検定：chi-square = 0.880; p-value = 0.830
 
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-speed-1} \end{center}
 \end{frame}
@@ -282,7 +289,7 @@ C & \num{0.002} & \num{0.007} & \num{0.004} & \num{0.001} & \num{0.002}\\
 D & \num{-0.028}* & \num{0.018}** & \num{0.007} & \num{0.007} & \num{0.006}\\
  & (\num{0.014}) & (\num{0.007}) & (\num{0.005}) & (\num{0.005}) & (\num{0.005})\\
 \midrule
-Num.Obs. & \num{11093} & \num{11093} & \num{11093} & \num{11093} & \num{11093}\\
+Num.Obs. & \num{11094} & \num{11094} & \num{11094} & \num{11094} & \num{11094}\\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textit{F-tests, p-value}}\\
 \hspace{1em}B = C & \num{0.004} & \num{0.282} & \num{0.028} & \num{0.021} & \num{0.015}\\

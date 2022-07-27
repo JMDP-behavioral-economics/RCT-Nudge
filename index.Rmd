@@ -1,7 +1,12 @@
 ---
-title: 骨髄バンクナッジ介入実験
-subtitle: 解析結果途中報告
-author: 加藤 大貴
+title: |
+  骨髄バンクメッセージ介入実験
+author:
+  - 加藤 大貴
+  - 大竹 文雄
+  - 黒澤 彩子
+  - 吉内 一浩
+  - 福田 隆浩
 aspectratio: 169
 fontsize: 12
 ---
