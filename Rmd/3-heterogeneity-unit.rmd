@@ -4,3 +4,144 @@ library(here)
 source(here("R", "_library.r"))
 source(here("R", "_outcome_labels.r"))
 ```
+
+```{r load-data, include = FALSE}
+root <- "D:/JMDPフィールド実験"
+
+rawdt <- read_csv(
+  here(root, "shaped.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4]))
+
+outcomes <- use %>%
+  select(
+    id,
+    reply,
+    intention,
+    test,
+    candidate,
+    consent,
+    donate,
+    treat,
+    RCTweek,
+    month,
+    week,
+    prefecture,
+    male,
+    age,
+    coordinate
+  ) %>%
+  pivot_longer(reply:donate, names_to = "outcome")
+
+exclude <- use %>%
+  select(id, starts_with("exg_stop")) %>%
+  pivot_longer(
+    -id, names_to = "outcome", values_to = "exclude",
+    names_prefix = "exg_stop_"
+  )
+
+testdt <- outcomes %>%
+  dplyr::left_join(exclude, by = c("id", "outcome")) %>%
+  dplyr::filter(exclude == 0 & prefecture != "海外") %>%
+  mutate(
+    outcome = factor(outcome, out_lev, out_lab),
+    prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
+    age = age - mean(rawdt$age),
+    coordinate1 = if_else(coordinate == 1, 1, 0)
+  )
+```
+
+## コーディネート経験のない男性に対する効果
+
+```{r heterogenity}
+est <- testdt %>%
+  group_by(outcome, male, coordinate1) %>%
+  do(est = lm_robust(
+    value ~ treat * age + prefecture + factor(month) + factor(week),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .
+  ))
+```
+
+```{r reg-male-first}
+est %>%
+  dplyr::filter(male == 1 & coordinate1 == 1) %>%
+  pull(est, name = outcome) %>%
+  modelsummary(
+    coef_map = c(
+      "treatB" = "B",
+      "treatB:age" = "B\u00d7Age",
+      "treatC" = "C",
+      "treatC:age" = "C\u00d7Age",
+      "treatD" = "D",
+      "treatD:age" = "D\u00d7Age"
+    ),
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  )
+```
+
+## コーディネート経験のある男性に対する効果
+
+```{r reg-male-second}
+est %>%
+  dplyr::filter(male == 1 & coordinate1 == 0) %>%
+  pull(est, name = outcome) %>%
+  modelsummary(
+    coef_map = c(
+      "treatB" = "B",
+      "treatB:age" = "B\u00d7Age",
+      "treatC" = "C",
+      "treatC:age" = "C\u00d7Age",
+      "treatD" = "D",
+      "treatD:age" = "D\u00d7Age"
+    ),
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  )
+```
+
+## コーディネート経験のない女性に対する効果
+
+```{r reg-female-first}
+est %>%
+  dplyr::filter(male == 0 & coordinate1 == 1) %>%
+  pull(est, name = outcome) %>%
+  modelsummary(
+    coef_map = c(
+      "treatB" = "B",
+      "treatB:age" = "B\u00d7Age",
+      "treatC" = "C",
+      "treatC:age" = "C\u00d7Age",
+      "treatD" = "D",
+      "treatD:age" = "D\u00d7Age"
+    ),
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  )
+```
+
+## コーディネート経験のある女性に対する効果
+
+```{r reg-female-second}
+est %>%
+  dplyr::filter(male == 0 & coordinate1 == 0) %>%
+  pull(est, name = outcome) %>%
+  modelsummary(
+    coef_map = c(
+      "treatB" = "B",
+      "treatB:age" = "B\u00d7Age",
+      "treatC" = "C",
+      "treatC:age" = "C\u00d7Age",
+      "treatD" = "D",
+      "treatD:age" = "D\u00d7Age"
+    ),
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  )
+```
+
