@@ -49,10 +49,16 @@ testdt <- outcomes %>%
   mutate(
     outcome = factor(outcome, out_lev, out_lab),
     prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
-    age = age - mean(rawdt$age),
+    age = age - min(rawdt$age),
     coordinate1 = if_else(coordinate == 1, 1, 0)
   )
 ```
+
+## 異質性の検討
+
+- 性別と過去のコーディネート経験でサンプルを分割して推定する
+- 年齢の異質性を考慮するために、各サブサンプル内で処置群と年齢の交差項を追加する
+  - 年齢は全サンプルの最年少からの乖離で示す（range:0～34）
 
 ## コーディネート経験のない男性に対する効果
 
@@ -82,7 +88,8 @@ est %>%
     ),
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
-  )
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) 
 ```
 
 ## コーディネート経験のある男性に対する効果
@@ -102,7 +109,8 @@ est %>%
     ),
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
-  )
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) 
 ```
 
 ## コーディネート経験のない女性に対する効果
@@ -122,7 +130,8 @@ est %>%
     ),
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
-  )
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) 
 ```
 
 ## コーディネート経験のある女性に対する効果
@@ -142,6 +151,7 @@ est %>%
     ),
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
-  )
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) 
 ```
 
