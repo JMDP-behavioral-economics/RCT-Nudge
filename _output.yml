@@ -5,5 +5,5 @@ bookdown::beamer_presentation2:
   fig_caption: false
   toc: false
   dev: cairo_pdf
-  template: "template/tex/beamer-luatex.tex"
+  template: "template/tex/DarkBlue-Simple-LuaLatex-Beamer.tex"
 delete_merged_file: true

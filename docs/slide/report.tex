@@ -3,7 +3,7 @@
         12pt,
     ]{beamer}
 
-% font
+% ------------------------------------ font
 \usefonttheme[onlymath]{serif}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
@@ -13,19 +13,19 @@
 \usepackage[match, deluxe, expert, noto-otf]{luatexja-preset}
 \renewcommand{\kanjifamilydefault}{\gtdefault}
 
-% math packages
+% ------------------------------------ math packages
 \usepackage{amsmath,amssymb}
 \usepackage{siunitx}
 
-% comment out package
+% ------------------------------------ comment out package
 \usepackage{comment}
 
-% tables
+% ------------------------------------ tables
 \usepackage{longtable, booktabs, array}
 \usepackage{threeparttable, threeparttablex, multirow}
 \newcolumntype{d}{S[input-symbols = ()]}
 
-% figures
+% ------------------------------------ figures
 \usepackage{graphics, graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -36,39 +36,106 @@
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 
-% navigation symbol
+\usepackage{tikz}
+\usetikzlibrary{backgrounds}
+
+% ------------------------------------ other packages (header-includes)
+
+% ------------------------------------ Slide Designs
+\definecolor{DarkBlue}{rgb}{0.05, 0.15, 0.35} 
+
+\setbeamercolor{item}{fg=DarkBlue}
+\setbeamercolor{title}{fg=DarkBlue}
+\setbeamercolor{subtitle}{fg=DarkBlue}
+\setbeamercolor{frametitle}{fg=DarkBlue}
+\setbeamercolor{section title}{fg=white}
+
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\small,series=\bfseries}
+\setbeamerfont{institute}{size=\footnotesize}
+\setbeamerfont{date}{size=\footnotesize}
+\setbeamerfont{section title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+
 \setbeamertemplate{navigation symbols}{}
-
-% page numbers
 \setbeamertemplate{footline}[frame number]
-
-% itemize
-\setbeamercolor{item}{fg=black}
 \setbeamertemplate{itemize item}[circle]
 \setbeamertemplate{itemize subitem}[circle]
 \setbeamertemplate{itemize subsubitem}[circle]
 
+\setbeamertemplate{frametitle}{%
+  \vspace*{0.5em}\usebeamerfont{frametitle}\insertframetitle\par\vskip-6pt\hrulefill\vspace{-0.1em}
+}
+
+\setbeamertemplate{title page}{
+    \vfill
+    \begingroup
+        \centering
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{title}
+        \usebeamerfont{title}\inserttitle\par%
+        \ifx\insertsubtitle\@empty%
+        \else%
+            \vskip0.25em%
+            {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+        \fi%     
+        \end{beamercolorbox}%
+        \hrulefill\vskip0.5em\par
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{author}
+        \usebeamerfont{author}\insertauthor
+        \end{beamercolorbox}
+        \vskip-1em
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{institute}
+        \usebeamerfont{institute}\insertinstitute
+        \end{beamercolorbox}
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{date}
+        \usebeamerfont{date}\insertdate
+        \end{beamercolorbox}\vskip0.5em
+        % ------------------------
+        {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+    \endgroup
+    \vfill
+}
+
+\setbeamertemplate{section page}{%
+  
+  \begingroup
+    \centering
+    {\color{white} \hrulefill}\vskip1em
+    \begin{beamercolorbox}[sep=8pt, center]{section title}
+        \usebeamerfont{section title} \thesection. \insertsection
+    \end{beamercolorbox}
+    {\color{white} \hrulefill}
+  \endgroup
+}
+
+\addtobeamertemplate{section page}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+    \fill[color=DarkBlue!80] (current page.south west) rectangle(current page.north east);
+  \end{tikzpicture}
+}
+
+\AtBeginSection{\frame{\sectionpage}}
+
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
-% title design
-\setbeamerfont{title}{size=\Large,series=\bfseries}
-\setbeamerfont{subtitle}{series=\bfseries}
-\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
-
-% header includes
-
-% Title information
+% ------------------------------------ title information
   \title{骨髄バンクナッジ介入実験}
   \subtitle{解析結果途中報告}
   \author{%
-        加藤 大貴
+        加藤 大貴\inst{1}
     \and
       }
 
 \begin{document}
 
 \frame{\titlepage}
+
 
 \begin{frame}
 \end{frame}
@@ -269,7 +336,7 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
   \begin{itemize}
   \tightlist
   \item
-    年齢は全サンプルの最年少からの乖離で示す
+    年齢は全サンプルの最年少からの乖離で示す（range:0～34）
   \end{itemize}
 \end{itemize}
 \end{frame}

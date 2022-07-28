@@ -1,7 +1,9 @@
 ---
 title: 骨髄バンクナッジ介入実験
 subtitle: 解析結果途中報告
-author: 加藤 大貴
+author:
+  - name: 加藤 大貴
+    inst: 1
 aspectratio: 169
 fontsize: 12
 ---
