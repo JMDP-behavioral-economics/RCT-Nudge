@@ -25,6 +25,7 @@ outcomes <- use %>%
     candidate,
     consent,
     donate,
+    days_reply,
     treat,
     RCTweek,
     month,
@@ -176,4 +177,184 @@ est %>%
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg() +
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+```
+
+## 返信スピードへの効果（30歳以上の女性）
+
+```{r plot-reply-days-female-over30}
+log.rank <- testdt %>%
+  dplyr::filter(male == 0 & age30 == 0) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survdiff(Surv(days_reply, value) ~ treat, data = .)
+
+p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
+
+testdt %>%
+  dplyr::filter(male == 0 & age30 == 0) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survfit(Surv(days_reply, value) ~ treat, data = .) %>%
+  tidy() %>%
+  mutate(treat = str_extract(strata, "[A-D]")) %>%
+  select(-strata) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        log.rank$chisq, p.log.rank
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## 返信スピードへの効果（30歳以下の女性）
+
+```{r plot-reply-days-female-under30}
+log.rank <- testdt %>%
+  dplyr::filter(male == 0 & age30 == 1) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survdiff(Surv(days_reply, value) ~ treat, data = .)
+
+p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
+
+testdt %>%
+  dplyr::filter(male == 0 & age30 == 1) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survfit(Surv(days_reply, value) ~ treat, data = .) %>%
+  tidy() %>%
+  mutate(treat = str_extract(strata, "[A-D]")) %>%
+  select(-strata) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        log.rank$chisq, p.log.rank
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## 返信スピードへの効果（30歳以上の男性）
+
+```{r plot-reply-days-male-over30}
+log.rank <- testdt %>%
+  dplyr::filter(male == 1 & age30 == 0) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survdiff(Surv(days_reply, value) ~ treat, data = .)
+
+p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
+
+testdt %>%
+  dplyr::filter(male == 1 & age30 == 0) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survfit(Surv(days_reply, value) ~ treat, data = .) %>%
+  tidy() %>%
+  mutate(treat = str_extract(strata, "[A-D]")) %>%
+  select(-strata) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        log.rank$chisq, p.log.rank
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## 返信スピードへの効果（30歳以下の男性）
+
+```{r plot-reply-days-male-under30}
+log.rank <- testdt %>%
+  dplyr::filter(male == 1 & age30 == 1) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survdiff(Surv(days_reply, value) ~ treat, data = .)
+
+p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
+
+testdt %>%
+  dplyr::filter(male == 1 & age30 == 1) %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survfit(Surv(days_reply, value) ~ treat, data = .) %>%
+  tidy() %>%
+  mutate(treat = str_extract(strata, "[A-D]")) %>%
+  select(-strata) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        log.rank$chisq, p.log.rank
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
 ```
