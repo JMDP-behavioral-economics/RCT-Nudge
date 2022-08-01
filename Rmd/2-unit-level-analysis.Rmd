@@ -25,6 +25,7 @@ outcomes <- use %>%
     candidate,
     consent,
     donate,
+    days_reply,
     treat,
     RCTweek,
     month,
@@ -45,7 +46,12 @@ exclude <- use %>%
 
 testdt <- outcomes %>%
   dplyr::left_join(exclude, by = c("id", "outcome")) %>%
-  dplyr::filter(exclude == 0)
+  dplyr::filter(exclude == 0) %>%
+  mutate(
+    prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
+    age = age - mean(rawdt$age),
+    coordinate1 = if_else(coordinate == 1, 1, 0)
+  )
 ```
 
 ## アウトカム変数
@@ -214,12 +220,7 @@ model <- value ~ treat + age + male + coordinate1 + prefecture +
   factor(month) + factor(week)
 
 est <- testdt %>%
-  mutate(
-    outcome = factor(outcome, out_lev, out_lab),
-    prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
-    age = age - mean(rawdt$age),
-    coordinate1 = if_else(coordinate == 1, 1, 0)
-  ) %>%
+  mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(outcome) %>%
   do(
     est = lm_robust(
@@ -270,5 +271,130 @@ est %>%
   kableExtra::column_spec(2:7, width = "5em") %>%
   kableExtra::group_rows(
     "F-tests, p-value", 8, 10, bold = FALSE, italic = TRUE
+  )
+```
+
+## 返信スピードに対する効果
+
+```{r log-rank-test}
+log.rank <- testdt %>%
+  dplyr::filter(outcome == "reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survdiff(Surv(days_reply, value) ~ treat, data = .)
+
+p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
+```
+
+ログランク検定：`r sprintf("chi-square = %1.3f; p-value = %1.3f", log.rank$chisq, p.log.rank)`
+
+```{r plot-reply-speed}
+testdt %>%
+  dplyr::filter(outcome == "reply") %>%
+  mutate(days_reply = if_else(
+    is.na(days_reply),
+    max(use$days_reply, na.rm = TRUE),
+    days_reply
+  )) %>%
+  survfit(Surv(days_reply, value) ~ treat, data = .) %>%
+  tidy() %>%
+  mutate(treat = str_extract(strata, "[A-D]")) %>%
+  select(-strata) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## 特定日数までの返信に対する効果
+
+```{r reply-until-days}
+est_until_reply <- testdt %>%
+  dplyr::filter(outcome == "reply") %>%
+  mutate(
+    days_reply = if_else(
+      is.na(days_reply),
+      max(use$days_reply, na.rm = TRUE),
+      days_reply
+    ),
+    value10 = if_else(days_reply <= 10, 1, 0),
+    value20 = if_else(days_reply <= 20, 1, 0),
+    value30 = if_else(days_reply <= 30, 1, 0),
+    value40 = if_else(days_reply <= 40, 1, 0),
+    value85 = value
+  ) %>%
+  select(-value) %>%
+  pivot_longer(
+    value10:value85,
+    names_to = "until",
+    names_prefix = "value"
+  ) %>%
+  mutate(until = factor(
+    until,
+    levels = c("10", "20", "30", "40", "85")
+  )) %>%
+  group_by(until) %>%
+  do(
+    est = lm_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      data = .
+    ),
+    ftestBC = lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatB - treatC = 0",
+      data = .
+    )$lh,
+    ftestBD = lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatB - treatD = 0",
+      data = .
+    )$lh,
+    ftestCD = lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatC - treatD = 0",
+      data = .
+    )$lh
+  )
+
+est_until_reply %>%
+  pull(est) %>%
+  setNames(paste0("(", seq(length(est_until_reply$est)), ")")) %>%
+  modelsummary(
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    coef_map = c(
+      "treatB" = "B",
+      "treatC" = "C",
+      "treatD" = "D"
+    ),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = bind_rows(est_until_reply$ftestBC)[, 4] %>%
+      rbind(bind_rows(est_until_reply$ftestBD)[, 4]) %>%
+      rbind(bind_rows(est_until_reply$ftestCD)[, 4]) %>%
+      data.frame(term = c("B = C", "B = D", "C = D"), .)
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "\u2266 10days" = 1,
+    "\u2266 20days" = 1, "\u2266 30days" = 1,
+    "\u2266 40days" = 1, "\u2266 85days" = 1
+  )) %>%
+  kableExtra::column_spec(2:6, width = "5em") %>%
+  kableExtra::group_rows(
+    "F-tests, p-value", 8, 10,
+    bold = FALSE, italic = TRUE
   )
 ```
