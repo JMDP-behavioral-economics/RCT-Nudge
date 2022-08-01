@@ -49,7 +49,7 @@ testdt <- outcomes %>%
   mutate(
     outcome = factor(outcome, out_lev, out_lab),
     prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
-    age = age - min(rawdt$age),
+    age30 = if_else(age <= 30, 1, 0),
     coordinate1 = if_else(coordinate == 1, 1, 0)
   )
 ```
@@ -60,98 +60,121 @@ testdt <- outcomes %>%
 - 年齢の異質性を考慮するために、各サブサンプル内で処置群と年齢の交差項を追加する
   - 年齢は全サンプルの最年少からの乖離で示す（range:0～34）
 
-## コーディネート経験のない男性に対する効果
-
 ```{r heterogenity}
 est <- testdt %>%
-  group_by(outcome, male, coordinate1) %>%
+  group_by(outcome, male, age30) %>%
   do(est = lm_robust(
-    value ~ treat * age + prefecture + factor(month) + factor(week),
+    value ~ treat + coordinate + prefecture + factor(month) + factor(week),
     cluster = RCTweek,
     se_type = "stata",
     data = .
   ))
 ```
 
-```{r reg-male-first}
+## 性別・年齢層別のメッセージBの効果
+
+```{r heterogenous-effect-B, fig.width = 10, fig.height=10}
 est %>%
-  dplyr::filter(male == 1 & coordinate1 == 1) %>%
-  pull(est, name = outcome) %>%
-  modelsummary(
-    coef_map = c(
-      "treatB" = "B",
-      "treatB:age" = "B\u00d7Age",
-      "treatC" = "C",
-      "treatC:age" = "C\u00d7Age",
-      "treatD" = "D",
-      "treatD:age" = "D\u00d7Age"
-    ),
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  rowwise(outcome, male, age30) %>%
+  summarize(
+    estimate = subset(tidy(est), term == "treatB")$estimate,
+    conf.low = subset(tidy(est), term == "treatB")$conf.low,
+    conf.high = subset(tidy(est), term == "treatB")$conf.high,
+    nobs = nobs(est)
   ) %>%
-  kableExtra::kable_styling(font_size = 9) 
+  ungroup() %>%
+  mutate(
+    pos = paste0(male, age30),
+    N = paste0("N=", nobs)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(aes(ymin = conf.low, ymax = conf.high), size = 1) +
+    geom_text(aes(y = -0.15, label = N)) +
+    facet_wrap(~ outcome, ncol = 3) +
+    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_x_discrete(
+      breaks = c("00", "01", "10", "11"),
+      labels = c(
+        "Female\u00d7Age>30",
+        "Female\u00d7Age\u226630",
+        "Male\u00d7Age>30",
+        "Male\u00d7Age\u226630"
+      )
+    ) +
+    labs(x = "Subset", y = "Estimate (95%CI)") +
+    simplegg() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
-## コーディネート経験のある男性に対する効果
+## 性別・年齢層別のメッセージCの効果
 
-```{r reg-male-second}
+```{r heterogenous-effect-C, fig.width = 10, fig.height=10}
 est %>%
-  dplyr::filter(male == 1 & coordinate1 == 0) %>%
-  pull(est, name = outcome) %>%
-  modelsummary(
-    coef_map = c(
-      "treatB" = "B",
-      "treatB:age" = "B\u00d7Age",
-      "treatC" = "C",
-      "treatC:age" = "C\u00d7Age",
-      "treatD" = "D",
-      "treatD:age" = "D\u00d7Age"
-    ),
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  rowwise(outcome, male, age30) %>%
+  summarize(
+    estimate = subset(tidy(est), term == "treatC")$estimate,
+    conf.low = subset(tidy(est), term == "treatC")$conf.low,
+    conf.high = subset(tidy(est), term == "treatC")$conf.high,
+    nobs = nobs(est)
   ) %>%
-  kableExtra::kable_styling(font_size = 9) 
+  ungroup() %>%
+  mutate(
+    pos = paste0(male, age30),
+    N = paste0("N=", nobs)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(aes(ymin = conf.low, ymax = conf.high), size = 1) +
+    geom_text(aes(y = -0.15, label = N)) +
+    facet_wrap(~ outcome, ncol = 3) +
+    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_x_discrete(
+      breaks = c("00", "01", "10", "11"),
+      labels = c(
+        "Female\u00d7Age>30",
+        "Female\u00d7Age\u226630",
+        "Male\u00d7Age>30",
+        "Male\u00d7Age\u226630"
+      )
+    ) +
+    labs(x = "Subset", y = "Estimate (95%CI)") +
+    simplegg() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
-## コーディネート経験のない女性に対する効果
+## 性別・年齢層別のメッセージDの効果
 
-```{r reg-female-first}
+```{r heterogenous-effect-D, fig.width = 10, fig.height=10}
 est %>%
-  dplyr::filter(male == 0 & coordinate1 == 1) %>%
-  pull(est, name = outcome) %>%
-  modelsummary(
-    coef_map = c(
-      "treatB" = "B",
-      "treatB:age" = "B\u00d7Age",
-      "treatC" = "C",
-      "treatC:age" = "C\u00d7Age",
-      "treatD" = "D",
-      "treatD:age" = "D\u00d7Age"
-    ),
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  rowwise(outcome, male, age30) %>%
+  summarize(
+    estimate = subset(tidy(est), term == "treatD")$estimate,
+    conf.low = subset(tidy(est), term == "treatD")$conf.low,
+    conf.high = subset(tidy(est), term == "treatD")$conf.high,
+    nobs = nobs(est)
   ) %>%
-  kableExtra::kable_styling(font_size = 9) 
-```
-
-## コーディネート経験のある女性に対する効果
-
-```{r reg-female-second}
-est %>%
-  dplyr::filter(male == 0 & coordinate1 == 0) %>%
-  pull(est, name = outcome) %>%
-  modelsummary(
-    coef_map = c(
-      "treatB" = "B",
-      "treatB:age" = "B\u00d7Age",
-      "treatC" = "C",
-      "treatC:age" = "C\u00d7Age",
-      "treatD" = "D",
-      "treatD:age" = "D\u00d7Age"
-    ),
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  ungroup() %>%
+  mutate(
+    pos = paste0(male, age30),
+    N = paste0("N=", nobs)
   ) %>%
-  kableExtra::kable_styling(font_size = 9) 
+  ggplot(aes(x = pos, y = estimate)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(aes(ymin = conf.low, ymax = conf.high), size = 1) +
+    geom_text(aes(y = -0.15, label = N)) +
+    facet_wrap(~ outcome, ncol = 3) +
+    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_x_discrete(
+      breaks = c("00", "01", "10", "11"),
+      labels = c(
+        "Female\u00d7Age>30",
+        "Female\u00d7Age\u226630",
+        "Male\u00d7Age>30",
+        "Male\u00d7Age\u226630"
+      )
+    ) +
+    labs(x = "Subset", y = "Estimate (95%CI)") +
+    simplegg() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
-
