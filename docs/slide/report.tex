@@ -132,14 +132,6 @@
   \author{%
         加藤 大貴\inst{1}
     \and
-        大竹 文雄
-    \and
-        黒澤 彩子
-    \and
-        吉内 一浩
-    \and
-        福田 隆浩
-    \and
       }
 
 \begin{document}
@@ -331,6 +323,41 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \hspace{1em}C = D & \num{0.277} & \num{0.164} & \num{0.148} & \num{0.068} & \num{0.018} & \num{0.220}\\
 \bottomrule
 \multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{返信スピードに対する効果}
+\protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux306bux5bfeux3059ux308bux52b9ux679c}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-days-1} \end{center}
+\end{frame}
+
+\begin{frame}{特定日数までの返信に対する効果}
+\protect\hypertarget{ux7279ux5b9aux65e5ux6570ux307eux3067ux306eux8fd4ux4fe1ux306bux5bfeux3059ux308bux52b9ux679c}{}
+\begin{table}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{≦ 10days} & \multicolumn{1}{c}{≦ 20days} & \multicolumn{1}{c}{≦ 30days} & \multicolumn{1}{c}{≦ 40days} & \multicolumn{1}{c}{≦ 85days} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
+  & (1) & (2) & (3) & (4) & (5)\\
+\midrule
+B & \num{-0.044}*** & \num{0.013} & \num{0.015}** & \num{0.012}* & \num{0.013}**\\
+ & (\num{0.014}) & (\num{0.009}) & (\num{0.007}) & (\num{0.006}) & (\num{0.006})\\
+C & \num{0.002} & \num{0.007} & \num{0.004} & \num{0.001} & \num{0.002}\\
+ & (\num{0.015}) & (\num{0.007}) & (\num{0.006}) & (\num{0.005}) & (\num{0.005})\\
+D & \num{-0.028}* & \num{0.018}** & \num{0.007} & \num{0.007} & \num{0.006}\\
+ & (\num{0.014}) & (\num{0.007}) & (\num{0.005}) & (\num{0.005}) & (\num{0.005})\\
+\midrule
+Num.Obs. & \num{11094} & \num{11094} & \num{11094} & \num{11094} & \num{11094}\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
+\hspace{1em}B = C & \num{0.004} & \num{0.282} & \num{0.028} & \num{0.021} & \num{0.015}\\
+\hspace{1em}B = D & \num{0.259} & \num{0.474} & \num{0.135} & \num{0.351} & \num{0.233}\\
+\hspace{1em}C = D & \num{0.064} & \num{0.022} & \num{0.463} & \num{0.165} & \num{0.277}\\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \end{table}
 \end{frame}

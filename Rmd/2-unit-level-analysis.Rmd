@@ -276,7 +276,7 @@ est %>%
 
 ## 返信スピードに対する効果
 
-```{r log-rank-test}
+```{r plot-reply-days}
 log.rank <- testdt %>%
   dplyr::filter(outcome == "reply") %>%
   mutate(days_reply = if_else(
@@ -287,11 +287,7 @@ log.rank <- testdt %>%
   survdiff(Surv(days_reply, value) ~ treat, data = .)
 
 p.log.rank <- 1 - pchisq(log.rank$chisq, 3)
-```
 
-ログランク検定：`r sprintf("chi-square = %1.3f; p-value = %1.3f", log.rank$chisq, p.log.rank)`
-
-```{r plot-reply-speed}
 testdt %>%
   dplyr::filter(outcome == "reply") %>%
   mutate(days_reply = if_else(
@@ -305,6 +301,15 @@ testdt %>%
   select(-strata) %>%
   ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
     geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        log.rank$chisq, p.log.rank
+      ),
+      size = 5
+    ) +
     scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     scale_x_continuous(breaks = seq(0, 90, 5)) +
     scale_color_hue() +
