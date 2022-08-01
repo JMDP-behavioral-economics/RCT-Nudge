@@ -50,6 +50,8 @@
 \setbeamercolor{frametitle}{fg=DarkBlue}
 \setbeamercolor{section title}{fg=white}
 
+\renewcommand{\textbf}[1]{{\color{DarkBlue}\bfseries#1}}
+
 \setbeamerfont{title}{size=\LARGE,series=\bfseries}
 \setbeamerfont{subtitle}{size=\small,series=\bfseries}
 \setbeamerfont{institute}{size=\footnotesize}
@@ -221,6 +223,7 @@
 \protect\hypertarget{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux6982ux8981}{}
 \begin{table}
 \centering
+\fontsize{9}{11}\selectfont
 \begin{tabular}[t]{lccccc}
 \toprule
 \multicolumn{1}{c}{ } & \multicolumn{4}{c}{実験群} & \multicolumn{1}{c}{ } \\
@@ -329,132 +332,24 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \begin{itemize}
 \tightlist
 \item
-  性別と過去のコーディネート経験でサンプルを分割して推定する
-\item
-  年齢の異質性を考慮するために、各サブサンプル内で処置群と年齢の交差項を追加する
-
-  \begin{itemize}
-  \tightlist
-  \item
-    年齢は全サンプルの最年少からの乖離で示す（range:0～34）
-  \end{itemize}
+  性別と年齢（30歳以下どうか）でサンプルを分割して、
+  各サブサンプル内でメッセージの効果を推定した
 \end{itemize}
 \end{frame}
 
-\begin{frame}{コーディネート経験のない男性に対する効果}
-\protect\hypertarget{ux30b3ux30fcux30c7ux30a3ux30cdux30fcux30c8ux7d4cux9a13ux306eux306aux3044ux7537ux6027ux306bux5bfeux3059ux308bux52b9ux679c}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lcccccc}
-\toprule
-  & Reply & Intention & CT & Candidate & Consent & Donation\\
-\midrule
-B & \num{0.060}* & \num{0.077} & \num{0.046} & \num{-0.002} & \num{0.007} & \num{0.029}\\
- & (\num{0.031}) & (\num{0.046}) & (\num{0.028}) & (\num{0.026}) & (\num{0.022}) & (\num{0.021})\\
-B×Age & \num{-0.001} & \num{-0.002} & \num{0.000} & \num{0.001} & \num{0.000} & \num{-0.001}\\
- & (\num{0.002}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.002}) & \vphantom{1} (\num{0.002})\\
-C & \num{0.022} & \num{0.009} & \num{-0.007} & \num{-0.009} & \num{-0.008} & \num{0.003}\\
- & (\num{0.031}) & (\num{0.043}) & (\num{0.036}) & (\num{0.030}) & (\num{0.024}) & (\num{0.024})\\
-C×Age & \num{-0.001} & \num{-0.001} & \num{0.001} & \num{-0.001} & \num{-0.001} & \num{-0.002}\\
- & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.001})\\
-D & \num{0.049}* & \num{-0.032} & \num{-0.058}* & \num{-0.015} & \num{-0.003} & \num{0.010}\\
- & (\num{0.028}) & (\num{0.049}) & (\num{0.030}) & (\num{0.033}) & (\num{0.032}) & (\num{0.025})\\
-D×Age & \num{-0.001} & \num{0.003} & \num{0.004}*** & \num{0.001} & \num{0.001} & \num{-0.001}\\
- & (\num{0.002}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.002}) & (\num{0.002})\\
-\midrule
-Num.Obs. & \num{4148} & \num{4128} & \num{3944} & \num{2278} & \num{2267} & \num{2226}\\
-\bottomrule
-\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
+\begin{frame}{性別・年齢層別のメッセージBの効果}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux5c64ux5225ux306eux30e1ux30c3ux30bbux30fcux30b8bux306eux52b9ux679c}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/heterogenous-effect-B-1} \end{center}
 \end{frame}
 
-\begin{frame}{コーディネート経験のある男性に対する効果}
-\protect\hypertarget{ux30b3ux30fcux30c7ux30a3ux30cdux30fcux30c8ux7d4cux9a13ux306eux3042ux308bux7537ux6027ux306bux5bfeux3059ux308bux52b9ux679c}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lcccccc}
-\toprule
-  & Reply & Intention & CT & Candidate & Consent & Donation\\
-\midrule
-B & \num{0.053} & \num{0.142}* & \num{0.177}** & \num{0.133}** & \num{0.100}*** & \num{0.034}\\
- & (\num{0.049}) & (\num{0.075}) & (\num{0.070}) & (\num{0.058}) & (\num{0.034}) & (\num{0.023})\\
-B×Age & \num{-0.002} & \num{-0.006}* & \num{-0.007}** & \num{-0.006}** & \num{-0.005}** & \num{-0.002}\\
- & (\num{0.002}) & (\num{0.003}) & (\num{0.003}) & (\num{0.003}) & (\num{0.002}) & (\num{0.001})\\
-C & \num{-0.010} & \num{-0.035} & \num{0.037} & \num{0.020} & \num{0.003} & \num{-0.007}\\
- & (\num{0.059}) & (\num{0.079}) & (\num{0.079}) & (\num{0.069}) & (\num{0.057}) & (\num{0.049})\\
-C×Age & \num{0.000} & \num{0.002} & \num{-0.001} & \num{-0.001} & \num{0.000} & \num{0.001}\\
- & (\num{0.002}) & (\num{0.003}) & (\num{0.003}) & (\num{0.003}) & (\num{0.003}) & (\num{0.002})\\
-D & \num{0.061} & \num{0.116} & \num{0.117} & \num{0.064} & \num{0.079}** & \num{0.043}*\\
- & (\num{0.044}) & (\num{0.093}) & (\num{0.089}) & (\num{0.044}) & (\num{0.029}) & (\num{0.022})\\
-D×Age & \num{-0.003} & \num{-0.004} & \num{-0.004} & \num{-0.002} & \num{-0.002} & \num{-0.001}\\
- & (\num{0.002}) & (\num{0.004}) & (\num{0.003}) & (\num{0.002}) & (\num{0.002}) & (\num{0.001})\\
-\midrule
-Num.Obs. & \num{2771} & \num{2763} & \num{2657} & \num{1551} & \num{1544} & \num{1501}\\
-\bottomrule
-\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
+\begin{frame}{性別・年齢層別のメッセージCの効果}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux5c64ux5225ux306eux30e1ux30c3ux30bbux30fcux30b8cux306eux52b9ux679c}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/heterogenous-effect-C-1} \end{center}
 \end{frame}
 
-\begin{frame}{コーディネート経験のない女性に対する効果}
-\protect\hypertarget{ux30b3ux30fcux30c7ux30a3ux30cdux30fcux30c8ux7d4cux9a13ux306eux306aux3044ux5973ux6027ux306bux5bfeux3059ux308bux52b9ux679c}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lcccccc}
-\toprule
-  & Reply & Intention & CT & Candidate & Consent & Donation\\
-\midrule
-B & \num{-0.037} & \num{-0.052} & \num{0.017} & \num{-0.071}** & \num{-0.068}** & \num{-0.044}**\\
- & (\num{0.030}) & (\num{0.037}) & (\num{0.033}) & (\num{0.031}) & (\num{0.026}) & (\num{0.021})\\
-B×Age & \num{0.001} & \num{0.003} & \num{-0.001} & \num{0.004}** & \num{0.004}** & \num{0.002}**\\
- & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.001}) & \vphantom{1} (\num{0.001})\\
-C & \num{-0.012} & \num{-0.093}** & \num{-0.078}* & \num{-0.058}* & \num{-0.060}** & \num{-0.019}\\
- & (\num{0.030}) & (\num{0.044}) & (\num{0.040}) & (\num{0.030}) & (\num{0.022}) & (\num{0.013})\\
-C×Age & \num{0.000} & \num{0.003} & \num{0.003} & \num{0.003}* & \num{0.004}** & \num{0.002}*\\
- & (\num{0.002}) & (\num{0.003}) & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.001})\\
-D & \num{-0.064}* & \num{-0.119}*** & \num{-0.013} & \num{-0.055}** & \num{-0.045}** & \num{-0.026}\\
- & (\num{0.036}) & (\num{0.041}) & (\num{0.027}) & (\num{0.025}) & (\num{0.021}) & (\num{0.021})\\
-D×Age & \num{0.003} & \num{0.005}* & \num{0.002} & \num{0.004}** & \num{0.004}** & \num{0.002}\\
- & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.002}) & (\num{0.001}) & (\num{0.001})\\
-\midrule
-Num.Obs. & \num{2899} & \num{2891} & \num{2745} & \num{1322} & \num{1320} & \num{1307}\\
-\bottomrule
-\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
-\end{frame}
-
-\begin{frame}{コーディネート経験のある女性に対する効果}
-\protect\hypertarget{ux30b3ux30fcux30c7ux30a3ux30cdux30fcux30c8ux7d4cux9a13ux306eux3042ux308bux5973ux6027ux306bux5bfeux3059ux308bux52b9ux679c}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lcccccc}
-\toprule
-  & Reply & Intention & CT & Candidate & Consent & Donation\\
-\midrule
-B & \num{-0.002} & \num{0.046} & \num{0.040} & \num{0.040} & \num{-0.031} & \num{0.003}\\
- & (\num{0.073}) & (\num{0.119}) & (\num{0.126}) & (\num{0.113}) & (\num{0.094}) & (\num{0.091})\\
-B×Age & \num{0.000} & \num{-0.003} & \num{0.001} & \num{-0.006} & \num{-0.001} & \num{-0.002}\\
- & (\num{0.003}) & (\num{0.006}) & (\num{0.006}) & (\num{0.005}) & (\num{0.004}) & (\num{0.004})\\
-C & \num{0.014} & \num{0.211}* & \num{0.322}*** & \num{0.119} & \num{0.083} & \num{0.006}\\
- & (\num{0.056}) & (\num{0.120}) & (\num{0.106}) & (\num{0.106}) & (\num{0.098}) & (\num{0.098})\\
-C×Age & \num{0.000} & \num{-0.008} & \num{-0.012}** & \num{-0.006} & \num{-0.004} & \num{-0.002}\\
- & (\num{0.003}) & (\num{0.006}) & (\num{0.005}) & (\num{0.005}) & (\num{0.005}) & (\num{0.005})\\
-D & \num{0.017} & \num{0.147} & \num{0.228}** & \num{0.115} & \num{0.014} & \num{-0.002}\\
- & (\num{0.058}) & (\num{0.134}) & (\num{0.108}) & (\num{0.095}) & (\num{0.086}) & (\num{0.085})\\
-D×Age & \num{-0.001} & \num{-0.006} & \num{-0.007} & \num{-0.007}* & \num{-0.002} & \num{-0.002}\\
- & (\num{0.003}) & (\num{0.007}) & (\num{0.005}) & (\num{0.004}) & (\num{0.004}) & (\num{0.004})\\
-\midrule
-Num.Obs. & \num{1275} & \num{1269} & \num{1214} & \num{621} & \num{619} & \num{612}\\
-\bottomrule
-\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
+\begin{frame}{性別・年齢層別のメッセージDの効果}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux5c64ux5225ux306eux30e1ux30c3ux30bbux30fcux30b8dux306eux52b9ux679c}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/heterogenous-effect-D-1} \end{center}
 \end{frame}
 
 \end{document}

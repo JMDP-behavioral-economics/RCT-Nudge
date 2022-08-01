@@ -56,9 +56,8 @@ testdt <- outcomes %>%
 
 ## 異質性の検討
 
-- 性別と過去のコーディネート経験でサンプルを分割して推定する
-- 年齢の異質性を考慮するために、各サブサンプル内で処置群と年齢の交差項を追加する
-  - 年齢は全サンプルの最年少からの乖離で示す（range:0～34）
+- 性別と年齢（30歳以下どうか）でサンプルを分割して、
+各サブサンプル内でメッセージの効果を推定した
 
 ```{r heterogenity}
 est <- testdt %>%
@@ -73,7 +72,7 @@ est <- testdt %>%
 
 ## 性別・年齢層別のメッセージBの効果
 
-```{r heterogenous-effect-B, fig.width = 10, fig.height=10}
+```{r heterogenous-effect-B, fig.width = 10, fig.height=7}
 est %>%
   rowwise(outcome, male, age30) %>%
   summarize(
@@ -89,17 +88,17 @@ est %>%
   ) %>%
   ggplot(aes(x = pos, y = estimate)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = conf.low, ymax = conf.high), size = 1) +
+    geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
     scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
-        "Female\u00d7Age>30",
-        "Female\u00d7Age\u226630",
-        "Male\u00d7Age>30",
-        "Male\u00d7Age\u226630"
+        "Female\u00d730<Age",
+        "Female\u00d730\u2265Age",
+        "Male\u00d730<Age",
+        "Male\u00d730\u2265Age"
       )
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
@@ -109,7 +108,7 @@ est %>%
 
 ## 性別・年齢層別のメッセージCの効果
 
-```{r heterogenous-effect-C, fig.width = 10, fig.height=10}
+```{r heterogenous-effect-C, fig.width = 10, fig.height=7}
 est %>%
   rowwise(outcome, male, age30) %>%
   summarize(
@@ -125,17 +124,17 @@ est %>%
   ) %>%
   ggplot(aes(x = pos, y = estimate)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = conf.low, ymax = conf.high), size = 1) +
+    geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
     scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
-        "Female\u00d7Age>30",
-        "Female\u00d7Age\u226630",
-        "Male\u00d7Age>30",
-        "Male\u00d7Age\u226630"
+        "Female\u00d730<Age",
+        "Female\u00d730\u2265Age",
+        "Male\u00d730<Age",
+        "Male\u00d730\u2265Age"
       )
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
@@ -145,7 +144,7 @@ est %>%
 
 ## 性別・年齢層別のメッセージDの効果
 
-```{r heterogenous-effect-D, fig.width = 10, fig.height=10}
+```{r heterogenous-effect-D, fig.width = 10, fig.height=7}
 est %>%
   rowwise(outcome, male, age30) %>%
   summarize(
@@ -161,17 +160,17 @@ est %>%
   ) %>%
   ggplot(aes(x = pos, y = estimate)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = conf.low, ymax = conf.high), size = 1) +
+    geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
     scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
-        "Female\u00d7Age>30",
-        "Female\u00d7Age\u226630",
-        "Male\u00d7Age>30",
-        "Male\u00d7Age\u226630"
+        "Female\u00d730<Age",
+        "Female\u00d730\u2265Age",
+        "Male\u00d730<Age",
+        "Male\u00d730\u2265Age"
       )
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
