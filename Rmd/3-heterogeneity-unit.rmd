@@ -457,7 +457,7 @@ sub_est_until_reply %>%
 
 ```{r tab-reply-until-days-female-under30}
 sub_est_until_reply <- est_until_reply %>%
-  dplyr::filter(male == 0 & age30 == 0)
+  dplyr::filter(male == 0 & age30 == 1)
 
 sub_est_until_reply %>%
   pull(est) %>%
