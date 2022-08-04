@@ -336,15 +336,14 @@ est %>%
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
-        "Female\u00d730<Age",
-        "Female\u00d730\u2265Age",
-        "Male\u00d730<Age",
-        "Male\u00d730\u2265Age"
+        "Female\u00d7\n30<Age",
+        "Female\u00d7\nAge\u226430",
+        "Male\u00d7\n30<Age",
+        "Male\u00d7\nAge\u226430"
       )
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    simplegg()
 ```
 
 ## Message C
@@ -361,15 +360,14 @@ est %>%
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
-        "Female\u00d730<Age",
-        "Female\u00d730\u2265Age",
-        "Male\u00d730<Age",
-        "Male\u00d730\u2265Age"
+        "Female\u00d7\n30<Age",
+        "Female\u00d7\nAge\u226430",
+        "Male\u00d7\n30<Age",
+        "Male\u00d7\nAge\u226430"
       )
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    simplegg()
 ```
 
 ## Message D
@@ -386,100 +384,12 @@ est %>%
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
-        "Female\u00d730<Age",
-        "Female\u00d730\u2265Age",
-        "Male\u00d730<Age",
-        "Male\u00d730\u2265Age"
+        "Female\u00d7\n30<Age",
+        "Female\u00d7\nAge\u226430",
+        "Male\u00d7\n30<Age",
+        "Male\u00d7\nAge\u226430"
       )
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-```
-
-## Linear Probability Model of Reply within $X$ days
-
-```{r reply-until-days, eval = FALSE}
-est_until_reply <- testdt %>%
-  dplyr::filter(outcome == "reply") %>%
-  mutate(
-    days_reply = if_else(
-      is.na(days_reply),
-      max(use$days_reply, na.rm = TRUE),
-      days_reply
-    ),
-    value10 = if_else(days_reply <= 10, 1, 0),
-    value20 = if_else(days_reply <= 20, 1, 0),
-    value30 = if_else(days_reply <= 30, 1, 0),
-    value40 = if_else(days_reply <= 40, 1, 0),
-    value85 = value
-  ) %>%
-  select(-value) %>%
-  pivot_longer(
-    value10:value85,
-    names_to = "until",
-    names_prefix = "value"
-  ) %>%
-  mutate(until = factor(
-    until,
-    levels = c("10", "20", "30", "40", "85")
-  )) %>%
-  group_by(until) %>%
-  do(
-    est = lm_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      data = .
-    ),
-    ftestBC = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatC = 0",
-      data = .
-    )$lh,
-    ftestBD = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatD = 0",
-      data = .
-    )$lh,
-    ftestCD = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatC - treatD = 0",
-      data = .
-    )$lh
-  )
-
-est_until_reply %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(est_until_reply$est)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    coef_map = c(
-      "treatB" = "B",
-      "treatC" = "C",
-      "treatD" = "D"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(est_until_reply$ftestBC)[, 4] %>%
-      rbind(bind_rows(est_until_reply$ftestBD)[, 4]) %>%
-      rbind(bind_rows(est_until_reply$ftestCD)[, 4]) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
-  ) %>%
-  kableExtra::kable_styling(font_size = 9) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "\u2266 10days" = 1,
-    "\u2266 20days" = 1, "\u2266 30days" = 1,
-    "\u2266 40days" = 1, "\u2266 85days" = 1
-  )) %>%
-  kableExtra::column_spec(2:6, width = "5em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
-    bold = FALSE, italic = TRUE
-  )
+    simplegg()
 ```

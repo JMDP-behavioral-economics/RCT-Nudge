@@ -1,5 +1,5 @@
 
-# Secondary Outcomes: Reply Speed
+# Effect on Reply Speed
 
 ```{r load-packages, include = FALSE}
 library(here)
@@ -58,7 +58,7 @@ testdt <- use %>%
 ```{r plot-surv}
 log_rank <- testdt %>%
   survdiff(Surv(days_reply, reply) ~ treat, data = .) %>%
-  with(c("chisq" = chisq, "p" = 1 - pchisq(log.rank$chisq, 3)))
+  with(c("chisq" = chisq, "p" = 1 - pchisq(chisq, 3)))
 
 testdt %>%
   survfit(Surv(days_reply, reply) ~ treat, data = .) %>%
@@ -180,7 +180,7 @@ with(subset(surv_data, male == 1 & age_less30 == 0), surv[[1]]) %>%
 
 ## Males Aged 30 and Younger
 
-```{r plot-reply-days-male-under30}
+```{r plot-surv-male-under30}
 with(subset(surv_data, male == 1 & age_less30 == 1), surv[[1]]) %>%
   ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
   geom_line(aes(color = treat)) +
@@ -199,208 +199,4 @@ with(subset(surv_data, male == 1 & age_less30 == 1), surv[[1]]) %>%
   scale_color_hue() +
   labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
   simplegg()
-```
-
-## Reply within $X$ days (Females aged more than 30)
-
-```{r heterogeneity-reply-within-days, eval = FALSE}
-model <- value ~ treat + coordinate + prefecture + factor(month) + factor(week)
-
-days_collapse <- testdt %>%
-  dplyr::filter(outcome == "Reply") %>%
-  mutate(
-    value10 = if_else(days_reply <= 10, 1, 0),
-    value20 = if_else(days_reply <= 20, 1, 0),
-    value30 = if_else(days_reply <= 30, 1, 0),
-    value40 = if_else(days_reply <= 40, 1, 0),
-    value85 = value
-  ) %>%
-  select(-value) %>%
-  pivot_longer(
-    value10:value85,
-    names_to = "until",
-    names_prefix = "value"
-  ) %>%
-  mutate(until = factor(
-    until,
-    levels = c("10", "20", "30", "40", "85")
-  )) %>%
-  group_by(until, male, age30)
-
-est_days_collapse <- days_collapse %>%
-  do(est = lm_robust(
-    model,
-    cluster = RCTweek,
-    se_type = "stata",
-    data = .
-  ))
-
-bc_ftest <- days_collapse %>%
-  do(
-    lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatC = 0",
-      data = .
-    ) %>%
-      with(lh) %>%
-      tibble()
-  )
-
-bd_ftest <- days_collapse %>%
-  do(
-    lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatD = 0",
-      data = .
-    ) %>%
-      with(lh) %>%
-      tibble()
-  )
-
-cd_ftest <- days_collapse %>%
-  do(
-    lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatC - treatD = 0",
-      data = .
-    ) %>%
-      with(lh) %>%
-      tibble()
-  )
-```
-
-```{r tab-reply-until-days-female-over30, eval = FALSE}
-est_days_collapse %>%
-  dplyr::filter(male == 0 & age30 == 0) %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    coef_map = c(
-      "treatB" = "B",
-      "treatC" = "C",
-      "treatD" = "D"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = subset(bc_ftest, male == 0 & age30 == 0)$p.value %>%
-      rbind(subset(bd_ftest, male == 0 & age30 == 0)$p.value) %>%
-      rbind(subset(cd_ftest, male == 0 & age30 == 0)$p.value) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
-  ) %>%
-  kableExtra::kable_styling(font_size = 9) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "\u2266 10days" = 1,
-    "\u2266 20days" = 1, "\u2266 30days" = 1,
-    "\u2266 40days" = 1, "\u2266 85days" = 1
-  )) %>%
-  kableExtra::column_spec(2:6, width = "5em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
-    bold = FALSE, italic = TRUE
-  )
-```
-
-## Reply within $X$ days (Females aged 30 and younger)
-
-```{r tab-reply-until-days-female-under30, eval = FALSE}
-est_days_collapse %>%
-  dplyr::filter(male == 0 & age30 == 1) %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    coef_map = c(
-      "treatB" = "B",
-      "treatC" = "C",
-      "treatD" = "D"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = subset(bc_ftest, male == 0 & age30 == 1)$p.value %>%
-      rbind(subset(bd_ftest, male == 0 & age30 == 1)$p.value) %>%
-      rbind(subset(cd_ftest, male == 0 & age30 == 1)$p.value) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
-  ) %>%
-  kableExtra::kable_styling(font_size = 9) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "\u2266 10days" = 1,
-    "\u2266 20days" = 1, "\u2266 30days" = 1,
-    "\u2266 40days" = 1, "\u2266 85days" = 1
-  )) %>%
-  kableExtra::column_spec(2:6, width = "5em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
-    bold = FALSE, italic = TRUE
-  )
-```
-
-## Reply within $X$ days (Males aged more than 30)
-
-```{r tab-reply-until-days-male-over30, eval = FALSE}
-est_days_collapse %>%
-  dplyr::filter(male == 1 & age30 == 0) %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    coef_map = c(
-      "treatB" = "B",
-      "treatC" = "C",
-      "treatD" = "D"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = subset(bc_ftest, male == 1 & age30 == 0)$p.value %>%
-      rbind(subset(bd_ftest, male == 1 & age30 == 0)$p.value) %>%
-      rbind(subset(cd_ftest, male == 1 & age30 == 0)$p.value) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
-  ) %>%
-  kableExtra::kable_styling(font_size = 9) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "\u2266 10days" = 1,
-    "\u2266 20days" = 1, "\u2266 30days" = 1,
-    "\u2266 40days" = 1, "\u2266 85days" = 1
-  )) %>%
-  kableExtra::column_spec(2:6, width = "5em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
-    bold = FALSE, italic = TRUE
-  )
-```
-
-## Reply within $X$ days (Males aged 30 and younger)
-
-```{r tab-reply-until-days-male-under30, eval = FALSE}
-est_days_collapse %>%
-  dplyr::filter(male == 1 & age30 == 1) %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    coef_map = c(
-      "treatB" = "B",
-      "treatC" = "C",
-      "treatD" = "D"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = subset(bc_ftest, male == 1 & age30 == 1)$p.value %>%
-      rbind(subset(bd_ftest, male == 1 & age30 == 1)$p.value) %>%
-      rbind(subset(cd_ftest, male == 1 & age30 == 1)$p.value) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
-  ) %>%
-  kableExtra::kable_styling(font_size = 9) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "\u2266 10days" = 1,
-    "\u2266 20days" = 1, "\u2266 30days" = 1,
-    "\u2266 40days" = 1, "\u2266 85days" = 1
-  )) %>%
-  kableExtra::column_spec(2:6, width = "5em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
-    bold = FALSE, italic = TRUE
-  )
 ```
