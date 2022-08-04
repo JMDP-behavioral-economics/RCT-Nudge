@@ -1,5 +1,5 @@
 
-# Heterogeneity by Gender x Age
+# Secondary Outcomes: Reply Speed
 
 ```{r load-packages, include = FALSE}
 library(here)
@@ -18,15 +18,11 @@ rawdt <- read_csv(
 use <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4]))
 
-outcomes <- use %>%
+testdt <- use %>%
+  dplyr::filter(exg_stop_reply == 0  & prefecture != "海外") %>%
   select(
     id,
     reply,
-    intention,
-    test,
-    candidate,
-    consent,
-    donate,
     days_reply,
     treat,
     RCTweek,
@@ -37,22 +33,10 @@ outcomes <- use %>%
     age,
     coordinate
   ) %>%
-  pivot_longer(reply:donate, names_to = "outcome")
-
-exclude <- use %>%
-  select(id, starts_with("exg_stop")) %>%
-  pivot_longer(
-    -id, names_to = "outcome", values_to = "exclude",
-    names_prefix = "exg_stop_"
-  )
-
-testdt <- outcomes %>%
-  dplyr::left_join(exclude, by = c("id", "outcome")) %>%
-  dplyr::filter(exclude == 0 & prefecture != "海外") %>%
   mutate(
-    outcome = factor(outcome, out_lev, out_lab),
     prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
-    age30 = if_else(age <= 30, 1, 0),
+    age_less30 = if_else(age <= 30, 1, 0),
+    age_demean = age - mean(rawdt$age),
     coordinate1 = if_else(coordinate == 1, 1, 0),
     days_reply = if_else(
       is.na(days_reply),
@@ -60,130 +44,6 @@ testdt <- outcomes %>%
       days_reply
     )
   )
-```
-
-## Heterogenous Effect on Primary Outcomes
-
-- 性別と年齢（30歳以下どうか）でサンプルを分割して、
-各サブサンプル内でメッセージの効果を推定した
-
-```{r heterogenity}
-est <- testdt %>%
-  group_by(outcome, male, age30) %>%
-  do(est = lm_robust(
-    value ~ treat + coordinate + prefecture + factor(month) + factor(week),
-    cluster = RCTweek,
-    se_type = "stata",
-    data = .
-  ))
-```
-
-## Heterogenous Effect of Message B on Primary Outcomes
-
-```{r heterogenous-effect-B, fig.width = 10, fig.height=7}
-est %>%
-  rowwise(outcome, male, age30) %>%
-  summarize(
-    estimate = subset(tidy(est), term == "treatB")$estimate,
-    conf.low = subset(tidy(est), term == "treatB")$conf.low,
-    conf.high = subset(tidy(est), term == "treatB")$conf.high,
-    nobs = nobs(est)
-  ) %>%
-  ungroup() %>%
-  mutate(
-    pos = paste0(male, age30),
-    N = paste0("N=", nobs)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d730<Age",
-        "Female\u00d730\u2265Age",
-        "Male\u00d730<Age",
-        "Male\u00d730\u2265Age"
-      )
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-```
-
-## Heterogenous Effect of Message C on Primary Outcomes
-
-```{r heterogenous-effect-C, fig.width = 10, fig.height=7}
-est %>%
-  rowwise(outcome, male, age30) %>%
-  summarize(
-    estimate = subset(tidy(est), term == "treatC")$estimate,
-    conf.low = subset(tidy(est), term == "treatC")$conf.low,
-    conf.high = subset(tidy(est), term == "treatC")$conf.high,
-    nobs = nobs(est)
-  ) %>%
-  ungroup() %>%
-  mutate(
-    pos = paste0(male, age30),
-    N = paste0("N=", nobs)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d730<Age",
-        "Female\u00d730\u2265Age",
-        "Male\u00d730<Age",
-        "Male\u00d730\u2265Age"
-      )
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-```
-
-## Heterogenous Effect of Message D on Primary Outcomes
-
-```{r heterogenous-effect-D, fig.width = 10, fig.height=7}
-est %>%
-  rowwise(outcome, male, age30) %>%
-  summarize(
-    estimate = subset(tidy(est), term == "treatD")$estimate,
-    conf.low = subset(tidy(est), term == "treatD")$conf.low,
-    conf.high = subset(tidy(est), term == "treatD")$conf.high,
-    nobs = nobs(est)
-  ) %>%
-  ungroup() %>%
-  mutate(
-    pos = paste0(male, age30),
-    N = paste0("N=", nobs)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = conf.low, ymax = conf.high)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d730<Age",
-        "Female\u00d730\u2265Age",
-        "Male\u00d730<Age",
-        "Male\u00d730\u2265Age"
-      )
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
 ## Heterogenous Effect on Secondary Outcomes
