@@ -216,60 +216,6 @@ surv_data <- testdt %>%
   })
 ```
 
-```{r heterogeneity-reply-within-days}
-model <- value ~ treat + coordinate + prefecture + factor(month) + factor(week)
-
-est_until_reply <- testdt %>%
-  dplyr::filter(outcome == "Reply") %>%
-  mutate(
-    value10 = if_else(days_reply <= 10, 1, 0),
-    value20 = if_else(days_reply <= 20, 1, 0),
-    value30 = if_else(days_reply <= 30, 1, 0),
-    value40 = if_else(days_reply <= 40, 1, 0),
-    value85 = value
-  ) %>%
-  select(-value) %>%
-  pivot_longer(
-    value10:value85,
-    names_to = "until",
-    names_prefix = "value"
-  ) %>%
-  mutate(until = factor(
-    until,
-    levels = c("10", "20", "30", "40", "85")
-  )) %>%
-  group_by(until, male, age30) %>%
-  do(
-    est = lm_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      data = .
-    ),
-    ftestBC = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatC = 0",
-      data = .
-    )$lh,
-    ftestBD = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatD = 0",
-      data = .
-    )$lh,
-    ftestCD = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatC - treatD = 0",
-      data = .
-    )$lh
-  )
-```
-
 ## Survival Analysis (Females aged more than 30)
 
 ```{r plot-reply-days-female-over30}
@@ -364,13 +310,83 @@ with(subset(surv_data, male == 1 & age30 == 1), surv[[1]]) %>%
 
 ## Reply within $X$ days (Females aged more than 30)
 
-```{r tab-reply-until-days-female-over30}
-sub_est_until_reply <- est_until_reply %>%
-  dplyr::filter(male == 0 & age30 == 0)
+```{r heterogeneity-reply-within-days}
+model <- value ~ treat + coordinate + prefecture + factor(month) + factor(week)
 
-sub_est_until_reply %>%
+days_collapse <- testdt %>%
+  dplyr::filter(outcome == "Reply") %>%
+  mutate(
+    value10 = if_else(days_reply <= 10, 1, 0),
+    value20 = if_else(days_reply <= 20, 1, 0),
+    value30 = if_else(days_reply <= 30, 1, 0),
+    value40 = if_else(days_reply <= 40, 1, 0),
+    value85 = value
+  ) %>%
+  select(-value) %>%
+  pivot_longer(
+    value10:value85,
+    names_to = "until",
+    names_prefix = "value"
+  ) %>%
+  mutate(until = factor(
+    until,
+    levels = c("10", "20", "30", "40", "85")
+  )) %>%
+  group_by(until, male, age30)
+
+est_days_collapse <- days_collapse %>%
+  do(est = lm_robust(
+    model,
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .
+  ))
+
+bc_ftest <- days_collapse %>%
+  do(
+    lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatB - treatC = 0",
+      data = .
+    ) %>%
+      with(lh) %>%
+      tibble()
+  )
+
+bd_ftest <- days_collapse %>%
+  do(
+    lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatB - treatD = 0",
+      data = .
+    ) %>%
+      with(lh) %>%
+      tibble()
+  )
+
+cd_ftest <- days_collapse %>%
+  do(
+    lh_robust(
+      model,
+      cluster = RCTweek,
+      se_type = "stata",
+      linear_hypothesis = "treatC - treatD = 0",
+      data = .
+    ) %>%
+      with(lh) %>%
+      tibble()
+  )
+```
+
+```{r tab-reply-until-days-female-over30}
+est_days_collapse %>%
+  dplyr::filter(male == 0 & age30 == 0) %>%
   pull(est) %>%
-  setNames(paste0("(", seq(length(sub_est_until_reply$est)), ")")) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
@@ -379,9 +395,9 @@ sub_est_until_reply %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(sub_est_until_reply$ftestBC)[, 4] %>%
-      rbind(bind_rows(sub_est_until_reply$ftestBD)[, 4]) %>%
-      rbind(bind_rows(sub_est_until_reply$ftestCD)[, 4]) %>%
+    add_rows = subset(bc_ftest, male == 0 & age30 == 0)$p.value %>%
+      rbind(subset(bd_ftest, male == 0 & age30 == 0)$p.value) %>%
+      rbind(subset(cd_ftest, male == 0 & age30 == 0)$p.value) %>%
       data.frame(term = c("B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 9) %>%
@@ -400,12 +416,10 @@ sub_est_until_reply %>%
 ## Reply within $X$ days (Females aged 30 and younger)
 
 ```{r tab-reply-until-days-female-under30}
-sub_est_until_reply <- est_until_reply %>%
-  dplyr::filter(male == 0 & age30 == 1)
-
-sub_est_until_reply %>%
+est_days_collapse %>%
+  dplyr::filter(male == 0 & age30 == 1) %>%
   pull(est) %>%
-  setNames(paste0("(", seq(length(sub_est_until_reply$est)), ")")) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
@@ -414,9 +428,9 @@ sub_est_until_reply %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(sub_est_until_reply$ftestBC)[, 4] %>%
-      rbind(bind_rows(sub_est_until_reply$ftestBD)[, 4]) %>%
-      rbind(bind_rows(sub_est_until_reply$ftestCD)[, 4]) %>%
+    add_rows = subset(bc_ftest, male == 0 & age30 == 1)$p.value %>%
+      rbind(subset(bd_ftest, male == 0 & age30 == 1)$p.value) %>%
+      rbind(subset(cd_ftest, male == 0 & age30 == 1)$p.value) %>%
       data.frame(term = c("B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 9) %>%
@@ -435,12 +449,10 @@ sub_est_until_reply %>%
 ## Reply within $X$ days (Males aged more than 30)
 
 ```{r tab-reply-until-days-male-over30}
-sub_est_until_reply <- est_until_reply %>%
-  dplyr::filter(male == 1 & age30 == 0)
-
-sub_est_until_reply %>%
+est_days_collapse %>%
+  dplyr::filter(male == 1 & age30 == 0) %>%
   pull(est) %>%
-  setNames(paste0("(", seq(length(sub_est_until_reply$est)), ")")) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
@@ -449,9 +461,9 @@ sub_est_until_reply %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(sub_est_until_reply$ftestBC)[, 4] %>%
-      rbind(bind_rows(sub_est_until_reply$ftestBD)[, 4]) %>%
-      rbind(bind_rows(sub_est_until_reply$ftestCD)[, 4]) %>%
+    add_rows = subset(bc_ftest, male == 1 & age30 == 0)$p.value %>%
+      rbind(subset(bd_ftest, male == 1 & age30 == 0)$p.value) %>%
+      rbind(subset(cd_ftest, male == 1 & age30 == 0)$p.value) %>%
       data.frame(term = c("B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 9) %>%
@@ -470,12 +482,10 @@ sub_est_until_reply %>%
 ## Reply within $X$ days (Males aged 30 and younger)
 
 ```{r tab-reply-until-days-male-under30}
-sub_est_until_reply <- est_until_reply %>%
-  dplyr::filter(male == 1 & age30 == 1)
-
-sub_est_until_reply %>%
+est_days_collapse %>%
+  dplyr::filter(male == 1 & age30 == 1) %>%
   pull(est) %>%
-  setNames(paste0("(", seq(length(sub_est_until_reply$est)), ")")) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
@@ -484,9 +494,9 @@ sub_est_until_reply %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(sub_est_until_reply$ftestBC)[, 4] %>%
-      rbind(bind_rows(sub_est_until_reply$ftestBD)[, 4]) %>%
-      rbind(bind_rows(sub_est_until_reply$ftestCD)[, 4]) %>%
+    add_rows = subset(bc_ftest, male == 1 & age30 == 1)$p.value %>%
+      rbind(subset(bd_ftest, male == 1 & age30 == 1)$p.value) %>%
+      rbind(subset(cd_ftest, male == 1 & age30 == 1)$p.value) %>%
       data.frame(term = c("B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 9) %>%
