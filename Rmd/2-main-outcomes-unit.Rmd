@@ -1,4 +1,6 @@
 
+# Main Results
+
 ```{r load-packages, include = FALSE}
 library(here)
 source(here("R", "_library.r"))
@@ -54,7 +56,7 @@ testdt <- outcomes %>%
   )
 ```
 
-## アウトカム変数
+## Primary Outcomes
 
 アウトカム変数は提供に至るまでのプロセスであり、具体的に以下の6つの工程がある。
 
@@ -131,7 +133,7 @@ show_ttest_info <- ttest_info %>%
 ```
 
 
-## 返信～確認検査の二群比較の検定
+## Difference-in-mean Test: Reply to CT
 
 
 ```{r ttest-1-3step, echo = FALSE}
@@ -167,7 +169,7 @@ stat %>%
     simplegg(caption_size = 13)
 ```
 
-## 候補者選定～採血までの二群比較の検定
+## Difference-in-mean Test: Candidate to Donation
 
 ```{r ttest-4-6step, echo = FALSE}
 stat %>%
@@ -199,7 +201,7 @@ stat %>%
     simplegg()
 ```
 
-## 線形確率モデル
+## Lineary Probability Model
 
 $m$月の第$w$週に適合通知を受け取った個人$i$について、
 
@@ -213,7 +215,7 @@ $$
 - $X_i$は性別・年齢・居住する都道府県・コーディネーション回数
 - $\lambda_m$と$\theta_w$は週・月の固定効果
 
-## モデル推定結果
+## Estimation Results
 
 ```{r lpm}
 model <- value ~ treat + age + male + coordinate1 + prefecture +
@@ -274,7 +276,16 @@ est %>%
   )
 ```
 
-## 返信スピードに対する効果
+## Secondary Outcomes: Reply Speed
+
+- 返信までの日数をアウトカムとした生存分析を実施
+  - 返信がない場合は欠損値となるので、返信までの日数の最大値（85日）で補完した（打ち切り時間）
+  - 返信を事象とする
+  - ログランク検定で生存曲線に差がないという帰無仮説を検定する（正しい方法なのかは不明・・・）
+- $X$日以内に返信したかどうかをアウトカムとしたLinear probability Modelを推定する
+  - $X = 10, 20, 30, 40, 85$
+
+## Survival Analysis Result
 
 ```{r plot-reply-days}
 log.rank <- testdt %>%
@@ -317,7 +328,7 @@ testdt %>%
     simplegg()
 ```
 
-## 特定日数までの返信に対する効果
+## Linear Probability Model of Reply within $X$ days
 
 ```{r reply-until-days}
 est_until_reply <- testdt %>%

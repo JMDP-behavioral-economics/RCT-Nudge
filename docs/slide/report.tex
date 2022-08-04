@@ -248,8 +248,11 @@
 \end{table}
 \end{frame}
 
-\begin{frame}{アウトカム変数}
-\protect\hypertarget{ux30a2ux30a6ux30c8ux30abux30e0ux5909ux6570}{}
+\hypertarget{main-results}{%
+\section{Main Results}\label{main-results}}
+
+\begin{frame}{Primary Outcomes}
+\protect\hypertarget{primary-outcomes}{}
 アウトカム変数は提供に至るまでのプロセスであり、具体的に以下の6つの工程がある。
 
 \begin{itemize}
@@ -269,18 +272,18 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{返信～確認検査の二群比較の検定}
-\protect\hypertarget{ux8fd4ux4fe1ux78baux8a8dux691cux67fbux306eux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9a}{}
+\begin{frame}{Difference-in-mean Test: Reply to CT}
+\protect\hypertarget{difference-in-mean-test-reply-to-ct}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-1-3step-1} \end{center}
 \end{frame}
 
-\begin{frame}{候補者選定～採血までの二群比較の検定}
-\protect\hypertarget{ux5019ux88dcux8005ux9078ux5b9aux63a1ux8840ux307eux3067ux306eux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9a}{}
+\begin{frame}{Difference-in-mean Test: Candidate to Donation}
+\protect\hypertarget{difference-in-mean-test-candidate-to-donation}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-4-6step-1} \end{center}
 \end{frame}
 
-\begin{frame}{線形確率モデル}
-\protect\hypertarget{ux7ddaux5f62ux78baux7387ux30e2ux30c7ux30eb}{}
+\begin{frame}{Lineary Probability Model}
+\protect\hypertarget{lineary-probability-model}{}
 \(m\)月の第\(w\)週に適合通知を受け取った個人\(i\)について、
 
 \[
@@ -299,8 +302,8 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{モデル推定結果}
-\protect\hypertarget{ux30e2ux30c7ux30ebux63a8ux5b9aux7d50ux679c}{}
+\begin{frame}{Estimation Results}
+\protect\hypertarget{estimation-results}{}
 \begin{table}
 \centering
 \fontsize{9}{11}\selectfont
@@ -327,13 +330,40 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \end{table}
 \end{frame}
 
-\begin{frame}{返信スピードに対する効果}
-\protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux306bux5bfeux3059ux308bux52b9ux679c}{}
+\begin{frame}{Secondary Outcomes: Reply Speed}
+\protect\hypertarget{secondary-outcomes-reply-speed}{}
+\begin{itemize}
+\tightlist
+\item
+  返信までの日数をアウトカムとした生存分析を実施
+
+  \begin{itemize}
+  \tightlist
+  \item
+    返信がない場合は欠損値となるので、返信までの日数の最大値（85日）で補完した（打ち切り時間）
+  \item
+    返信を事象とする
+  \item
+    ログランク検定で生存曲線に差がないという帰無仮説を検定する（正しい方法なのかは不明・・・）
+  \end{itemize}
+\item
+  \(X\)日以内に返信したかどうかをアウトカムとしたLinear probability Modelを推定する
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(X = 10, 20, 30, 40, 85\)
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Survival Analysis Result}
+\protect\hypertarget{survival-analysis-result}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-days-1} \end{center}
 \end{frame}
 
-\begin{frame}{特定日数までの返信に対する効果}
-\protect\hypertarget{ux7279ux5b9aux65e5ux6570ux307eux3067ux306eux8fd4ux4fe1ux306bux5bfeux3059ux308bux52b9ux679c}{}
+\begin{frame}{Linear Probability Model of Reply within \(X\) days}
+\protect\hypertarget{linear-probability-model-of-reply-within-x-days}{}
 \begin{table}
 \centering
 \fontsize{9}{11}\selectfont
@@ -356,171 +386,6 @@ Num.Obs. & \num{11094} & \num{11094} & \num{11094} & \num{11094} & \num{11094}\\
 \hspace{1em}B = C & \num{0.004} & \num{0.282} & \num{0.028} & \num{0.021} & \num{0.015}\\
 \hspace{1em}B = D & \num{0.259} & \num{0.474} & \num{0.135} & \num{0.351} & \num{0.233}\\
 \hspace{1em}C = D & \num{0.064} & \num{0.022} & \num{0.463} & \num{0.165} & \num{0.277}\\
-\bottomrule
-\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
-\end{frame}
-
-\begin{frame}{異質性の検討}
-\protect\hypertarget{ux7570ux8ceaux6027ux306eux691cux8a0e}{}
-\begin{itemize}
-\tightlist
-\item
-  性別と年齢（30歳以下どうか）でサンプルを分割して、
-  各サブサンプル内でメッセージの効果を推定した
-\end{itemize}
-\end{frame}
-
-\begin{frame}{性別・年齢層別のメッセージBの効果}
-\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux5c64ux5225ux306eux30e1ux30c3ux30bbux30fcux30b8bux306eux52b9ux679c}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/heterogenous-effect-B-1} \end{center}
-\end{frame}
-
-\begin{frame}{性別・年齢層別のメッセージCの効果}
-\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux5c64ux5225ux306eux30e1ux30c3ux30bbux30fcux30b8cux306eux52b9ux679c}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/heterogenous-effect-C-1} \end{center}
-\end{frame}
-
-\begin{frame}{性別・年齢層別のメッセージDの効果}
-\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux5c64ux5225ux306eux30e1ux30c3ux30bbux30fcux30b8dux306eux52b9ux679c}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/heterogenous-effect-D-1} \end{center}
-\end{frame}
-
-\begin{frame}{返信スピードへの効果（30歳以上の女性）}
-\protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux3078ux306eux52b9ux679c30ux6b73ux4ee5ux4e0aux306eux5973ux6027}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-days-female-over30-1} \end{center}
-\end{frame}
-
-\begin{frame}{返信スピードへの効果（30歳以下の女性）}
-\protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux3078ux306eux52b9ux679c30ux6b73ux4ee5ux4e0bux306eux5973ux6027}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-days-female-under30-1} \end{center}
-\end{frame}
-
-\begin{frame}{返信スピードへの効果（30歳以上の男性）}
-\protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux3078ux306eux52b9ux679c30ux6b73ux4ee5ux4e0aux306eux7537ux6027}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-days-male-over30-1} \end{center}
-\end{frame}
-
-\begin{frame}{返信スピードへの効果（30歳以下の男性）}
-\protect\hypertarget{ux8fd4ux4fe1ux30b9ux30d4ux30fcux30c9ux3078ux306eux52b9ux679c30ux6b73ux4ee5ux4e0bux306eux7537ux6027}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-days-male-under30-1} \end{center}
-\end{frame}
-
-\begin{frame}{X日以内返信への効果の異質性（30歳以上の女性）}
-\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux3078ux306eux52b9ux679cux306eux7570ux8ceaux602730ux6b73ux4ee5ux4e0aux306eux5973ux6027}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{≦ 10days} & \multicolumn{1}{c}{≦ 20days} & \multicolumn{1}{c}{≦ 30days} & \multicolumn{1}{c}{≦ 40days} & \multicolumn{1}{c}{≦ 85days} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
-  & (1) & (2) & (3) & (4) & (5)\\
-\midrule
-B & \num{-0.060}* & \num{-0.009} & \num{-0.008} & \num{-0.010} & \num{-0.008}\\
- & (\num{0.030}) & (\num{0.012}) & (\num{0.009}) & (\num{0.008}) & (\num{0.008})\\
-C & \num{-0.026} & \num{-0.012} & \num{-0.015} & \num{-0.017}* & \num{-0.015}\\
- & (\num{0.026}) & (\num{0.011}) & (\num{0.010}) & (\num{0.009}) & (\num{0.009})\\
-D & \num{-0.048}* & \num{-0.002} & \num{-0.007} & \num{-0.004} & \num{-0.002}\\
- & (\num{0.024}) & (\num{0.009}) & (\num{0.009}) & (\num{0.007}) & (\num{0.007})\\
-\midrule
-Num.Obs. & \num{2923} & \num{2923} & \num{2923} & \num{2923} & \num{2923}\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
-\hspace{1em}B = C & \num{0.174} & \num{0.704} & \num{0.373} & \num{0.411} & \num{0.415}\\
-\hspace{1em}B = D & \num{0.627} & \num{0.201} & \num{0.923} & \num{0.338} & \num{0.345}\\
-\hspace{1em}C = D & \num{0.280} & \num{0.122} & \num{0.355} & \num{0.113} & \num{0.122}\\
-\bottomrule
-\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
-\end{frame}
-
-\begin{frame}{X日以内返信への効果の異質性（30歳以下の女性）}
-\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux3078ux306eux52b9ux679cux306eux7570ux8ceaux602730ux6b73ux4ee5ux4e0bux306eux5973ux6027}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{≦ 10days} & \multicolumn{1}{c}{≦ 20days} & \multicolumn{1}{c}{≦ 30days} & \multicolumn{1}{c}{≦ 40days} & \multicolumn{1}{c}{≦ 85days} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
-  & (1) & (2) & (3) & (4) & (5)\\
-\midrule
-B & \num{-0.070}** & \num{0.002} & \num{-0.002} & \num{-0.018} & \num{-0.012}\\
- & (\num{0.028}) & (\num{0.016}) & (\num{0.016}) & (\num{0.019}) & (\num{0.019})\\
-C & \num{0.055}** & \num{0.051}*** & \num{0.033}** & \num{0.014} & \num{0.012}\\
- & (\num{0.022}) & (\num{0.016}) & (\num{0.015}) & (\num{0.017}) & (\num{0.017})\\
-D & \num{-0.025} & \num{-0.002} & \num{-0.032}** & \num{-0.037}** & \num{-0.040}**\\
- & (\num{0.028}) & (\num{0.012}) & (\num{0.015}) & (\num{0.017}) & (\num{0.017})\\
-\midrule
-Num.Obs. & \num{1251} & \num{1251} & \num{1251} & \num{1251} & \num{1251}\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
-\hspace{1em}B = C & \num{0.000} & \num{0.000} & \num{0.001} & \num{0.010} & \num{0.035}\\
-\hspace{1em}B = D & \num{0.133} & \num{0.646} & \num{0.019} & \num{0.180} & \num{0.058}\\
-\hspace{1em}C = D & \num{0.001} & \num{0.000} & \num{0.000} & \num{0.000} & \num{0.000}\\
-\bottomrule
-\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
-\end{frame}
-
-\begin{frame}{X日以内返信への効果の異質性（30歳以上の男性）}
-\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux3078ux306eux52b9ux679cux306eux7570ux8ceaux602730ux6b73ux4ee5ux4e0aux306eux7537ux6027}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{≦ 10days} & \multicolumn{1}{c}{≦ 20days} & \multicolumn{1}{c}{≦ 30days} & \multicolumn{1}{c}{≦ 40days} & \multicolumn{1}{c}{≦ 85days} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
-  & (1) & (2) & (3) & (4) & (5)\\
-\midrule
-B & \num{-0.036}** & \num{0.012} & \num{0.018} & \num{0.021} & \num{0.020}\\
- & (\num{0.017}) & (\num{0.017}) & (\num{0.016}) & (\num{0.016}) & (\num{0.015})\\
-C & \num{0.000} & \num{-0.005} & \num{-0.004} & \num{-0.003} & \num{-0.004}\\
- & (\num{0.017}) & (\num{0.013}) & (\num{0.014}) & (\num{0.014}) & (\num{0.013})\\
-D & \num{-0.020} & \num{0.005} & \num{0.003} & \num{0.003} & \num{0.002}\\
- & (\num{0.016}) & (\num{0.014}) & (\num{0.013}) & (\num{0.013}) & (\num{0.012})\\
-\midrule
-Num.Obs. & \num{5201} & \num{5201} & \num{5201} & \num{5201} & \num{5201}\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
-\hspace{1em}B = C & \num{0.055} & \num{0.151} & \num{0.062} & \num{0.046} & \num{0.024}\\
-\hspace{1em}B = D & \num{0.397} & \num{0.640} & \num{0.196} & \num{0.131} & \num{0.083}\\
-\hspace{1em}C = D & \num{0.310} & \num{0.105} & \num{0.470} & \num{0.464} & \num{0.456}\\
-\bottomrule
-\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
-\end{tabular}
-\end{table}
-\end{frame}
-
-\begin{frame}{X日以内返信への効果の異質性（30歳以下の男性）}
-\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux3078ux306eux52b9ux679cux306eux7570ux8ceaux602730ux6b73ux4ee5ux4e0bux306eux7537ux6027}{}
-\begin{table}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{≦ 10days} & \multicolumn{1}{c}{≦ 20days} & \multicolumn{1}{c}{≦ 30days} & \multicolumn{1}{c}{≦ 40days} & \multicolumn{1}{c}{≦ 85days} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
-  & (1) & (2) & (3) & (4) & (5)\\
-\midrule
-B & \num{-0.024} & \num{0.073}** & \num{0.058}*** & \num{0.046}* & \num{0.048}**\\
- & (\num{0.036}) & (\num{0.031}) & (\num{0.021}) & (\num{0.023}) & (\num{0.023})\\
-C & \num{-0.001} & \num{0.025} & \num{0.024} & \num{0.016} & \num{0.024}\\
- & (\num{0.037}) & (\num{0.027}) & (\num{0.018}) & (\num{0.019}) & (\num{0.019})\\
-D & \num{-0.018} & \num{0.105}*** & \num{0.071}*** & \num{0.067}*** & \num{0.067}***\\
- & (\num{0.034}) & (\num{0.026}) & (\num{0.019}) & (\num{0.023}) & (\num{0.023})\\
-\midrule
-Num.Obs. & \num{1718} & \num{1718} & \num{1718} & \num{1718} & \num{1718}\\
-\addlinespace[0.3em]
-\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
-\hspace{1em}B = C & \num{0.502} & \num{0.114} & \num{0.104} & \num{0.166} & \num{0.255}\\
-\hspace{1em}B = D & \num{0.851} & \num{0.302} & \num{0.605} & \num{0.445} & \num{0.490}\\
-\hspace{1em}C = D & \num{0.653} & \num{0.002} & \num{0.015} & \num{0.018} & \num{0.045}\\
 \bottomrule
 \multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}

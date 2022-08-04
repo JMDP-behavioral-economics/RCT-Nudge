@@ -2,5 +2,5 @@ output_dir: "docs/slide"
 rmd_files:
   - index.Rmd
   - Rmd/1-summary.rmd
-  - Rmd/2-unit-level-analysis.rmd
-  - Rmd/3-heterogeneity-unit.rmd
+  - Rmd/2-main-outcomes-unit.rmd
+  # - Rmd/3-heterogeneity-unit.rmd
