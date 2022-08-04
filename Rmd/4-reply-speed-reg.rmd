@@ -1,0 +1,45 @@
+
+```{r load-packages, include = FALSE}
+library(here)
+source(here("R", "_library.r"))
+source(here("R", "_outcome_labels.r"))
+```
+
+```{r load-data, include = FALSE}
+root <- "D:/JMDPフィールド実験"
+
+rawdt <- read_csv(
+  here(root, "shaped.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4]))
+
+testdt <- use %>%
+  dplyr::filter(exg_stop_reply == 0  & prefecture != "海外") %>%
+  select(
+    id,
+    reply,
+    days_reply,
+    treat,
+    RCTweek,
+    month,
+    week,
+    prefecture,
+    male,
+    age,
+    coordinate
+  ) %>%
+  mutate(
+    prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
+    age_less30 = if_else(age <= 30, 1, 0),
+    age_demean = age - mean(rawdt$age),
+    coordinate1 = if_else(coordinate == 1, 1, 0),
+    days_reply = if_else(
+      is.na(days_reply),
+      max(use$days_reply, na.rm = TRUE),
+      days_reply
+    )
+  )
+```
