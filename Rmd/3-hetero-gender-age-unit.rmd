@@ -1,4 +1,6 @@
 
+# Heterogeneity by Gender x Age
+
 ```{r load-packages, include = FALSE}
 library(here)
 source(here("R", "_library.r"))
@@ -55,7 +57,7 @@ testdt <- outcomes %>%
   )
 ```
 
-## 異質性の検討
+## Heterogenous Effect on Primary Outcomes
 
 - 性別と年齢（30歳以下どうか）でサンプルを分割して、
 各サブサンプル内でメッセージの効果を推定した
@@ -71,7 +73,7 @@ est <- testdt %>%
   ))
 ```
 
-## 性別・年齢層別のメッセージBの効果
+## Heterogenous Effect of Message B on Primary Outcomes
 
 ```{r heterogenous-effect-B, fig.width = 10, fig.height=7}
 est %>%
@@ -107,7 +109,7 @@ est %>%
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
-## 性別・年齢層別のメッセージCの効果
+## Heterogenous Effect of Message C on Primary Outcomes
 
 ```{r heterogenous-effect-C, fig.width = 10, fig.height=7}
 est %>%
@@ -143,7 +145,7 @@ est %>%
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
-## 性別・年齢層別のメッセージDの効果
+## Heterogenous Effect of Message D on Primary Outcomes
 
 ```{r heterogenous-effect-D, fig.width = 10, fig.height=7}
 est %>%
@@ -179,7 +181,14 @@ est %>%
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
-## 返信スピードへの効果（30歳以上の女性）
+## Heterogenous Effect on Secondary Outcomes
+
+性別×年齢（30歳以下かどうか）でサブサンプルを構築し、以下の分析を実施
+
+1. 返信までの日数の生存分析
+1. $X$日以内返信のLinear probability model
+
+## Survival Analysis (Females aged more than 30)
 
 ```{r plot-reply-days-female-over30}
 log.rank <- testdt %>%
@@ -224,7 +233,7 @@ testdt %>%
     simplegg()
 ```
 
-## 返信スピードへの効果（30歳以下の女性）
+## Survival Analysis (Females aged 30 and younger)
 
 ```{r plot-reply-days-female-under30}
 log.rank <- testdt %>%
@@ -269,7 +278,7 @@ testdt %>%
     simplegg()
 ```
 
-## 返信スピードへの効果（30歳以上の男性）
+## Survival Analysis (Males aged more than 30)
 
 ```{r plot-reply-days-male-over30}
 log.rank <- testdt %>%
@@ -314,7 +323,7 @@ testdt %>%
     simplegg()
 ```
 
-## 返信スピードへの効果（30歳以下の男性）
+## Survival Analysis (Males aged 30 and younger)
 
 ```{r plot-reply-days-male-under30}
 log.rank <- testdt %>%
@@ -359,7 +368,7 @@ testdt %>%
     simplegg()
 ```
 
-## X日以内返信への効果の異質性（30歳以上の女性）
+## Reply within $X$ days (Females aged more than 30)
 
 ```{r heterogeneity-reply-until-days}
 model <- value ~ treat + coordinate + prefecture + factor(month) + factor(week)
@@ -453,7 +462,7 @@ sub_est_until_reply %>%
   )
 ```
 
-## X日以内返信への効果の異質性（30歳以下の女性）
+## Reply within $X$ days (Females aged 30 and younger)
 
 ```{r tab-reply-until-days-female-under30}
 sub_est_until_reply <- est_until_reply %>%
@@ -488,7 +497,7 @@ sub_est_until_reply %>%
   )
 ```
 
-## X日以内返信への効果の異質性（30歳以上の男性）
+## Reply within $X$ days (Males aged more than 30)
 
 ```{r tab-reply-until-days-male-over30}
 sub_est_until_reply <- est_until_reply %>%
@@ -523,7 +532,7 @@ sub_est_until_reply %>%
   )
 ```
 
-## X日以内返信への効果の異質性（30歳以下の男性）
+## Reply within $X$ days (Males aged 30 and younger)
 
 ```{r tab-reply-until-days-male-under30}
 sub_est_until_reply <- est_until_reply %>%
