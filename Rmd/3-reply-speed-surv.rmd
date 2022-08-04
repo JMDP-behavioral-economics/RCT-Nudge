@@ -19,7 +19,7 @@ use <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4]))
 
 testdt <- use %>%
-  dplyr::filter(exg_stop_reply == 0  & prefecture != "海外") %>%
+  dplyr::filter(exg_stop_reply == 0 & prefecture != "海外") %>%
   select(
     id,
     reply,
