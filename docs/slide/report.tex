@@ -248,8 +248,8 @@
 \end{table}
 \end{frame}
 
-\hypertarget{main-results}{%
-\section{Main Results}\label{main-results}}
+\hypertarget{effect-on-primary-outcomes}{%
+\section{Effect on Primary Outcomes}\label{effect-on-primary-outcomes}}
 
 \begin{frame}{Primary Outcomes}
 \protect\hypertarget{primary-outcomes}{}
@@ -270,16 +270,18 @@
 \item
   Donation: 採取をしたならば1を取る二値変数
 \end{itemize}
+
+平均値の差の検定（t検定）を行う。
 \end{frame}
 
 \begin{frame}{Difference-in-mean Test: Reply to CT}
 \protect\hypertarget{difference-in-mean-test-reply-to-ct}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-1-3step-1} \end{center}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-first-3step-1} \end{center}
 \end{frame}
 
 \begin{frame}{Difference-in-mean Test: Candidate to Donation}
 \protect\hypertarget{difference-in-mean-test-candidate-to-donation}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-4-6step-1} \end{center}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/ttest-last-3step-1} \end{center}
 \end{frame}
 
 \begin{frame}{Lineary Probability Model}
@@ -299,6 +301,9 @@
   \(X_i\)は性別・年齢・居住する都道府県・コーディネーション回数
 \item
   \(\lambda_m\)と\(\theta_w\)は週・月の固定効果
+\item
+  \(\beta_1 = \beta_2\)、\(\beta_1 = \beta_3\)、\(\beta_2 = \beta_3\)の帰無仮説に対する
+  F検定を実施
 \end{itemize}
 \end{frame}
 
@@ -330,8 +335,36 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \end{table}
 \end{frame}
 
-\begin{frame}{Secondary Outcomes: Reply Speed}
-\protect\hypertarget{secondary-outcomes-reply-speed}{}
+\begin{frame}{Heterogenous Effect by Gender and Age}
+\protect\hypertarget{heterogenous-effect-by-gender-and-age}{}
+\begin{itemize}
+\tightlist
+\item
+  性別と年齢（30歳以下どうか）でサンプルを分割して、
+  各サブサンプル内でメッセージの効果を推定した
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Message B}
+\protect\hypertarget{message-b}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotB-hetero-gender-age-primaries-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message C}
+\protect\hypertarget{message-c}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotC-hetero-gender-age-primaries-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message D}
+\protect\hypertarget{message-d}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotD-hetero-gender-age-primaries-1} \end{center}
+\end{frame}
+
+\hypertarget{effect-on-reply-speed}{%
+\section{Effect on Reply Speed}\label{effect-on-reply-speed}}
+
+\begin{frame}{Survival Analysis}
+\protect\hypertarget{survival-analysis}{}
 \begin{itemize}
 \tightlist
 \item
@@ -346,8 +379,50 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
   \item
     ログランク検定で生存曲線に差がないという帰無仮説を検定する（正しい方法なのかは不明・・・）
   \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Survival Analysis Result}
+\protect\hypertarget{survival-analysis-result}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-1} \end{center}
+\end{frame}
+
+\begin{frame}{Survival Analysis of Gender x Age Subsample}
+\protect\hypertarget{survival-analysis-of-gender-x-age-subsample}{}
+\begin{itemize}
+\tightlist
 \item
-  \(X\)日以内に返信したかどうかをアウトカムとしたLinear probability Modelを推定する
+  性別と年齢（30歳以下どうか）でサンプルを分割して、
+  生存分析（とログランク検定）を実施した
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Females Aged More Than 30}
+\protect\hypertarget{females-aged-more-than-30}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-female-over30-1} \end{center}
+\end{frame}
+
+\begin{frame}{Females Aged 30 and Younger}
+\protect\hypertarget{females-aged-30-and-younger}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-female-less30-1} \end{center}
+\end{frame}
+
+\begin{frame}{Males Aged More Than 30}
+\protect\hypertarget{males-aged-more-than-30}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-male-over30-1} \end{center}
+\end{frame}
+
+\begin{frame}{Males Aged 30 and Younger}
+\protect\hypertarget{males-aged-30-and-younger}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-male-under30-1} \end{center}
+\end{frame}
+
+\begin{frame}{Linear Probability Model of Reply within X days}
+\protect\hypertarget{linear-probability-model-of-reply-within-x-days}{}
+\begin{itemize}
+\tightlist
+\item
+  \(X\)日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
 
   \begin{itemize}
   \tightlist
@@ -357,39 +432,57 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Survival Analysis Result}
-\protect\hypertarget{survival-analysis-result}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-reply-days-1} \end{center}
-\end{frame}
-
-\begin{frame}{Linear Probability Model of Reply within \(X\) days}
-\protect\hypertarget{linear-probability-model-of-reply-within-x-days}{}
+\begin{frame}{Results}
+\protect\hypertarget{results}{}
 \begin{table}
 \centering
 \fontsize{9}{11}\selectfont
-\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{≦ 10days} & \multicolumn{1}{c}{≦ 20days} & \multicolumn{1}{c}{≦ 30days} & \multicolumn{1}{c}{≦ 40days} & \multicolumn{1}{c}{≦ 85days} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
-  & (1) & (2) & (3) & (4) & (5)\\
+  & within 10days & within 20days & within 30days & within 40days\\
 \midrule
-B & \num{-0.044}*** & \num{0.013} & \num{0.015}** & \num{0.012}* & \num{0.013}**\\
- & (\num{0.014}) & (\num{0.009}) & (\num{0.007}) & (\num{0.006}) & (\num{0.006})\\
-C & \num{0.002} & \num{0.007} & \num{0.004} & \num{0.001} & \num{0.002}\\
- & (\num{0.015}) & (\num{0.007}) & (\num{0.006}) & (\num{0.005}) & (\num{0.005})\\
-D & \num{-0.028}* & \num{0.018}** & \num{0.007} & \num{0.007} & \num{0.006}\\
- & (\num{0.014}) & (\num{0.007}) & (\num{0.005}) & (\num{0.005}) & (\num{0.005})\\
+B & \num{-0.044}*** & \num{0.013} & \num{0.015}** & \num{0.012}*\\
+ & (\num{0.014}) & (\num{0.009}) & (\num{0.007}) & (\num{0.006})\\
+C & \num{0.002} & \num{0.007} & \num{0.004} & \num{0.001}\\
+ & (\num{0.015}) & (\num{0.007}) & (\num{0.006}) & (\num{0.005})\\
+D & \num{-0.028}* & \num{0.018}** & \num{0.007} & \num{0.007}\\
+ & (\num{0.014}) & (\num{0.007}) & (\num{0.005}) & (\num{0.005})\\
 \midrule
-Num.Obs. & \num{11094} & \num{11094} & \num{11094} & \num{11094} & \num{11094}\\
+Num.Obs. & \num{11093} & \num{11093} & \num{11093} & \num{11093}\\
 \addlinespace[0.3em]
-\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
-\hspace{1em}B = C & \num{0.004} & \num{0.282} & \num{0.028} & \num{0.021} & \num{0.015}\\
-\hspace{1em}B = D & \num{0.259} & \num{0.474} & \num{0.135} & \num{0.351} & \num{0.233}\\
-\hspace{1em}C = D & \num{0.064} & \num{0.022} & \num{0.463} & \num{0.165} & \num{0.277}\\
+\multicolumn{5}{l}{\textit{F-tests, p-value}}\\
+\hspace{1em}B = C & \num{0.004} & \num{0.282} & \num{0.028} & \num{0.021}\\
+\hspace{1em}B = D & \num{0.259} & \num{0.474} & \num{0.135} & \num{0.351}\\
+\hspace{1em}C = D & \num{0.064} & \num{0.022} & \num{0.463} & \num{0.165}\\
 \bottomrule
-\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \end{table}
+\end{frame}
+
+\begin{frame}{Heterogenous Effect on Reply within X days by Gender x Age}
+\protect\hypertarget{heterogenous-effect-on-reply-within-x-days-by-gender-x-age}{}
+\begin{itemize}
+\tightlist
+\item
+  性別と年齢（30歳以下どうか）でサンプルを分割して、
+  \(X\)日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Message B on Reply within X days}
+\protect\hypertarget{message-b-on-reply-within-x-days}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotB-hetero-gender-age-secondary-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message C on Reply within X days}
+\protect\hypertarget{message-c-on-reply-within-x-days}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotC-hetero-gender-age-secondary-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message D on Reply within X days}
+\protect\hypertarget{message-d-on-reply-within-x-days}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotD-hetero-gender-age-secondary-1} \end{center}
 \end{frame}
 
 \end{document}

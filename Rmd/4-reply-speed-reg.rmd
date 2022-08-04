@@ -64,7 +64,7 @@ testdt <- use %>%
   ))
 ```
 
-## Linear Probability Model of Reply within $X$ days
+## Linear Probability Model of Reply within X days
 
 - $X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
   - $X = 10, 20, 30, 40, 85$
@@ -108,7 +108,7 @@ est_within_reply <- testdt %>%
 
 ## Results
 
-```{r tab-reg-secandary, eval = FALSE}
+```{r tab-reg-secandary}
 est_within_reply %>%
   pull(est, name = within) %>%
   modelsummary(
@@ -133,7 +133,7 @@ est_within_reply %>%
   )
 ```
 
-## Heterogenous Effect on Reply within $X$ days by Gender x Age
+## Heterogenous Effect on Reply within X days by Gender x Age
 
 - 性別と年齢（30歳以下どうか）でサンプルを分割して、
 $X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
@@ -172,7 +172,7 @@ est_within_reply_hetero <- testdt %>%
   )
 ```
 
-## Message B on Reply within $X$ days
+## Message B on Reply within X days
 
 ```{r plotB-hetero-gender-age-secondary, fig.width = 10, fig.height=7}
 est_within_reply_hetero %>%
@@ -196,7 +196,7 @@ est_within_reply_hetero %>%
     simplegg()
 ```
 
-## Message C on Reply within $X$ days
+## Message C on Reply within X days
 
 ```{r plotC-hetero-gender-age-secondary, fig.width = 10, fig.height=7}
 est_within_reply_hetero %>%
@@ -220,7 +220,7 @@ est_within_reply_hetero %>%
     simplegg()
 ```
 
-## Message D on Reply within $X$ days
+## Message D on Reply within X days
 
 ```{r plotD-hetero-gender-age-secondary, fig.width = 10, fig.height=7}
 est_within_reply_hetero %>%
