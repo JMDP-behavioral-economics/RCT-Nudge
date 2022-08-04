@@ -46,40 +46,25 @@ testdt <- use %>%
   )
 ```
 
-## Heterogenous Effect on Secondary Outcomes
+## Survival Analysis
 
-性別×年齢（30歳以下かどうか）でサブサンプルを構築し、以下の分析を実施
+- 返信までの日数をアウトカムとした生存分析を実施
+  - 返信がない場合は欠損値となるので、返信までの日数の最大値（85日）で補完した（打ち切り時間）
+  - 返信を事象とする
+  - ログランク検定で生存曲線に差がないという帰無仮説を検定する（正しい方法なのかは不明・・・）
 
-1. 返信までの日数の生存分析
-1. $X$日以内返信のLinear probability model
+## Survival Analysis Result
 
-```{r heterogeneity-survival}
-log_rank_test <- testdt %>%
-  dplyr::filter(outcome == "Reply") %>%
-  group_by(male, age30) %>%
-  do(log.rank = {
-    test <- survdiff(Surv(days_reply, value) ~ treat, data = .)
-    tibble(chisq = test$chisq, p = 1 - pchisq(test$chisq, 3))
-  }) %>%
-  rowwise(male, age30) %>%
-  summarize(chisq = log.rank$chisq, p = log.rank$p) %>%
-  ungroup()
+```{r plot-surv}
+log_rank <- testdt %>%
+  survdiff(Surv(days_reply, reply) ~ treat, data = .) %>%
+  with(c("chisq" = chisq, "p" = 1 - pchisq(log.rank$chisq, 3)))
 
-surv_data <- testdt %>%
-  dplyr::filter(outcome == "Reply") %>%
-  group_by(male, age30) %>%
-  do(surv = {
-    survfit(Surv(days_reply, value) ~ treat, data = .) %>%
-      tidy() %>%
-      mutate(treat = str_extract(strata, "[A-D]")) %>%
-      select(-strata)
-  })
-```
-
-## Survival Analysis (Females aged more than 30)
-
-```{r plot-reply-days-female-over30}
-with(subset(surv_data, male == 0 & age30 == 0), surv[[1]]) %>%
+testdt %>%
+  survfit(Surv(days_reply, reply) ~ treat, data = .) %>%
+  tidy() %>%
+  mutate(treat = str_extract(strata, "[A-D]")) %>%
+  select(-strata) %>%
   ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
     geom_line(aes(color = treat)) +
     annotate(
@@ -87,8 +72,7 @@ with(subset(surv_data, male == 0 & age30 == 0), surv[[1]]) %>%
       x = 50, y = 0.6,
       label = sprintf(
         "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
-        with(subset(log_rank_test, male == 0 & age30 == 0), chisq),
-        with(subset(log_rank_test, male == 0 & age30 == 0), p)
+        log_rank["chisq"], log_rank["p"]
       ),
       size = 5
     ) +
@@ -99,10 +83,59 @@ with(subset(surv_data, male == 0 & age30 == 0), surv[[1]]) %>%
     simplegg()
 ```
 
-## Survival Analysis (Females aged 30 and younger)
+## Survival Analysis of Gender x Age Subsample
 
-```{r plot-reply-days-female-under30}
-with(subset(surv_data, male == 0 & age30 == 1), surv[[1]]) %>%
+- 性別と年齢（30歳以下どうか）でサンプルを分割して、
+生存分析（とログランク検定）を実施した
+
+```{r surv-hetero, include = FALSE}
+log_rank_test <- testdt %>%
+  group_by(male, age_less30) %>%
+  do(log.rank = {
+    test <- survdiff(Surv(days_reply, reply) ~ treat, data = .)
+    tibble(chisq = test$chisq, p = 1 - pchisq(test$chisq, 3))
+  }) %>%
+  rowwise(male, age_less30) %>%
+  summarize(chisq = log.rank$chisq, p = log.rank$p) %>%
+  ungroup()
+
+surv_data <- testdt %>%
+  group_by(male, age_less30) %>%
+  do(surv = {
+    survfit(Surv(days_reply, reply) ~ treat, data = .) %>%
+      tidy() %>%
+      mutate(treat = str_extract(strata, "[A-D]")) %>%
+      select(-strata)
+  })
+```
+
+## Females Aged More Than 30
+
+```{r plot-surv-female-over30}
+with(subset(surv_data, male == 0 & age_less30 == 0), surv[[1]]) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        with(subset(log_rank_test, male == 0 & age_less30 == 0), chisq),
+        with(subset(log_rank_test, male == 0 & age_less30 == 0), p)
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## Females Aged 30 and Younger
+
+```{r plot-surv-female-less30}
+with(subset(surv_data, male == 0 & age_less30 == 1), surv[[1]]) %>%
   ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
   geom_line(aes(color = treat)) +
   annotate(
@@ -110,8 +143,8 @@ with(subset(surv_data, male == 0 & age30 == 1), surv[[1]]) %>%
     x = 50, y = 0.6,
     label = sprintf(
       "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
-      with(subset(log_rank_test, male == 0 & age30 == 1), chisq),
-      with(subset(log_rank_test, male == 0 & age30 == 1), p)
+      with(subset(log_rank_test, male == 0 & age_less30 == 1), chisq),
+      with(subset(log_rank_test, male == 0 & age_less30 == 1), p)
     ),
     size = 5
   ) +
@@ -122,10 +155,10 @@ with(subset(surv_data, male == 0 & age30 == 1), surv[[1]]) %>%
   simplegg()
 ```
 
-## Survival Analysis (Males aged more than 30)
+## Males Aged More Than 30
 
-```{r plot-reply-days-male-over30}
-with(subset(surv_data, male == 1 & age30 == 0), surv[[1]]) %>%
+```{r plot-surv-male-over30}
+with(subset(surv_data, male == 1 & age_less30 == 0), surv[[1]]) %>%
   ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
   geom_line(aes(color = treat)) +
   annotate(
@@ -133,8 +166,8 @@ with(subset(surv_data, male == 1 & age30 == 0), surv[[1]]) %>%
     x = 50, y = 0.6,
     label = sprintf(
       "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
-      with(subset(log_rank_test, male == 1 & age30 == 0), chisq),
-      with(subset(log_rank_test, male == 1 & age30 == 0), p)
+      with(subset(log_rank_test, male == 1 & age_less30 == 0), chisq),
+      with(subset(log_rank_test, male == 1 & age_less30 == 0), p)
     ),
     size = 5
   ) +
@@ -145,10 +178,10 @@ with(subset(surv_data, male == 1 & age30 == 0), surv[[1]]) %>%
   simplegg()
 ```
 
-## Survival Analysis (Males aged 30 and younger)
+## Males Aged 30 and Younger
 
 ```{r plot-reply-days-male-under30}
-with(subset(surv_data, male == 1 & age30 == 1), surv[[1]]) %>%
+with(subset(surv_data, male == 1 & age_less30 == 1), surv[[1]]) %>%
   ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
   geom_line(aes(color = treat)) +
   annotate(
@@ -156,8 +189,8 @@ with(subset(surv_data, male == 1 & age30 == 1), surv[[1]]) %>%
     x = 50, y = 0.6,
     label = sprintf(
       "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
-      with(subset(log_rank_test, male == 1 & age30 == 1), chisq),
-      with(subset(log_rank_test, male == 1 & age30 == 1), p)
+      with(subset(log_rank_test, male == 1 & age_less30 == 1), chisq),
+      with(subset(log_rank_test, male == 1 & age_less30 == 1), p)
     ),
     size = 5
   ) +
@@ -170,7 +203,7 @@ with(subset(surv_data, male == 1 & age30 == 1), surv[[1]]) %>%
 
 ## Reply within $X$ days (Females aged more than 30)
 
-```{r heterogeneity-reply-within-days}
+```{r heterogeneity-reply-within-days, eval = FALSE}
 model <- value ~ treat + coordinate + prefecture + factor(month) + factor(week)
 
 days_collapse <- testdt %>%
@@ -242,7 +275,7 @@ cd_ftest <- days_collapse %>%
   )
 ```
 
-```{r tab-reply-until-days-female-over30}
+```{r tab-reply-until-days-female-over30, eval = FALSE}
 est_days_collapse %>%
   dplyr::filter(male == 0 & age30 == 0) %>%
   pull(est) %>%
@@ -275,7 +308,7 @@ est_days_collapse %>%
 
 ## Reply within $X$ days (Females aged 30 and younger)
 
-```{r tab-reply-until-days-female-under30}
+```{r tab-reply-until-days-female-under30, eval = FALSE}
 est_days_collapse %>%
   dplyr::filter(male == 0 & age30 == 1) %>%
   pull(est) %>%
@@ -308,7 +341,7 @@ est_days_collapse %>%
 
 ## Reply within $X$ days (Males aged more than 30)
 
-```{r tab-reply-until-days-male-over30}
+```{r tab-reply-until-days-male-over30, eval = FALSE}
 est_days_collapse %>%
   dplyr::filter(male == 1 & age30 == 0) %>%
   pull(est) %>%
@@ -341,7 +374,7 @@ est_days_collapse %>%
 
 ## Reply within $X$ days (Males aged 30 and younger)
 
-```{r tab-reply-until-days-male-under30}
+```{r tab-reply-until-days-male-under30, eval = FALSE}
 est_days_collapse %>%
   dplyr::filter(male == 1 & age30 == 1) %>%
   pull(est) %>%
