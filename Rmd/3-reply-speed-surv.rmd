@@ -10,6 +10,18 @@ source(here("R", "_outcome_labels.r"))
 ```{r load-data, include = FALSE}
 root <- "D:/JMDPフィールド実験"
 
+hospital <- read_csv(
+  here(root, "hospital-list.csv"),
+  locale = locale(encoding = "cp932")
+) %>%
+  mutate(
+    qt_hospital = ntile(hospital_per_area, n = 4),
+    qt_hospital = factor(
+      qt_hospital,
+      labels = c("bottom", "2nd", "3rd", "top")
+    )
+  )
+
 rawdt <- read_csv(
   here(root, "shaped.csv"),
   locale = locale(encoding = "cp932")
@@ -19,7 +31,7 @@ use <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4]))
 
 testdt <- use %>%
-  dplyr::filter(exg_stop_reply == 0  & prefecture != "海外") %>%
+  dplyr::filter(exg_stop_reply == 0 & prefecture != "海外") %>%
   select(
     id,
     reply,
@@ -199,4 +211,125 @@ with(subset(surv_data, male == 1 & age_less30 == 1), surv[[1]]) %>%
   scale_color_hue() +
   labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
   simplegg()
+```
+
+## Survival Analysis of Geographical Subsample
+
+- 都道府県ごとに10平方キロメートル当たりの病院数を計算し、
+4分位グループを作り、それに基づいてサンプルを分割する
+- それぞれのサンプルで生存分析を実施した
+
+```{r surv-geohetero, include = FALSE}
+log_rank_test <- testdt %>%
+  dplyr::left_join(hospital, by = "prefecture") %>%
+  group_by(qt_hospital) %>%
+  do(log.rank = {
+    test <- survdiff(Surv(days_reply, reply) ~ treat, data = .)
+    tibble(chisq = test$chisq, p = 1 - pchisq(test$chisq, 3))
+  }) %>%
+  rowwise(qt_hospital) %>%
+  summarize(chisq = log.rank$chisq, p = log.rank$p) %>%
+  ungroup()
+
+surv_data <- testdt %>%
+  dplyr::left_join(hospital, by = "prefecture") %>%
+  group_by(qt_hospital) %>%
+  do(surv = {
+    survfit(Surv(days_reply, reply) ~ treat, data = .) %>%
+      tidy() %>%
+      mutate(treat = str_extract(strata, "[A-D]")) %>%
+      select(-strata)
+  })
+```
+
+## Bottom Quartile
+
+```{r plot-surv-bottom}
+with(subset(surv_data, qt_hospital == "bottom"), surv[[1]]) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        with(subset(log_rank_test, qt_hospital == "bottom"), chisq),
+        with(subset(log_rank_test, qt_hospital == "bottom"), p)
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## Second Quartile
+
+```{r plot-surv-2nd}
+with(subset(surv_data, qt_hospital == "2nd"), surv[[1]]) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        with(subset(log_rank_test, qt_hospital == "2nd"), chisq),
+        with(subset(log_rank_test, qt_hospital == "2nd"), p)
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## Third Quartile
+
+```{r plot-surv-3rd}
+with(subset(surv_data, qt_hospital == "3rd"), surv[[1]]) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        with(subset(log_rank_test, qt_hospital == "3rd"), chisq),
+        with(subset(log_rank_test, qt_hospital == "3rd"), p)
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
+```
+
+## Top Quartile
+
+```{r plot-surv-top}
+with(subset(surv_data, qt_hospital == "top"), surv[[1]]) %>%
+  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+    geom_line(aes(color = treat)) +
+    annotate(
+      geom = "text",
+      x = 50, y = 0.6,
+      label = sprintf(
+        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
+        with(subset(log_rank_test, qt_hospital == "top"), chisq),
+        with(subset(log_rank_test, qt_hospital == "top"), p)
+      ),
+      size = 5
+    ) +
+    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+    scale_x_continuous(breaks = seq(0, 90, 5)) +
+    scale_color_hue() +
+    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    simplegg()
 ```

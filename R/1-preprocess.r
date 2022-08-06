@@ -1,3 +1,4 @@
+#' //NOTE: メインデータの加工
 #+ include = FALSE
 library(here)
 source(here("R", "_library.r"))
@@ -210,4 +211,41 @@ write.csv(
 write_csv(
   shape_schedule_dt,
   file = here(root, "RCT-schedule.csv")
+)
+
+#' //NOTE: 病院施設データの加工
+#+ include = FALSE
+hospital <- read_csv(
+  here(root, "original/hospital-list.csv"),
+  locale = locale(encoding = "cp932")
+) %>%
+  mutate_at(
+    vars(PB, BM, DLI),
+    list(~ ifelse(is.na(.), 0, .))
+  ) %>%
+  group_by(prefecture) %>%
+  summarize(
+    hospital = n(),
+    PB_hospital = sum(PB),
+    BM_hospital = sum(BM),
+    DLI_hospital = sum(DLI)
+  ) %>%
+  ungroup()
+
+merge_mencho <- read_csv(
+  here(root, "original/R1-4-mencho.csv"),
+  local = locale(encoding = "cp932")
+) %>%
+  select(code = 標準地域コード, prefecture = 都道府県, area = `令和4年4月1日(k㎡)`) %>%
+  dplyr::filter(code %in% as.character(1:47 * 1000)) %>%
+  select(-code) %>%
+  right_join(hospital, by = "prefecture") %>%
+  mutate(hospital_per_area = hospital / (area / 100))
+
+write.csv(
+  merge_mencho,
+  file = here(root, "hospital-list.csv"),
+  fileEncoding = "CP932",
+  quote = FALSE,
+  row.names = FALSE
 )

@@ -8,6 +8,18 @@ source(here("R", "_outcome_labels.r"))
 ```{r load-data, include = FALSE}
 root <- "D:/JMDPフィールド実験"
 
+hospital <- read_csv(
+  here(root, "hospital-list.csv"),
+  locale = locale(encoding = "cp932")
+) %>%
+  mutate(
+    qt_hospital = ntile(hospital_per_area, n = 4),
+    qt_hospital = factor(
+      qt_hospital,
+      labels = c("bottom", "2nd", "3rd", "top")
+    )
+  )
+
 rawdt <- read_csv(
   here(root, "shaped.csv"),
   locale = locale(encoding = "cp932")
@@ -336,5 +348,97 @@ age_criterion_secondary %>%
       limits = c(-0.17, 0.17), breaks = seq(-0.2, 0.2, by = 0.05)
     ) +
     labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
+    simplegg()
+```
+
+## Geographical Heterogenous Effect
+
+- 都道府県ごとに10平方キロメートル当たりの病院数を計算し、
+4分位グループを作り、それに基づいてサンプルを分割する
+- それぞれのサンプルで効果を推定する
+
+```{r geographical-hetero-secondaries, include = FALSE}
+est <- testdt %>%
+  dplyr::left_join(hospital, by = "prefecture") %>%
+  group_by(within, qt_hospital) %>%
+  do(est = lm_robust(
+    update(model, . ~ . - prefecture),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .
+  )) %>%
+  rowwise(within, qt_hospital) %>%
+  summarize(
+    estimate.B = subset(tidy(est), term == "treatB")$estimate,
+    lwr_conf.B = subset(tidy(est), term == "treatB")$conf.low,
+    upr_conf.B = subset(tidy(est), term == "treatB")$conf.high,
+    estimate.C = subset(tidy(est), term == "treatC")$estimate,
+    lwr_conf.C = subset(tidy(est), term == "treatC")$conf.low,
+    upr_conf.C = subset(tidy(est), term == "treatC")$conf.high,
+    estimate.D = subset(tidy(est), term == "treatD")$estimate,
+    lwr_conf.D = subset(tidy(est), term == "treatD")$conf.low,
+    upr_conf.D = subset(tidy(est), term == "treatD")$conf.high,
+    nobs = nobs(est)
+  ) %>%
+  pivot_longer(
+    estimate.B:upr_conf.D,
+    names_to = c(".value", "treat"),
+    names_pattern = "(.*).(.)"
+  ) %>%
+  ungroup() %>%
+  mutate(N = paste0("N=", nobs))
+```
+
+## Message B
+
+```{r plotB-geographical-hetero-secondaries, fig.width = 10, fig.height=7}
+est %>%
+  dplyr::filter(treat == "B") %>%
+  ggplot(aes(x = qt_hospital, y = estimate)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
+    geom_text(aes(y = -0.2, label = N)) +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      limits = c(-0.2, 0.1),
+      breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
+    labs(x = "Subset", y = "Estimate (95%CI)") +
+    simplegg()
+```
+
+## Message C
+
+```{r plotC-geographical-hetero-secondaries, fig.width = 10, fig.height=7}
+est %>%
+  dplyr::filter(treat == "C") %>%
+  ggplot(aes(x = qt_hospital, y = estimate)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
+    geom_text(aes(y = -0.2, label = N)) +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      limits = c(-0.2, 0.1),
+      breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
+    labs(x = "Subset", y = "Estimate (95%CI)") +
+    simplegg()
+```
+
+## Message D
+
+```{r plotD-geographical-hetero-secondaries, fig.width = 10, fig.height=7}
+est %>%
+  dplyr::filter(treat == "D") %>%
+  ggplot(aes(x = qt_hospital, y = estimate)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
+    geom_text(aes(y = -0.2, label = N)) +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      limits = c(-0.2, 0.1),
+      breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
+    labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
