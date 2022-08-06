@@ -10,6 +10,18 @@ source(here("R", "_outcome_labels.r"))
 ```{r load-data, include = FALSE}
 root <- "D:/JMDPフィールド実験"
 
+hospital <- read_csv(
+  here(root, "hospital-list.csv"),
+  locale = locale(encoding = "cp932")
+) %>%
+  mutate(
+    qt_hospital = ntile(hospital_per_area, n = 4),
+    qt_hospital = factor(
+      qt_hospital,
+      labels = c("bottom", "2nd", "3rd", "top")
+    )
+  )
+
 rawdt <- read_csv(
   here(root, "shaped.csv"),
   locale = locale(encoding = "cp932")
@@ -400,33 +412,8 @@ est %>%
 4分位グループを作り、それに基づいてサンプルを分割する
 - それぞれのサンプルで効果を推定する
 
-```{r load-hospital-list}
-hospital <- read_csv(
-  here(root, "hospital-list.csv"),
-  locale = locale(encoding = "cp932")) %>%
-  group_by(prefecture) %>%
-  summarize(hospital = n()) %>%
-  ungroup()
-
-merge_mencho <- read_csv(
-  here(root, "original/R1-4-mencho.csv"),
-  local = locale(encoding = "cp932")) %>%
-  select(code = 標準地域コード, prefecture = 都道府県, area = `令和4年4月1日(k㎡)`) %>%
-  dplyr::filter(code %in% as.character(1:47 * 1000)) %>%
-  select(-code) %>%
-  right_join(hospital, by = "prefecture") %>%
-  mutate(
-    hospital_per_area = hospital / (area / 100),
-    qt_hospital = ntile(hospital_per_area, n = 4),
-    qt_hospital = factor(
-      qt_hospital,
-      labels = c("bottom", "2nd", "3rd", "top")
-    )
-  )
-```
-
 ```{r plot-hospital-per-area, fig.width=10, fig.height=7}
-merge_mencho %>%
+hospital %>%
   ggplot(aes(
     x = reorder(prefecture, hospital_per_area), y = hospital_per_area
   )) +
@@ -444,7 +431,7 @@ merge_mencho %>%
 
 ```{r geographical-hetero-primaries, include = FALSE}
 est <- testdt %>%
-  dplyr::left_join(merge_mencho, by = "prefecture") %>%
+  dplyr::left_join(hospital, by = "prefecture") %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(outcome, qt_hospital) %>%
   do(est = lm_robust(
