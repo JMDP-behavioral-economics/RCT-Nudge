@@ -396,28 +396,55 @@ est %>%
 
 ## Geographical Heterogenous Effect
 
+- 都道府県ごとに10平方キロメートル当たりの病院数を計算し、
+4分位グループを作り、それに基づいてサンプルを分割する
+- それぞれのサンプルで効果を推定する
+
 ```{r load-hospital-list}
 hospital <- read_csv(
   here(root, "hospital-list.csv"),
-  locale = locale(encoding = "cp932")
-)
-
-aggregate_hospital <- hospital %>%
+  locale = locale(encoding = "cp932")) %>%
   group_by(prefecture) %>%
   summarize(hospital = n()) %>%
-  ungroup() %>%
-  mutate(qt_hospital = ntile(hospital, 4))
+  ungroup()
 
-testdt_hospital <- testdt %>%
-  dplyr::left_join(aggregate_hospital, by = "prefecture")
+merge_mencho <- read_csv(
+  here(root, "original/R1-4-mencho.csv"),
+  local = locale(encoding = "cp932")) %>%
+  select(code = 標準地域コード, prefecture = 都道府県, area = `令和4年4月1日(k㎡)`) %>%
+  dplyr::filter(code %in% as.character(1:47 * 1000)) %>%
+  select(-code) %>%
+  right_join(hospital, by = "prefecture") %>%
+  mutate(
+    hospital_per_area = hospital / (area / 100),
+    qt_hospital = ntile(hospital_per_area, n = 4),
+    qt_hospital = factor(
+      qt_hospital,
+      labels = c("bottom", "2nd", "3rd", "top")
+    )
+  )
 ```
 
-```{r , include = FALSE}
-testdt_hospital %>%
-  with(table(qt_hospital, treat, outcome))
+```{r plot-hospital-per-area, fig.width=10, fig.height=7}
+merge_mencho %>%
+  ggplot(aes(
+    x = reorder(prefecture, hospital_per_area), y = hospital_per_area
+  )) +
+  geom_hline(aes(yintercept = 0)) +
+  geom_bar(aes(fill = qt_hospital), stat = "identity", color = "black") +
+  scale_fill_grey(start = 0.7, end = 0.1) +
+  labs(
+    x = "Prefectures",
+    y = "Hospitals per 10 square kilometers",
+    fill = "Quartiles"
+  ) +
+  simplegg() +
+  theme(axis.text.x = element_text(size = 6, angle = 45, hjust = 1))
+```
 
-
-est <- testdt_hospital %>%
+```{r geographical-hetero-primaries, include = FALSE}
+est <- testdt %>%
+  dplyr::left_join(merge_mencho, by = "prefecture") %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(outcome, qt_hospital) %>%
   do(est = lm_robust(
@@ -448,7 +475,9 @@ est <- testdt_hospital %>%
   mutate(N = paste0("N=", nobs))
 ```
 
-```{r , fig.width = 10, fig.height=7}
+## Message B
+
+```{r plotB-geographical-hetero-primaries, fig.width = 10, fig.height=7}
 est %>%
   dplyr::filter(treat == "B") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
@@ -457,20 +486,13 @@ est %>%
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
     scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
-    # scale_x_discrete(
-    #   breaks = c("00", "01", "10", "11"),
-    #   labels = c(
-    #     "Female\u00d7\n30<Age",
-    #     "Female\u00d7\nAge\u226430",
-    #     "Male\u00d7\n30<Age",
-    #     "Male\u00d7\nAge\u226430"
-    #   )
-    # ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
 
-```{r , fig.width = 10, fig.height=7}
+## Message C
+
+```{r plotC-geographical-hetero-primaries, fig.width = 10, fig.height=7}
 est %>%
   dplyr::filter(treat == "C") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
@@ -479,20 +501,13 @@ est %>%
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
     scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
-    # scale_x_discrete(
-    #   breaks = c("00", "01", "10", "11"),
-    #   labels = c(
-    #     "Female\u00d7\n30<Age",
-    #     "Female\u00d7\nAge\u226430",
-    #     "Male\u00d7\n30<Age",
-    #     "Male\u00d7\nAge\u226430"
-    #   )
-    # ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
 
-```{r , fig.width = 10, fig.height=7}
+## Message D
+
+```{r plotD-geographical-hetero-primaries, fig.width = 10, fig.height=7}
 est %>%
   dplyr::filter(treat == "D") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
@@ -501,15 +516,6 @@ est %>%
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
     scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
-    # scale_x_discrete(
-    #   breaks = c("00", "01", "10", "11"),
-    #   labels = c(
-    #     "Female\u00d7\n30<Age",
-    #     "Female\u00d7\nAge\u226430",
-    #     "Male\u00d7\n30<Age",
-    #     "Male\u00d7\nAge\u226430"
-    #   )
-    # ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
