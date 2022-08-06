@@ -41,25 +41,25 @@ testdt <- use %>%
       max(use$days_reply, na.rm = TRUE),
       days_reply
     ),
+    reply5 = if_else(days_reply <= 5, 1, 0),
     reply10 = if_else(days_reply <= 10, 1, 0),
     reply20 = if_else(days_reply <= 20, 1, 0),
-    reply30 = if_else(days_reply <= 30, 1, 0),
-    reply40 = if_else(days_reply <= 40, 1, 0)
+    reply30 = if_else(days_reply <= 30, 1, 0)
   ) %>%
   select(-reply, -days_reply) %>%
   pivot_longer(
-    reply10:reply40,
+    reply5:reply30,
     names_to = "within",
     names_prefix = "reply"
   ) %>%
   mutate(within = factor(
     within,
-    levels = c("10", "20", "30", "40"),
+    levels = c("5", "10", "20", "30"),
     labels = c(
+      "within 5days",
       "within 10days",
       "within 20days",
-      "within 30days",
-      "within 40days"
+      "within 30days"
     )
   ))
 ```
@@ -67,7 +67,7 @@ testdt <- use %>%
 ## Linear Probability Model of Reply within X days
 
 - $X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
-  - $X = 10, 20, 30, 40, 85$
+  - $X = 5, 10, 20, 30$
 
 ```{r reg-secondary, include = FALSE}
 model <- value ~ treat + age_demean + male + coordinate1 + prefecture +
@@ -112,7 +112,6 @@ est_within_reply <- testdt %>%
 est_within_reply %>%
   pull(est, name = within) %>%
   modelsummary(
-    output = "latex",
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
       "treatB" = "B",
@@ -182,7 +181,9 @@ est_within_reply_hetero %>%
     geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ within, ncol = 2) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
@@ -206,7 +207,9 @@ est_within_reply_hetero %>%
     geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ within, ncol = 2) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
@@ -230,7 +233,9 @@ est_within_reply_hetero %>%
     geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ within, ncol = 2) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
