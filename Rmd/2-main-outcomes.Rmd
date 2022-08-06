@@ -332,7 +332,9 @@ est %>%
     geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_y_continuous(
+      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
@@ -356,7 +358,9 @@ est %>%
     geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_y_continuous(
+      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
@@ -380,7 +384,9 @@ est %>%
     geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
     geom_text(aes(y = -0.15, label = N)) +
     facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(breaks = seq(-0.2, 0.2, by = 0.05)) +
+    scale_y_continuous(
+      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
     scale_x_discrete(
       breaks = c("00", "01", "10", "11"),
       labels = c(
@@ -395,6 +401,9 @@ est %>%
 ```
 
 ## Change Threshold of Younger Group
+
+- 若年層の区切りを30～40歳の範囲で変えて、
+若年層の男性と女性におけるメッセージの効果を推定した
 
 ```{r change-age-threshold}
 age_criterion <- 30:40 %>%
@@ -437,7 +446,7 @@ age_criterion %>%
     scale_y_continuous(
       limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
     ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)") +
+    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
     simplegg()
 ```
 
@@ -457,7 +466,7 @@ age_criterion %>%
     scale_y_continuous(
       limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
     ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)") +
+    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
     simplegg()
 ```
 
@@ -477,6 +486,6 @@ age_criterion %>%
     scale_y_continuous(
       limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
     ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)") +
+    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
     simplegg()
 ```
