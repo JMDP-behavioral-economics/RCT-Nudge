@@ -412,6 +412,8 @@ est %>%
 4分位グループを作り、それに基づいてサンプルを分割する
 - それぞれのサンプルで効果を推定する
 
+## Hospitals per 10 square kilometers
+
 ```{r plot-hospital-per-area, fig.width=10, fig.height=7}
 hospital %>%
   ggplot(aes(
@@ -425,7 +427,7 @@ hospital %>%
     y = "Hospitals per 10 square kilometers",
     fill = "Quartiles"
   ) +
-  simplegg() +
+  simplegg(font_family = "YuGothic") +
   theme(axis.text.x = element_text(size = 6, angle = 45, hjust = 1))
 ```
 

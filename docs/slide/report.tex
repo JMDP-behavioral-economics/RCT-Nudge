@@ -237,10 +237,10 @@
 \hspace{1em}移植患者情報 &  &  & X & X & \\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textbf{B. サンプルサイズ}}\\
-\hspace{1em}サンプルサイズ & 2559 & 3075 & 2754 & 2766 & \\
+\hspace{1em}サンプルサイズ & 2558 & 3075 & 2754 & 2766 & \\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textbf{C. 共変量}}\\
-\hspace{1em}年齢 & \num{38.38} & \num{38.13} & \num{37.43} & \num{37.99} & \num{0.06}\\
+\hspace{1em}年齢 & \num{38.37} & \num{38.13} & \num{37.43} & \num{37.99} & \num{0.06}\\
 \hspace{1em}過去のコーディネーション回数 & \num{1.61} & \num{1.59} & \num{1.63} & \num{1.56} & \num{0.36}\\
 \hspace{1em}1 = 男性 & \num{0.62} & \num{0.63} & \num{0.63} & \num{0.61} & \num{0.40}\\
 \bottomrule
@@ -323,11 +323,11 @@ C & \num{0.002} & \num{-0.005} & \num{0.015} & \num{-0.010} & \num{-0.009} & \nu
 D & \num{0.006} & \num{0.006} & \num{0.032}*** & \num{0.008} & \num{0.011} & \num{0.002}\\
  & (\num{0.005}) & (\num{0.010}) & (\num{0.010}) & (\num{0.008}) & (\num{0.007}) & (\num{0.008})\\
 \midrule
-Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \num{5647}\\
+Num.Obs. & \num{11093} & \num{11051} & \num{10560} & \num{5772} & \num{5750} & \num{5646}\\
 \addlinespace[0.3em]
 \multicolumn{7}{l}{\textit{F-tests, p-value}}\\
 \hspace{1em}B = C & \num{0.015} & \num{0.007} & \num{0.084} & \num{0.293} & \num{0.230} & \num{0.152}\\
-\hspace{1em}B = D & \num{0.233} & \num{0.114} & \num{0.857} & \num{0.495} & \num{0.325} & \num{0.917}\\
+\hspace{1em}B = D & \num{0.233} & \num{0.114} & \num{0.856} & \num{0.495} & \num{0.325} & \num{0.917}\\
 \hspace{1em}C = D & \num{0.277} & \num{0.164} & \num{0.148} & \num{0.068} & \num{0.018} & \num{0.220}\\
 \bottomrule
 \multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
@@ -358,6 +358,38 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \begin{frame}{Message D}
 \protect\hypertarget{message-d}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotD-hetero-gender-age-primaries-1} \end{center}
+\end{frame}
+
+\begin{frame}{Geographical Heterogenous Effect}
+\protect\hypertarget{geographical-heterogenous-effect}{}
+\begin{itemize}
+\tightlist
+\item
+  都道府県ごとに10平方キロメートル当たりの病院数を計算し、
+  4分位グループを作り、それに基づいてサンプルを分割する
+\item
+  それぞれのサンプルで効果を推定する
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Hospitals per 10 square kilometers}
+\protect\hypertarget{hospitals-per-10-square-kilometers}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-hospital-per-area-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message B}
+\protect\hypertarget{message-b-1}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotB-geographical-hetero-primaries-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message C}
+\protect\hypertarget{message-c-1}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotC-geographical-hetero-primaries-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message D}
+\protect\hypertarget{message-d-1}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotD-geographical-hetero-primaries-1} \end{center}
 \end{frame}
 
 \hypertarget{effect-on-reply-speed}{%
@@ -417,6 +449,38 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-male-under30-1} \end{center}
 \end{frame}
 
+\begin{frame}{Survival Analysis of Geographical Subsample}
+\protect\hypertarget{survival-analysis-of-geographical-subsample}{}
+\begin{itemize}
+\tightlist
+\item
+  都道府県ごとに10平方キロメートル当たりの病院数を計算し、
+  4分位グループを作り、それに基づいてサンプルを分割する
+\item
+  それぞれのサンプルで生存分析を実施した
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Bottom Quartile}
+\protect\hypertarget{bottom-quartile}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-bottom-1} \end{center}
+\end{frame}
+
+\begin{frame}{Second Quartile}
+\protect\hypertarget{second-quartile}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-2nd-1} \end{center}
+\end{frame}
+
+\begin{frame}{Third Quartile}
+\protect\hypertarget{third-quartile}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-3rd-1} \end{center}
+\end{frame}
+
+\begin{frame}{Top Quartile}
+\protect\hypertarget{top-quartile}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plot-surv-top-1} \end{center}
+\end{frame}
+
 \begin{frame}{Linear Probability Model of Reply within X days}
 \protect\hypertarget{linear-probability-model-of-reply-within-x-days}{}
 \begin{itemize}
@@ -439,21 +503,21 @@ Num.Obs. & \num{11094} & \num{11052} & \num{10561} & \num{5773} & \num{5751} & \
 \fontsize{9}{11}\selectfont
 \begin{tabular}[t]{l>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}}
 \toprule
-  & within 10days & within 20days & within 30days & within 40days\\
+  & within 5days & within 10days & within 20days & within 30days\\
 \midrule
-B & \num{-0.044}*** & \num{0.013} & \num{0.015}** & \num{0.012}*\\
- & (\num{0.014}) & (\num{0.009}) & (\num{0.007}) & (\num{0.006})\\
-C & \num{0.002} & \num{0.007} & \num{0.004} & \num{0.001}\\
- & (\num{0.015}) & (\num{0.007}) & (\num{0.006}) & (\num{0.005})\\
-D & \num{-0.028}* & \num{0.018}** & \num{0.007} & \num{0.007}\\
- & (\num{0.014}) & (\num{0.007}) & (\num{0.005}) & (\num{0.005})\\
+B & \num{0.006} & \num{-0.044}*** & \num{0.013} & \num{0.015}**\\
+ & (\num{0.008}) & (\num{0.014}) & (\num{0.009}) & (\num{0.007})\\
+C & \num{0.002} & \num{0.002} & \num{0.007} & \num{0.004}\\
+ & (\num{0.007}) & (\num{0.015}) & (\num{0.007}) & (\num{0.006})\\
+D & \num{0.013} & \num{-0.028}* & \num{0.018}** & \num{0.007}\\
+ & (\num{0.009}) & (\num{0.014}) & (\num{0.007}) & (\num{0.005})\\
 \midrule
 Num.Obs. & \num{11093} & \num{11093} & \num{11093} & \num{11093}\\
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textit{F-tests, p-value}}\\
-\hspace{1em}B = C & \num{0.004} & \num{0.282} & \num{0.028} & \num{0.021}\\
-\hspace{1em}B = D & \num{0.259} & \num{0.474} & \num{0.135} & \num{0.351}\\
-\hspace{1em}C = D & \num{0.064} & \num{0.022} & \num{0.463} & \num{0.165}\\
+\hspace{1em}B = C & \num{0.590} & \num{0.004} & \num{0.282} & \num{0.028}\\
+\hspace{1em}B = D & \num{0.447} & \num{0.259} & \num{0.474} & \num{0.135}\\
+\hspace{1em}C = D & \num{0.148} & \num{0.064} & \num{0.022} & \num{0.463}\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
@@ -483,6 +547,33 @@ Num.Obs. & \num{11093} & \num{11093} & \num{11093} & \num{11093}\\
 \begin{frame}{Message D on Reply within X days}
 \protect\hypertarget{message-d-on-reply-within-x-days}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotD-hetero-gender-age-secondary-1} \end{center}
+\end{frame}
+
+\begin{frame}{Geographical Heterogenous Effect}
+\protect\hypertarget{geographical-heterogenous-effect-1}{}
+\begin{itemize}
+\tightlist
+\item
+  都道府県ごとに10平方キロメートル当たりの病院数を計算し、
+  4分位グループを作り、それに基づいてサンプルを分割する
+\item
+  それぞれのサンプルで効果を推定する
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Message B}
+\protect\hypertarget{message-b-2}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotB-geographical-hetero-secondaries-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message C}
+\protect\hypertarget{message-c-2}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotC-geographical-hetero-secondaries-1} \end{center}
+\end{frame}
+
+\begin{frame}{Message D}
+\protect\hypertarget{message-d-2}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{report_files/figure-beamer/plotD-geographical-hetero-secondaries-1} \end{center}
 \end{frame}
 
 \end{document}

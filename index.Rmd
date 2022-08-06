@@ -25,4 +25,8 @@ knitr::opts_chunk$set(
   fig.align = "center",
   out.width = "75%"
 )
+
+library(systemfonts)
+data.frame(unique(system_fonts()[, "family"]))
+grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
 ```
