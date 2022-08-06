@@ -393,3 +393,90 @@ est %>%
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
+
+## Change Threshold of Younger Group
+
+```{r change-age-threshold}
+age_criterion <- 30:40 %>%
+  purrr::map(function(x) {
+    testdt %>%
+      mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
+      dplyr::filter(age <= x) %>%
+      group_by(outcome, male) %>%
+      do(
+        lm_robust(
+          update(model, . ~ . - male - age_demean),
+          cluster = RCTweek,
+          se_type = "stata",
+          data = .
+        ) %>%
+          tidy() %>%
+          dplyr::filter(str_detect(term, "treat")) %>%
+          select(-outcome)
+      ) %>%
+      ungroup() %>%
+      mutate(age = x)
+  }) %>%
+  reduce(bind_rows) %>%
+  mutate(male = factor(male, levels = 0:1, labels = c("Females", "Males")))
+```
+
+## Message B Effect among Younger Group
+
+```{r plotB-change-age-threshold, fig.width=15, fig.height=10}
+age_criterion %>%
+  dplyr::filter(term == "treatB") %>%
+  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_point(size = 3) +
+    geom_line(size = 1) +
+    geom_line(aes(y = conf.low), linetype = 2) +
+    geom_line(aes(y = conf.high), linetype = 2) +
+    facet_wrap(~ outcome, ncol = 3) +
+    scale_x_continuous(breaks = 30:40) +
+    scale_y_continuous(
+      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
+    labs(x = "Age Thresholds", y = "Estimates (95%CI)") +
+    simplegg()
+```
+
+## Message C Effect among Younger Group
+
+```{r plotC-change-age-threshold, fig.width=15, fig.height=10}
+age_criterion %>%
+  dplyr::filter(term == "treatC") %>%
+  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_point(size = 3) +
+    geom_line(size = 1) +
+    geom_line(aes(y = conf.low), linetype = 2) +
+    geom_line(aes(y = conf.high), linetype = 2) +
+    facet_wrap(~ outcome, ncol = 3) +
+    scale_x_continuous(breaks = 30:40) +
+    scale_y_continuous(
+      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
+    labs(x = "Age Thresholds", y = "Estimates (95%CI)") +
+    simplegg()
+```
+
+## Message D Effect among Younger Group
+
+```{r plotD-change-age-threshold, fig.width=15, fig.height=10}
+age_criterion %>%
+  dplyr::filter(term == "treatD") %>%
+  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_point(size = 3) +
+    geom_line(size = 1) +
+    geom_line(aes(y = conf.low), linetype = 2) +
+    geom_line(aes(y = conf.high), linetype = 2) +
+    facet_wrap(~ outcome, ncol = 3) +
+    scale_x_continuous(breaks = 30:40) +
+    scale_y_continuous(
+      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    ) +
+    labs(x = "Age Thresholds", y = "Estimates (95%CI)") +
+    simplegg()
+```
