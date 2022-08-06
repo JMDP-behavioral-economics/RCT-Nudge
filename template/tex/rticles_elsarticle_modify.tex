@@ -1,0 +1,174 @@
+
+$if(modify_cls)$
+\documentclass[
+  $if(review)$ review $endif$ 
+  $if(classoption)$, $classoption$ $endif$]{"$resoruce-path$/$modify_cls$"}
+$else$
+\documentclass[$if(review)$ review $endif$ $if(classoption)$, $classoption$ $endif$]{elsarticle}
+$endif$
+%default = preprint (single sapce), review = doublespace
+%detail class option: https://www.elsevier.com/__data/assets/pdf_file/0008/56843/elsdoc-1.pdf
+
+% eliminate "Preprinted to Elsevier"
+\makeatletter
+\def\ps@pprintTitle{%
+ \let\@oddhead\@empty
+ \let\@evenhead\@empty
+ \def\@oddfoot{\centerline{\thepage}}%
+ \let\@evenfoot\@oddfoot}
+\makeatother
+
+%%% Begin My package additions %%%%%%%%%%%%%%%%%%%
+\usepackage[hyphens]{url}
+
+
+
+\usepackage{lineno} % add
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\usepackage{graphicx}
+
+\usepackage{zxjatype}
+\usepackage{xeCJK}
+\setCJKmainfont{ipaexm.ttf}
+\setCJKsansfont{ipaexg.ttf}
+\setCJKmonofont{ipaexg.ttf}
+
+\usepackage{color}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+
+%\usepackage{xpatch}
+%\xpatchcmd{\MaketitleBox}{\hrule}{}{}{}% remove first horizontal rule (above abstract)
+%\xpatchcmd{\MaketitleBox}{\hrule}{}{}{}% remoce second horizonral rule (below keywords)
+%%%%%%%%%%%%%%%% end my additions to header
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \usepackage{fontspec}
+  \ifxetex
+    \usepackage{xltxtra,xunicode}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\bibliographystyle{elsarticle-harvard}
+\usepackage{tabularx}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={Short Paper},
+            colorlinks=false,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+
+\setcounter{secnumdepth}{5}
+
+$if(csl)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[3] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc} % for \widthof, \maxof
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\maxof{\widthof{#1}}{\csllabelwidth}}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth}{#1}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+$endif$
+
+% Pandoc toggle for numbering sections (defaults to be off)
+
+
+% Pandoc header
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+\begin{document}
+  \begin{frontmatter}
+
+    \title{$title$$if(thanks)$\tnoteref{$for(thanks)$$thanks.code$$sep$,$endfor$}$endif$}
+    $if(thanks)$
+    $for(thanks)$
+    \tnotetext[$thanks.code$]{$thanks.content$}
+    $endfor$
+    $endif$
+    $for(author)$
+    \author[$author.affiliation$]{
+      $author.name$ 
+      $if(author.footnote)$ \corref{$author.footnote$} $endif$}
+    $if(author.e-mail)$ \ead{$author.e-mail$} $endif$  %to avoid auto-link, use \@ instead of @
+    $endfor$
+    $for(address)$
+    \address[$address.code$]{$address.address$}
+    $endfor$
+    $for(footnote)$
+    \cortext[$footnote.code$]{$footnote.text$}
+    $endfor$
+  
+    $if(abstract)$
+    \begin{abstract}
+      $abstract$
+    \end{abstract}
+    $endif$
+  
+    $if(keyword)$
+    \begin{keyword}
+      $keyword.text$
+      $if(keyword.JEL)$ \JEL{$keyword.JEL$} $endif$
+    \end{keyword}
+    $endif$
+
+  \end{frontmatter}
+
+  $body$
+
+\end{document}
+
+

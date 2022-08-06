@@ -1,0 +1,7 @@
+output_dir: "docs/slide"
+rmd_files:
+  - index.Rmd
+  - Rmd/1-summary.rmd
+  - Rmd/2-main-outcomes.rmd
+  - Rmd/3-reply-speed-surv.rmd
+  - Rmd/4-reply-speed-reg.rmd

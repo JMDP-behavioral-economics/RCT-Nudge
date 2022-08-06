@@ -1,0 +1,32 @@
+---
+title: 骨髄バンクナッジ介入実験
+subtitle: 解析結果途中報告
+author:
+  - name: 加藤 大貴
+    inst: 1
+aspectratio: 169
+fontsize: 12
+---
+
+```{r include = FALSE, eval = FALSE, echo = FALSE}
+options(knitr.duplicate.label = "allow")
+bookdown::render_book(output_file = "report")
+```
+
+```{r include = FALSE, echo = FALSE}
+options(tinytex.verbose = FALSE)
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE,
+  cache = FALSE,
+  include = TRUE,
+  fig.pos = "t",
+  fig.align = "center",
+  out.width = "75%"
+)
+
+library(systemfonts)
+data.frame(unique(system_fonts()[, "family"]))
+grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
+```

@@ -6,6 +6,7 @@ library(modelsummary)
 library(kableExtra)
 library(RCTtoolbox)
 library(ggsignif)
+library(survival)
 
 lapply(
   Sys.glob(here("R/func", "*.r")),
