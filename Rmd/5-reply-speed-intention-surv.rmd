@@ -35,6 +35,7 @@ testdt <- use %>%
   select(
     id,
     reply,
+    intention,
     days_reply,
     treat,
     RCTweek,
@@ -58,40 +59,26 @@ testdt <- use %>%
   )
 ```
 
-## Survival Analysis
+## Intention Rates Given Reply within X days
 
-- 返信までの日数をアウトカムとした生存分析を実施
-  - 返信がない場合は欠損値となるので、返信までの日数の最大値（85日）で補完した（打ち切り時間）
-  - 返信を事象とする
-  - ログランク検定で生存曲線に差がないという帰無仮説を検定する（正しい方法なのかは不明・・・）
+- $X$日以内に返信した人に限定して、意向比率を計算してプロットした
 
-## Survival Analysis Result
+## Full Sample
 
-```{r plot-surv}
-log_rank <- testdt %>%
-  survdiff(Surv(days_reply, reply) ~ treat, data = .) %>%
-  with(c("chisq" = chisq, "p" = 1 - pchisq(chisq, 3)))
-
-testdt %>%
-  survfit(Surv(days_reply, reply) ~ treat, data = .) %>%
-  tidy() %>%
-  mutate(treat = str_extract(strata, "[A-D]")) %>%
-  select(-strata) %>%
-  ggplot(aes(x = time, y = 1 - estimate, group = treat)) +
+```{r plot-cond-int}
+tibble(time = seq(max(testdt$days_reply, na.rm = TRUE))) %>%
+  rowwise(time) %>%
+  summarize(
+    subset(testdt, reply == 1 & days_reply <= time) %>%
+      group_by(treat) %>%
+      summarize(mean = mean(intention))
+  ) %>%
+  ggplot(aes(x = time, y = mean, group = treat)) +
     geom_line(aes(color = treat)) +
-    annotate(
-      geom = "text",
-      x = 50, y = 0.6,
-      label = sprintf(
-        "Log-rank test\nchi-square = %1.3f; p-value = %1.3f",
-        log_rank["chisq"], log_rank["p"]
-      ),
-      size = 5
-    ) +
     scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     scale_x_continuous(breaks = seq(0, 90, 5)) +
     scale_color_hue() +
-    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
     simplegg()
 ```
 
@@ -104,7 +91,7 @@ testdt %>%
 log_rank_test <- testdt %>%
   group_by(male, age_less30) %>%
   do(log.rank = {
-    test <- survdiff(Surv(days_reply, reply) ~ treat, data = .)
+    test <- survdiff(Surv(days_reply, intention) ~ treat, data = .)
     tibble(chisq = test$chisq, p = 1 - pchisq(test$chisq, 3))
   }) %>%
   rowwise(male, age_less30) %>%
@@ -114,7 +101,7 @@ log_rank_test <- testdt %>%
 surv_data <- testdt %>%
   group_by(male, age_less30) %>%
   do(surv = {
-    survfit(Surv(days_reply, reply) ~ treat, data = .) %>%
+    survfit(Surv(days_reply, intention) ~ treat, data = .) %>%
       tidy() %>%
       mutate(treat = str_extract(strata, "[A-D]")) %>%
       select(-strata)
@@ -140,7 +127,7 @@ with(subset(surv_data, male == 0 & age_less30 == 0), surv[[1]]) %>%
     scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     scale_x_continuous(breaks = seq(0, 90, 5)) +
     scale_color_hue() +
-    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
     simplegg()
 ```
 
@@ -163,7 +150,7 @@ with(subset(surv_data, male == 0 & age_less30 == 1), surv[[1]]) %>%
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
   scale_x_continuous(breaks = seq(0, 90, 5)) +
   scale_color_hue() +
-  labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+  labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
   simplegg()
 ```
 
@@ -186,7 +173,7 @@ with(subset(surv_data, male == 1 & age_less30 == 0), surv[[1]]) %>%
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
   scale_x_continuous(breaks = seq(0, 90, 5)) +
   scale_color_hue() +
-  labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+  labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
   simplegg()
 ```
 
@@ -209,7 +196,7 @@ with(subset(surv_data, male == 1 & age_less30 == 1), surv[[1]]) %>%
   scale_y_continuous(breaks = seq(0, 1, 0.1)) +
   scale_x_continuous(breaks = seq(0, 90, 5)) +
   scale_color_hue() +
-  labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+  labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
   simplegg()
 ```
 
@@ -224,7 +211,7 @@ log_rank_test <- testdt %>%
   dplyr::left_join(hospital, by = "prefecture") %>%
   group_by(qt_hospital) %>%
   do(log.rank = {
-    test <- survdiff(Surv(days_reply, reply) ~ treat, data = .)
+    test <- survdiff(Surv(days_reply, intention) ~ treat, data = .)
     tibble(chisq = test$chisq, p = 1 - pchisq(test$chisq, 3))
   }) %>%
   rowwise(qt_hospital) %>%
@@ -261,7 +248,7 @@ with(subset(surv_data, qt_hospital == "bottom"), surv[[1]]) %>%
     scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     scale_x_continuous(breaks = seq(0, 90, 5)) +
     scale_color_hue() +
-    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
     simplegg()
 ```
 
@@ -284,7 +271,7 @@ with(subset(surv_data, qt_hospital == "2nd"), surv[[1]]) %>%
     scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     scale_x_continuous(breaks = seq(0, 90, 5)) +
     scale_color_hue() +
-    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
     simplegg()
 ```
 
@@ -307,7 +294,7 @@ with(subset(surv_data, qt_hospital == "3rd"), surv[[1]]) %>%
     scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     scale_x_continuous(breaks = seq(0, 90, 5)) +
     scale_color_hue() +
-    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
     simplegg()
 ```
 
@@ -330,6 +317,6 @@ with(subset(surv_data, qt_hospital == "top"), surv[[1]]) %>%
     scale_y_continuous(breaks = seq(0, 1, 0.1)) +
     scale_x_continuous(breaks = seq(0, 90, 5)) +
     scale_color_hue() +
-    labs(x = "Days", y = "Reply rates", color = "Experimental Arms") +
+    labs(x = "Days", y = "Intention rates", color = "Experimental Arms") +
     simplegg()
 ```
