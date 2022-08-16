@@ -1,9 +1,0 @@
-bookdown::beamer_presentation2:
-  latex_engine: lualatex
-  number_sections: false
-  keep_tex: true
-  fig_caption: false
-  toc: false
-  dev: cairo_pdf
-  template: "template/tex/DarkBlue-Simple-LuaLatex-Beamer.tex"
-delete_merged_file: true

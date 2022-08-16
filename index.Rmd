@@ -4,13 +4,28 @@ subtitle: 解析結果途中報告
 author:
   - name: 加藤 大貴
     inst: 1
+output:
+  bookdown::beamer_presentation2:
+    latex_engine: lualatex
+    number_sections: false
+    keep_tex: true
+    fig_caption: false
+    toc: false
+    dev: cairo_pdf
+    template: "template/tex/DarkBlue-Simple-LuaLatex-Beamer.tex"
 aspectratio: 169
 fontsize: 12
 ---
 
 ```{r include = FALSE, eval = FALSE, echo = FALSE}
 options(knitr.duplicate.label = "allow")
-bookdown::render_book(output_file = "report")
+library(here)
+rmarkdown::render(
+  input = here("index.rmd"),
+  output_format = "all",
+  output_file = "report.pdf",
+  output_dir = "docs/slide"
+)
 ```
 
 ```{r include = FALSE, echo = FALSE}
@@ -29,4 +44,20 @@ knitr::opts_chunk$set(
 library(systemfonts)
 data.frame(unique(system_fonts()[, "family"]))
 grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
+```
+
+```{r child="Rmd/1-summary.rmd"}
+
+```
+
+```{r child="Rmd/2-main-outcomes.rmd"}
+
+```
+
+```{r child="Rmd/3-reply-speed-surv.rmd"}
+
+```
+
+```{r child="Rmd/4-reply-speed-reg.rmd"}
+
 ```
