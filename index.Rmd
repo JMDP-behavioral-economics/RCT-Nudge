@@ -50,7 +50,7 @@ grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
 
 ```
 
-```{r child="Rmd/2-diff-in-mean.rmd"}
+```{r child="Rmd/2-diff-in-mean.rmd", eval=FALSE}
 
 ```
 

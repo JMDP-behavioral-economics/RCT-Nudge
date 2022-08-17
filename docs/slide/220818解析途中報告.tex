@@ -139,6 +139,9 @@
 \frame{\titlepage}
 
 
+\hypertarget{field-experiment}{%
+\section{Field Experiment}\label{field-experiment}}
+
 \begin{frame}{フィールド実験の介入}
 \protect\hypertarget{ux30d5ux30a3ux30fcux30ebux30c9ux5b9fux9a13ux306eux4ecbux5165}{}
 \begin{itemize}
@@ -245,40 +248,45 @@
 \end{table}
 \end{frame}
 
-\hypertarget{effect-on-primary-outcomes}{%
-\section{Effect on Primary Outcomes}\label{effect-on-primary-outcomes}}
-
-\begin{frame}{Primary Outcomes}
-\protect\hypertarget{primary-outcomes}{}
-アウトカム変数は提供に至るまでのプロセスであり、具体的に以下の6つの工程がある。
-
+\begin{frame}{Outcomes}
+\protect\hypertarget{outcomes}{}
 \begin{itemize}
 \tightlist
 \item
-  Reply: 適合通知に返信したならば1を取る二値変数
+  提供に至るまでの各工程が記録されている
 \item
-  Intention: 提供を希望するという意向を示して返信したならば1を取る二値変数
+  最も個人の意向が現れる以下の工程をPrimary outcomesとする
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Reply}: 適合通知に返信したならば1を取る二値変数
+  \item
+    \textbf{Intention}: 提供を希望するという意向を示して返信したならば1を取る二値変数
+  \end{itemize}
 \item
-  CT: 確認検査を実施したならば1を取る二値変数
-\item
-  Candidate: 第一候補者に選定されたならば1を取る二値変数
-\item
-  Consent: 最終同意をしたならば1を取る二値変数
-\item
-  Donation: 採取をしたならば1を取る二値変数
+  返信意向の以下の4工程をSecondary outcomesとする
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{CT}: 確認検査を実施したならば1を取る二値変数
+  \item
+    \textbf{Candidate}: 第一候補者に選定されたならば1を取る二値変数
+  \item
+    \textbf{Consent}: 最終同意をしたならば1を取る二値変数
+  \item
+    \textbf{Donation}: 採取をしたならば1を取る二値変数
+  \end{itemize}
 \end{itemize}
-
-平均値の差の検定（t検定）を行う。
 \end{frame}
 
-\begin{frame}{Difference-in-mean Test: Reply to CT}
-\protect\hypertarget{difference-in-mean-test-reply-to-ct}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/katoo/Desktop/JMDP/RCT-Nudge/docs/slide/220818解析途中報告_files/figure-beamer/ttest-first-3step-1} \end{center}
-\end{frame}
+\hypertarget{effect-on-reply-and-intention}{%
+\section{Effect on Reply and Intention}\label{effect-on-reply-and-intention}}
 
-\begin{frame}{Difference-in-mean Test: Candidate to Donation}
-\protect\hypertarget{difference-in-mean-test-candidate-to-donation}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/katoo/Desktop/JMDP/RCT-Nudge/docs/slide/220818解析途中報告_files/figure-beamer/ttest-last-3step-1} \end{center}
+\begin{frame}{Difference-in-mean Tests}
+\protect\hypertarget{difference-in-mean-tests}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/katoo/Desktop/JMDP/RCT-Nudge/docs/slide/220818解析途中報告_files/figure-beamer/ttest-reply-1} \end{center}
 \end{frame}
 
 \begin{frame}{Linear Probability Model}
@@ -301,29 +309,6 @@
 \item
   \(\beta_1 = \beta_2\)、\(\beta_1 = \beta_3\)、\(\beta_2 = \beta_3\)の帰無仮説に対する
   F検定を実施
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Effect on Reply and Intention}
-\protect\hypertarget{effect-on-reply-and-intention}{}
-返信に関するアウトカム変数\(Y_{imw}\)
-
-\begin{itemize}
-\tightlist
-\item
-  返信したかどうか
-\item
-  \(X \in \{5, 10, 20, 30\}\)日以内に返信したかどうか
-\end{itemize}
-
-意向に関するアウトカム変数\(Y_{imw}\)
-
-\begin{itemize}
-\tightlist
-\item
-  提供を希望するという意向を示して返信した
-\item
-  \(X \in \{5, 10, 20, 30\}\)日以内に返信し、意向を示したかどうか
 \end{itemize}
 \end{frame}
 
