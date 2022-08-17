@@ -87,13 +87,14 @@ shape_rawdt <- rawdt %>%
       reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
       TRUE ~ 0
     ),
-    exg_stop_intention = case_when(
-      intention == 1 ~ 0,
-      method == "PB" & reasonPB == "患者理由" ~ 1,
-      method == "MB" & reasonBM == "患者理由" ~ 1,
-      reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
-      TRUE ~ 0
-    ),
+    # exg_stop_intention = case_when(
+    #   intention == 1 ~ 0,
+    #   method == "PB" & reasonPB == "患者理由" ~ 1,
+    #   method == "MB" & reasonBM == "患者理由" ~ 1,
+    #   reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
+    #   TRUE ~ 0
+    # ),
+    exg_stop_intention = exg_stop_reply,
     exg_stop_test = case_when(
       test == 1 ~ 0,
       method == "PB" & reasonPB == "患者理由" ~ 1,
