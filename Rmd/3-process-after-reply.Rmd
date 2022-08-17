@@ -1,5 +1,5 @@
 
-# Effect on Primary Outcomes
+# Effect on Process after Reply
 
 ```{r load-packages, include = FALSE}
 library(here)
@@ -33,8 +33,6 @@ use <- rawdt %>%
 outcomes <- use %>%
   select(
     id,
-    reply,
-    intention,
     test,
     candidate,
     consent,
@@ -48,7 +46,7 @@ outcomes <- use %>%
     age,
     coordinate
   ) %>%
-  pivot_longer(reply:donate, names_to = "outcome")
+  pivot_longer(test:donate, names_to = "outcome")
 
 exclude <- use %>%
   select(id, starts_with("exg_stop")) %>%
@@ -64,22 +62,16 @@ testdt <- outcomes %>%
     prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
     age_less30 = if_else(age <= 30, 1, 0),
     age_demean = age - mean(rawdt$age),
-    coordinate1 = if_else(coordinate == 1, 1, 0)
+    coordinate1 = if_else(coordinate == 1, 1, 0),
+    outcome = factor(
+      outcome,
+      levels = c("test", "candidate", "consent", "donate"),
+      labels = c("CT", "Candidate", "Consent", "Donation")
+    )
   )
 ```
 
-## Primary Outcomes
-
-アウトカム変数は提供に至るまでのプロセスであり、具体的に以下の6つの工程がある。
-
-- Reply: 適合通知に返信したならば1を取る二値変数
-- Intention: 提供を希望するという意向を示して返信したならば1を取る二値変数
-- CT: 確認検査を実施したならば1を取る二値変数
-- Candidate: 第一候補者に選定されたならば1を取る二値変数
-- Consent: 最終同意をしたならば1を取る二値変数
-- Donation: 採取をしたならば1を取る二値変数
-
-平均値の差の検定（t検定）を行う。
+## Difference-in-mean Test
 
 ```{r ttest, include = FALSE}
 stat <- testdt %>%
@@ -88,12 +80,11 @@ stat <- testdt %>%
   ungroup() %>%
   mutate(
     lwr.mean = mean - se,
-    upr.mean = mean + se,
-    outcome = factor(outcome, out_lev, out_lab)
+    upr.mean = mean + se
   )
 
 ttest_info <- expand.grid(
-  outcome = out_lev,
+  outcome = c("CT", "Candidate", "Consent", "Donation"),
   group1 = LETTERS[1:4],
   group2 = LETTERS[1:4],
   stringsAsFactors = FALSE) %>%
@@ -122,7 +113,6 @@ show_ttest_info <- ttest_info %>%
   dplyr::left_join(ttest, by = "id") %>%
   dplyr::filter(p <= 0.1) %>%
   mutate_at(vars(group1, group2), list(~factor(., levels = LETTERS[1:4]))) %>%
-  mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(id) %>%
   do(data.frame(
     outcome = .$outcome,
@@ -135,24 +125,22 @@ show_ttest_info <- ttest_info %>%
   ungroup() %>%
   mutate(
     y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02,
-    y = if_else(id == 21, y + 0.02, y),
-    y = if_else(id == 34, y + 0.06, y),
+    y = if_else(id == 16, y + 0.03, y),
     sign = case_when(
       p < 0.01 ~ "***",
       p < 0.05 ~ "**",
       p < 0.1 ~ "*",
       TRUE ~ "",
+    ),
+    outcome = factor(
+      outcome,
+      levels = c("CT", "Candidate", "Consent", "Donation")
     )
   )
 ```
 
-
-## Difference-in-mean Test: Reply to CT
-
-
-```{r ttest-first-3step, echo = FALSE}
+```{r ttest-after-reply, echo = FALSE, fig.width=12, fig.height=7}
 stat %>%
-  dplyr::filter(outcome %in% out_lab[1:3]) %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
       color = "black",
@@ -165,7 +153,7 @@ stat %>%
     ) +
     geom_text(
       aes(y = 0, label = sprintf("%1.3f\nN=%1d", mean, n)),
-      vjust = -1, size = 4
+      vjust = -0.2, size = 4
     ) +
     geom_signif(
       data = show_ttest_info,
@@ -174,38 +162,9 @@ stat %>%
       manual = TRUE
     ) +
     facet_wrap(~ outcome) +
-    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
-    labs(
-      x = "Experimental Arms",
-      y = "Sample average",
-      caption = "*** p < 0.01, ** p < 0.05, * p < 0.1"
-    ) +
-    simplegg(caption_size = 13)
-```
-
-## Difference-in-mean Test: Candidate to Donation
-
-```{r ttest-last-3step, echo = FALSE}
-stat %>%
-  dplyr::filter(outcome %in% out_lab[4:6]) %>%
-  ggplot(aes(x = treat, y = mean)) +
-    geom_bar(
-      color = "black",
-      fill = "grey90",
-      stat = "identity"
-    ) +
-    geom_errorbar(
-      aes(ymin = lwr.mean, ymax = upr.mean),
-      width = 0.5, position = position_dodge(0.9)
-    ) +
-    geom_text(
-      aes(y = 0, label = sprintf("%1.3f\nN=%1d", mean, n)),
-      vjust = -1, size = 4
-    ) +
-    facet_wrap(~ outcome) +
     scale_y_continuous(
-      limits = c(0, 0.16),
-      breaks = seq(0, 0.16, 0.02)
+      limits = c(0, 0.38),
+      breaks = seq(0, 0.38, 0.05)
     ) +
     labs(
       x = "Experimental Arms",
@@ -215,28 +174,13 @@ stat %>%
     simplegg()
 ```
 
-<!-- ## Lineary Probability Model
+## Linear Probability Model
 
-$m$月の第$w$週に適合通知を受け取った個人$i$について、
-
-$$
-  Y_{imw} =
-  \beta_1 \cdot \text{B}_{mw} + \beta_2 \cdot \text{C}_{mw}
-  + \beta_3 \cdot \text{D}_{mw}
-  + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
-$$
-
-- $X_i$は性別・年齢・居住する都道府県・コーディネーション回数
-- $\lambda_m$と$\theta_w$は週・月の固定効果
-- $\beta_1 = \beta_2$、$\beta_1 = \beta_3$、$\beta_2 = \beta_3$の帰無仮説に対する
-F検定を実施 -->
-
-```{r reg-primaries, include = FALSE, eval = FALSE}
+```{r reg-after-reply, include = FALSE}
 model <- value ~ treat + age_demean + male + coordinate1 + prefecture +
   factor(month) + factor(week)
 
-reg_primaries <- testdt %>%
-  mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
+est_model <- testdt %>%
   group_by(outcome) %>%
   do(
     est = lm_robust(
@@ -269,11 +213,10 @@ reg_primaries <- testdt %>%
   )
 ```
 
-<!-- ## Estimation Results -->
-
-```{r tab-reg-primaries, eval = FALSE}
-reg_primaries %>%
-  pull(est, name = outcome) %>%
+```{r tab-reg-after-reply}
+est_model %>%
+  pull(est) %>%
+  setNames(paste0("(", seq_len(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
@@ -282,26 +225,28 @@ reg_primaries %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(reg_primaries$ftestBC)[, 4] %>%
-      rbind(bind_rows(reg_primaries$ftestBD)[, 4]) %>%
-      rbind(bind_rows(reg_primaries$ftestCD)[, 4]) %>%
+    add_rows = bind_rows(est_model$ftestBC)[, 4] %>%
+      rbind(bind_rows(est_model$ftestBD)[, 4]) %>%
+      rbind(bind_rows(est_model$ftestCD)[, 4]) %>%
       data.frame(term = c("B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 9) %>%
-  kableExtra::column_spec(2:7, width = "5em") %>%
+  kableExtra::add_header_above(
+    c(" ", as.character(est_model$outcome))
+  ) %>%
+  kableExtra::column_spec(2:5, width = "5em") %>%
   kableExtra::group_rows(
     "F-tests, p-value", 8, 10, bold = FALSE, italic = TRUE
   )
 ```
 
-<!-- ## Heterogenous Effect by Gender and Age
+## Heterogenous Effect by Gender and Age
 
 - 性別と年齢（30歳以下どうか）でサンプルを分割して、
-各サブサンプル内でメッセージの効果を推定した -->
+各サブサンプル内でメッセージの効果を推定した
 
-```{r hetero-gender-age-primaries, include = FALSE, eval = FALSE}
-est <- testdt %>%
-  mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
+```{r hetero-after-reply-gender-age, include = FALSE}
+hetero_after_reply <- testdt %>%
   group_by(outcome, male, age_less30) %>%
   do(est = lm_robust(
     update(model, . ~ . - male - age_demean),
@@ -309,104 +254,89 @@ est <- testdt %>%
     se_type = "stata",
     data = .
   )) %>%
-  rowwise(outcome, male, age_less30) %>%
-  summarize(
-    estimate.B = subset(tidy(est), term == "treatB")$estimate,
-    lwr_conf.B = subset(tidy(est), term == "treatB")$conf.low,
-    upr_conf.B = subset(tidy(est), term == "treatB")$conf.high,
-    estimate.C = subset(tidy(est), term == "treatC")$estimate,
-    lwr_conf.C = subset(tidy(est), term == "treatC")$conf.low,
-    upr_conf.C = subset(tidy(est), term == "treatC")$conf.high,
-    estimate.D = subset(tidy(est), term == "treatD")$estimate,
-    lwr_conf.D = subset(tidy(est), term == "treatD")$conf.low,
-    upr_conf.D = subset(tidy(est), term == "treatD")$conf.high,
-    nobs = nobs(est)
-  ) %>%
-  pivot_longer(
-    estimate.B:upr_conf.D,
-    names_to = c(".value", "treat"),
-    names_pattern = "(.*).(.)"
-  ) %>%
-  ungroup() %>%
   mutate(
     pos = paste0(male, age_less30),
-    N = paste0("N=", nobs)
+    pos = factor(
+      pos,
+      levels = c("01", "00", "11", "10"),
+      labels = c(
+        "Female\u00d7\nAge\u226430",
+        "Female\u00d7\n30<Age",
+        "Male\u00d7\nAge\u226430",
+        "Male\u00d7\n30<Age"
+      )
+    ),
+    N = paste0("N=", nobs(est))
   )
 ```
 
-<!-- ## Message B -->
+## Heterogenity by Gender x Age: Message B
 
-```{r plotB-hetero-gender-age-primaries, fig.width = 10, fig.height=7, eval = FALSE}
-est %>%
-  dplyr::filter(treat == "B") %>%
+```{r plotB-hetero-after-reply-gender-age, fig.width = 10, fig.height=7}
+hetero_after_reply %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+  ) %>%
   ggplot(aes(x = pos, y = estimate)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(
-      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
     ) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d7\n30<Age",
-        "Female\u00d7\nAge\u226430",
-        "Male\u00d7\n30<Age",
-        "Male\u00d7\nAge\u226430"
-      )
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~ outcome, ncol = 2) +
+    scale_y_continuous(
+      limits = c(-0.2, 0.2),
+      breaks = seq(-0.2, 0.2, by = 0.05)
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
 
-<!-- ## Message C -->
+## Heterogenity by Gender x Age: Message C
 
-```{r plotC-hetero-gender-age-primaries, fig.width = 10, fig.height=7, eval = FALSE}
-est %>%
-  dplyr::filter(treat == "C") %>%
+```{r plotC-hetero-after-reply-gender-age, fig.width = 10, fig.height=7}
+hetero_after_reply %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
+  ) %>%
   ggplot(aes(x = pos, y = estimate)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(
-      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
     ) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d7\n30<Age",
-        "Female\u00d7\nAge\u226430",
-        "Male\u00d7\n30<Age",
-        "Male\u00d7\nAge\u226430"
-      )
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~outcome, ncol = 2) +
+    scale_y_continuous(
+      limits = c(-0.2, 0.2),
+      breaks = seq(-0.2, 0.2, by = 0.05)
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
 
-<!-- ## Message D -->
+## Heterogenity by Gender x Age: Message D
 
-```{r plotD-hetero-gender-age-primaries, fig.width = 10, fig.height=7, eval = FALSE}
-est %>%
-  dplyr::filter(treat == "D") %>%
+```{r plotD-hetero-after-reply-gender-age, fig.width = 10, fig.height=7}
+hetero_after_reply %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
+  ) %>%
   ggplot(aes(x = pos, y = estimate)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_y_continuous(
-      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
     ) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d7\n30<Age",
-        "Female\u00d7\nAge\u226430",
-        "Male\u00d7\n30<Age",
-        "Male\u00d7\nAge\u226430"
-      )
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~ outcome, ncol = 2) +
+    scale_y_continuous(
+      limits = c(-0.2, 0.2),
+      breaks = seq(-0.2, 0.2, by = 0.05)
     ) +
     labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
