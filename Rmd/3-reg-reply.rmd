@@ -33,6 +33,7 @@ testdt <- use %>%
   select(
     id,
     reply,
+    intention,
     days_reply,
     treat,
     RCTweek,
@@ -53,63 +54,89 @@ testdt <- use %>%
       max(use$days_reply, na.rm = TRUE),
       days_reply
     ),
-    reply5 = if_else(days_reply <= 5, 1, 0),
-    reply10 = if_else(days_reply <= 10, 1, 0),
-    reply20 = if_else(days_reply <= 20, 1, 0),
-    reply30 = if_else(days_reply <= 30, 1, 0)
+    reply_full = reply,
+    reply_5 = if_else(days_reply <= 5, 1, 0),
+    reply_10 = if_else(days_reply <= 10, 1, 0),
+    reply_20 = if_else(days_reply <= 20, 1, 0),
+    reply_30 = if_else(days_reply <= 30, 1, 0),
+    intention_full = intention,
+    intention_5 = if_else(days_reply <= 5, intention, 0),
+    intention_10 = if_else(days_reply <= 10, intention, 0),
+    intention_20 = if_else(days_reply <= 20, intention, 0),
+    intention_30 = if_else(days_reply <= 30, intention, 0)
   ) %>%
-  select(-reply, -days_reply) %>%
+  select(-reply, -intention, -days_reply) %>%
   pivot_longer(
-    reply5:reply30,
-    names_to = "within",
-    names_prefix = "reply"
+    reply_full:intention_30,
+    names_to = c(".value", "within"),
+    names_pattern = "(.*)_(.*)"
   ) %>%
   mutate(within = factor(
     within,
-    levels = c("5", "10", "20", "30"),
-    labels = c(
-      "within 5days",
-      "within 10days",
-      "within 20days",
-      "within 30days"
-    )
-  ))
+    levels = c("full", "5", "10", "20", "30")
+  )) %>%
+  pivot_longer(reply:intention, names_to = "outcome")
 ```
 
-## Linear Probability Model of Reply within X days
+## Linear Probability Model
 
-- $X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
-  - $X = 5, 10, 20, 30$
+$m$月の第$w$週に適合通知を受け取った個人$i$について、
 
-```{r reg-secondary, include = FALSE}
-model <- value ~ treat + age_demean + male + coordinate1 + prefecture +
+$$
+  Y_{imw} =
+  \beta_1 \cdot \text{B}_{mw} + \beta_2 \cdot \text{C}_{mw}
+  + \beta_3 \cdot \text{D}_{mw}
+  + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
+$$
+
+- $X_i$は性別・年齢・居住する都道府県・コーディネーション回数
+- $\lambda_m$と$\theta_w$は週・月の固定効果
+- $\beta_1 = \beta_2$、$\beta_1 = \beta_3$、$\beta_2 = \beta_3$の帰無仮説に対する
+F検定を実施
+
+## Effect on Reply and Intention
+
+返信に関するアウトカム変数$Y_{imw}$
+
+- 返信したかどうか
+- $X \in \{5, 10, 20, 30\}$日以内に返信したかどうか
+
+意向に関するアウトカム変数$Y_{imw}$
+
+- 提供を希望するという意向を示して返信した
+- $X \in \{5, 10, 20, 30\}$日以内に返信し、意向を示したかどうか
+
+## Linear Probability Model of Reply
+
+```{r reg-reply, include = FALSE}
+mod <- value ~ treat + age_demean + male + coordinate1 + prefecture +
   factor(month) + factor(week)
 
-est_within_reply <- testdt %>%
-  group_by(within) %>%
+est_mod <- testdt %>%
+  group_by(outcome, within) %>%
   do(
     est = lm_robust(
-      model,
+      mod,
       cluster = RCTweek,
       se_type = "stata",
       data = .
     ),
     ftestBC = lh_robust(
-      model,
+      mod,
       cluster = RCTweek,
       se_type = "stata",
       linear_hypothesis = "treatB - treatC = 0",
       data = .
     )$lh %>% tidy(),
     ftestBD = lh_robust(
-      model,
+      mod,
       cluster = RCTweek,
       se_type = "stata",
       linear_hypothesis = "treatB - treatD = 0",
       data = .
     )$lh %>% tidy(),
     ftestCD = lh_robust(
-      model,
+      mod,
       cluster = RCTweek,
       se_type = "stata",
       linear_hypothesis = "treatC - treatD = 0",
@@ -118,11 +145,13 @@ est_within_reply <- testdt %>%
   )
 ```
 
-## Results
+```{r tab-reg-reply}
+est_mod_reply <- est_mod %>%
+  dplyr::filter(outcome == "reply")
 
-```{r tab-reg-secandary}
-est_within_reply %>%
-  pull(est, name = within) %>%
+est_mod_reply %>%
+  pull(est) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
     coef_map = c(
@@ -131,13 +160,59 @@ est_within_reply %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(est_within_reply$ftestBC)$p.value %>%
-      rbind(bind_rows(est_within_reply$ftestBD)$p.value) %>%
-      rbind(bind_rows(est_within_reply$ftestCD)$p.value) %>%
+    add_rows = bind_rows(est_mod_reply$ftestBC)$p.value %>%
+      rbind(bind_rows(est_mod_reply$ftestBD)$p.value) %>%
+      rbind(bind_rows(est_mod_reply$ftestCD)$p.value) %>%
       data.frame(term = c("B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 9) %>%
-  kableExtra::column_spec(2:5, width = "6em") %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "Reply" = 1,
+    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
+  )) %>%
+  kableExtra::add_header_above(c(
+    " " = 2,
+    "Reply within specific day" = 4
+  )) %>%
+  kableExtra::column_spec(2:6, width = "6em") %>%
+  kableExtra::group_rows(
+    "F-tests, p-value", 8, 10,
+    bold = FALSE, italic = TRUE
+  )
+```
+
+## Linear Probability Model of Intention
+
+```{r tab-reg-int}
+est_mod_int <- est_mod %>%
+  dplyr::filter(outcome == "intention")
+
+est_mod_int %>%
+  pull(est) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
+  modelsummary(
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    coef_map = c(
+      "treatB" = "B",
+      "treatC" = "C",
+      "treatD" = "D"
+    ),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = bind_rows(est_mod_int$ftestBC)$p.value %>%
+      rbind(bind_rows(est_mod_int$ftestBD)$p.value) %>%
+      rbind(bind_rows(est_mod_int$ftestCD)$p.value) %>%
+      data.frame(term = c("B = C", "B = D", "C = D"), .)
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "Intention" = 1,
+    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
+  )) %>%
+  kableExtra::add_header_above(c(
+    " " = 2,
+    "Intention with reply within specific day" = 4
+  )) %>%
+  kableExtra::column_spec(2:6, width = "6em") %>%
   kableExtra::group_rows(
     "F-tests, p-value", 8, 10,
     bold = FALSE, italic = TRUE
@@ -149,7 +224,7 @@ est_within_reply %>%
 - 性別と年齢（30歳以下どうか）でサンプルを分割して、
 $X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
 
-```{r hetero-gender-age-secandary, include = FALSE}
+```{r hetero-gender-age-secandary, include = FALSE, eval = FALSE}
 est_within_reply_hetero <- testdt %>%
   group_by(within, male, age_less30) %>%
   do(est = lm_robust(
@@ -185,7 +260,7 @@ est_within_reply_hetero <- testdt %>%
 
 ## Message B on Reply within X days
 
-```{r plotB-hetero-gender-age-secondary, fig.width = 10, fig.height=7}
+```{r plotB-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
 est_within_reply_hetero %>%
   dplyr::filter(treat == "B") %>%
   ggplot(aes(x = pos, y = estimate)) +
@@ -211,7 +286,7 @@ est_within_reply_hetero %>%
 
 ## Message C on Reply within X days
 
-```{r plotC-hetero-gender-age-secondary, fig.width = 10, fig.height=7}
+```{r plotC-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
 est_within_reply_hetero %>%
   dplyr::filter(treat == "C") %>%
   ggplot(aes(x = pos, y = estimate)) +
@@ -237,7 +312,7 @@ est_within_reply_hetero %>%
 
 ## Message D on Reply within X days
 
-```{r plotD-hetero-gender-age-secondary, fig.width = 10, fig.height=7}
+```{r plotD-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
 est_within_reply_hetero %>%
   dplyr::filter(treat == "D") %>%
   ggplot(aes(x = pos, y = estimate)) +
@@ -266,7 +341,7 @@ est_within_reply_hetero %>%
 - 若年層の区切りを30～40歳の範囲で変えて、
 若年層の男性と女性におけるメッセージの効果を推定した
 
-```{r change-age-threshold-secondary}
+```{r change-age-threshold-secondary, eval = FALSE}
 age_criterion_secondary <- 30:40 %>%
   purrr::map(function(x) {
     testdt %>%
@@ -293,7 +368,7 @@ age_criterion_secondary <- 30:40 %>%
 
 ## Message B Effect among Younger Group
 
-```{r plotB-change-age-threshold-secondary, fig.width=15, fig.height=10}
+```{r plotB-change-age-threshold-secondary, fig.width=15, fig.height=10, eval = FALSE}
 age_criterion_secondary %>%
   dplyr::filter(term == "treatB") %>%
   ggplot(aes(x = age, y = estimate, color = male, group = male)) +
@@ -313,7 +388,7 @@ age_criterion_secondary %>%
 
 ## Message C Effect among Younger Group
 
-```{r plotC-change-age-threshold-secondary, fig.width=15, fig.height=10}
+```{r plotC-change-age-threshold-secondary, fig.width=15, fig.height=10, eval=FALSE}
 age_criterion_secondary %>%
   dplyr::filter(term == "treatC") %>%
   ggplot(aes(x = age, y = estimate, color = male, group = male)) +
@@ -333,7 +408,7 @@ age_criterion_secondary %>%
 
 ## Message D Effect among Younger Group
 
-```{r plotD-change-age-threshold-secondary, fig.width=15, fig.height=10}
+```{r plotD-change-age-threshold-secondary, fig.width=15, fig.height=10, eval=FALSE}
 age_criterion_secondary %>%
   dplyr::filter(term == "treatD") %>%
   ggplot(aes(x = age, y = estimate, color = male, group = male)) +
@@ -357,7 +432,7 @@ age_criterion_secondary %>%
 4分位グループを作り、それに基づいてサンプルを分割する
 - それぞれのサンプルで効果を推定する
 
-```{r geographical-hetero-secondaries, include = FALSE}
+```{r geographical-hetero-secondaries, include = FALSE, eval=FALSE}
 est <- testdt %>%
   dplyr::left_join(hospital, by = "prefecture") %>%
   group_by(within, qt_hospital) %>%
@@ -391,7 +466,7 @@ est <- testdt %>%
 
 ## Message B
 
-```{r plotB-geographical-hetero-secondaries, fig.width = 10, fig.height=7}
+```{r plotB-geographical-hetero-secondaries, fig.width = 10, fig.height=7, eval=FALSE}
 est %>%
   dplyr::filter(treat == "B") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
@@ -409,7 +484,7 @@ est %>%
 
 ## Message C
 
-```{r plotC-geographical-hetero-secondaries, fig.width = 10, fig.height=7}
+```{r plotC-geographical-hetero-secondaries, fig.width = 10, fig.height=7, eval=FALSE}
 est %>%
   dplyr::filter(treat == "C") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
@@ -427,7 +502,7 @@ est %>%
 
 ## Message D
 
-```{r plotD-geographical-hetero-secondaries, fig.width = 10, fig.height=7}
+```{r plotD-geographical-hetero-secondaries, fig.width = 10, fig.height=7, eval=FALSE}
 est %>%
   dplyr::filter(treat == "D") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
