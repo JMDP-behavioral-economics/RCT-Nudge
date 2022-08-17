@@ -73,9 +73,17 @@ testdt <- use %>%
   ) %>%
   mutate(within = factor(
     within,
-    levels = c("full", "5", "10", "20", "30")
+    levels = c("full", "5", "10", "20", "30"),
+    labels = c(
+      "full",
+      "\u2264 5 days",
+      "\u2264 10 days",
+      "\u2264 20 days",
+      "\u2264 30 days"
+    )
   )) %>%
-  pivot_longer(reply:intention, names_to = "outcome")
+  pivot_longer(reply:intention, names_to = "outcome") %>%
+  mutate(outcome = factor(outcome, levels = c("reply", "intention")))
 ```
 
 ## Linear Probability Model
@@ -219,120 +227,197 @@ est_mod_int %>%
   )
 ```
 
-<!-- ## Heterogenous Effect on Reply within X days by Gender x Age
+## Heterogenous Effect on Reply by Gender x Age
 
-- 性別と年齢（30歳以下どうか）でサンプルを分割して、
-$X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定 -->
+性別と年齢（30歳以下どうか）でサンプルを分割して、返信と意向の効果を推定する
 
-```{r hetero-gender-age-secandary, include = FALSE, eval = FALSE}
-est_within_reply_hetero <- testdt %>%
-  group_by(within, male, age_less30) %>%
+```{r hetero-reply-gender-age, include = FALSE}
+hetero_reply <- testdt %>%
+  group_by(outcome, within, male, age_less30) %>%
   do(est = lm_robust(
-    update(model, . ~ . - male - age_demean),
+    update(mod, . ~ . - male - age_demean),
     cluster = RCTweek,
     se_type = "stata",
     data = .
   )) %>%
-  rowwise(within, male, age_less30) %>%
-  summarize(
-    estimate.B = subset(tidy(est), term == "treatB")$estimate,
-    lwr_conf.B = subset(tidy(est), term == "treatB")$conf.low,
-    upr_conf.B = subset(tidy(est), term == "treatB")$conf.high,
-    estimate.C = subset(tidy(est), term == "treatC")$estimate,
-    lwr_conf.C = subset(tidy(est), term == "treatC")$conf.low,
-    upr_conf.C = subset(tidy(est), term == "treatC")$conf.high,
-    estimate.D = subset(tidy(est), term == "treatD")$estimate,
-    lwr_conf.D = subset(tidy(est), term == "treatD")$conf.low,
-    upr_conf.D = subset(tidy(est), term == "treatD")$conf.high,
-    nobs = nobs(est)
-  ) %>%
-  pivot_longer(
-    estimate.B:upr_conf.D,
-    names_to = c(".value", "treat"),
-    names_pattern = "(.*).(.)"
-  ) %>%
-  ungroup() %>%
   mutate(
     pos = paste0(male, age_less30),
-    N = paste0("N=", nobs)
+    pos = factor(
+      pos,
+      levels = c("01", "00", "11", "10"),
+      labels = c(
+        "Female\u00d7\nAge\u226430",
+        "Female\u00d7\n30<Age",
+        "Male\u00d7\nAge\u226430",
+        "Male\u00d7\n30<Age"
+      )
+    ),
+    N = paste0("N=", nobs(est))
   )
 ```
 
-<!-- ## Message B on Reply within X days -->
+## Heterogenity by Gender x Age: Message B (1)
 
-```{r plotB-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
-est_within_reply_hetero %>%
-  dplyr::filter(treat == "B") %>%
-  ggplot(aes(x = pos, y = estimate)) +
+```{r plotB-hetero-reply-gender-age, fig.width = 10, fig.height=7}
+hetero_reply %>%
+  dplyr::filter(within == "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ within, ncol = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
     scale_y_continuous(
       breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
     ) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d7\n30<Age",
-        "Female\u00d7\nAge\u226430",
-        "Male\u00d7\n30<Age",
-        "Male\u00d7\nAge\u226430"
-      )
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
     ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
 
-<!-- ## Message C on Reply within X days -->
+## Heterogenity by Gender x Age: Message C (1)
 
-```{r plotC-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
-est_within_reply_hetero %>%
-  dplyr::filter(treat == "C") %>%
-  ggplot(aes(x = pos, y = estimate)) +
+```{r plotC-hetero-reply-gender-age, fig.width = 10, fig.height=7}
+hetero_reply %>%
+  dplyr::filter(within == "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
-    geom_text(aes(y = -0.15, label = N)) +
-    facet_wrap(~ within, ncol = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
     scale_y_continuous(
       breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
     ) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d7\n30<Age",
-        "Female\u00d7\nAge\u226430",
-        "Male\u00d7\n30<Age",
-        "Male\u00d7\nAge\u226430"
-      )
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
     ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
     simplegg()
 ```
 
-<!-- ## Message D on Reply within X days -->
+## Heterogenity by Gender x Age: Message D (1)
 
-```{r plotD-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
-est_within_reply_hetero %>%
-  dplyr::filter(treat == "D") %>%
-  ggplot(aes(x = pos, y = estimate)) +
+```{r plotD-hetero-reply-gender-age, fig.width = 10, fig.height=7}
+hetero_reply %>%
+  dplyr::filter(within == "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(aes(ymin = lwr_conf, ymax = upr_conf)) +
-    geom_text(aes(y = -0.15, label = N)) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
+
+## Heterogenity by Gender x Age: Message B (2)
+
+```{r plotB-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
+hetero_reply %>%
+  dplyr::filter(within != "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
     facet_wrap(~ within, ncol = 2) +
     scale_y_continuous(
       breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
     ) +
-    scale_x_discrete(
-      breaks = c("00", "01", "10", "11"),
-      labels = c(
-        "Female\u00d7\n30<Age",
-        "Female\u00d7\nAge\u226430",
-        "Male\u00d7\n30<Age",
-        "Male\u00d7\nAge\u226430"
-      )
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
     ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
+    simplegg()
+```
+
+## Heterogenity by Gender x Age: Message C (2)
+
+```{r plotC-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
+hetero_reply %>%
+  dplyr::filter(within != "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
+
+## Heterogenity by Gender x Age: Message D (2)
+
+```{r plotD-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
+hetero_reply %>%
+  dplyr::filter(within != "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
     simplegg()
 ```
 
