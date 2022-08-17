@@ -215,7 +215,7 @@ stat %>%
     simplegg()
 ```
 
-## Lineary Probability Model
+<!-- ## Lineary Probability Model
 
 $m$月の第$w$週に適合通知を受け取った個人$i$について、
 
@@ -229,9 +229,9 @@ $$
 - $X_i$は性別・年齢・居住する都道府県・コーディネーション回数
 - $\lambda_m$と$\theta_w$は週・月の固定効果
 - $\beta_1 = \beta_2$、$\beta_1 = \beta_3$、$\beta_2 = \beta_3$の帰無仮説に対する
-F検定を実施
+F検定を実施 -->
 
-```{r reg-primaries, include = FALSE}
+```{r reg-primaries, include = FALSE, eval = FALSE}
 model <- value ~ treat + age_demean + male + coordinate1 + prefecture +
   factor(month) + factor(week)
 
@@ -269,9 +269,9 @@ reg_primaries <- testdt %>%
   )
 ```
 
-## Estimation Results
+<!-- ## Estimation Results -->
 
-```{r tab-reg-primaries}
+```{r tab-reg-primaries, eval = FALSE}
 reg_primaries %>%
   pull(est, name = outcome) %>%
   modelsummary(
@@ -294,12 +294,12 @@ reg_primaries %>%
   )
 ```
 
-## Heterogenous Effect by Gender and Age
+<!-- ## Heterogenous Effect by Gender and Age
 
 - 性別と年齢（30歳以下どうか）でサンプルを分割して、
-各サブサンプル内でメッセージの効果を推定した
+各サブサンプル内でメッセージの効果を推定した -->
 
-```{r hetero-gender-age-primaries, include = FALSE}
+```{r hetero-gender-age-primaries, include = FALSE, eval = FALSE}
 est <- testdt %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
   group_by(outcome, male, age_less30) %>%
@@ -334,9 +334,9 @@ est <- testdt %>%
   )
 ```
 
-## Message B
+<!-- ## Message B -->
 
-```{r plotB-hetero-gender-age-primaries, fig.width = 10, fig.height=7}
+```{r plotB-hetero-gender-age-primaries, fig.width = 10, fig.height=7, eval = FALSE}
 est %>%
   dplyr::filter(treat == "B") %>%
   ggplot(aes(x = pos, y = estimate)) +
@@ -360,9 +360,9 @@ est %>%
     simplegg()
 ```
 
-## Message C
+<!-- ## Message C -->
 
-```{r plotC-hetero-gender-age-primaries, fig.width = 10, fig.height=7}
+```{r plotC-hetero-gender-age-primaries, fig.width = 10, fig.height=7, eval = FALSE}
 est %>%
   dplyr::filter(treat == "C") %>%
   ggplot(aes(x = pos, y = estimate)) +
@@ -386,9 +386,9 @@ est %>%
     simplegg()
 ```
 
-## Message D
+<!-- ## Message D -->
 
-```{r plotD-hetero-gender-age-primaries, fig.width = 10, fig.height=7}
+```{r plotD-hetero-gender-age-primaries, fig.width = 10, fig.height=7, eval = FALSE}
 est %>%
   dplyr::filter(treat == "D") %>%
   ggplot(aes(x = pos, y = estimate)) +
@@ -412,12 +412,12 @@ est %>%
     simplegg()
 ```
 
-## Change Threshold of Younger Group
+<!-- ## Change Threshold of Younger Group
 
 - 若年層の区切りを30～40歳の範囲で変えて、
-若年層の男性と女性におけるメッセージの効果を推定した
+若年層の男性と女性におけるメッセージの効果を推定した -->
 
-```{r change-age-threshold}
+```{r change-age-threshold, eval = FALSE}
 age_criterion <- 30:40 %>%
   purrr::map(function(x) {
     testdt %>%
@@ -442,9 +442,9 @@ age_criterion <- 30:40 %>%
   mutate(male = factor(male, levels = 0:1, labels = c("Females", "Males")))
 ```
 
-## Message B Effect among Younger Group
+<!-- ## Message B Effect among Younger Group -->
 
-```{r plotB-change-age-threshold, fig.width=15, fig.height=10}
+```{r plotB-change-age-threshold, fig.width=15, fig.height=10, eval = FALSE}
 age_criterion %>%
   dplyr::filter(term == "treatB") %>%
   ggplot(aes(x = age, y = estimate, color = male, group = male)) +
@@ -462,9 +462,9 @@ age_criterion %>%
     simplegg()
 ```
 
-## Message C Effect among Younger Group
+<!-- ## Message C Effect among Younger Group -->
 
-```{r plotC-change-age-threshold, fig.width=15, fig.height=10}
+```{r plotC-change-age-threshold, fig.width=15, fig.height=10, eval = FALSE}
 age_criterion %>%
   dplyr::filter(term == "treatC") %>%
   ggplot(aes(x = age, y = estimate, color = male, group = male)) +
@@ -482,9 +482,9 @@ age_criterion %>%
     simplegg()
 ```
 
-## Message D Effect among Younger Group
+<!-- ## Message D Effect among Younger Group -->
 
-```{r plotD-change-age-threshold, fig.width=15, fig.height=10}
+```{r plotD-change-age-threshold, fig.width=15, fig.height=10, eval = FALSE}
 age_criterion %>%
   dplyr::filter(term == "treatD") %>%
   ggplot(aes(x = age, y = estimate, color = male, group = male)) +
@@ -502,15 +502,15 @@ age_criterion %>%
     simplegg()
 ```
 
-## Geographical Heterogenous Effect
+<!-- ## Geographical Heterogenous Effect
 
 - 都道府県ごとに10平方キロメートル当たりの病院数を計算し、
 4分位グループを作り、それに基づいてサンプルを分割する
 - それぞれのサンプルで効果を推定する
 
-## Hospitals per 10 square kilometers
+## Hospitals per 10 square kilometers -->
 
-```{r plot-hospital-per-area, fig.width=10, fig.height=7}
+```{r plot-hospital-per-area, fig.width=10, fig.height=7, eval = FALSE}
 hospital %>%
   ggplot(aes(
     x = reorder(prefecture, hospital_per_area), y = hospital_per_area
@@ -527,7 +527,7 @@ hospital %>%
   theme(axis.text.x = element_text(size = 6, angle = 45, hjust = 1))
 ```
 
-```{r geographical-hetero-primaries, include = FALSE}
+```{r geographical-hetero-primaries, include = FALSE, eval = FALSE}
 est <- testdt %>%
   dplyr::left_join(hospital, by = "prefecture") %>%
   mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
@@ -560,9 +560,9 @@ est <- testdt %>%
   mutate(N = paste0("N=", nobs))
 ```
 
-## Message B
+<!-- ## Message B -->
 
-```{r plotB-geographical-hetero-primaries, fig.width = 10, fig.height=7}
+```{r plotB-geographical-hetero-primaries, fig.width = 10, fig.height=7, eval = FALSE}
 est %>%
   dplyr::filter(treat == "B") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
@@ -575,9 +575,9 @@ est %>%
     simplegg()
 ```
 
-## Message C
+<!-- ## Message C -->
 
-```{r plotC-geographical-hetero-primaries, fig.width = 10, fig.height=7}
+```{r plotC-geographical-hetero-primaries, fig.width = 10, fig.height=7, eval = FALSE}
 est %>%
   dplyr::filter(treat == "C") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +
@@ -590,9 +590,9 @@ est %>%
     simplegg()
 ```
 
-## Message D
+<!-- ## Message D -->
 
-```{r plotD-geographical-hetero-primaries, fig.width = 10, fig.height=7}
+```{r plotD-geographical-hetero-primaries, fig.width = 10, fig.height=7, eval = FALSE}
 est %>%
   dplyr::filter(treat == "D") %>%
   ggplot(aes(x = qt_hospital, y = estimate)) +

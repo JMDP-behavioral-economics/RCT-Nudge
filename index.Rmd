@@ -23,7 +23,7 @@ library(here)
 rmarkdown::render(
   input = here("index.rmd"),
   output_format = "all",
-  output_file = "report.pdf",
+  output_file = "220818解析途中報告.pdf",
   output_dir = "docs/slide"
 )
 ```
@@ -50,14 +50,14 @@ grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
 
 ```
 
-```{r child="Rmd/2-main-outcomes.rmd"}
+```{r child="Rmd/2-diff-in-mean.rmd"}
 
 ```
 
-```{r child="Rmd/3-reply-speed-surv.rmd"}
+```{r child="Rmd/3-reg-reply.rmd"}
 
 ```
 
-```{r child="Rmd/4-reply-speed-reg.rmd"}
+```{r child="Rmd/4-reply-speed-reg.rmd", eval=FALSE}
 
 ```

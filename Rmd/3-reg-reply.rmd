@@ -219,10 +219,10 @@ est_mod_int %>%
   )
 ```
 
-## Heterogenous Effect on Reply within X days by Gender x Age
+<!-- ## Heterogenous Effect on Reply within X days by Gender x Age
 
 - 性別と年齢（30歳以下どうか）でサンプルを分割して、
-$X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定
+$X$日以内に返信したかどうかをアウトカム変数としたLinear probability modelを推定 -->
 
 ```{r hetero-gender-age-secandary, include = FALSE, eval = FALSE}
 est_within_reply_hetero <- testdt %>%
@@ -258,7 +258,7 @@ est_within_reply_hetero <- testdt %>%
   )
 ```
 
-## Message B on Reply within X days
+<!-- ## Message B on Reply within X days -->
 
 ```{r plotB-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
 est_within_reply_hetero %>%
@@ -284,7 +284,7 @@ est_within_reply_hetero %>%
     simplegg()
 ```
 
-## Message C on Reply within X days
+<!-- ## Message C on Reply within X days -->
 
 ```{r plotC-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
 est_within_reply_hetero %>%
@@ -310,7 +310,7 @@ est_within_reply_hetero %>%
     simplegg()
 ```
 
-## Message D on Reply within X days
+<!-- ## Message D on Reply within X days -->
 
 ```{r plotD-hetero-gender-age-secondary, fig.width = 10, fig.height=7, eval = FALSE}
 est_within_reply_hetero %>%
@@ -336,10 +336,10 @@ est_within_reply_hetero %>%
     simplegg()
 ```
 
-## Change Threshold of Younger Group
+<!-- ## Change Threshold of Younger Group
 
 - 若年層の区切りを30～40歳の範囲で変えて、
-若年層の男性と女性におけるメッセージの効果を推定した
+若年層の男性と女性におけるメッセージの効果を推定した -->
 
 ```{r change-age-threshold-secondary, eval = FALSE}
 age_criterion_secondary <- 30:40 %>%
@@ -366,7 +366,7 @@ age_criterion_secondary <- 30:40 %>%
 ```
 
 
-## Message B Effect among Younger Group
+<!-- ## Message B Effect among Younger Group -->
 
 ```{r plotB-change-age-threshold-secondary, fig.width=15, fig.height=10, eval = FALSE}
 age_criterion_secondary %>%
@@ -386,7 +386,7 @@ age_criterion_secondary %>%
     simplegg()
 ```
 
-## Message C Effect among Younger Group
+<!-- ## Message C Effect among Younger Group -->
 
 ```{r plotC-change-age-threshold-secondary, fig.width=15, fig.height=10, eval=FALSE}
 age_criterion_secondary %>%
@@ -406,7 +406,7 @@ age_criterion_secondary %>%
     simplegg()
 ```
 
-## Message D Effect among Younger Group
+<!-- ## Message D Effect among Younger Group -->
 
 ```{r plotD-change-age-threshold-secondary, fig.width=15, fig.height=10, eval=FALSE}
 age_criterion_secondary %>%
@@ -426,11 +426,11 @@ age_criterion_secondary %>%
     simplegg()
 ```
 
-## Geographical Heterogenous Effect
+<!-- ## Geographical Heterogenous Effect
 
 - 都道府県ごとに10平方キロメートル当たりの病院数を計算し、
 4分位グループを作り、それに基づいてサンプルを分割する
-- それぞれのサンプルで効果を推定する
+- それぞれのサンプルで効果を推定する -->
 
 ```{r geographical-hetero-secondaries, include = FALSE, eval=FALSE}
 est <- testdt %>%
@@ -464,7 +464,7 @@ est <- testdt %>%
   mutate(N = paste0("N=", nobs))
 ```
 
-## Message B
+<!-- ## Message B -->
 
 ```{r plotB-geographical-hetero-secondaries, fig.width = 10, fig.height=7, eval=FALSE}
 est %>%
@@ -482,7 +482,7 @@ est %>%
     simplegg()
 ```
 
-## Message C
+<!-- ## Message C -->
 
 ```{r plotC-geographical-hetero-secondaries, fig.width = 10, fig.height=7, eval=FALSE}
 est %>%
@@ -500,7 +500,7 @@ est %>%
     simplegg()
 ```
 
-## Message D
+<!-- ## Message D -->
 
 ```{r plotD-geographical-hetero-secondaries, fig.width = 10, fig.height=7, eval=FALSE}
 est %>%
