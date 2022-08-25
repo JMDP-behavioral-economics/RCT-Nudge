@@ -927,3 +927,193 @@ geohetero_reply %>%
     ) +
     simplegg()
 ```
+
+## Heterogenity by Geography: Message B (1)
+
+```{r hetero-reply-gender-geo, include = FALSE}
+geohetero_reply <- testdt %>%
+  group_by(outcome, within, toka, male) %>%
+  do(est = lm_robust(
+    update(mod, . ~ . - toka - male),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .
+  )) %>%
+  mutate(
+    pos = paste0(male, toka),
+    pos = factor(
+      pos,
+      levels = c("01", "00", "11", "10"),
+      labels = c(
+        "Female\u00d7\nTOKA",
+        "Female\u00d7\nOthers",
+        "Male\u00d7\nTOKA",
+        "Male\u00d7\nOthers"
+      )
+    ),
+    N = paste0("N=", nobs(est))
+  )
+```
+
+```{r plotB-hetero-reply-gender-geo, fig.width = 10, fig.height=7}
+geohetero_reply %>%
+  dplyr::filter(within == "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
+
+## Heterogenity by Geography: Message C (1)
+
+```{r plotC-hetero-reply-gender-geo, fig.width = 10, fig.height=7}
+geohetero_reply %>%
+  dplyr::filter(within == "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
+
+## Heterogenity by Geography: Message D (1)
+
+```{r plotD-hetero-reply-gender-geo, fig.width = 10, fig.height=7}
+geohetero_reply %>%
+  dplyr::filter(within == "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
+
+## Heterogenity by Geography: Message B (2)
+
+```{r plotB-hetero-reply-within-gender-geo, fig.width = 10, fig.height=7}
+geohetero_reply %>%
+  dplyr::filter(within != "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
+
+## Heterogenity by Geography: Message C (2)
+
+```{r plotC-hetero-reply-within-gender-geo, fig.width = 10, fig.height=7}
+geohetero_reply %>%
+  dplyr::filter(within != "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
+
+## Heterogenity by Geography: Message D (2)
+
+```{r plotD-hetero-reply-within-gender-geo, fig.width = 10, fig.height=7}
+geohetero_reply %>%
+  dplyr::filter(within != "full") %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_pointrange(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(0.5)
+    ) +
+    geom_text(aes(y = -0.15, label = N), color = "black") +
+    facet_wrap(~ within, ncol = 2) +
+    scale_y_continuous(
+      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+    ) +
+    labs(
+      x = "Subset",
+      y = "Estimate (95%CI)",
+      color = "Outcomes", shape = "Outcomes"
+    ) +
+    simplegg()
+```
