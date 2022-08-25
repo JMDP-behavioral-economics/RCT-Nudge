@@ -111,7 +111,7 @@ grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
     移植を希望して返信する確率を高め、移植確率にも正の影響を与えている。
 
 
-```{r child="Rmd/1-summary.rmd", eval = FALSE}
+```{r child="Rmd/1-summary.rmd"}
 
 ```
 
