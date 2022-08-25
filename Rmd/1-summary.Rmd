@@ -44,9 +44,8 @@ rawdt <- read_csv(
 )
 
 use <- rawdt %>%
-  mutate(
-    treat = factor(treat, levels = LETTERS[1:4])
-  )
+  dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4]))
 
 schedule <- read_csv(here(root, "RCT-schedule.csv"))
 ```
@@ -105,8 +104,8 @@ balance_test <- use %>%
   group_by(vars) %>%
   do(est = lm_robust(
     value ~ treat,
-    clusters = RCTweek,
-    se_type = "CR0",
+    # clusters = RCTweek,
+    se_type = "HC0",
     data = .
   )) %>%
   summarize(

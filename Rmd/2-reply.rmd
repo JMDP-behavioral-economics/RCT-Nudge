@@ -85,7 +85,7 @@ testdt <- use %>%
 
 ## Difference-in-mean Tests
 
-```{r ttest, include = FALSE, eval = FALSE}
+```{r ttest, include = FALSE}
 stat <- testdt %>%
   dplyr::filter(within == "full") %>%
   group_by(outcome, treat) %>%
@@ -150,7 +150,7 @@ show_ttest_info <- ttest_info %>%
   )
 ```
 
-```{r ttest-reply, echo = FALSE, eval = FALSE}
+```{r ttest-reply, echo = FALSE}
 stat %>%
   dplyr::filter(outcome %in% c("Reply", "Positive intention")) %>%
   ggplot(aes(x = treat, y = mean)) +
@@ -275,6 +275,57 @@ est_mod_reply %>%
   )
 ```
 
+## Linear Probability Model of Reply：その他
+
+モデル(1)の共変量・固定効果に関する結果
+
+- 高齢であるほど、返信率が高い
+- 女性の方が男性よりも返信率が高い
+- コーディネートの経験回数が多いほど、返信率が高い
+- 東京・大阪・神奈川・愛知に在住している人がそうでない人よりも返信率が高い
+- 週・月の固定効果は返信率と**相関なし**
+
+```{r tab-reg-reply2, eval = FALSE, include = FALSE}
+est_mod_reply <- est_mod %>%
+  dplyr::filter(outcome == "Reply")
+
+est_mod_reply %>%
+  pull(est) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
+  modelsummary(
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"#,
+  ) %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "Reply" = 1,
+    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
+  )) %>%
+  kableExtra::add_header_above(c(
+    " " = 2,
+    "Reply within specific day" = 4
+  ))
+
+estimatr::difference_in_means(
+  value ~ treat,
+  data = subset(testdt, outcome == "Reply" & within == "full"),
+  condition1 = "A", condition = "B"
+)
+```
+
+## 回帰分析と二群比較の結果の差について
+
+メッセージAとメッセージBの比較に注目する
+
+- 効果の大きさ：0.011（二群比較）$<$ 0.014（回帰分析）
+  - 回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
+- 推定効果の標準誤差：0.009（二群比較）$>$ 0.006（回帰分析）
+  - 回帰分析は実験週単位でクラスターした標準誤差を使用している
+  - クラスター標準誤差が通常の標準誤差を下回るということは、
+  クラスター内の個人間の相関が負であることを示す (Angrist and Pischke, 2009)
+  - 適合通知を受け取った人が他の人の返信状況などを聞いて、
+  クラウディング・アウトのような行動を取るとしたら、クラスター内の個人間の相関が負となる？
+
+
 ## Linear Probability Model of Positive Intention
 
 ```{r tab-reg-positive-int}
@@ -312,6 +363,56 @@ est_mod_int %>%
     bold = FALSE, italic = TRUE
   )
 ```
+
+## Linear Probability Model of Reply：その他
+
+```{r tab-reg-positive-int2, eval = FALSE}
+est_mod_reply <- est_mod %>%
+  dplyr::filter(outcome == "Positive intention")
+
+est_mod_reply %>%
+  pull(est) %>%
+  setNames(paste0("(", seq(length(.)), ")")) %>%
+  modelsummary(
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"#,
+  ) %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "Reply" = 1,
+    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
+  )) %>%
+  kableExtra::add_header_above(c(
+    " " = 2,
+    "Reply within specific day" = 4
+  ))
+
+estimatr::difference_in_means(
+  value ~ treat,
+  data = subset(testdt, outcome == "Positive intention" & within == "full"),
+  condition1 = "A", condition = "B"
+)
+```
+
+モデル(1)の共変量・固定効果に関する結果
+
+- 高齢であるほど、正の意向を示しやすい
+- 男性の方が女性よりも正の意向を示しやすい
+- コーディネートの経験回数が多いほど、正の意向を示さない
+- 2022年1月と比較して、2021/9や2021/10に送付した時の方が正の意向を示しやすい
+- 第1週と比較して、第3週に送付したときの方が正の意向を示しやすい
+
+## 回帰分析と二群比較の結果の差について
+
+メッセージAとメッセージBの比較に注目する
+
+- 効果の大きさ：0.022（二群比較）$>$ 0.020（回帰分析）
+  - 回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
+  - メッセージBの割り当ては第1週に2回、第3週に1回。
+  メッセージAの割り当ては第1週と第3週ともに1回。
+- 推定効果の標準誤差：0.013（二群比較）$>$ 0.012（回帰分析）
+  - 回帰分析は実験週単位でクラスターした標準誤差を使用している
+  - クラスター標準誤差が通常の標準誤差を下回るということは、
+  クラスター内の個人間の相関が負であることを示す
 
 ## Linear Probability Model of Negative Intention
 
