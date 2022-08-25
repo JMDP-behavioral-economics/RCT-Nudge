@@ -53,7 +53,7 @@ testdt <- use %>%
     positive_10 = if_else(days_reply <= 10, intention, 0),
     positive_20 = if_else(days_reply <= 20, intention, 0),
     positive_30 = if_else(days_reply <= 30, intention, 0),
-    negative_full = 1 - intention,
+    negative_full = reply * (1 - intention),
     negative_5 = if_else(days_reply <= 5, 1- intention, 0),
     negative_10 = if_else(days_reply <= 10, 1- intention, 0),
     negative_20 = if_else(days_reply <= 20, 1- intention, 0),
@@ -62,7 +62,7 @@ testdt <- use %>%
   select(-reply, -intention, -days_reply) %>%
   pivot_longer(
     reply_full:negative_30,
-    names_to = c(".value", "within"),
+    names_to = c("outcome", "within"),
     names_pattern = "(.*)_(.*)"
   ) %>%
   mutate(within = factor(
@@ -76,7 +76,6 @@ testdt <- use %>%
       "\u2264 30 days"
     )
   )) %>%
-  pivot_longer(reply:negative, names_to = "outcome") %>%
   mutate(outcome = factor(
     outcome,
     levels = c("reply", "positive", "negative"),
@@ -86,7 +85,7 @@ testdt <- use %>%
 
 ## Difference-in-mean Tests
 
-```{r ttest, include = FALSE}
+```{r ttest, include = FALSE, eval = FALSE}
 stat <- testdt %>%
   dplyr::filter(within == "full") %>%
   group_by(outcome, treat) %>%
@@ -151,7 +150,7 @@ show_ttest_info <- ttest_info %>%
   )
 ```
 
-```{r ttest-reply, echo = FALSE}
+```{r ttest-reply, echo = FALSE, eval = FALSE}
 stat %>%
   dplyr::filter(outcome %in% c("Reply", "Positive intention")) %>%
   ggplot(aes(x = treat, y = mean)) +
