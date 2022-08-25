@@ -59,6 +59,10 @@ shape_rawdt <- rawdt %>%
     year = year(ym(ym)),
     month = month(ym(ym)),
     male = if_else(sex == "M", 1, 0),
+    toka = if_else(
+      prefecture %in% c("東京都", "大阪府", "神奈川県", "愛知県"),
+      1, 0
+    ),
     reply = if_else(reply == "有", 1, 0),
     days_reply = if_else(days_reply != "-", as.numeric(days_reply), NA_real_),
     intention = if_else(intention == "希望する", 1, 0),
@@ -138,6 +142,7 @@ shape_rawdt <- rawdt %>%
     sentenceB,
     sentenceC,
     prefecture,
+    toka,
     male,
     age,
     coordinate,

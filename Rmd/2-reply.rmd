@@ -19,7 +19,7 @@ use <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4]))
 
 testdt <- use %>%
-  dplyr::filter(exg_stop_reply == 0  & prefecture != "海外") %>%
+  dplyr::filter(ongoing == 0 & exg_stop_reply == 0  & prefecture != "海外") %>%
   select(
     id,
     reply,
@@ -29,13 +29,12 @@ testdt <- use %>%
     RCTweek,
     month,
     week,
-    prefecture,
+    toka,
     male,
     age,
     coordinate
   ) %>%
   mutate(
-    prefecture = factor(prefecture, c("東京都", unique(rawdt$prefecture)[-11])),
     age_less30 = if_else(age <= 30, 1, 0),
     age_demean = age - mean(rawdt$age),
     coordinate1 = if_else(coordinate == 1, 1, 0),
@@ -202,10 +201,8 @@ $$
 - $\beta_1 = \beta_2$、$\beta_1 = \beta_3$、$\beta_2 = \beta_3$の帰無仮説に対する
 F検定を実施
 
-## Linear Probability Model of Reply
-
 ```{r reg-reply, include = FALSE}
-mod <- value ~ treat + age_demean + male + coordinate1 + prefecture +
+mod <- value ~ treat + age_demean + male + coordinate1 + toka +
   factor(month) + factor(week)
 
 est_mod <- testdt %>%
@@ -240,6 +237,8 @@ est_mod <- testdt %>%
     )$lh %>% tidy()
   )
 ```
+
+## Linear Probability Model of Reply
 
 ```{r tab-reg-reply}
 est_mod_reply <- est_mod %>%
@@ -647,20 +646,16 @@ age_criterion_secondary %>%
 
 ```{r hetero-reply-geo, include = FALSE}
 geohetero_reply <- testdt %>%
-  mutate(hospital = if_else(
-    prefecture %in% c("東京都", "大阪府", "神奈川県", "愛知県"),
-    1, 0
-  )) %>%
-  group_by(outcome, within, hospital) %>%
+  group_by(outcome, within, toka) %>%
   do(est = lm_robust(
-    update(mod, . ~ . - prefecture),
+    update(mod, . ~ . - toka),
     cluster = RCTweek,
     se_type = "stata",
     data = .
   )) %>%
   mutate(
-    hospital = factor(
-      hospital,
+    toka = factor(
+      toka,
       levels = c(0, 1),
       labels = c("Other Areas", "Tokyo, Osaka\nKanagawa, Aichi")
     ),
@@ -677,7 +672,7 @@ geohetero_reply %>%
   summarize(
     subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
   ) %>%
-  ggplot(aes(x = hospital, y = estimate, color = outcome, shape = outcome)) +
+  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
     geom_pointrange(
       aes(ymin = conf.low, ymax = conf.high),
@@ -704,7 +699,7 @@ geohetero_reply %>%
   summarize(
     subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
   ) %>%
-  ggplot(aes(x = hospital, y = estimate, color = outcome, shape = outcome)) +
+  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
     geom_pointrange(
       aes(ymin = conf.low, ymax = conf.high),
@@ -731,7 +726,7 @@ geohetero_reply %>%
   summarize(
     subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
   ) %>%
-  ggplot(aes(x = hospital, y = estimate, color = outcome, shape = outcome)) +
+  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
     geom_pointrange(
       aes(ymin = conf.low, ymax = conf.high),
@@ -758,7 +753,7 @@ geohetero_reply %>%
   summarize(
     subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
   ) %>%
-  ggplot(aes(x = hospital, y = estimate, color = outcome, shape = outcome)) +
+  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
     geom_pointrange(
       aes(ymin = conf.low, ymax = conf.high),
@@ -786,7 +781,7 @@ geohetero_reply %>%
   summarize(
     subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
   ) %>%
-  ggplot(aes(x = hospital, y = estimate, color = outcome, shape = outcome)) +
+  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
     geom_pointrange(
       aes(ymin = conf.low, ymax = conf.high),
@@ -814,7 +809,7 @@ geohetero_reply %>%
   summarize(
     subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
   ) %>%
-  ggplot(aes(x = hospital, y = estimate, color = outcome, shape = outcome)) +
+  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
     geom_pointrange(
       aes(ymin = conf.low, ymax = conf.high),
