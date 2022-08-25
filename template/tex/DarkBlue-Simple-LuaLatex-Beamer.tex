@@ -64,8 +64,8 @@ $endfor$
 
 \setbeamerfont{title}{size=\LARGE,series=\bfseries}
 \setbeamerfont{subtitle}{size=\small,series=\bfseries}
-\setbeamerfont{institute}{size=\footnotesize}
-\setbeamerfont{date}{size=\footnotesize}
+\setbeamerfont{institute}{size=\scriptsize}
+\setbeamerfont{date}{size=\scriptsize}
 \setbeamerfont{section title}{size=\LARGE,series=\bfseries}
 \setbeamerfont{frametitle}{size=\Large,series=\bfseries}
 
@@ -151,10 +151,10 @@ $if(author)$
     $endfor$
   }
 $endif$
-$if(inst)$
+$if(institute)$
   \institute{%
-    $for(inst.number)$
-    \inst{$inst.number$}$inst.name$
+    $for(institute)$
+    \inst{$institute.number$}$institute.name$\\
     $endfor$
   }
 $endif$

@@ -1,0 +1,265 @@
+\documentclass[
+      aspectratio=169,
+        12pt,
+    ]{beamer}
+
+% ------------------------------------ font
+\usefonttheme[onlymath]{serif}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[scale = 1.0]{tgheros} %Sans serif
+\usepackage[scaled]{beramono}
+\usepackage{luatexja-otf}
+\usepackage[match, deluxe, expert, noto-otf]{luatexja-preset}
+\renewcommand{\kanjifamilydefault}{\gtdefault}
+
+% ------------------------------------ math packages
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+
+% ------------------------------------ comment out package
+\usepackage{comment}
+
+% ------------------------------------ tables
+\usepackage{longtable, booktabs, array}
+\usepackage{threeparttable, threeparttablex, multirow}
+\newcolumntype{d}{S[input-symbols = ()]}
+
+% ------------------------------------ figures
+\usepackage{graphics, graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+\usepackage{tikz}
+\usetikzlibrary{backgrounds}
+
+% ------------------------------------ other packages (header-includes)
+
+% ------------------------------------ Slide Designs
+\definecolor{DarkBlue}{rgb}{0.05, 0.15, 0.35} 
+
+\setbeamercolor{item}{fg=DarkBlue}
+\setbeamercolor{title}{fg=DarkBlue}
+\setbeamercolor{subtitle}{fg=DarkBlue}
+\setbeamercolor{frametitle}{fg=DarkBlue}
+\setbeamercolor{section title}{fg=white}
+
+\renewcommand{\textbf}[1]{{\color{DarkBlue}\bfseries#1}}
+
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\small,series=\bfseries}
+\setbeamerfont{institute}{size=\scriptsize}
+\setbeamerfont{date}{size=\scriptsize}
+\setbeamerfont{section title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[circle]
+\setbeamertemplate{itemize subsubitem}[circle]
+
+\setbeamertemplate{frametitle}{%
+  \vspace*{0.5em}\usebeamerfont{frametitle}\insertframetitle\par\vskip-6pt\hrulefill\vspace{-0.1em}
+}
+
+\setbeamertemplate{title page}{
+    \vfill
+    \begingroup
+        \centering
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{title}
+        \usebeamerfont{title}\inserttitle\par%
+        \ifx\insertsubtitle\@empty%
+        \else%
+            \vskip0.25em%
+            {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+        \fi%     
+        \end{beamercolorbox}%
+        \hrulefill\vskip0.5em\par
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{author}
+        \usebeamerfont{author}\insertauthor
+        \end{beamercolorbox}
+        \vskip-1em
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{institute}
+        \usebeamerfont{institute}\insertinstitute
+        \end{beamercolorbox}
+        % ------------------------
+        \begin{beamercolorbox}[sep=8pt,center]{date}
+        \usebeamerfont{date}\insertdate
+        \end{beamercolorbox}\vskip0.5em
+        % ------------------------
+        {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+    \endgroup
+    \vfill
+}
+
+\setbeamertemplate{section page}{%
+  
+  \begingroup
+    \centering
+    {\color{white} \hrulefill}\vskip1em
+    \begin{beamercolorbox}[sep=8pt, center]{section title}
+        \usebeamerfont{section title} \thesection. \insertsection
+    \end{beamercolorbox}
+    {\color{white} \hrulefill}
+  \endgroup
+}
+
+\addtobeamertemplate{section page}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+    \fill[color=DarkBlue!80] (current page.south west) rectangle(current page.north east);
+  \end{tikzpicture}
+}
+
+\AtBeginSection{\frame{\sectionpage}}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% ------------------------------------ title information
+  \title{Only You}
+  \subtitle{A Field Experiment of Text Message
+to Prevent Crowding-out Effect in Japan Marrow Donor Program}
+  \author{%
+        Hiroki Kato\inst{1}
+    \and
+        Fumio Ohtake\inst{1, 2}
+    \and
+        Saiko Kurosawa\inst{3}
+    \and
+        Kazuhiro Yoshiuchi\inst{4}
+    \and
+        Takahiro Fukuda\inst{5}
+    \and
+      }
+  \institute{%
+        \inst{1}Graduate School of Economics, Osaka University\\
+        \inst{2}Center for Infectious Disease Education and Research (CiDER), Osaka University\\
+        \inst{3}Department of Oncology, Ina Central Hospital\\
+        \inst{4}Graduate School of Medicine, Tokyo University\\
+        \inst{5}Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital\\
+      }
+
+\begin{document}
+
+\frame{\titlepage}
+
+
+\begin{frame}{同種幹細胞移植について}
+\protect\hypertarget{ux540cux7a2eux5e79ux7d30ux80deux79fbux690dux306bux3064ux3044ux3066}{}
+\begin{itemize}
+\tightlist
+\item
+  比較的再発率の低い、血液病（e.g.白血病）に対する治療法
+
+  \begin{itemize}
+  \tightlist
+  \item
+    抗がん剤もしくは放射線治療によって健康な細胞と病巣を破壊し、他者の健康な細胞を移植する
+  \end{itemize}
+\item
+  白血球の型（HLA）が一致していることが条件
+
+  \begin{itemize}
+  \tightlist
+  \item
+    ランダムにピックアップした二人のHLAの一致確率は1\%未満
+  \item
+    兄弟姉妹の二人のHLAの一致確率は30\%（親子の一致確率はかなり小さい）
+  \end{itemize}
+\item
+  日本では、親族に最適なドナーがいない場合、
+  日本骨髄バンク（JMDP）を通して非親族の造血幹細胞ドナーを探す
+\end{itemize}
+\end{frame}
+
+\begin{frame}{JMDPの問題点}
+\protect\hypertarget{jmdpux306eux554fux984cux70b9}{}
+\begin{itemize}
+\tightlist
+\item
+  移植のコーディネート期間が長く、患者の死亡率が高い(Hirakawa et al, 2018)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    50\%の登録患者は146日以内に移植を受けられるが、死亡した登録患者の58\%は200日以内に死亡していた
+  \item
+    登録患者の約40\%が移植を受けられず、死亡した
+  \end{itemize}
+\item
+  患者の生存率を向上するためには、移植のコーディネート期間を短くする必要がある。
+  そのための政策は2つある。
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{ドナープールの規模を拡大する}。2000年から2015年にかけて骨髄バンクの登録者は2倍になっているが、
+    HLAの一致確率は5\%程度しか増えていない(Takanashi, 2016)。この政策の限界便益は小さい
+  \item
+    \textbf{ドナープールの質を高める}。73\%のコーディネーションは確認検査前にドナー側の理由で中断している
+    (Hirakawa et al., 2018)。ここに改善の余地がある。
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{公共財としての同種幹細胞移植}
+\protect\hypertarget{ux516cux5171ux8ca1ux3068ux3057ux3066ux306eux540cux7a2eux5e79ux7d30ux80deux79fbux690d}{}
+\begin{itemize}
+\tightlist
+\item
+  JMDPを介した移植は1人の患者に対して複数のドナーが同時にコーディネーションを進める
+\item
+  患者を助けることに効用を得る人は、他者の移植でも効用を得られる。
+  したがって、経済学で言われるクラウディング・アウト効果（もしくは、ただ乗り行動）が生じうる
+
+  \begin{itemize}
+  \tightlist
+  \item
+    ドナー候補者が複数いると期待している人は、他者が移植してくれることを期待して、
+    自身が移植することを断る。
+  \item
+    結果として、医者が選択できるドナー候補者が少なくなり、移植を阻害してしまう。
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{本研究の概要}
+\protect\hypertarget{ux672cux7814ux7a76ux306eux6982ux8981}{}
+\begin{itemize}
+\tightlist
+\item
+  ドナー候補者に選定されたことを伝える適合通知に、
+  クラウディング・アウト効果を阻害するようなテキストメッセージを加えて、
+  その効果をフィールド実験にて検証する。
+
+  \begin{itemize}
+  \tightlist
+  \item
+    関連研究：Shang and Croson (2009, EJ)
+  \end{itemize}
+\item
+  主な発見
+
+  \begin{enumerate}
+  \tightlist
+  \item
+    クラウディング・アウト効果を解消するメッセージは返信率を高めている
+  \item
+    特に、このメッセージは移植成績の良い若年男性に対して有効であり、
+    移植を希望して返信する確率を高め、移植確率にも正の影響を与えている。
+  \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\end{document}
