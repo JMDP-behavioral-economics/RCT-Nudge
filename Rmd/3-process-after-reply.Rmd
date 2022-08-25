@@ -1,5 +1,18 @@
 
-# Effect on Process after Reply
+# Effect on Coordination Process
+
+## アウトカム変数
+
+返信以降の4工程をそれぞれアウトカム変数とする
+
+- **CT**: 確認検査を実施したならば1を取る二値変数
+  - 外生的な要因である患者側の都合でこの工程の段階でコーディネーションが中止した人は除外する
+- **Candidate**: 第一候補者に選定されたならば1を取る二値変数
+  - 患者側の都合あるいは健康上の理由でこの工程の段階でコーディネーションが中止した人は除外する
+- **Consent**: 最終同意をしたならば1を取る二値変数
+  - 患者側の都合あるいは健康上の理由でこの工程の段階でコーディネーションが中止した人は除外する
+- **Donation**: 採取をしたならば1を取る二値変数
+  - 患者側の都合あるいは健康上の理由でこの工程の段階でコーディネーションが中止した人は除外する
 
 ```{r load-packages, include = FALSE}
 library(here)
@@ -59,7 +72,7 @@ testdt <- outcomes %>%
   )
 ```
 
-## Difference-in-mean Test
+## 二群比較の検定（補論）
 
 ```{r ttest, include = FALSE}
 stat <- testdt %>%
@@ -127,7 +140,7 @@ show_ttest_info <- ttest_info %>%
   )
 ```
 
-```{r ttest-after-reply, echo = FALSE, fig.width=12, fig.height=7}
+```{r ttest-process, echo = FALSE, fig.width=12, fig.height=7}
 stat %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
@@ -162,9 +175,9 @@ stat %>%
     simplegg()
 ```
 
-## Linear Probability Model
+## 回帰分析の結果
 
-```{r reg-after-reply, include = FALSE}
+```{r reg-process, include = FALSE}
 model <- value ~ treat + age_demean + male + coordinate1 + toka +
   factor(month) + factor(week)
 
@@ -201,7 +214,7 @@ est_model <- testdt %>%
   )
 ```
 
-```{r tab-reg-after-reply}
+```{r tab-reg-process}
 est_model %>%
   pull(est) %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
@@ -218,7 +231,7 @@ est_model %>%
       rbind(bind_rows(est_model$ftestCD)[, 4]) %>%
       data.frame(term = c("B = C", "B = D", "C = D"), .)
   ) %>%
-  kableExtra::kable_styling(font_size = 9) %>%
+  kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(
     c(" ", as.character(est_model$outcome))
   ) %>%
@@ -228,12 +241,12 @@ est_model %>%
   )
 ```
 
-## Heterogenous Effect by Gender and Age
+## 性別×年齢による効果の異質性
 
 - 性別と年齢（30歳以下どうか）でサンプルを分割して、
 各サブサンプル内でメッセージの効果を推定した
 
-```{r hetero-after-reply-gender-age, include = FALSE}
+```{r hetero-process-gender-age, include = FALSE}
 hetero_after_reply <- testdt %>%
   group_by(outcome, male, age_less30) %>%
   do(est = lm_robust(
@@ -258,76 +271,34 @@ hetero_after_reply <- testdt %>%
   )
 ```
 
-## Heterogenity by Gender x Age: Message B
+## 性別×年齢による効果の異質性
 
-```{r plotB-hetero-after-reply-gender-age, fig.width = 10, fig.height=7}
+```{r plot-hetero-process-gender-age, fig.width = 10, fig.height=7}
 hetero_after_reply %>%
   rowwise(everything()) %>%
   summarize(
-    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+    subset(tidy(est), str_detect(term, "treat")) %>%
+      select(-outcome) %>%
+      mutate(term = factor(term, labels = LETTERS[2:4]))
   ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      limits = c(-0.2, 0.2),
-      breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
-```
-
-## Heterogenity by Gender x Age: Message C
-
-```{r plotC-hetero-after-reply-gender-age, fig.width = 10, fig.height=7}
-hetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~outcome, ncol = 2) +
-    scale_y_continuous(
-      limits = c(-0.2, 0.2),
-      breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
-```
-
-## Heterogenity by Gender x Age: Message D
-
-```{r plotD-hetero-after-reply-gender-age, fig.width = 10, fig.height=7}
-hetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      limits = c(-0.2, 0.2),
-      breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
+  ggplot(aes(x = pos, y = estimate, shape = term, color = term)) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  geom_pointrange(
+    aes(ymin = conf.low, ymax = conf.high),
+    position = position_dodge(0.5)
+  ) +
+  geom_text(aes(y = -0.15, label = N), color = "black") +
+  facet_wrap(~outcome, ncol = 2) +
+  scale_y_continuous(
+    limits = c(-0.2, 0.2),
+    breaks = seq(-0.2, 0.2, by = 0.05)
+  ) +
+  labs(
+    x = "Subset",
+    y = "Estimates (95%CI)",
+    shape = "Treatments", color = "Treatments"
+  ) +
+  simplegg()
 ```
 
 <!-- ## Change Threshold of Younger Group
@@ -420,15 +391,13 @@ age_criterion %>%
     simplegg()
 ```
 
-## Geographical Heterogenity
+## 地域による異質性
 
-- 都道府県ごとに10平方キロメートル当たりの病院数を計算し、
-0.5カ所以上ある地域とそうでない地域でサンプルを分割した
-  - 1カ所以上：東京・大阪
-  - 1カ所未満：神奈川・愛知
-- それぞれのサブサンプルで効果を推定する
+- 10平方キロメートル当たりに0.5カ所以上の病院がある東京・大阪・神奈川・愛知（TOKA地域）
+に在住しているかどうかでサンプルを分割して、それぞれのサブサンプルで効果を推定した
+- また、性別×TOKA地域でサブサンプルを作り、効果を推定した
 
-```{r hetero-after-reply-geo, include = FALSE}
+```{r hetero-process-geo, include = FALSE}
 geohetero_after_reply <- testdt %>%
   group_by(outcome, toka) %>%
   do(est = lm_robust(
@@ -447,79 +416,39 @@ geohetero_after_reply <- testdt %>%
   )
 ```
 
-## Heterogenity by Geography: Message B
+## 地域による効果の異質性
 
-```{r plotB-hetero-after-reply-geo, fig.width = 10, fig.height=7}
+```{r plot-hetero-process-geo, fig.width = 10, fig.height=7}
 geohetero_after_reply %>%
   rowwise(everything()) %>%
   summarize(
-    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+    subset(tidy(est), str_detect(term, "treat")) %>%
+      select(-outcome) %>%
+      mutate(term = factor(term, labels = LETTERS[2:4]))
   ) %>%
-  ggplot(aes(x = toka, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
-```
-
-## Heterogenity by Geography: Message C
-
-```{r plotC-hetero-after-reply-geo, fig.width = 10, fig.height=7}
-geohetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = toka, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
-```
-
-## Heterogenity by Geography: Message D
-
-```{r plotD-hetero-after-reply-geo, fig.width = 10, fig.height=7}
-geohetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = toka, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
+  ggplot(aes(x = toka, y = estimate, color = term, shape = term)) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  geom_pointrange(
+    aes(ymin = conf.low, ymax = conf.high),
+    position = position_dodge(0.5)
+  ) +
+  geom_text(aes(y = -0.15, label = N), color = "black") +
+  facet_wrap(~outcome, ncol = 2) +
+  scale_y_continuous(
+    breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    x = "Subset",
+    y = "Estimates (95%CI)",
+    color = "Treatments", shape = "Treatments"
+  ) +
+  simplegg()
 ```
 
 
-## Heterogenity by Gender x Geography: Message B
+## 性別×TOKA地域による効果の異質性
 
-```{r hetero-after-reply-gender-geo, include = FALSE}
+```{r hetero-process-gender-geo, include = FALSE}
 geohetero_after_reply <- testdt %>%
   group_by(outcome, toka, male) %>%
   do(est = lm_robust(
@@ -544,69 +473,29 @@ geohetero_after_reply <- testdt %>%
   )
 ```
 
-```{r plotB-hetero-after-reply-gender-geo, fig.width = 10, fig.height=7}
+```{r plot-hetero-process-gender-geo, fig.width = 10, fig.height=7}
 geohetero_after_reply %>%
   rowwise(everything()) %>%
   summarize(
-    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+    subset(tidy(est), str_detect(term, "treat")) %>%
+      select(-outcome) %>%
+      mutate(term = factor(term, labels = LETTERS[2:4]))
   ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
-```
-
-## Heterogenity by Gender x Geography: Message C
-
-```{r plotC-hetero-after-reply-gender-geo, fig.width = 10, fig.height=7}
-geohetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
-```
-
-## Heterogenity by Gender x Geography: Message D
-
-```{r plotD-hetero-after-reply-gender-geo, fig.width = 10, fig.height=7}
-geohetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ outcome, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(x = "Subset", y = "Estimate (95%CI)") +
-    simplegg()
+  ggplot(aes(x = pos, y = estimate, color = term, shape = term)) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  geom_pointrange(
+    aes(ymin = conf.low, ymax = conf.high),
+    position = position_dodge(0.5)
+  ) +
+  geom_text(aes(y = -0.15, label = N), color = "black") +
+  facet_wrap(~outcome, ncol = 2) +
+  scale_y_continuous(
+    breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    x = "Subset",
+    y = "Estiamtes (95%CI)",
+    color = "Treatments", shape = "Treatments"
+  ) +
+  simplegg()
 ```
