@@ -6,6 +6,7 @@ library(modelsummary)
 library(kableExtra)
 library(RCTtoolbox)
 library(ggsignif)
+library(patchwork)
 library(survival)
 
 lapply(

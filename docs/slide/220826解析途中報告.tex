@@ -366,6 +366,9 @@ to Prevent Crowding-out Effect in Japan Marrow Donor Program}
   \tightlist
   \item
     観測単位はコーディネーション（ドナー候補者）
+  \item
+    コーディネーション進行状況は提供に至るまでの各工程について記録されている
+    (返信と意向\(\to\)確認検査\(\to\)第一候補者\(\to\)最終同意\(\to\)採取)
   \end{itemize}
 \item
   分析対象は\textbf{国内在住でコーディネーションが完全に終了している人}
@@ -432,6 +435,364 @@ to Prevent Crowding-out Effect in Japan Marrow Donor Program}
   \(\beta_1 = \beta_2\)、\(\beta_1 = \beta_3\)、\(\beta_2 = \beta_3\)の帰無仮説に対する
   F検定を実施
 \end{itemize}
+\end{frame}
+
+\hypertarget{effect-on-reply-and-intention}{%
+\section{Effect on Reply and Intention}\label{effect-on-reply-and-intention}}
+
+\begin{frame}{アウトカム変数}
+\protect\hypertarget{ux30a2ux30a6ux30c8ux30abux30e0ux5909ux6570}{}
+\begin{itemize}
+\tightlist
+\item
+  最も個人の意向が現れる\textbf{適合通知への返信}と\textbf{移植の意向}をアウトカム変数とする
+
+  \begin{itemize}
+  \tightlist
+  \item
+    外生的な要因である患者側の都合でこの工程の段階でコーディネーションが中止した人は除外して分析をする
+  \end{itemize}
+\item
+  アウトカム変数は適合通知に返信したらならば1を取るダミー変数
+
+  \begin{itemize}
+  \tightlist
+  \item
+    全体平均は88\%
+  \end{itemize}
+\item
+  返信スピードに対する効果を検証するために、
+  \(X\)日以内に返信したならば1を取るダミー変数もアウトカムとする
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(X = \{5, 10, 20, 30\}\)
+  \item
+    返信した人の平均返信日数は全体で約10日（中央値は9日）
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{二群比較の検定（補論）}
+\protect\hypertarget{ux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9aux88dcux8ad6}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/ttest-reply-1} \end{center}
+\end{frame}
+
+\begin{frame}{回帰分析の結果}
+\protect\hypertarget{ux56deux5e30ux5206ux6790ux306eux7d50ux679c}{}
+\begin{table}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{4}{c}{Reply within specific day} \\
+\cmidrule(l{3pt}r{3pt}){3-6}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Reply} & \multicolumn{1}{c}{5 days} & \multicolumn{1}{c}{10 days} & \multicolumn{1}{c}{20 days} & \multicolumn{1}{c}{30 days} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
+  & (1) & (2) & (3) & (4) & (5)\\
+\midrule
+B & \num{0.014}** & \num{0.005} & \num{-0.047}*** & \num{0.013} & \num{0.016}**\\
+ & (\num{0.006}) & (\num{0.008}) & (\num{0.014}) & (\num{0.009}) & (\num{0.007})\\
+C & \num{0.003} & \num{0.002} & \num{0.003} & \num{0.008} & \num{0.006}\\
+ & (\num{0.005}) & (\num{0.007}) & (\num{0.015}) & (\num{0.007}) & (\num{0.005})\\
+D & \num{0.006} & \num{0.013} & \num{-0.030}** & \num{0.017}** & \num{0.006}\\
+ & (\num{0.005}) & (\num{0.009}) & (\num{0.014}) & (\num{0.007}) & (\num{0.005})\\
+\midrule
+Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
+\hspace{1em}B = C & \num{0.019} & \num{0.677} & \num{0.002} & \num{0.394} & \num{0.038}\\
+\hspace{1em}B = D & \num{0.152} & \num{0.377} & \num{0.190} & \num{0.621} & \num{0.081}\\
+\hspace{1em}C = D & \num{0.542} & \num{0.146} & \num{0.037} & \num{0.093} & \num{0.852}\\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Remark：共変量・固定効果の影響}
+\protect\hypertarget{remarkux5171ux5909ux91cfux56faux5b9aux52b9ux679cux306eux5f71ux97ff}{}
+モデル(1)の共変量・固定効果に関する結果
+
+\begin{itemize}
+\tightlist
+\item
+  高齢であるほど、返信率が高い
+\item
+  女性の方が男性よりも返信率が高い
+\item
+  コーディネートの経験回数が多いほど、返信率が高い
+\item
+  東京・大阪・神奈川・愛知に在住している人がそうでない人よりも返信率が高い
+\item
+  週・月の固定効果は返信率と\textbf{相関なし}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{回帰分析と二群比較の結果の差について（メモ）}
+\protect\hypertarget{ux56deux5e30ux5206ux6790ux3068ux4e8cux7fa4ux6bd4ux8f03ux306eux7d50ux679cux306eux5deeux306bux3064ux3044ux3066ux30e1ux30e2}{}
+メッセージAとメッセージBの比較に注目する
+
+\begin{itemize}
+\tightlist
+\item
+  効果の大きさ：0.011（二群比較）\(<\) 0.014（回帰分析）
+
+  \begin{itemize}
+  \tightlist
+  \item
+    回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
+  \end{itemize}
+\item
+  推定効果の標準誤差：0.009（二群比較）\(>\) 0.006（回帰分析）
+
+  \begin{itemize}
+  \tightlist
+  \item
+    回帰分析は実験週単位でクラスターした標準誤差を使用している
+  \item
+    クラスター標準誤差が通常の標準誤差を下回るということは、
+    クラスター内の個人間の相関が負であることを示す (Angrist and Pischke, 2009)
+  \item
+    適合通知を受け取った人が他の人の返信状況などを聞いて、
+    クラウディング・アウトのような行動を取るとしたら、クラスター内の個人間の相関が負となる？
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{移植の意向による効果の分解}
+\protect\hypertarget{ux79fbux690dux306eux610fux5411ux306bux3088ux308bux52b9ux679cux306eux5206ux89e3}{}
+\begin{itemize}
+\tightlist
+\item
+  返信率に対する効果は2つの効果に分解できる
+
+  \begin{enumerate}
+  \tightlist
+  \item
+    \textbf{Positive intention}：提供を希望して返信したかどうか
+  \item
+    \textbf{Negative intention}：提供を希望しないで返信したかどうか
+  \end{enumerate}
+\item
+  意向に関する二つのアウトカム変数に対する効果を推定する
+\item
+  また、返信スピードを考慮して、
+  \(X\)日以内に提供を希望して（しないで）返信したかどうかもアウトカム
+  (Reply within specific day with psotive/negative intention)としたモデルも推定する
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Positive intentionに対する効果}
+\protect\hypertarget{positive-intentionux306bux5bfeux3059ux308bux52b9ux679c}{}
+\begin{table}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{4}{c}{Reply within specific day with positive intention} \\
+\cmidrule(l{3pt}r{3pt}){3-6}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Positive intention} & \multicolumn{1}{c}{5 days} & \multicolumn{1}{c}{10 days} & \multicolumn{1}{c}{20 days} & \multicolumn{1}{c}{30 days} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
+  & (1) & (2) & (3) & (4) & (5)\\
+\midrule
+B & \num{0.020} & \num{0.013} & \num{-0.020}* & \num{0.021} & \num{0.021}\\
+ & (\num{0.012}) & (\num{0.009}) & (\num{0.010}) & (\num{0.013}) & (\num{0.012})\\
+C & \num{-0.003} & \num{0.004} & \num{0.005} & \num{-0.002} & \num{-0.003}\\
+ & (\num{0.011}) & (\num{0.009}) & (\num{0.015}) & (\num{0.011}) & (\num{0.011})\\
+D & \num{0.006} & \num{0.016} & \num{-0.016} & \num{0.013} & \num{0.007}\\
+ & (\num{0.010}) & (\num{0.010}) & (\num{0.011}) & (\num{0.011}) & (\num{0.010})\\
+\midrule
+Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
+\hspace{1em}B = C & \num{0.011} & \num{0.227} & \num{0.087} & \num{0.014} & \num{0.007}\\
+\hspace{1em}B = D & \num{0.071} & \num{0.775} & \num{0.691} & \num{0.395} & \num{0.078}\\
+\hspace{1em}C = D & \num{0.256} & \num{0.145} & \num{0.122} & \num{0.037} & \num{0.149}\\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Remark：共変量・固定効果の影響}
+\protect\hypertarget{remarkux5171ux5909ux91cfux56faux5b9aux52b9ux679cux306eux5f71ux97ff-1}{}
+モデル(1)の共変量・固定効果に関する結果
+
+\begin{itemize}
+\tightlist
+\item
+  高齢であるほど、正の意向を示しやすい
+\item
+  男性の方が女性よりも正の意向を示しやすい
+\item
+  コーディネートの経験回数が多いほど、正の意向を示さない
+\item
+  2022年1月と比較して、2021/9や2021/10に送付した時の方が正の意向を示しやすい
+\item
+  第1週と比較して、第3週に送付したときの方が正の意向を示しやすい
+\end{itemize}
+\end{frame}
+
+\begin{frame}{回帰分析と二群比較の結果の差について（メモ）}
+\protect\hypertarget{ux56deux5e30ux5206ux6790ux3068ux4e8cux7fa4ux6bd4ux8f03ux306eux7d50ux679cux306eux5deeux306bux3064ux3044ux3066ux30e1ux30e2-1}{}
+メッセージAとメッセージBの比較に注目する
+
+\begin{itemize}
+\tightlist
+\item
+  効果の大きさ：0.022（二群比較）\(>\) 0.020（回帰分析）
+
+  \begin{itemize}
+  \tightlist
+  \item
+    回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
+  \item
+    メッセージBの割り当ては第1週に2回、第3週に1回。
+    メッセージAの割り当ては第1週と第3週ともに1回。
+  \end{itemize}
+\item
+  推定効果の標準誤差：0.013（二群比較）\(>\) 0.012（回帰分析）
+
+  \begin{itemize}
+  \tightlist
+  \item
+    回帰分析は実験週単位でクラスターした標準誤差を使用している
+  \item
+    クラスター標準誤差が通常の標準誤差を下回るということは、
+    クラスター内の個人間の相関が負であることを示す
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Negative intentionに対する効果}
+\protect\hypertarget{negative-intentionux306bux5bfeux3059ux308bux52b9ux679c}{}
+\begin{table}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}>{\centering\arraybackslash}p{6em}}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{4}{c}{Reply within specific day with negative intention} \\
+\cmidrule(l{3pt}r{3pt}){3-6}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Negative intention} & \multicolumn{1}{c}{5 days} & \multicolumn{1}{c}{10 days} & \multicolumn{1}{c}{20 days} & \multicolumn{1}{c}{30 days} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
+  & (1) & (2) & (3) & (4) & (5)\\
+\midrule
+B & \num{-0.006} & \num{-0.008}* & \num{-0.028}*** & \num{-0.008} & \num{-0.005}\\
+ & (\num{0.008}) & (\num{0.005}) & (\num{0.008}) & (\num{0.007}) & (\num{0.007})\\
+C & \num{0.006} & \num{-0.002} & \num{-0.002} & \num{0.010} & \num{0.009}\\
+ & (\num{0.010}) & (\num{0.005}) & (\num{0.009}) & (\num{0.007}) & (\num{0.009})\\
+D & \num{0.000} & \num{-0.003} & \num{-0.013}* & \num{0.003} & \num{-0.001}\\
+ & (\num{0.007}) & (\num{0.005}) & (\num{0.007}) & (\num{0.007}) & (\num{0.007})\\
+\midrule
+Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
+\hspace{1em}B = C & \num{0.159} & \num{0.114} & \num{0.014} & \num{0.008} & \num{0.079}\\
+\hspace{1em}B = D & \num{0.190} & \num{0.138} & \num{0.117} & \num{0.060} & \num{0.381}\\
+\hspace{1em}C = D & \num{0.452} & \num{0.822} & \num{0.256} & \num{0.302} & \num{0.194}\\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{性別×年齢による効果の異質性}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027}{}
+\begin{itemize}
+\tightlist
+\item
+  性別と年齢（30歳以下どうか）でサンプルを分割して、返信と意向の効果を推定する
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{若年男性は移植実績が良いとされているが、具体的に、若年とは何歳以下か？}
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{性別×年齢による効果の異質性：結果(1)}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c1}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plot-hetero-reply-gender-age-1} \end{center}
+\end{frame}
+
+\begin{frame}{性別×年齢による効果の異質性：結果(2)}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c2}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotB-hetero-reply-within-gender-age-1} \end{center}
+\end{frame}
+
+\begin{frame}{性別×年齢による効果の異質性：結果(3)}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c3}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotC-hetero-reply-within-gender-age-1} \end{center}
+\end{frame}
+
+\begin{frame}{性別×年齢による効果の異質性：結果(4)}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c4}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotD-hetero-reply-within-gender-age-1} \end{center}
+\end{frame}
+
+\begin{frame}{地域による異質性}
+\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux7570ux8ceaux6027}{}
+\begin{itemize}
+\tightlist
+\item
+  都道府県ごとに10平方キロメートル当たりの病院数を計算し、
+  0.5カ所以上ある地域とそうでない地域でサンプルを分割した
+
+  \begin{itemize}
+  \tightlist
+  \item
+    1カ所以上：東京・大阪
+  \item
+    1カ所未満：神奈川・愛知
+  \item
+    東京・大阪・神奈川・愛知のグループを\emph{TOKA}と称する
+  \end{itemize}
+\item
+  それぞれのサブサンプルで効果を推定する。さらに、性別×TOKAのサブサンプルでも効果を推定する。
+\end{itemize}
+\end{frame}
+
+\begin{frame}{地域による効果の異質性(1)}
+\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60271}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotB-hetero-reply-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{地域による効果の異質性(2)}
+\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60272}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotB-hetero-reply-within-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{地域による効果の異質性(3)}
+\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60273}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotC-hetero-reply-within-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{地域による効果の異質性(4)}
+\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60274}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotD-hetero-reply-within-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{性別×TOKA地域による効果の異質性(1)}
+\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60271}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotB-hetero-reply-gender-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{性別×TOKA地域による効果の異質性(2)}
+\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60272}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotB-hetero-reply-within-gender-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{性別×TOKA地域による効果の異質性(3)}
+\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60273}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotC-hetero-reply-within-gender-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{性別×TOKA地域による効果の異質性(4)}
+\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60274}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/220826解析途中報告_files/figure-beamer/plotD-hetero-reply-within-gender-geo-1} \end{center}
 \end{frame}
 
 \end{document}

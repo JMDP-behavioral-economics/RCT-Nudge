@@ -1,6 +1,17 @@
 
 # Effect on Reply and Intention
 
+## アウトカム変数
+
+- 最も個人の意向が現れる**適合通知への返信**と**移植の意向**をアウトカム変数とする
+  - 外生的な要因である患者側の都合でこの工程の段階でコーディネーションが中止した人は除外して分析をする
+- アウトカム変数は適合通知に返信したらならば1を取るダミー変数
+  - 全体平均は88\%
+- 返信スピードに対する効果を検証するために、
+$X$日以内に返信したならば1を取るダミー変数もアウトカムとする
+  - $X = \{5, 10, 20, 30\}$
+  - 返信した人の平均返信日数は全体で約10日（中央値は9日）
+
 ```{r load-packages, include = FALSE}
 library(here)
 source(here("R", "_library.r"))
@@ -83,7 +94,7 @@ testdt <- use %>%
   ))
 ```
 
-## Difference-in-mean Tests
+## 二群比較の検定（補論）
 
 ```{r ttest, include = FALSE}
 stat <- testdt %>%
@@ -183,22 +194,7 @@ stat %>%
     simplegg(caption_size = 13)
 ```
 
-
-## Linear Probability Model
-
-$m$月の第$w$週に適合通知を受け取った個人$i$について、
-
-$$
-  Y_{imw} =
-  \beta_1 \cdot \text{B}_{mw} + \beta_2 \cdot \text{C}_{mw}
-  + \beta_3 \cdot \text{D}_{mw}
-  + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
-$$
-
-- $X_i$は性別・年齢・居住する都道府県・コーディネーション回数
-- $\lambda_m$と$\theta_w$は週・月の固定効果
-- $\beta_1 = \beta_2$、$\beta_1 = \beta_3$、$\beta_2 = \beta_3$の帰無仮説に対する
-F検定を実施
+## 回帰分析の結果
 
 ```{r reg-reply, include = FALSE}
 mod <- value ~ treat + age_demean + male + coordinate1 + toka +
@@ -237,8 +233,6 @@ est_mod <- testdt %>%
   )
 ```
 
-## Linear Probability Model of Reply
-
 ```{r tab-reg-reply}
 est_mod_reply <- est_mod %>%
   dplyr::filter(outcome == "Reply")
@@ -275,7 +269,7 @@ est_mod_reply %>%
   )
 ```
 
-## Linear Probability Model of Reply：その他
+## Remark：共変量・固定効果の影響
 
 モデル(1)の共変量・固定効果に関する結果
 
@@ -312,7 +306,7 @@ estimatr::difference_in_means(
 )
 ```
 
-## 回帰分析と二群比較の結果の差について
+## 回帰分析と二群比較の結果の差について（メモ）
 
 メッセージAとメッセージBの比較に注目する
 
@@ -325,8 +319,17 @@ estimatr::difference_in_means(
   - 適合通知を受け取った人が他の人の返信状況などを聞いて、
   クラウディング・アウトのような行動を取るとしたら、クラスター内の個人間の相関が負となる？
 
+## 移植の意向による効果の分解
 
-## Linear Probability Model of Positive Intention
+- 返信率に対する効果は2つの効果に分解できる
+    1. **Positive intention**：提供を希望して返信したかどうか
+    1. **Negative intention**：提供を希望しないで返信したかどうか
+- 意向に関する二つのアウトカム変数に対する効果を推定する
+- また、返信スピードを考慮して、
+$X$日以内に提供を希望して（しないで）返信したかどうかもアウトカム
+(Reply within specific day with psotive/negative intention)としたモデルも推定する
+
+## Positive intentionに対する効果
 
 ```{r tab-reg-positive-int}
 est_mod_int <- est_mod %>%
@@ -364,7 +367,7 @@ est_mod_int %>%
   )
 ```
 
-## Linear Probability Model of Reply：その他
+## Remark：共変量・固定効果の影響
 
 ```{r tab-reg-positive-int2, eval = FALSE}
 est_mod_reply <- est_mod %>%
@@ -401,7 +404,7 @@ estimatr::difference_in_means(
 - 2022年1月と比較して、2021/9や2021/10に送付した時の方が正の意向を示しやすい
 - 第1週と比較して、第3週に送付したときの方が正の意向を示しやすい
 
-## 回帰分析と二群比較の結果の差について
+## 回帰分析と二群比較の結果の差について（メモ）
 
 メッセージAとメッセージBの比較に注目する
 
@@ -414,7 +417,7 @@ estimatr::difference_in_means(
   - クラスター標準誤差が通常の標準誤差を下回るということは、
   クラスター内の個人間の相関が負であることを示す
 
-## Linear Probability Model of Negative Intention
+## Negative intentionに対する効果
 
 ```{r tab-reg-negative-int}
 est_mod_int <- est_mod %>%
@@ -452,9 +455,10 @@ est_mod_int %>%
   )
 ```
 
-## Heterogenous Effect on Reply by Gender x Age
+## 性別×年齢による効果の異質性
 
-性別と年齢（30歳以下どうか）でサンプルを分割して、返信と意向の効果を推定する
+- 性別と年齢（30歳以下どうか）でサンプルを分割して、返信と意向の効果を推定する
+  - **若年男性は移植実績が良いとされているが、具体的に、若年とは何歳以下か？**
 
 ```{r hetero-reply-gender-age, include = FALSE}
 hetero_reply <- testdt %>%
@@ -481,88 +485,43 @@ hetero_reply <- testdt %>%
   )
 ```
 
-## Heterogenity by Gender x Age: Message B (1)
+## 性別×年齢による効果の異質性：結果(1)
 
-```{r plotB-hetero-reply-gender-age, fig.width = 10, fig.height=7}
-hetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
+```{r plot-hetero-reply-gender-age, fig.width = 10, fig.height=7}
+plot_list <- 2:4 %>%
+  purrr::map(function(x) {
+    hetero_reply %>%
+      dplyr::filter(within == "full") %>%
+      rowwise(everything()) %>%
+      summarize(
+        subset(tidy(est), term == paste0("treat", LETTERS[x])) %>%
+          select(-term, -outcome)
+      ) %>%
+      ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_pointrange(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(0.5)
+      ) +
+      geom_text(aes(y = -0.15, label = N), color = "black") +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+      ) +
+      labs(
+        title = paste("Panel", LETTERS[x - 1]),
+        x = "Subset",
+        y = paste("Effect of Message", LETTERS[x], "\n(95%CI)"),
+        color = "Outcomes", shape = "Outcomes"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+    theme(legend.position = "bottom")
 ```
 
-## Heterogenity by Gender x Age: Message C (1)
-
-```{r plotC-hetero-reply-gender-age, fig.width = 10, fig.height=7}
-hetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-## Heterogenity by Gender x Age: Message D (1)
-
-```{r plotD-hetero-reply-gender-age, fig.width = 10, fig.height=7}
-hetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-## Heterogenity by Gender x Age: Message B (2)
+## 性別×年齢による効果の異質性：結果(2)
 
 ```{r plotB-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
 hetero_reply %>%
@@ -584,13 +543,13 @@ hetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message B (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
 ```
 
-## Heterogenity by Gender x Age: Message C (2)
+## 性別×年齢による効果の異質性：結果(3)
 
 ```{r plotC-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
 hetero_reply %>%
@@ -612,13 +571,13 @@ hetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message C (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
 ```
 
-## Heterogenity by Gender x Age: Message D (2)
+## 性別×年齢による効果の異質性：結果(4)
 
 ```{r plotD-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
 hetero_reply %>%
@@ -640,7 +599,7 @@ hetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message D (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
@@ -736,13 +695,14 @@ age_criterion_secondary %>%
     simplegg()
 ```
 
-## Geographical Heterogenity
+## 地域による異質性
 
 - 都道府県ごとに10平方キロメートル当たりの病院数を計算し、
 0.5カ所以上ある地域とそうでない地域でサンプルを分割した
   - 1カ所以上：東京・大阪
   - 1カ所未満：神奈川・愛知
-- それぞれのサブサンプルで効果を推定する
+  - 東京・大阪・神奈川・愛知のグループを*TOKA*と称する
+- それぞれのサブサンプルで効果を推定する。さらに、性別×TOKAのサブサンプルでも効果を推定する。
 
 ```{r hetero-reply-geo, include = FALSE}
 geohetero_reply <- testdt %>%
@@ -763,88 +723,43 @@ geohetero_reply <- testdt %>%
   )
 ```
 
-## Heterogenity by Geography: Message B (1)
+## 地域による効果の異質性(1)
 
 ```{r plotB-hetero-reply-geo, fig.width = 10, fig.height=7}
-geohetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
+plot_list <- 2:4 %>%
+  purrr::map(function(x) {
+    geohetero_reply %>%
+      dplyr::filter(within == "full") %>%
+      rowwise(everything()) %>%
+      summarize(
+        subset(tidy(est), term == paste0("treat", LETTERS[x])) %>%
+          select(-term, -outcome)
+      ) %>%
+      ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_pointrange(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(0.5)
+      ) +
+      geom_text(aes(y = -0.15, label = N), color = "black") +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+      ) +
+      labs(
+        title = paste("Panel", LETTERS[x - 1]),
+        x = "Subset",
+        y = paste("Effect of Message", LETTERS[x], "\n(95%CI)"),
+        color = "Outcomes", shape = "Outcomes"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 
-## Heterogenity by Geography: Message C (1)
-
-```{r plotC-hetero-reply-geo, fig.width = 10, fig.height=7}
-geohetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-## Heterogenity by Geography: Message D (1)
-
-```{r plotD-hetero-reply-geo, fig.width = 10, fig.height=7}
-geohetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = toka, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-## Heterogenity by Geography: Message B (2)
+## 地域による効果の異質性(2)
 
 ```{r plotB-hetero-reply-within-geo, fig.width = 10, fig.height=7}
 geohetero_reply %>%
@@ -866,13 +781,13 @@ geohetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message B (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
 ```
 
-## Heterogenity by Geography: Message C (2)
+## 地域による効果の異質性(3)
 
 ```{r plotC-hetero-reply-within-geo, fig.width = 10, fig.height=7}
 geohetero_reply %>%
@@ -894,13 +809,13 @@ geohetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message C (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
 ```
 
-## Heterogenity by Geography: Message D (2)
+## 地域による効果の異質性(4)
 
 ```{r plotD-hetero-reply-within-geo, fig.width = 10, fig.height=7}
 geohetero_reply %>%
@@ -922,13 +837,13 @@ geohetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message D (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
 ```
 
-## Heterogenity by Geography: Message B (1)
+## 性別×TOKA地域による効果の異質性(1)
 
 ```{r hetero-reply-gender-geo, include = FALSE}
 geohetero_reply <- testdt %>%
@@ -956,85 +871,40 @@ geohetero_reply <- testdt %>%
 ```
 
 ```{r plotB-hetero-reply-gender-geo, fig.width = 10, fig.height=7}
-geohetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
+plot_list <- 2:4 %>%
+  purrr::map(function(x) {
+    geohetero_reply %>%
+      dplyr::filter(within == "full") %>%
+      rowwise(everything()) %>%
+      summarize(
+        subset(tidy(est), term == paste0("treat", LETTERS[x])) %>%
+          select(-term, -outcome)
+      ) %>%
+      ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_pointrange(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(0.5)
+      ) +
+      geom_text(aes(y = -0.15, label = N), color = "black") +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+      ) +
+      labs(
+        title = paste("Panel", LETTERS[x - 1]),
+        x = "Subset",
+        y = paste("Effect of Message", LETTERS[x], "\n(95%CI)"),
+        color = "Outcomes", shape = "Outcomes"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 
-## Heterogenity by Geography: Message C (1)
-
-```{r plotC-hetero-reply-gender-geo, fig.width = 10, fig.height=7}
-geohetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-## Heterogenity by Geography: Message D (1)
-
-```{r plotD-hetero-reply-gender-geo, fig.width = 10, fig.height=7}
-geohetero_reply %>%
-  dplyr::filter(within == "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Estimate (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-## Heterogenity by Geography: Message B (2)
+## 性別×TOKA地域による効果の異質性(2)
 
 ```{r plotB-hetero-reply-within-gender-geo, fig.width = 10, fig.height=7}
 geohetero_reply %>%
@@ -1056,13 +926,13 @@ geohetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message B (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
 ```
 
-## Heterogenity by Geography: Message C (2)
+## 性別×TOKA地域による効果の異質性(3)
 
 ```{r plotC-hetero-reply-within-gender-geo, fig.width = 10, fig.height=7}
 geohetero_reply %>%
@@ -1084,13 +954,13 @@ geohetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message C (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
 ```
 
-## Heterogenity by Geography: Message D (2)
+## 性別×TOKA地域による効果の異質性(4)
 
 ```{r plotD-hetero-reply-within-gender-geo, fig.width = 10, fig.height=7}
 geohetero_reply %>%
@@ -1112,7 +982,7 @@ geohetero_reply %>%
     ) +
     labs(
       x = "Subset",
-      y = "Estimate (95%CI)",
+      y = "Effect of Message D (95%CI)",
       color = "Outcomes", shape = "Outcomes"
     ) +
     simplegg()
