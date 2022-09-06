@@ -404,7 +404,7 @@ to Prevent Free-riding in Japan Marrow Donor Program}
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textbf{C. 共変量}}\\
 \hspace{1em}年齢 & \num{38.38} & \num{38.12} & \num{37.45} & \num{37.98} & \num{0.00}\\
-\hspace{1em}過去のコーディネーション回数 & \num{1.61} & \num{1.59} & \num{1.62} & \num{1.56} & \num{0.13}\\
+\hspace{1em}初回コーディネーション & \num{0.63} & \num{0.64} & \num{0.62} & \num{0.65} & \num{0.05}\\
 \hspace{1em}男性 & \num{0.62} & \num{0.63} & \num{0.63} & \num{0.61} & \num{0.23}\\
 \hspace{1em}東京・大阪・神奈川・愛知 & \num{0.28} & \num{0.29} & \num{0.29} & \num{0.28} & \num{0.57}\\
 \bottomrule
@@ -473,11 +473,6 @@ to Prevent Free-riding in Japan Marrow Donor Program}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{二群比較の検定（補論）}
-\protect\hypertarget{ux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9aux88dcux8ad6}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/ttest-reply-1} \end{center}
-\end{frame}
-
 \begin{frame}{回帰分析の結果}
 \protect\hypertarget{ux56deux5e30ux5206ux6790ux306eux7d50ux679c}{}
 \begin{table}
@@ -499,8 +494,9 @@ D & \num{0.006} & \num{0.013} & \num{-0.030}** & \num{0.017}** & \num{0.006}\\
  & (\num{0.005}) & (\num{0.009}) & (\num{0.014}) & (\num{0.007}) & (\num{0.005})\\
 \midrule
 Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
+Control Avg. & \num{0.883} & \num{0.100} & \num{0.551} & \num{0.830} & \num{0.874}\\
 \addlinespace[0.3em]
-\multicolumn{6}{l}{\textit{F-tests, p-value}}\\
+\multicolumn{6}{l}{\textit{F-tests, p-value:}}\\
 \hspace{1em}B = C & \num{0.019} & \num{0.677} & \num{0.002} & \num{0.394} & \num{0.038}\\
 \hspace{1em}B = D & \num{0.152} & \num{0.377} & \num{0.190} & \num{0.621} & \num{0.081}\\
 \hspace{1em}C = D & \num{0.542} & \num{0.146} & \num{0.037} & \num{0.093} & \num{0.852}\\
@@ -508,56 +504,6 @@ Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
 \multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \end{table}
-\end{frame}
-
-\begin{frame}{Remark：共変量・固定効果の影響}
-\protect\hypertarget{remarkux5171ux5909ux91cfux56faux5b9aux52b9ux679cux306eux5f71ux97ff}{}
-モデル(1)の共変量・固定効果に関する結果
-
-\begin{itemize}
-\tightlist
-\item
-  高齢であるほど、返信率が高い
-\item
-  女性の方が男性よりも返信率が高い
-\item
-  コーディネートの経験回数が多いほど、返信率が高い
-\item
-  東京・大阪・神奈川・愛知に在住している人がそうでない人よりも返信率が高い
-\item
-  週・月の固定効果は返信率と\textbf{相関なし}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{回帰分析と二群比較の結果の差について（メモ）}
-\protect\hypertarget{ux56deux5e30ux5206ux6790ux3068ux4e8cux7fa4ux6bd4ux8f03ux306eux7d50ux679cux306eux5deeux306bux3064ux3044ux3066ux30e1ux30e2}{}
-メッセージAとメッセージBの比較に注目する
-
-\begin{itemize}
-\tightlist
-\item
-  効果の大きさ：0.011（二群比較）\(<\) 0.014（回帰分析）
-
-  \begin{itemize}
-  \tightlist
-  \item
-    回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
-  \end{itemize}
-\item
-  推定効果の標準誤差：0.009（二群比較）\(>\) 0.006（回帰分析）
-
-  \begin{itemize}
-  \tightlist
-  \item
-    回帰分析は実験週単位でクラスターした標準誤差を使用している
-  \item
-    クラスター標準誤差が通常の標準誤差を下回るということは、
-    クラスター内の個人間の相関が負であることを示す (Angrist and Pischke, 2009)
-  \item
-    適合通知を受け取った人が他の人の返信状況などを聞いて、
-    クラウディング・アウトのような行動を取るとしたら、クラスター内の個人間の相関が負となる？
-  \end{itemize}
-\end{itemize}
 \end{frame}
 
 \begin{frame}{移植の意向による効果の分解}
@@ -604,6 +550,7 @@ D & \num{0.006} & \num{0.016} & \num{-0.016} & \num{0.013} & \num{0.007}\\
  & (\num{0.010}) & (\num{0.010}) & (\num{0.011}) & (\num{0.011}) & (\num{0.010})\\
 \midrule
 Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
+Control Avg. & \num{0.553} & \num{0.060} & \num{0.383} & \num{0.531} & \num{0.550}\\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textit{F-tests, p-value}}\\
 \hspace{1em}B = C & \num{0.011} & \num{0.227} & \num{0.087} & \num{0.014} & \num{0.007}\\
@@ -613,56 +560,6 @@ Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
 \multicolumn{6}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \end{table}
-\end{frame}
-
-\begin{frame}{Remark：共変量・固定効果の影響}
-\protect\hypertarget{remarkux5171ux5909ux91cfux56faux5b9aux52b9ux679cux306eux5f71ux97ff-1}{}
-モデル(1)の共変量・固定効果に関する結果
-
-\begin{itemize}
-\tightlist
-\item
-  高齢であるほど、正の意向を示しやすい
-\item
-  男性の方が女性よりも正の意向を示しやすい
-\item
-  コーディネートの経験回数が多いほど、正の意向を示さない
-\item
-  2022年1月と比較して、2021/9や2021/10に送付した時の方が正の意向を示しやすい
-\item
-  第1週と比較して、第3週に送付したときの方が正の意向を示しやすい
-\end{itemize}
-\end{frame}
-
-\begin{frame}{回帰分析と二群比較の結果の差について（メモ）}
-\protect\hypertarget{ux56deux5e30ux5206ux6790ux3068ux4e8cux7fa4ux6bd4ux8f03ux306eux7d50ux679cux306eux5deeux306bux3064ux3044ux3066ux30e1ux30e2-1}{}
-メッセージAとメッセージBの比較に注目する
-
-\begin{itemize}
-\tightlist
-\item
-  効果の大きさ：0.022（二群比較）\(>\) 0.020（回帰分析）
-
-  \begin{itemize}
-  \tightlist
-  \item
-    回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
-  \item
-    メッセージBの割り当ては第1週に2回、第3週に1回。
-    メッセージAの割り当ては第1週と第3週ともに1回。
-  \end{itemize}
-\item
-  推定効果の標準誤差：0.013（二群比較）\(>\) 0.012（回帰分析）
-
-  \begin{itemize}
-  \tightlist
-  \item
-    回帰分析は実験週単位でクラスターした標準誤差を使用している
-  \item
-    クラスター標準誤差が通常の標準誤差を下回るということは、
-    クラスター内の個人間の相関が負であることを示す
-  \end{itemize}
-\end{itemize}
 \end{frame}
 
 \begin{frame}{Negative intentionに対する効果}
@@ -686,6 +583,7 @@ D & \num{0.000} & \num{-0.003} & \num{-0.013}* & \num{0.003} & \num{-0.001}\\
  & (\num{0.007}) & (\num{0.005}) & (\num{0.007}) & (\num{0.007}) & (\num{0.007})\\
 \midrule
 Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
+Control Avg. & \num{0.330} & \num{0.041} & \num{0.168} & \num{0.298} & \num{0.324}\\
 \addlinespace[0.3em]
 \multicolumn{6}{l}{\textit{F-tests, p-value}}\\
 \hspace{1em}B = C & \num{0.159} & \num{0.114} & \num{0.014} & \num{0.008} & \num{0.079}\\
@@ -697,101 +595,80 @@ Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
 \end{table}
 \end{frame}
 
+\begin{frame}{性別・年齢の影響}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306eux5f71ux97ff}{}
+\begin{itemize}
+\tightlist
+\item
+  女性の方が男性よりも返信率が高いが、返信に占めるネガティブな意向の比率も高くなる
+\item
+  高齢であるほど、ネガティブな意向を示して返信しなくなる一方で、
+  ポジティブな意向を示して返信しやすくなる。全体的に、高齢であるほど、返信率が高くなる
+\end{itemize}
+\end{frame}
+
+\begin{frame}{初回コーディネーション・地域の影響}
+\protect\hypertarget{ux521dux56deux30b3ux30fcux30c7ux30a3ux30cdux30fcux30b7ux30e7ux30f3ux5730ux57dfux306eux5f71ux97ff}{}
+\begin{itemize}
+\tightlist
+\item
+  初めてコーディネートを経験する人はそうでない人よりもネガティブな意向を示して返信しやすいが、
+  ポジティブな意向を示して返信しなくなる。全体的に、初回コーディネートの方が返信率は高い。
+\item
+  東京・大阪・神奈川・愛知に在住している人はそうでない人よりもネガティブな意向を示して返信しなくなる一方で、
+  ポジティブな意向を示して返信しやすくなる。全体的に、返信率が高くなる
+
+  \begin{itemize}
+  \tightlist
+  \item
+    東京・大阪・神奈川・愛知：10平方キロメートル当たりの面談施設が0.5カ所以上の地域
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
 \begin{frame}{性別×年齢による効果の異質性}
 \protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027}{}
 \begin{itemize}
 \tightlist
 \item
+  移植実績の良いとされる若年層の男性はそうでない人よりも適合通知に返信していない
+\item
+  メッセージB～Dは若年男性の行動変容を促しているのか？
+\item
   性別と年齢（30歳以下どうか）でサンプルを分割して、返信と意向の効果を推定する
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \textbf{若年男性は移植実績が良いとされているが、具体的に、若年とは何歳以下か？}
-  \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{性別×年齢による効果の異質性：結果(1)}
-\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c1}{}
+\begin{frame}{返信率と意向比率に対する効果の異質性}
+\protect\hypertarget{ux8fd4ux4fe1ux7387ux3068ux610fux5411ux6bd4ux7387ux306bux5bfeux3059ux308bux52b9ux679cux306eux7570ux8ceaux6027}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plot-hetero-reply-gender-age-1} \end{center}
 \end{frame}
 
-\begin{frame}{性別×年齢による効果の異質性：結果(2)}
-\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c2}{}
+\begin{frame}{X日以内の返信に対するメッセージBの効果の異質性}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux306eux8fd4ux4fe1ux306bux5bfeux3059ux308bux30e1ux30c3ux30bbux30fcux30b8bux306eux52b9ux679cux306eux7570ux8ceaux6027}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotB-hetero-reply-within-gender-age-1} \end{center}
 \end{frame}
 
-\begin{frame}{性別×年齢による効果の異質性：結果(3)}
-\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c3}{}
+\begin{frame}{X日以内の返信に対するメッセージCの効果の異質性}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux306eux8fd4ux4fe1ux306bux5bfeux3059ux308bux30e1ux30c3ux30bbux30fcux30b8cux306eux52b9ux679cux306eux7570ux8ceaux6027}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotC-hetero-reply-within-gender-age-1} \end{center}
 \end{frame}
 
-\begin{frame}{性別×年齢による効果の異質性：結果(4)}
-\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027ux7d50ux679c4}{}
+\begin{frame}{X日以内の返信に対するメッセージDの効果の異質性}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux306eux8fd4ux4fe1ux306bux5bfeux3059ux308bux30e1ux30c3ux30bbux30fcux30b8dux306eux52b9ux679cux306eux7570ux8ceaux6027}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotD-hetero-reply-within-gender-age-1} \end{center}
 \end{frame}
 
-\begin{frame}{地域による異質性}
-\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux7570ux8ceaux6027}{}
+\begin{frame}{地域による異質性の検討}
+\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux7570ux8ceaux6027ux306eux691cux8a0e}{}
 \begin{itemize}
 \tightlist
 \item
-  都道府県ごとに10平方キロメートル当たりの病院数を計算し、
-  0.5カ所以上ある地域とそうでない地域でサンプルを分割した
-
-  \begin{itemize}
-  \tightlist
-  \item
-    1カ所以上：東京・大阪
-  \item
-    1カ所未満：神奈川・愛知
-  \item
-    東京・大阪・神奈川・愛知のグループを\emph{TOKA}と称する
-  \end{itemize}
+  メッセージBは面談施設が多い都道府県（東京・大阪・愛知・神奈川）に在住している人に対しても有効
 \item
-  それぞれのサブサンプルで効果を推定する。さらに、性別×TOKAのサブサンプルでも効果を推定する。
+  性別×地域による異質性を分析すると、メッセージBは面談施設が多い地域に住む女性に対して有効ではないが、
+  面談施設が多い地域に住む男性に対して有効である。
 \end{itemize}
-\end{frame}
-
-\begin{frame}{地域による効果の異質性(1)}
-\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60271}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotB-hetero-reply-geo-1} \end{center}
-\end{frame}
-
-\begin{frame}{地域による効果の異質性(2)}
-\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60272}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotB-hetero-reply-within-geo-1} \end{center}
-\end{frame}
-
-\begin{frame}{地域による効果の異質性(3)}
-\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60273}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotC-hetero-reply-within-geo-1} \end{center}
-\end{frame}
-
-\begin{frame}{地域による効果の異質性(4)}
-\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60274}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotD-hetero-reply-within-geo-1} \end{center}
-\end{frame}
-
-\begin{frame}{性別×TOKA地域による効果の異質性(1)}
-\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60271}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotB-hetero-reply-gender-geo-1} \end{center}
-\end{frame}
-
-\begin{frame}{性別×TOKA地域による効果の異質性(2)}
-\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60272}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotB-hetero-reply-within-gender-geo-1} \end{center}
-\end{frame}
-
-\begin{frame}{性別×TOKA地域による効果の異質性(3)}
-\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60273}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotC-hetero-reply-within-gender-geo-1} \end{center}
-\end{frame}
-
-\begin{frame}{性別×TOKA地域による効果の異質性(4)}
-\protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux60274}{}
-\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotD-hetero-reply-within-gender-geo-1} \end{center}
 \end{frame}
 
 \hypertarget{effect-on-coordination-process}{%
@@ -839,7 +716,7 @@ Num.Obs. & \num{10989} & \num{10989} & \num{10989} & \num{10989} & \num{10989}\\
 \end{frame}
 
 \begin{frame}{二群比較の検定（補論）}
-\protect\hypertarget{ux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9aux88dcux8ad6-1}{}
+\protect\hypertarget{ux4e8cux7fa4ux6bd4ux8f03ux306eux691cux5b9aux88dcux8ad6}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/ttest-process-1} \end{center}
 \end{frame}
 
@@ -889,7 +766,7 @@ Num.Obs. & \num{10456} & \num{5668} & \num{5646} & \num{5542}\\
 \end{frame}
 
 \begin{frame}{地域による異質性}
-\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux7570ux8ceaux6027-1}{}
+\protect\hypertarget{ux5730ux57dfux306bux3088ux308bux7570ux8ceaux6027}{}
 \begin{itemize}
 \tightlist
 \item
@@ -908,6 +785,49 @@ Num.Obs. & \num{10456} & \num{5668} & \num{5646} & \num{5542}\\
 \begin{frame}{性別×TOKA地域による効果の異質性}
 \protect\hypertarget{ux6027ux5225tokaux5730ux57dfux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027}{}
 \begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plot-hetero-process-gender-geo-1} \end{center}
+\end{frame}
+
+\hypertarget{appendix-a.-heterogeneity-by-region}{%
+\section{Appendix A. Heterogeneity by Region}\label{appendix-a.-heterogeneity-by-region}}
+
+\begin{frame}{返信・意向}
+\protect\hypertarget{ux8fd4ux4fe1ux610fux5411}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plot-hetero-reply-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{X日以内返信(メッセージB)}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux30e1ux30c3ux30bbux30fcux30b8b}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotB-hetero-reply-within-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{X日以内返信(メッセージC)}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux30e1ux30c3ux30bbux30fcux30b8c}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotC-hetero-reply-within-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{X日以内返信(メッセージD)}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux30e1ux30c3ux30bbux30fcux30b8d}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotD-hetero-reply-within-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{返信・意向(性別×地域)}
+\protect\hypertarget{ux8fd4ux4fe1ux610fux5411ux6027ux5225ux5730ux57df}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plot-hetero-reply-gender-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{X日以内返信(メッセージB・性別×地域)}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux30e1ux30c3ux30bbux30fcux30b8bux6027ux5225ux5730ux57df}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotB-hetero-reply-within-gender-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{X日以内返信(メッセージC・性別×地域)}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux30e1ux30c3ux30bbux30fcux30b8cux6027ux5225ux5730ux57df}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotC-hetero-reply-within-gender-geo-1} \end{center}
+\end{frame}
+
+\begin{frame}{X日以内返信(メッセージD・性別×地域)}
+\protect\hypertarget{xux65e5ux4ee5ux5185ux8fd4ux4fe1ux30e1ux30c3ux30bbux30fcux30b8dux6027ux5225ux5730ux57df}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/slides_files/figure-beamer/plotD-hetero-reply-within-gender-geo-1} \end{center}
 \end{frame}
 
 \end{document}
