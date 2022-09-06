@@ -43,12 +43,11 @@ testdt <- use %>%
     toka,
     male,
     age,
-    coordinate
+    coordinate1
   ) %>%
   mutate(
     age_less30 = if_else(age <= 30, 1, 0),
     age_demean = age - mean(rawdt$age),
-    coordinate1 = if_else(coordinate == 1, 1, 0),
     days_reply = if_else(
       is.na(days_reply),
       max(use$days_reply, na.rm = TRUE),
@@ -94,9 +93,9 @@ testdt <- use %>%
   ))
 ```
 
-## 二群比較の検定（補論）
+<!-- ## 二群比較の検定（補論） -->
 
-```{r ttest, include = FALSE}
+```{r ttest, include = FALSE, eval = FALSE}
 stat <- testdt %>%
   dplyr::filter(within == "full") %>%
   group_by(outcome, treat) %>%
@@ -161,7 +160,7 @@ show_ttest_info <- ttest_info %>%
   )
 ```
 
-```{r ttest-reply, echo = FALSE}
+```{r ttest-reply, echo = FALSE, eval = FALSE}
 stat %>%
   dplyr::filter(outcome %in% c("Reply", "Positive intention")) %>%
   ggplot(aes(x = treat, y = mean)) +
@@ -234,6 +233,11 @@ est_mod <- testdt %>%
 ```
 
 ```{r tab-reg-reply}
+ctrl_avg <- testdt %>%
+  dplyr::filter(treat == "A" & outcome == "Reply") %>%
+  group_by(within) %>%
+  summarize(mean = mean(value))
+
 est_mod_reply <- est_mod %>%
   dplyr::filter(outcome == "Reply")
 
@@ -245,13 +249,18 @@ est_mod_reply %>%
     coef_map = c(
       "treatB" = "B",
       "treatC" = "C",
-      "treatD" = "D"
+      "treatD" = "D",
+      "male" = "male",
+      "age_demean" = "age",
+      "coordinate1" = "coordinate1",
+      "toka" = "toka"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(est_mod_reply$ftestBC)$p.value %>%
+    add_rows = unlist(ctrl_avg$mean) %>%
+      rbind(bind_rows(est_mod_reply$ftestBC)$p.value) %>%
       rbind(bind_rows(est_mod_reply$ftestBD)$p.value) %>%
       rbind(bind_rows(est_mod_reply$ftestCD)$p.value) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
+      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(c(
@@ -264,49 +273,12 @@ est_mod_reply %>%
   )) %>%
   kableExtra::column_spec(2:6, width = "6em") %>%
   kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
+    "F-tests, p-value:", 9, 11,
     bold = FALSE, italic = TRUE
   )
 ```
 
-## Remark：共変量・固定効果の影響
-
-モデル(1)の共変量・固定効果に関する結果
-
-- 高齢であるほど、返信率が高い
-- 女性の方が男性よりも返信率が高い
-- コーディネートの経験回数が多いほど、返信率が高い
-- 東京・大阪・神奈川・愛知に在住している人がそうでない人よりも返信率が高い
-- 週・月の固定効果は返信率と**相関なし**
-
-```{r tab-reg-reply2, eval = FALSE, include = FALSE}
-est_mod_reply <- est_mod %>%
-  dplyr::filter(outcome == "Reply")
-
-est_mod_reply %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"#,
-  ) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "Reply" = 1,
-    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
-  )) %>%
-  kableExtra::add_header_above(c(
-    " " = 2,
-    "Reply within specific day" = 4
-  ))
-
-estimatr::difference_in_means(
-  value ~ treat,
-  data = subset(testdt, outcome == "Reply" & within == "full"),
-  condition1 = "A", condition = "B"
-)
-```
-
-## 回帰分析と二群比較の結果の差について（メモ）
+<!-- ## 回帰分析と二群比較の結果の差について（メモ）
 
 メッセージAとメッセージBの比較に注目する
 
@@ -317,7 +289,7 @@ estimatr::difference_in_means(
   - クラスター標準誤差が通常の標準誤差を下回るということは、
   クラスター内の個人間の相関が負であることを示す (Angrist and Pischke, 2009)
   - 適合通知を受け取った人が他の人の返信状況などを聞いて、
-  クラウディング・アウトのような行動を取るとしたら、クラスター内の個人間の相関が負となる？
+  クラウディング・アウトのような行動を取るとしたら、クラスター内の個人間の相関が負となる？ -->
 
 ## 移植の意向による効果の分解
 
@@ -332,6 +304,11 @@ $X$日以内に提供を希望して（しないで）返信したかどうか�
 ## Positive intentionに対する効果
 
 ```{r tab-reg-positive-int}
+ctrl_avg <- testdt %>%
+  dplyr::filter(treat == "A" & outcome == "Positive intention") %>%
+  group_by(within) %>%
+  summarize(mean = mean(value))
+
 est_mod_int <- est_mod %>%
   dplyr::filter(outcome == "Positive intention")
 
@@ -343,13 +320,18 @@ est_mod_int %>%
     coef_map = c(
       "treatB" = "B",
       "treatC" = "C",
-      "treatD" = "D"
+      "treatD" = "D",
+      "male" = "male",
+      "age_demean" = "age",
+      "coordinate1" = "coordinate1",
+      "toka" = "toka"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(est_mod_int$ftestBC)$p.value %>%
+    add_rows = unlist(ctrl_avg$mean) %>%
+      rbind(bind_rows(est_mod_int$ftestBC)$p.value) %>%
       rbind(bind_rows(est_mod_int$ftestBD)$p.value) %>%
       rbind(bind_rows(est_mod_int$ftestCD)$p.value) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
+      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(c(
@@ -362,49 +344,12 @@ est_mod_int %>%
   )) %>%
   kableExtra::column_spec(2:6, width = "6em") %>%
   kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
+    "F-tests, p-value", 9, 11,
     bold = FALSE, italic = TRUE
   )
 ```
 
-## Remark：共変量・固定効果の影響
-
-```{r tab-reg-positive-int2, eval = FALSE}
-est_mod_reply <- est_mod %>%
-  dplyr::filter(outcome == "Positive intention")
-
-est_mod_reply %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"#,
-  ) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "Reply" = 1,
-    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
-  )) %>%
-  kableExtra::add_header_above(c(
-    " " = 2,
-    "Reply within specific day" = 4
-  ))
-
-estimatr::difference_in_means(
-  value ~ treat,
-  data = subset(testdt, outcome == "Positive intention" & within == "full"),
-  condition1 = "A", condition = "B"
-)
-```
-
-モデル(1)の共変量・固定効果に関する結果
-
-- 高齢であるほど、正の意向を示しやすい
-- 男性の方が女性よりも正の意向を示しやすい
-- コーディネートの経験回数が多いほど、正の意向を示さない
-- 2022年1月と比較して、2021/9や2021/10に送付した時の方が正の意向を示しやすい
-- 第1週と比較して、第3週に送付したときの方が正の意向を示しやすい
-
-## 回帰分析と二群比較の結果の差について（メモ）
+<!-- ## 回帰分析と二群比較の結果の差について（メモ）
 
 メッセージAとメッセージBの比較に注目する
 
@@ -415,11 +360,16 @@ estimatr::difference_in_means(
 - 推定効果の標準誤差：0.013（二群比較）$>$ 0.012（回帰分析）
   - 回帰分析は実験週単位でクラスターした標準誤差を使用している
   - クラスター標準誤差が通常の標準誤差を下回るということは、
-  クラスター内の個人間の相関が負であることを示す
+  クラスター内の個人間の相関が負であることを示す -->
 
 ## Negative intentionに対する効果
 
 ```{r tab-reg-negative-int}
+ctrl_avg <- testdt %>%
+  dplyr::filter(treat == "A" & outcome == "Negative intention") %>%
+  group_by(within) %>%
+  summarize(mean = mean(value))
+
 est_mod_int <- est_mod %>%
   dplyr::filter(outcome == "Negative intention")
 
@@ -431,13 +381,18 @@ est_mod_int %>%
     coef_map = c(
       "treatB" = "B",
       "treatC" = "C",
-      "treatD" = "D"
+      "treatD" = "D",
+      "male" = "male",
+      "age_demean" = "age",
+      "coordinate1" = "coordinate1",
+      "toka" = "toka"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(est_mod_int$ftestBC)$p.value %>%
+    add_rows = unlist(ctrl_avg$mean) %>%
+      rbind(bind_rows(est_mod_int$ftestBC)$p.value) %>%
       rbind(bind_rows(est_mod_int$ftestBD)$p.value) %>%
       rbind(bind_rows(est_mod_int$ftestCD)$p.value) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
+      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(c(
@@ -450,10 +405,21 @@ est_mod_int %>%
   )) %>%
   kableExtra::column_spec(2:6, width = "6em") %>%
   kableExtra::group_rows(
-    "F-tests, p-value", 8, 10,
+    "F-tests, p-value", 9, 11,
     bold = FALSE, italic = TRUE
   )
 ```
+
+## 共変量に関する結果
+
+- 高齢であるほど、ネガティブな意向を示して返信しなくなる一方で、
+ポジティブな意向を示して返信しやすくなる。全体的に、高齢であるほど、返信率が高くなる
+- 女性の方が男性よりも返信率が高いが、返信に占めるネガティブな意向の比率も高くなる
+- 初めてコーディネートを経験する人はそうでない人よりもネガティブな意向を示して返信しやすいが、
+ポジティブな意向を示して返信しなくなる。全体的に、初回コーディネートの方が返信率は高い。
+- 東京・大阪・神奈川・愛知に在住している人はそうでない人よりもネガティブな意向を示して返信しなくなる一方で、
+ポジティブな意向を示して返信しやすくなる。全体的に、返信率が高くなる
+  - 東京・大阪・神奈川・愛知：10平方キロメートル当たりの面談施設が0.5カ所以上の地域
 
 ## 性別×年齢による効果の異質性
 
