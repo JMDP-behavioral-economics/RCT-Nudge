@@ -88,7 +88,7 @@ shape_rawdt <- rawdt %>%
     exg_stop_reply = case_when(
       reply == 1 ~ 0,
       method == "PB" & reasonPB == "患者理由" ~ 1,
-      method == "MB" & reasonBM == "患者理由" ~ 1,
+      method == "BM" & reasonBM == "患者理由" ~ 1,
       reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
       TRUE ~ 0
     ),
@@ -102,31 +102,35 @@ shape_rawdt <- rawdt %>%
     exg_stop_intention = exg_stop_reply,
     exg_stop_test = case_when(
       test == 1 ~ 0,
+      intention == 0 ~ exg_stop_intention,
       method == "PB" & reasonPB == "患者理由" ~ 1,
-      method == "MB" & reasonBM == "患者理由" ~ 1,
+      method == "BM" & reasonBM == "患者理由" ~ 1,
       reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
       TRUE ~ 0
     ),
     exg_stop_candidate = case_when(
       candidate == 1 ~ 0,
+      test == 0 ~ exg_stop_test,
       method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
-      method == "MB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      method == "BM" & (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
       (reasonPB == "患者理由" | reasonPB == "健康上理由") &
         (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
       TRUE ~ 0
     ),
     exg_stop_consent = case_when(
       consent == 1 ~ 0,
+      candidate == 0 ~ exg_stop_candidate,
       method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
-      method == "MB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      method == "BM" & (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
       (reasonPB == "患者理由" | reasonPB == "健康上理由") &
         (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
       TRUE ~ 0
     ),
     exg_stop_donate = case_when(
       donate == 1 ~ 0,
+      consent == 0 ~ exg_stop_consent,
       method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
-      method == "MB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      method == "BM" & (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
       (reasonPB == "患者理由" | reasonPB == "健康上理由") &
         (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
       TRUE ~ 0
@@ -224,7 +228,7 @@ write_csv(
 #' //NOTE: 病院施設データの加工
 #+ include = FALSE
 hospital <- read_csv(
-  here(root, "hospital-list.csv"),
+  here(root, "original", "hospital-list.csv"),
   locale = locale(encoding = "cp932")
 ) %>%
   mutate_at(
@@ -241,7 +245,7 @@ hospital <- read_csv(
   ungroup()
 
 merge_mencho <- read_csv(
-  here(root, "original/R1-4-mencho.csv"),
+  here(root, "original", "R1-4-mencho.csv"),
   local = locale(encoding = "cp932")
 ) %>%
   select(code = 標準地域コード, prefecture = 都道府県, area = `令和4年4月1日(k㎡)`) %>%
