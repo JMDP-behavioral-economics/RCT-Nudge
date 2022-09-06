@@ -126,3 +126,7 @@ grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
 ```{r child="Rmd/4-reply-toka-heterogeneity.rmd"}
 
 ```
+
+```{r child="Rmd/5-process-toka-heterogeneity.rmd"}
+
+```

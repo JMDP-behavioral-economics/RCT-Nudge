@@ -1,0 +1,165 @@
+
+
+```{r load-packages, include = FALSE}
+library(here)
+source(here("R", "_library.r"))
+source(here("R", "_outcome_labels.r"))
+```
+
+```{r load-data, include = FALSE}
+root <- "D:/JMDPフィールド実験"
+
+rawdt <- read_csv(
+  here(root, "shaped.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4]))
+
+outcomes <- use %>%
+  select(
+    id,
+    test,
+    candidate,
+    consent,
+    donate,
+    treat,
+    RCTweek,
+    month,
+    week,
+    toka,
+    male,
+    age,
+    coordinate
+  ) %>%
+  pivot_longer(test:donate, names_to = "outcome")
+
+exclude <- use %>%
+  select(id, starts_with("exg_stop")) %>%
+  pivot_longer(
+    -id, names_to = "outcome", values_to = "exclude",
+    names_prefix = "exg_stop_"
+  )
+
+testdt <- outcomes %>%
+  dplyr::left_join(exclude, by = c("id", "outcome")) %>%
+  dplyr::filter(exclude == 0) %>%
+  mutate(
+    age_less30 = if_else(age <= 30, 1, 0),
+    age_demean = age - mean(rawdt$age),
+    coordinate1 = if_else(coordinate == 1, 1, 0),
+    outcome = factor(
+      outcome,
+      levels = c("test", "candidate", "consent", "donate"),
+      labels = c("CT", "Candidate", "Consent", "Donation")
+    )
+  )
+```
+
+## コーディネーション過程における異質性
+
+```{r hetero-process-geo, include = FALSE}
+model <- value ~ treat + age_demean + male + coordinate1 + toka +
+  factor(month) + factor(week)
+
+geohetero_after_reply <- testdt %>%
+  group_by(outcome, toka) %>%
+  do(est = lm_robust(
+    update(model, . ~ . - toka),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .
+  )) %>%
+  mutate(
+    toka = factor(
+      toka,
+      levels = c(0, 1),
+      labels = c("Other Areas", "Tokyo, Osaka\nKanagawa, Aichi")
+    ),
+    N = paste0("N=", nobs(est))
+  )
+```
+
+```{r plot-hetero-process-geo, fig.width = 10, fig.height=7}
+geohetero_after_reply %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), str_detect(term, "treat")) %>%
+      select(-outcome) %>%
+      mutate(term = factor(term, labels = LETTERS[2:4]))
+  ) %>%
+  ggplot(aes(x = toka, y = estimate, color = term, shape = term)) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  geom_pointrange(
+    aes(ymin = conf.low, ymax = conf.high),
+    position = position_dodge(0.5)
+  ) +
+  geom_text(aes(y = -0.15, label = N), color = "black") +
+  facet_wrap(~outcome, ncol = 2) +
+  scale_y_continuous(
+    breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    x = "Subset",
+    y = "Estimates (95%CI)",
+    color = "Treatments", shape = "Treatments"
+  ) +
+  simplegg()
+```
+
+
+## コーディネーション過程における異質性(性別×地域)
+
+```{r hetero-process-gender-geo, include = FALSE}
+geohetero_after_reply <- testdt %>%
+  group_by(outcome, toka, male) %>%
+  do(est = lm_robust(
+    update(model, . ~ . - toka - male),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .
+  )) %>%
+  mutate(
+    pos = paste0(male, toka),
+    pos = factor(
+      pos,
+      levels = c("01", "00", "11", "10"),
+      labels = c(
+        "Female\u00d7\nTOKA",
+        "Female\u00d7\nOthers",
+        "Male\u00d7\nTOKA",
+        "Male\u00d7\nOthers"
+      )
+    ),
+    N = paste0("N=", nobs(est))
+  )
+```
+
+```{r plot-hetero-process-gender-geo, fig.width = 10, fig.height=7}
+geohetero_after_reply %>%
+  rowwise(everything()) %>%
+  summarize(
+    subset(tidy(est), str_detect(term, "treat")) %>%
+      select(-outcome) %>%
+      mutate(term = factor(term, labels = LETTERS[2:4]))
+  ) %>%
+  ggplot(aes(x = pos, y = estimate, color = term, shape = term)) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  geom_pointrange(
+    aes(ymin = conf.low, ymax = conf.high),
+    position = position_dodge(0.5)
+  ) +
+  geom_text(aes(y = -0.15, label = N), color = "black") +
+  facet_wrap(~outcome, ncol = 2) +
+  scale_y_continuous(
+    breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    x = "Subset",
+    y = "Estiamtes (95%CI)",
+    color = "Treatments", shape = "Treatments"
+  ) +
+  simplegg()
+```

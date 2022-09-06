@@ -5,14 +5,16 @@
 
 返信以降の4工程をそれぞれアウトカム変数とする
 
-- **CT**: 確認検査を実施したならば1を取る二値変数
-  - 外生的な要因である患者側の都合でこの工程の段階でコーディネーションが中止した人は除外する
-- **Candidate**: 第一候補者に選定されたならば1を取る二値変数
-  - 患者側の都合あるいは健康上の理由でこの工程の段階でコーディネーションが中止した人は除外する
-- **Consent**: 最終同意をしたならば1を取る二値変数
-  - 患者側の都合あるいは健康上の理由でこの工程の段階でコーディネーションが中止した人は除外する
-- **Donation**: 採取をしたならば1を取る二値変数
-  - 患者側の都合あるいは健康上の理由でこの工程の段階でコーディネーションが中止した人は除外する
+1. **CT**: 確認検査を実施したならば1を取る二値変数
+1. **Candidate**: 第一候補者に選定されたならば1を取る二値変数
+1. **Consent**: 最終同意をしたならば1を取る二値変数
+1. **Donation**: 採取をしたならば1を取る二値変数
+
+各アウトカム変数に対するサンプルの除外条件は以下の通り
+
+- CT: 患者側の都合で確認検査を実施しなかった人
+- Candidate～Donation: 患者側の都合で確認検査を実施しなかった人
+もしくは、患者側の都合や健康上の理由で候補者選定以降にコーディネーションが中止した人
 
 ```{r load-packages, include = FALSE}
 library(here)
@@ -46,7 +48,7 @@ outcomes <- use %>%
     toka,
     male,
     age,
-    coordinate
+    coordinate1,
   ) %>%
   pivot_longer(test:donate, names_to = "outcome")
 
@@ -63,7 +65,6 @@ testdt <- outcomes %>%
   mutate(
     age_less30 = if_else(age <= 30, 1, 0),
     age_demean = age - mean(rawdt$age),
-    coordinate1 = if_else(coordinate == 1, 1, 0),
     outcome = factor(
       outcome,
       levels = c("test", "candidate", "consent", "donate"),
@@ -72,9 +73,9 @@ testdt <- outcomes %>%
   )
 ```
 
-## 二群比較の検定（補論）
+<!-- ## 二群比較の検定（補論） -->
 
-```{r ttest, include = FALSE}
+```{r ttest, include = FALSE, eval = FALSE}
 stat <- testdt %>%
   group_by(outcome, treat) %>%
   summarize(mean = mean(value), se = se(value), n = n()) %>%
@@ -140,7 +141,7 @@ show_ttest_info <- ttest_info %>%
   )
 ```
 
-```{r ttest-process, echo = FALSE, fig.width=12, fig.height=7}
+```{r ttest-process, echo = FALSE, fig.width=12, fig.height=7, eval = FALSE}
 stat %>%
   ggplot(aes(x = treat, y = mean)) +
     geom_bar(
@@ -215,6 +216,11 @@ est_model <- testdt %>%
 ```
 
 ```{r tab-reg-process}
+ctrl_avg <- testdt %>%
+  dplyr::filter(treat == "A") %>%
+  group_by(outcome) %>%
+  summarize(mean = mean(value))
+
 est_model %>%
   pull(est) %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
@@ -226,10 +232,11 @@ est_model %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = bind_rows(est_model$ftestBC)[, 4] %>%
+    add_rows = unlist(ctrl_avg$mean) %>%
+      rbind(bind_rows(est_model$ftestBC)[, 4]) %>%
       rbind(bind_rows(est_model$ftestBD)[, 4]) %>%
       rbind(bind_rows(est_model$ftestCD)[, 4]) %>%
-      data.frame(term = c("B = C", "B = D", "C = D"), .)
+      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(
@@ -237,14 +244,22 @@ est_model %>%
   ) %>%
   kableExtra::column_spec(2:5, width = "5em") %>%
   kableExtra::group_rows(
-    "F-tests, p-value", 8, 10, bold = FALSE, italic = TRUE
+    "F-tests, p-value", 9, 11, bold = FALSE, italic = TRUE
   )
 ```
 
-## 性別×年齢による効果の異質性
+## 共変量に関する結果
 
-- 性別と年齢（30歳以下どうか）でサンプルを分割して、
-各サブサンプル内でメッセージの効果を推定した
+- 男性は女性よりも各工程にたどり着きやすい
+  - その差は候補者選定・最終同意時点で最大となる（男性の方が選ばれやすい？）
+- 若い人ほど、各工程にたどり着きやすい
+- 初めてコーディネーションを経験する人はそうでない人よりも各工程にたどり着きづらい
+  - その差は確認検査時点で大きくなり、候補者選定以降は小さくなる
+  （初めてコーディネーションを経験する人の方が選ばれやすい？）
+- 面談施設が多い地域に住む人はそうでない人よりも各工程にたどり着きやすい
+  - その差は確認検査時点で最大となる
+
+## 性別×年齢による効果の異質性
 
 ```{r hetero-process-gender-age, include = FALSE}
 hetero_after_reply <- testdt %>%
@@ -270,8 +285,6 @@ hetero_after_reply <- testdt %>%
     N = paste0("N=", nobs(est))
   )
 ```
-
-## 性別×年齢による効果の異質性
 
 ```{r plot-hetero-process-gender-age, fig.width = 10, fig.height=7}
 hetero_after_reply %>%
@@ -389,113 +402,4 @@ age_criterion %>%
     ) +
     labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
     simplegg()
-```
-
-## 地域による異質性
-
-- 10平方キロメートル当たりに0.5カ所以上の病院がある東京・大阪・神奈川・愛知（TOKA地域）
-に在住しているかどうかでサンプルを分割して、それぞれのサブサンプルで効果を推定した
-- また、性別×TOKA地域でサブサンプルを作り、効果を推定した
-
-```{r hetero-process-geo, include = FALSE}
-geohetero_after_reply <- testdt %>%
-  group_by(outcome, toka) %>%
-  do(est = lm_robust(
-    update(model, . ~ . - toka),
-    cluster = RCTweek,
-    se_type = "stata",
-    data = .
-  )) %>%
-  mutate(
-    toka = factor(
-      toka,
-      levels = c(0, 1),
-      labels = c("Other Areas", "Tokyo, Osaka\nKanagawa, Aichi")
-    ),
-    N = paste0("N=", nobs(est))
-  )
-```
-
-## 地域による効果の異質性
-
-```{r plot-hetero-process-geo, fig.width = 10, fig.height=7}
-geohetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), str_detect(term, "treat")) %>%
-      select(-outcome) %>%
-      mutate(term = factor(term, labels = LETTERS[2:4]))
-  ) %>%
-  ggplot(aes(x = toka, y = estimate, color = term, shape = term)) +
-  geom_hline(aes(yintercept = 0), linetype = 2) +
-  geom_pointrange(
-    aes(ymin = conf.low, ymax = conf.high),
-    position = position_dodge(0.5)
-  ) +
-  geom_text(aes(y = -0.15, label = N), color = "black") +
-  facet_wrap(~outcome, ncol = 2) +
-  scale_y_continuous(
-    breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-  ) +
-  labs(
-    x = "Subset",
-    y = "Estimates (95%CI)",
-    color = "Treatments", shape = "Treatments"
-  ) +
-  simplegg()
-```
-
-
-## 性別×TOKA地域による効果の異質性
-
-```{r hetero-process-gender-geo, include = FALSE}
-geohetero_after_reply <- testdt %>%
-  group_by(outcome, toka, male) %>%
-  do(est = lm_robust(
-    update(model, . ~ . - toka - male),
-    cluster = RCTweek,
-    se_type = "stata",
-    data = .
-  )) %>%
-  mutate(
-    pos = paste0(male, toka),
-    pos = factor(
-      pos,
-      levels = c("01", "00", "11", "10"),
-      labels = c(
-        "Female\u00d7\nTOKA",
-        "Female\u00d7\nOthers",
-        "Male\u00d7\nTOKA",
-        "Male\u00d7\nOthers"
-      )
-    ),
-    N = paste0("N=", nobs(est))
-  )
-```
-
-```{r plot-hetero-process-gender-geo, fig.width = 10, fig.height=7}
-geohetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), str_detect(term, "treat")) %>%
-      select(-outcome) %>%
-      mutate(term = factor(term, labels = LETTERS[2:4]))
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = term, shape = term)) +
-  geom_hline(aes(yintercept = 0), linetype = 2) +
-  geom_pointrange(
-    aes(ymin = conf.low, ymax = conf.high),
-    position = position_dodge(0.5)
-  ) +
-  geom_text(aes(y = -0.15, label = N), color = "black") +
-  facet_wrap(~outcome, ncol = 2) +
-  scale_y_continuous(
-    breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-  ) +
-  labs(
-    x = "Subset",
-    y = "Estiamtes (95%CI)",
-    color = "Treatments", shape = "Treatments"
-  ) +
-  simplegg()
 ```
