@@ -59,6 +59,7 @@ shape_rawdt <- rawdt %>%
     year = year(ym(ym)),
     month = month(ym(ym)),
     male = if_else(sex == "M", 1, 0),
+    coordinate1 = if_else(coordinate == 1, 1, 0),
     toka = if_else(
       prefecture %in% c("東京都", "大阪府", "神奈川県", "愛知県"),
       1, 0
@@ -146,6 +147,7 @@ shape_rawdt <- rawdt %>%
     male,
     age,
     coordinate,
+    coordinate1,
     reply,
     days_reply,
     intention,
@@ -222,7 +224,7 @@ write_csv(
 #' //NOTE: 病院施設データの加工
 #+ include = FALSE
 hospital <- read_csv(
-  here(root, "original/hospital-list.csv"),
+  here(root, "hospital-list.csv"),
   locale = locale(encoding = "cp932")
 ) %>%
   mutate_at(

@@ -120,7 +120,7 @@ schedule %>%
 
 ```{r overview-field-exp}
 balance_test <- use %>%
-  select(male, age, coordinate, toka, treat, RCTweek) %>%
+  select(male, age, coordinate1, toka, treat, RCTweek) %>%
   pivot_longer(male:toka, values_to = "value", names_to = "vars") %>%
   group_by(vars) %>%
   do(est = lm_robust(
@@ -157,7 +157,7 @@ note <- paste(
 
 datasummary(
   (`年齢` = age) +
-  (`過去のコーディネーション回数` = coordinate) +
+  (`初回コーディネーション` = coordinate1) +
   (`男性` = male) +
   (`東京・大阪・神奈川・愛知` = toka) ~ mean * treat,
   data = use,
