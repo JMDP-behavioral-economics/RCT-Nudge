@@ -271,7 +271,8 @@ est_mod_reply %>%
   kableExtra::group_rows(
     "F-tests, p-value:", 9, 11,
     bold = FALSE, italic = TRUE
-  )
+  ) %>%
+  kableExtra::as_image()
 ```
 
 <!-- ## 回帰分析と二群比較の結果の差について（メモ）
@@ -338,7 +339,8 @@ est_mod_int %>%
   kableExtra::group_rows(
     "F-tests, p-value", 9, 11,
     bold = FALSE, italic = TRUE
-  )
+  ) %>%
+  kableExtra::as_image()
 ```
 
 <!-- ## 回帰分析と二群比較の結果の差について（メモ）
@@ -395,7 +397,8 @@ est_mod_int %>%
   kableExtra::group_rows(
     "F-tests, p-value", 9, 11,
     bold = FALSE, italic = TRUE
-  )
+  ) %>%
+  kableExtra::as_image()
 ```
 
 ## 性別・年齢の影響

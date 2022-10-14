@@ -245,7 +245,8 @@ est_model %>%
   kableExtra::column_spec(2:5, width = "5em") %>%
   kableExtra::group_rows(
     "F-tests, p-value", 9, 11, bold = FALSE, italic = TRUE
-  )
+  ) %>%
+  kableExtra::as_image()
 ```
 
 ## 共変量に関する結果
