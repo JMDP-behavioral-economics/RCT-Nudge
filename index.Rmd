@@ -1,42 +1,17 @@
 ---
 title: |
-  Only You
-subtitle: |
-  A Field Experiment of Text Message
-  to Prevent Free-riding in Japan Marrow Donor Program
+  Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program
 author:
-  - name: Hiroki Kato
-    inst: 1
-  - name: Fumio Ohtake
-    inst: 1, 2
-  - name: Saiko Kurosawa
-    inst: 3
-  - name: Kazuhiro Yoshiuchi
-    inst: 4
-  - name: Takahiro Fukuda
-    inst: 5
-institute:
-  - number: 1
-    name: Graduate School of Economics, Osaka University
-  - number: 2
-    name: Center for Infectious Disease Education and Research (CiDER), Osaka University
-  - number: 3
-    name: Department of Oncology, Ina Central Hospital
-  - number: 4
-    name: Graduate School of Medicine, Tokyo University
-  - number: 5
-    name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital
+  - Hiroki Kato
+  - Fumio Ohtake
+  - Saiko Kurosawa
+  - Kazuhiro Yoshiuchi
+  - Takahiro Fukuda
 output:
-  bookdown::beamer_presentation2:
-    latex_engine: lualatex
-    number_sections: false
-    keep_tex: true
-    fig_caption: false
-    toc: false
-    dev: cairo_pdf
-    template: "template/tex/DarkBlue-Simple-LuaLatex-Beamer.tex"
-aspectratio: 169
-fontsize: 12
+  powerpoint_presentation:
+    slide_level: 2
+    reference_doc: template/mspptx/DarkBlue-Simple.pptx
+always_allow_html: true
 ---
 
 ```{r include = FALSE, eval = FALSE, echo = FALSE}
@@ -45,7 +20,7 @@ library(here)
 rmarkdown::render(
   input = here("index.rmd"),
   output_format = "all",
-  output_file = "slides.pdf",
+  output_file = "221014骨髄バンク介入実験分析.pptx",
   output_dir = "docs/slide"
 )
 ```
@@ -60,7 +35,8 @@ knitr::opts_chunk$set(
   include = TRUE,
   fig.pos = "t",
   fig.align = "center",
-  out.width = "75%"
+  out.width = "75%",
+  dpi = 300
 )
 
 library(systemfonts)
