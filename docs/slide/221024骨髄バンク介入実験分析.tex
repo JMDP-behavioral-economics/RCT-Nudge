@@ -567,6 +567,83 @@ Num.Obs. & \num{10985} & \num{10985} & \num{10985}\\
 \end{itemize}
 \end{frame}
 
+\hypertarget{effect-on-coordination-process}{%
+\section{Effect on Coordination Process}\label{effect-on-coordination-process}}
+
+\begin{frame}{アウトカム変数}
+\protect\hypertarget{ux30a2ux30a6ux30c8ux30abux30e0ux5909ux6570-1}{}
+返信以降の4工程をそれぞれアウトカム変数とする
+
+\begin{enumerate}
+\tightlist
+\item
+  \textbf{CT}: 確認検査を実施したならば1を取る二値変数
+\item
+  \textbf{Candidate}: 第一候補者に選定されたならば1を取る二値変数
+\item
+  \textbf{Consent}: 最終同意をしたならば1を取る二値変数
+\item
+  \textbf{Donation}: 採取をしたならば1を取る二値変数
+\end{enumerate}
+
+各アウトカム変数に対するサンプルの除外条件は以下の通り
+
+\begin{itemize}
+\tightlist
+\item
+  CT: 患者側の都合で確認検査を実施しなかった人
+\item
+  Candidate～Donation: 患者側の都合で確認検査を実施しなかった人
+  もしくは、患者側の都合や健康上の理由で候補者選定以降にコーディネーションが中止した人
+\end{itemize}
+\end{frame}
+
+\begin{frame}{回帰分析の結果}
+\protect\hypertarget{ux56deux5e30ux5206ux6790ux306eux7d50ux679c}{}
+\begin{table}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{l>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{5em}}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{CT} & \multicolumn{1}{c}{Candidate} & \multicolumn{1}{c}{Consent} & \multicolumn{1}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+B & \num{0.032}*** & \num{0.003} & \num{0.004} & \num{0.002}\\
+ & (\num{0.008}) & (\num{0.005}) & (\num{0.004}) & (\num{0.004})\\
+C & \num{0.013} & \num{-0.002} & \num{-0.001} & \num{-0.001}\\
+ & (\num{0.009}) & (\num{0.006}) & (\num{0.005}) & (\num{0.005})\\
+D & \num{0.030}*** & \num{0.009}* & \num{0.010}** & \num{0.003}\\
+ & (\num{0.008}) & (\num{0.005}) & (\num{0.005}) & (\num{0.005})\\
+\midrule
+Num.Obs. & \num{10435} & \num{8587} & \num{8558} & \num{8441}\\
+Control Avg. & \num{0.235} & \num{0.078} & \num{0.069} & \num{0.057}\\
+\bottomrule
+\multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{コントロール変数に関する結果}
+\protect\hypertarget{ux30b3ux30f3ux30c8ux30edux30fcux30ebux5909ux6570ux306bux95a2ux3059ux308bux7d50ux679c}{}
+\begin{itemize}
+\tightlist
+\item
+  男性は女性よりも各工程にたどり着きやすい
+\item
+  若い人ほど、各工程にたどり着きやすい
+\item
+  初めてコーディネーションを経験する人はそうでない人よりも各工程にたどり着きづらい（その差は小さくなっていく）
+\item
+  面談施設が多い地域に住む人はそうでない人よりも各工程にたどり着きやすい
+\end{itemize}
+\end{frame}
+
+\begin{frame}{性別×年齢による効果の異質性}
+\protect\hypertarget{ux6027ux5225ux5e74ux9f62ux306bux3088ux308bux52b9ux679cux306eux7570ux8ceaux6027-1}{}
+\begin{center}\includegraphics[width=0.75\linewidth]{C:/Users/vge00/Desktop/JMDP/RCT-Nudge/docs/slide/221024骨髄バンク介入実験分析_files/figure-beamer/plot-reg-process-by-genage-1} \end{center}
+\end{frame}
+
 \hypertarget{appendix-a.-heterogeneity-by-region}{%
 \section{Appendix A. Heterogeneity by Region}\label{appendix-a.-heterogeneity-by-region}}
 

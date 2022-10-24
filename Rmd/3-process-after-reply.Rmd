@@ -49,6 +49,7 @@ outcomes <- use %>%
     male,
     age,
     coordinate1,
+    exg_stop_reply
   ) %>%
   pivot_longer(test:donate, names_to = "outcome")
 
@@ -61,7 +62,6 @@ exclude <- use %>%
 
 testdt <- outcomes %>%
   dplyr::left_join(exclude, by = c("id", "outcome")) %>%
-  dplyr::filter(exclude == 0) %>%
   mutate(
     age_less30 = if_else(age <= 30, 1, 0),
     age_demean = age - mean(rawdt$age),
@@ -73,156 +73,43 @@ testdt <- outcomes %>%
   )
 ```
 
-<!-- ## 二群比較の検定（補論） -->
-
-```{r ttest, include = FALSE, eval = FALSE}
-stat <- testdt %>%
-  group_by(outcome, treat) %>%
-  summarize(mean = mean(value), se = se(value), n = n()) %>%
-  ungroup() %>%
-  mutate(
-    lwr.mean = mean - se,
-    upr.mean = mean + se
-  )
-
-ttest_info <- expand.grid(
-  outcome = c("CT", "Candidate", "Consent", "Donation"),
-  group1 = LETTERS[1:4],
-  group2 = LETTERS[1:4],
-  stringsAsFactors = FALSE) %>%
-  dplyr::filter(group1 < group2) %>%
-  arrange(outcome) %>%
-  mutate(id = seq(n()))
-
-ttest <- ttest_info %>%
-  group_by(id) %>%
-  do(test = t.test(
-    subset(
-      testdt, treat == .$group1 & outcome == .$outcome
-    )$value,
-    subset(
-      testdt, treat == .$group2 & outcome == .$outcome
-    )$value
-  )) %>%
-  summarize(
-    id = id,
-    p = test$p.value,
-    est1 = test$estimate[1],
-    est2 = test$estimate[2]
-  )
-
-show_ttest_info <- ttest_info %>%
-  dplyr::left_join(ttest, by = "id") %>%
-  dplyr::filter(p <= 0.1) %>%
-  mutate_at(vars(group1, group2), list(~factor(., levels = LETTERS[1:4]))) %>%
-  group_by(id) %>%
-  do(data.frame(
-    outcome = .$outcome,
-    group1 = .$group1,
-    group2 = .$group2,
-    p = .$p,
-    y_g1 = subset(stat, outcome == .$outcome & treat == .$group1)$upr.mean,
-    y_g2 = subset(stat, outcome == .$outcome & treat == .$group2)$upr.mean
-  )) %>%
-  ungroup() %>%
-  mutate(
-    y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02,
-    y = if_else(id == 16, y + 0.03, y),
-    sign = case_when(
-      p < 0.01 ~ "***",
-      p < 0.05 ~ "**",
-      p < 0.1 ~ "*",
-      TRUE ~ "",
-    ),
-    outcome = factor(
-      outcome,
-      levels = c("CT", "Candidate", "Consent", "Donation")
-    )
-  )
-```
-
-```{r ttest-process, echo = FALSE, fig.width=12, fig.height=7, eval = FALSE}
-stat %>%
-  ggplot(aes(x = treat, y = mean)) +
-    geom_bar(
-      color = "black",
-      fill = "grey90",
-      stat = "identity"
-    ) +
-    geom_errorbar(
-      aes(ymin = lwr.mean, ymax = upr.mean),
-      width = 0.5, position = position_dodge(0.9)
-    ) +
-    geom_text(
-      aes(y = 0, label = sprintf("%1.3f\nN=%1d", mean, n)),
-      vjust = -0.2, size = 4
-    ) +
-    geom_signif(
-      data = show_ttest_info,
-      aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
-      textsize = 5, tip_length = 0.01,
-      manual = TRUE
-    ) +
-    facet_wrap(~ outcome) +
-    scale_y_continuous(
-      limits = c(0, 0.38),
-      breaks = seq(0, 0.38, 0.05)
-    ) +
-    labs(
-      x = "Experimental Arms",
-      y = "Sample average",
-      fill = "Experimental Arms"
-    ) +
-    simplegg()
-```
-
 ## 回帰分析の結果
 
 ```{r reg-process, include = FALSE}
 model <- value ~ treat + age_demean + male + coordinate1 + toka +
   factor(month) + factor(week)
 
-est_model <- testdt %>%
+est_process1 <- testdt %>%
+  dplyr::filter(exg_stop_reply == 0) %>%
   group_by(outcome) %>%
-  do(
-    est = lm_robust(
+  do(fit = lm_robust(
       model,
       cluster = RCTweek,
       se_type = "stata",
       data = .
-    ),
-    ftestBC = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatC = 0",
-      data = .
-    )$lh,
-    ftestBD = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatD = 0",
-      data = .
-    )$lh,
-    ftestCD = lh_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatC - treatD = 0",
-      data = .
-    )$lh
-  )
+  ))
+
+est_process2 <- testdt %>%
+  group_by(outcome) %>%
+  do(fit = lm_robust(
+    model,
+    cluster = RCTweek,
+    se_type = "stata",
+    data = subset(., exclude == 0)
+  ))
 ```
 
 ```{r tab-reg-process}
 ctrl_avg <- testdt %>%
+  dplyr::filter(exclude == 0) %>%
   dplyr::filter(treat == "A") %>%
   group_by(outcome) %>%
-  summarize(mean = mean(value))
+  summarize(mean = mean(value)) %>%
+  pivot_wider(names_from = outcome, values_from = mean) %>%
+  bind_cols(tibble(terms = "Control Avg."), .)
 
-est_model %>%
-  pull(est) %>%
+est_process2 %>%
+  pull(fit) %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
@@ -232,45 +119,43 @@ est_model %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = unlist(ctrl_avg$mean) %>%
-      rbind(bind_rows(est_model$ftestBC)[, 4]) %>%
-      rbind(bind_rows(est_model$ftestBD)[, 4]) %>%
-      rbind(bind_rows(est_model$ftestCD)[, 4]) %>%
-      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
+    add_rows = ctrl_avg
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(
     c(" ", as.character(est_model$outcome))
   ) %>%
-  kableExtra::column_spec(2:5, width = "5em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 9, 11, bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::as_image()
+  kableExtra::column_spec(2:5, width = "5em")
 ```
 
-## 共変量に関する結果
+## コントロール変数に関する結果
 
 - 男性は女性よりも各工程にたどり着きやすい
-  - その差は候補者選定・最終同意時点で最大となる（男性の方が選ばれやすい？）
 - 若い人ほど、各工程にたどり着きやすい
-- 初めてコーディネーションを経験する人はそうでない人よりも各工程にたどり着きづらい
-  - その差は確認検査時点で大きくなり、候補者選定以降は小さくなる
-  （初めてコーディネーションを経験する人の方が選ばれやすい？）
+- 初めてコーディネーションを経験する人はそうでない人よりも各工程にたどり着きづらい（その差は小さくなっていく）
 - 面談施設が多い地域に住む人はそうでない人よりも各工程にたどり着きやすい
-  - その差は確認検査時点で最大となる
 
 ## 性別×年齢による効果の異質性
 
-```{r hetero-process-gender-age, include = FALSE}
-hetero_after_reply <- testdt %>%
+```{r reg-process-by-genage, include = FALSE}
+est_process_genage <- testdt %>%
+  dplyr::filter(exclude == 0) %>%
   group_by(outcome, male, age_less30) %>%
-  do(est = lm_robust(
+  nest() %>%
+  mutate(fit = map(data, ~ lm_robust(
     update(model, . ~ . - male - age_demean),
     cluster = RCTweek,
     se_type = "stata",
-    data = .
-  )) %>%
+    data = .x
+  ))) %>%
+  mutate(
+    tidy = map(fit, tidy),
+    tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+    tidy = map(tidy, ~ dplyr::select(.x, -outcome)),
+    N = map_chr(fit, ~ paste0("N=", nobs(.x)))
+  ) %>%
+  select(-data, -fit) %>%
+  unnest(cols = tidy) %>%
   mutate(
     pos = paste0(male, age_less30),
     pos = factor(
@@ -282,26 +167,30 @@ hetero_after_reply <- testdt %>%
         "Male\u00d7\nAge\u226430",
         "Male\u00d7\n30<Age"
       )
-    ),
-    N = paste0("N=", nobs(est))
+    )
   )
 ```
 
-```{r plot-hetero-process-gender-age, fig.width = 10, fig.height=7}
-hetero_after_reply %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), str_detect(term, "treat")) %>%
-      select(-outcome) %>%
-      mutate(term = factor(term, labels = LETTERS[2:4]))
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, shape = term, color = term)) +
+```{r plot-reg-process-by-genage, fig.width = 10, fig.height=7}
+est_process_genage %>%
+  ggplot(aes(x = pos, y = estimate)) +
   geom_hline(aes(yintercept = 0), linetype = 2) +
-  geom_pointrange(
-    aes(ymin = conf.low, ymax = conf.high),
+  geom_point(
+    aes(shape = term, color = term),
+    size = 3,
     position = position_dodge(0.5)
   ) +
-  geom_text(aes(y = -0.15, label = N), color = "black") +
+  geom_errorbar(
+    aes(ymin = conf.low, ymax = conf.high, color = term),
+    position = position_dodge(0.5), width = 0
+  ) +
+  geom_text(
+    aes(y = -0.15, label = N, group = outcome),
+    data = ungroup(est_process_genage) %>%
+      select(outcome, male, age_less30, N, pos) %>%
+      distinct(),
+    color = "black"
+  ) +
   facet_wrap(~outcome, ncol = 2) +
   scale_y_continuous(
     limits = c(-0.2, 0.2),
@@ -309,98 +198,8 @@ hetero_after_reply %>%
   ) +
   labs(
     x = "Subset",
-    y = "Estimates (95%CI)",
+    y = "Estimated Effects (95%CI)",
     shape = "Treatments", color = "Treatments"
   ) +
   simplegg()
-```
-
-<!-- ## Change Threshold of Younger Group
-
-- 若年層の区切りを30～40歳の範囲で変えて、
-若年層の男性と女性におけるメッセージの効果を推定した -->
-
-```{r change-age-threshold, eval = FALSE}
-age_criterion <- 30:40 %>%
-  purrr::map(function(x) {
-    testdt %>%
-      mutate(outcome = factor(outcome, out_lev, out_lab)) %>%
-      dplyr::filter(age <= x) %>%
-      group_by(outcome, male) %>%
-      do(
-        lm_robust(
-          update(model, . ~ . - male - age_demean),
-          cluster = RCTweek,
-          se_type = "stata",
-          data = .
-        ) %>%
-          tidy() %>%
-          dplyr::filter(str_detect(term, "treat")) %>%
-          select(-outcome)
-      ) %>%
-      ungroup() %>%
-      mutate(age = x)
-  }) %>%
-  reduce(bind_rows) %>%
-  mutate(male = factor(male, levels = 0:1, labels = c("Females", "Males")))
-```
-
-<!-- ## Message B Effect among Younger Group -->
-
-```{r plotB-change-age-threshold, fig.width=15, fig.height=10, eval = FALSE}
-age_criterion %>%
-  dplyr::filter(term == "treatB") %>%
-  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_point(size = 3) +
-    geom_line(size = 1) +
-    geom_line(aes(y = conf.low), linetype = 2) +
-    geom_line(aes(y = conf.high), linetype = 2) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_x_continuous(breaks = 30:40) +
-    scale_y_continuous(
-      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
-    simplegg()
-```
-
-<!-- ## Message C Effect among Younger Group -->
-
-```{r plotC-change-age-threshold, fig.width=15, fig.height=10, eval = FALSE}
-age_criterion %>%
-  dplyr::filter(term == "treatC") %>%
-  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_point(size = 3) +
-    geom_line(size = 1) +
-    geom_line(aes(y = conf.low), linetype = 2) +
-    geom_line(aes(y = conf.high), linetype = 2) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_x_continuous(breaks = 30:40) +
-    scale_y_continuous(
-      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
-    simplegg()
-```
-
-<!-- ## Message D Effect among Younger Group -->
-
-```{r plotD-change-age-threshold, fig.width=15, fig.height=10, eval = FALSE}
-age_criterion %>%
-  dplyr::filter(term == "treatD") %>%
-  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_point(size = 3) +
-    geom_line(size = 1) +
-    geom_line(aes(y = conf.low), linetype = 2) +
-    geom_line(aes(y = conf.high), linetype = 2) +
-    facet_wrap(~ outcome, ncol = 3) +
-    scale_x_continuous(breaks = 30:40) +
-    scale_y_continuous(
-      limits = c(-0.15, 0.15), breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
-    simplegg()
 ```

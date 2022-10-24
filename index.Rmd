@@ -118,7 +118,7 @@ grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
 
 ```
 
-```{r child="Rmd/3-process-after-reply.rmd", eval = FALSE}
+```{r child="Rmd/3-process-after-reply.rmd"}
 
 ```
 
