@@ -8,6 +8,7 @@ library(RCTtoolbox)
 library(ggsignif)
 library(patchwork)
 library(survival)
+library(furrr)
 
 lapply(
   Sys.glob(here("R/func", "*.r")),
