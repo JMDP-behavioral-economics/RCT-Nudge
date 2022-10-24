@@ -9,6 +9,7 @@ library(ggsignif)
 library(patchwork)
 library(survival)
 library(grf)
+library(DiagrammeR)
 
 lapply(
   Sys.glob(here("R/func", "*.r")),

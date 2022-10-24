@@ -27,7 +27,6 @@ use <- rawdt %>%
     male,
     age,
     coordinate1,
-    days_reply,
     reply,
     positive = intention
   ) %>%
@@ -36,4 +35,14 @@ use <- rawdt %>%
     age_less30 = if_else(age <= 30, 1, 0),
     age_demean = age - mean(rawdt$age),
   )
+```
+
+```{r causal-forest-reply}
+Y <- use$positive
+X <- as.matrix(use[, c("male", "age", "coordinate1", "toka")])
+W <- use$treat
+G <- use$RCTweek
+est <- multi_arm_causal_forest(X, Y, W, num.trees = 4000, clusters = G)
+
+average_treatment_effect(est, "all", subset = X[, 1] == 0 & X[, 2] <= 30 & X[, 4] == 1)
 ```
