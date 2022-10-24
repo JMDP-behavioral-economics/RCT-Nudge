@@ -93,8 +93,7 @@ schedule %>%
   kableExtra::kable_styling() %>%
   kableExtra::add_header_above(c(
     " " = 1, "Month, Year" = 6
-  )) %>%
-  kableExtra::as_image()
+  ))
 ```
 
 ## データ
@@ -161,8 +160,7 @@ kableExtra::kable_styling(font_size = 8) %>%
 add_header_above(c(" " = 1, "実験群" = 4, " " = 1)) %>%
 group_rows("A. 介入", 1, 3) %>%
 group_rows("B. サンプルサイズ", 4, 4) %>%
-group_rows("C. 共変量", 5, 8) %>%
-kableExtra::as_image()
+group_rows("C. 共変量", 5, 8)
 ```
 
 ## 推定方法

@@ -5,12 +5,9 @@
 
 - 最も個人の意向が現れる**適合通知への返信**と**移植の意向**をアウトカム変数とする
   - 外生的な要因である患者側の都合でこの工程の段階でコーディネーションが中止した人は除外して分析をする
-- アウトカム変数は適合通知に返信したらならば1を取るダミー変数
-  - 全体平均は88\%
-- 返信スピードに対する効果を検証するために、
-$X$日以内に返信したならば1を取るダミー変数もアウトカムとする
-  - $X = \{5, 10, 20, 30\}$
-  - 返信した人の平均返信日数は全体で約10日（中央値は9日）
+- 意向という観点から返信に対する効果を二つに分解する
+    1. **Positive intention**：提供を希望して返信したかどうか
+    1. **Negative intention**：提供を希望しないで返信したかどうか
 
 ```{r load-packages, include = FALSE}
 library(here)
@@ -27,15 +24,11 @@ rawdt <- read_csv(
 )
 
 use <- rawdt %>%
-  mutate(treat = factor(treat, levels = LETTERS[1:4]))
-
-testdt <- use %>%
-  dplyr::filter(ongoing == 0 & exg_stop_reply == 0  & prefecture != "海外") %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
+  dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
+  dplyr::filter(exg_stop_reply == 0) %>%
   select(
     id,
-    reply,
-    intention,
-    days_reply,
     treat,
     RCTweek,
     month,
@@ -43,49 +36,17 @@ testdt <- use %>%
     toka,
     male,
     age,
-    coordinate1
+    coordinate1,
+    days_reply,
+    reply,
+    positive = intention
   ) %>%
   mutate(
+    negative = reply * (1 - positive),
     age_less30 = if_else(age <= 30, 1, 0),
     age_demean = age - mean(rawdt$age),
-    days_reply = if_else(
-      is.na(days_reply),
-      max(use$days_reply, na.rm = TRUE),
-      days_reply
-    ),
-    reply_full = reply,
-    reply_5 = if_else(days_reply <= 5, 1, 0),
-    reply_10 = if_else(days_reply <= 10, 1, 0),
-    reply_20 = if_else(days_reply <= 20, 1, 0),
-    reply_30 = if_else(days_reply <= 30, 1, 0),
-    positive_full = intention,
-    positive_5 = if_else(days_reply <= 5, intention, 0),
-    positive_10 = if_else(days_reply <= 10, intention, 0),
-    positive_20 = if_else(days_reply <= 20, intention, 0),
-    positive_30 = if_else(days_reply <= 30, intention, 0),
-    negative_full = reply * (1 - intention),
-    negative_5 = if_else(days_reply <= 5, 1- intention, 0),
-    negative_10 = if_else(days_reply <= 10, 1- intention, 0),
-    negative_20 = if_else(days_reply <= 20, 1- intention, 0),
-    negative_30 = if_else(days_reply <= 30, 1- intention, 0)
   ) %>%
-  select(-reply, -intention, -days_reply) %>%
-  pivot_longer(
-    reply_full:negative_30,
-    names_to = c("outcome", "within"),
-    names_pattern = "(.*)_(.*)"
-  ) %>%
-  mutate(within = factor(
-    within,
-    levels = c("full", "5", "10", "20", "30"),
-    labels = c(
-      "full",
-      "\u2264 5 days",
-      "\u2264 10 days",
-      "\u2264 20 days",
-      "\u2264 30 days"
-    )
-  )) %>%
+  pivot_longer(reply:negative, "outcome") %>%
   mutate(outcome = factor(
     outcome,
     levels = c("reply", "positive", "negative"),
@@ -93,156 +54,34 @@ testdt <- use %>%
   ))
 ```
 
-<!-- ## 二群比較の検定（補論） -->
+## 返信・意向に対するメッセージ効果
 
-```{r ttest, include = FALSE, eval = FALSE}
-stat <- testdt %>%
-  dplyr::filter(within == "full") %>%
-  group_by(outcome, treat) %>%
-  summarize(mean = mean(value), se = se(value), n = n()) %>%
-  ungroup() %>%
-  mutate(
-    lwr.mean = mean - se,
-    upr.mean = mean + se
-  )
-
-ttest_info <- expand.grid(
-  outcome = c("Reply", "Positive intention"),
-  group1 = LETTERS[1:4],
-  group2 = LETTERS[1:4],
-  stringsAsFactors = FALSE) %>%
-  dplyr::filter(group1 < group2) %>%
-  arrange(outcome) %>%
-  mutate(id = seq(n()))
-
-ttest <- ttest_info %>%
-  group_by(id) %>%
-  do(test = t.test(
-    subset(
-      testdt,
-      treat == .$group1 & outcome == .$outcome & within == "full"
-    )$value,
-    subset(
-      testdt,
-      treat == .$group2 & outcome == .$outcome & within == "full"
-    )$value
-  )) %>%
-  summarize(
-    id = id,
-    p = test$p.value,
-    est1 = test$estimate[1],
-    est2 = test$estimate[2]
-  )
-
-show_ttest_info <- ttest_info %>%
-  dplyr::left_join(ttest, by = "id") %>%
-  dplyr::filter(p <= 0.1) %>%
-  mutate_at(vars(group1, group2), list(~factor(., levels = LETTERS[1:4]))) %>%
-  group_by(id) %>%
-  do(data.frame(
-    outcome = .$outcome,
-    group1 = .$group1,
-    group2 = .$group2,
-    p = .$p,
-    y_g1 = subset(stat, outcome == .$outcome & treat == .$group1)$upr.mean,
-    y_g2 = subset(stat, outcome == .$outcome & treat == .$group2)$upr.mean
-  )) %>%
-  ungroup() %>%
-  mutate(
-    outcome = factor(outcome, levels = c("Reply", "Positive intention")),
-    y = if_else(y_g1 > y_g2, y_g1, y_g2) + 0.02,
-    sign = case_when(
-      p < 0.01 ~ "***",
-      p < 0.05 ~ "**",
-      p < 0.1 ~ "*",
-      TRUE ~ "",
-    )
-  )
-```
-
-```{r ttest-reply, echo = FALSE, eval = FALSE}
-stat %>%
-  dplyr::filter(outcome %in% c("Reply", "Positive intention")) %>%
-  ggplot(aes(x = treat, y = mean)) +
-    geom_bar(
-      color = "black",
-      fill = "grey90",
-      stat = "identity"
-    ) +
-    geom_errorbar(
-      aes(ymin = lwr.mean, ymax = upr.mean),
-      width = 0.5, position = position_dodge(0.9)
-    ) +
-    geom_text(
-      aes(y = 0, label = sprintf("%1.3f\nN=%1d", mean, n)),
-      vjust = -1, size = 4
-    ) +
-    geom_signif(
-      data = show_ttest_info,
-      aes(xmin = group1, xmax = group2, annotations = sign, y_position = y),
-      textsize = 5, tip_length = 0.01,
-      manual = TRUE
-    ) +
-    facet_wrap(~ outcome) +
-    scale_y_continuous(breaks = seq(0, 1, 0.1)) +
-    labs(
-      x = "Experimental Arms",
-      y = "Sample average",
-      caption = "*** p < 0.01, ** p < 0.05, * p < 0.1"
-    ) +
-    simplegg(caption_size = 13)
-```
-
-## 回帰分析の結果
-
-```{r reg-reply, include = FALSE}
+```{r reg-stock, include = FALSE}
 mod <- value ~ treat + age_demean + male + coordinate1 + toka +
   factor(month) + factor(week)
 
-est_mod <- testdt %>%
-  group_by(outcome, within) %>%
-  do(
-    est = lm_robust(
+est_stock <- use %>%
+  group_by(outcome) %>%
+  do(fit = lm_robust(
       mod,
       cluster = RCTweek,
       se_type = "stata",
       data = .
-    ),
-    ftestBC = lh_robust(
-      mod,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatC = 0",
-      data = .
-    )$lh %>% tidy(),
-    ftestBD = lh_robust(
-      mod,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatB - treatD = 0",
-      data = .
-    )$lh %>% tidy(),
-    ftestCD = lh_robust(
-      mod,
-      cluster = RCTweek,
-      se_type = "stata",
-      linear_hypothesis = "treatC - treatD = 0",
-      data = .
-    )$lh %>% tidy()
-  )
+  ))
 ```
 
-```{r tab-reg-reply}
-ctrl_avg <- testdt %>%
-  dplyr::filter(treat == "A" & outcome == "Reply") %>%
-  group_by(within) %>%
-  summarize(mean = mean(value))
+```{r tab-reg-stock}
+ctrl_avg <- use %>%
+  dplyr::filter(treat == "A") %>%
+  group_by(outcome) %>%
+  summarize(mean = mean(value)) %>%
+  pivot_wider(names_from = outcome, values_from = mean) %>%
+  bind_cols(tibble(terms = "Control Avg."), .)
 
-est_mod_reply <- est_mod %>%
-  dplyr::filter(outcome == "Reply")
+attr(ctrl_avg, "position") <- 7
 
-est_mod_reply %>%
-  pull(est) %>%
+est_stock %>%
+  pull(fit) %>%
   setNames(paste0("(", seq(length(.)), ")")) %>%
   modelsummary(
     stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
@@ -252,163 +91,25 @@ est_mod_reply %>%
       "treatD" = "D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = unlist(ctrl_avg$mean) %>%
-      rbind(bind_rows(est_mod_reply$ftestBC)$p.value) %>%
-      rbind(bind_rows(est_mod_reply$ftestBD)$p.value) %>%
-      rbind(bind_rows(est_mod_reply$ftestCD)$p.value) %>%
-      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
+    add_rows = ctrl_avg
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(c(
     " " = 1, "Reply" = 1,
-    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
+    "Positive" = 1, "Negative" = 1
   )) %>%
   kableExtra::add_header_above(c(
     " " = 2,
-    "Reply within specific day" = 4
+    "Intention" = 2
   )) %>%
-  kableExtra::column_spec(2:6, width = "6em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value:", 9, 11,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::as_image()
+  kableExtra::column_spec(2:4, width = "10em")
 ```
 
-<!-- ## 回帰分析と二群比較の結果の差について（メモ）
+## コントロール変数の影響
 
-メッセージAとメッセージBの比較に注目する
-
-- 効果の大きさ：0.011（二群比較）$<$ 0.014（回帰分析）
-  - 回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
-- 推定効果の標準誤差：0.009（二群比較）$>$ 0.006（回帰分析）
-  - 回帰分析は実験週単位でクラスターした標準誤差を使用している
-  - クラスター標準誤差が通常の標準誤差を下回るということは、
-  クラスター内の個人間の相関が負であることを示す (Angrist and Pischke, 2009)
-  - 適合通知を受け取った人が他の人の返信状況などを聞いて、
-  クラウディング・アウトのような行動を取るとしたら、クラスター内の個人間の相関が負となる？ -->
-
-## 移植の意向による効果の分解
-
-- 返信率に対する効果は2つの効果に分解できる
-    1. **Positive intention**：提供を希望して返信したかどうか
-    1. **Negative intention**：提供を希望しないで返信したかどうか
-- 意向に関する二つのアウトカム変数に対する効果を推定する
-- また、返信スピードを考慮して、
-$X$日以内に提供を希望して（しないで）返信したかどうかもアウトカム
-(Reply within specific day with psotive/negative intention)としたモデルも推定する
-
-## Positive intentionに対する効果
-
-```{r tab-reg-positive-int}
-ctrl_avg <- testdt %>%
-  dplyr::filter(treat == "A" & outcome == "Positive intention") %>%
-  group_by(within) %>%
-  summarize(mean = mean(value))
-
-est_mod_int <- est_mod %>%
-  dplyr::filter(outcome == "Positive intention")
-
-est_mod_int %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    coef_map = c(
-      "treatB" = "B",
-      "treatC" = "C",
-      "treatD" = "D"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = unlist(ctrl_avg$mean) %>%
-      rbind(bind_rows(est_mod_int$ftestBC)$p.value) %>%
-      rbind(bind_rows(est_mod_int$ftestBD)$p.value) %>%
-      rbind(bind_rows(est_mod_int$ftestCD)$p.value) %>%
-      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
-  ) %>%
-  kableExtra::kable_styling(font_size = 8) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "Positive intention" = 1,
-    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
-  )) %>%
-  kableExtra::add_header_above(c(
-    " " = 2,
-    "Reply within specific day with positive intention" = 4
-  )) %>%
-  kableExtra::column_spec(2:6, width = "6em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 9, 11,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::as_image()
-```
-
-<!-- ## 回帰分析と二群比較の結果の差について（メモ）
-
-メッセージAとメッセージBの比較に注目する
-
-- 効果の大きさ：0.022（二群比較）$>$ 0.020（回帰分析）
-  - 回帰分析はA群の平均年齢と平均コーディネート経験回数がB群よりも若干高いことを制御した？
-  - メッセージBの割り当ては第1週に2回、第3週に1回。
-  メッセージAの割り当ては第1週と第3週ともに1回。
-- 推定効果の標準誤差：0.013（二群比較）$>$ 0.012（回帰分析）
-  - 回帰分析は実験週単位でクラスターした標準誤差を使用している
-  - クラスター標準誤差が通常の標準誤差を下回るということは、
-  クラスター内の個人間の相関が負であることを示す -->
-
-## Negative intentionに対する効果
-
-```{r tab-reg-negative-int}
-ctrl_avg <- testdt %>%
-  dplyr::filter(treat == "A" & outcome == "Negative intention") %>%
-  group_by(within) %>%
-  summarize(mean = mean(value))
-
-est_mod_int <- est_mod %>%
-  dplyr::filter(outcome == "Negative intention")
-
-est_mod_int %>%
-  pull(est) %>%
-  setNames(paste0("(", seq(length(.)), ")")) %>%
-  modelsummary(
-    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
-    coef_map = c(
-      "treatB" = "B",
-      "treatC" = "C",
-      "treatD" = "D"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = unlist(ctrl_avg$mean) %>%
-      rbind(bind_rows(est_mod_int$ftestBC)$p.value) %>%
-      rbind(bind_rows(est_mod_int$ftestBD)$p.value) %>%
-      rbind(bind_rows(est_mod_int$ftestCD)$p.value) %>%
-      data.frame(term = c("Control Avg.", "B = C", "B = D", "C = D"), .)
-  ) %>%
-  kableExtra::kable_styling(font_size = 8) %>%
-  kableExtra::add_header_above(c(
-    " " = 1, "Negative intention" = 1,
-    "5 days" = 1, "10 days" = 1, "20 days" = 1, "30 days" = 1
-  )) %>%
-  kableExtra::add_header_above(c(
-    " " = 2,
-    "Reply within specific day with negative intention" = 4
-  )) %>%
-  kableExtra::column_spec(2:6, width = "6em") %>%
-  kableExtra::group_rows(
-    "F-tests, p-value", 9, 11,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::as_image()
-```
-
-## 性別・年齢の影響
-
-- 女性の方が男性よりも返信率が高いが、返信に占めるネガティブな意向の比率も高くなる
+- 女性の方が男性よりも返信率が高いが、ネガティブな意向を示しやすい
 - 高齢であるほど、ネガティブな意向を示して返信しなくなる一方で、
 ポジティブな意向を示して返信しやすくなる。全体的に、高齢であるほど、返信率が高くなる
-
-## 初回コーディネーション・地域の影響
-
 - 初めてコーディネートを経験する人はそうでない人よりもネガティブな意向を示して返信しやすいが、
 ポジティブな意向を示して返信しなくなる。全体的に、初回コーディネートの方が返信率は高い。
 - 東京・大阪・神奈川・愛知に在住している人はそうでない人よりもネガティブな意向を示して返信しなくなる一方で、
@@ -417,19 +118,24 @@ est_mod_int %>%
 
 ## 性別×年齢による効果の異質性
 
-- 移植実績の良いとされる若年層の男性はそうでない人よりも適合通知に返信していない
-- メッセージB～Dは若年男性の行動変容を促しているのか？
-- 性別と年齢（30歳以下どうか）でサンプルを分割して、返信と意向の効果を推定する
-
-```{r hetero-reply-gender-age, include = FALSE}
-hetero_reply <- testdt %>%
-  group_by(outcome, within, male, age_less30) %>%
-  do(est = lm_robust(
+```{r reg-stock-by-genage, include = FALSE}
+est_stock_genage <- use %>%
+  group_by(outcome, male, age_less30) %>%
+  nest() %>%
+  mutate(est = map(data, ~ lm_robust(
     update(mod, . ~ . - male - age_demean),
     cluster = RCTweek,
     se_type = "stata",
-    data = .
-  )) %>%
+    data = .x
+  ))) %>%
+  mutate(
+    fit = map(est, tidy),
+    fit = map(fit, ~ subset(.x, str_detect(term, "treat"))),
+    fit = map(fit, ~ dplyr::select(.x, -outcome)),
+    N = map_chr(est, ~ paste0("N=", nobs(.x)))
+  ) %>%
+  select(-data, -est) %>%
+  unnest(cols = fit) %>%
   mutate(
     pos = paste0(male, age_less30),
     pos = factor(
@@ -442,218 +148,311 @@ hetero_reply <- testdt %>%
         "Male\u00d7\n30<Age"
       )
     ),
-    N = paste0("N=", nobs(est))
+    term = str_replace(term, "treat", ""),
+    term = factor(term, LETTERS[2:4])
   )
 ```
 
-## 返信率と意向比率に対する効果の異質性
-
-```{r plot-hetero-reply-gender-age, fig.width = 10, fig.height=7}
-plot_list <- 2:4 %>%
+```{r plot-reg-stock-by-genage, fig.width = 10, fig.height=7}
+plot_list <- unique(est_stock_genage$outcome) %>%
   purrr::map(function(x) {
-    hetero_reply %>%
-      dplyr::filter(within == "full") %>%
-      rowwise(everything()) %>%
-      summarize(
-        subset(tidy(est), term == paste0("treat", LETTERS[x])) %>%
-          select(-term, -outcome)
-      ) %>%
-      ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
+    subset(est_stock_genage, outcome == x) %>%
+      ggplot(aes(x = pos, y = estimate)) +
+        geom_hline(aes(yintercept = 0), linetype = 2) +
+        geom_point(
+          aes(color = term, shape = term),
+          size = 3, position = position_dodge(0.5)
+        ) +
+        geom_errorbar(
+          aes(ymin = conf.low, ymax = conf.high, color = term),
+          position = position_dodge(0.5),
+          width = 0
+        ) +
+        geom_text(
+          aes(y = -0.125, label = N),
+          data = ungroup(est_stock_genage) %>%
+            select(male, age_less30, N, pos) %>%
+            distinct(),
+          color = "black"
+        ) +
+        scale_y_continuous(
+          breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+        ) +
+        labs(
+          title = paste("Outcome:", x),
+          x = "Subset",
+          y = "Estimated Effects (95%CI)",
+          color = "Treatment", shape = "Treatment"
+        ) +
+        simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+## フロー変数（返信日数）の分析
+
+- 適合通知を送付してから$X$日以内に返信したかどうか（提供を希望して返信したかどうか／提供を希望しないで返信したかどうか）をアウトカム変数として、効果の経時的変化を分析する
+  - 適合通知には、**7日以内**の返信をお願いしている
+
+## 返信日数の分布
+
+```{r dist-days-reply}
+reply_rate <- subset(use, outcome == "Reply") %>%
+  with(table(treat, days_reply)) %>%
+  as.data.frame(stringsAsFactors = FALSE) %>%
+  tibble() %>%
+  mutate(
+    treat = factor(treat, levels = LETTERS[1:4]),
+    days_reply = as.numeric(days_reply)
+  ) %>%
+  rename(N = Freq) %>%
+  left_join(
+    subset(use, outcome == "Reply") %>% with(table(treat)) %>% as.data.frame(),
+    by = "treat"
+  ) %>%
+  group_by(treat) %>%
+  mutate(prop =  cumsum(N) / Freq)
+
+ggplot(reply_rate, aes(x = days_reply, y = prop * 100)) +
+  geom_line(aes(group = treat, color = treat)) +
+  geom_point(aes(shape = treat, color = treat), size = 3) +
+  scale_x_continuous(breaks = seq(0, 90, by = 5)) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) +
+  labs(
+    x = "Days after sending notification",
+    y = "Cumulative reply rate (%)",
+    color = "Treat",
+    shape = "Treat"
+  ) +
+  simplegg()
+``` 
+
+```{r flow-data}
+flow_use <- use %>%
+  mutate(
+    days_reply = if_else(
+      is.na(days_reply),
+      10000,
+      days_reply
+    ),
+    days4 = if_else(days_reply <= 4, value, 0),
+    days7 = if_else(days_reply <= 7, value, 0),
+    days14 = if_else(days_reply <= 14, value, 0),
+    days21 = if_else(days_reply <= 21, value, 0),
+    days28 = if_else(days_reply <= 28, value, 0)
+  ) %>%
+  select(-value) %>%
+  pivot_longer(days4:days28, "within", "days") %>%
+  mutate(within = as.numeric(within))
+```
+
+## フルサンプルの分析結果
+
+```{r reg-flow}
+est_flow <- flow_use %>%
+  group_by(outcome, within) %>%
+  nest() %>%
+  mutate(fit = map(data, ~ lm_robust(
+    mod,
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .x
+  ))) %>%
+  mutate(
+    tidy = map(fit, tidy),
+    tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+    tidy = map(tidy, ~ dplyr::select(.x, -outcome))
+  ) %>%
+  dplyr::select(-data, -fit) %>%
+  unnest(cols = tidy) %>%
+  mutate(
+    term = str_replace(term, "treat", ""),
+    term = factor(term, LETTERS[2:4])
+  )
+```
+
+```{r plot-reg-flow}
+plot_list <- unique(est_flow$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow, outcome == x) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
       geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_pointrange(
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
         aes(ymin = conf.low, ymax = conf.high),
-        position = position_dodge(0.5)
+        position = position_dodge(2),
+        width = 0
       ) +
-      geom_text(aes(y = -0.15, label = N), color = "black") +
+      scale_x_continuous(breaks = unique(est_flow$within)) +
       scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.1, 0.1)
       ) +
       labs(
-        title = paste("Effect of Message", LETTERS[x]),
-        x = "Subset",
+        title = paste("Outcome:", x),
+        x = "Days after sending notification",
         y = "Estimated Effects (95%CI)",
-        color = "Outcomes", shape = "Outcomes"
+        color = "Treatment", shape = "Treatment"
       ) +
       simplegg()
   })
 
 wrap_plots(plot_list, ncol = 2) +
   plot_layout(guides = "collect") &
-    theme(legend.position = "bottom")
+  theme(legend.position = "bottom")
 ```
 
-## X日以内の返信に対するメッセージBの効果の異質性
+## 異質性：30歳以下の女性
 
-```{r plotB-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
-hetero_reply %>%
-  dplyr::filter(within != "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatB") %>% select(-term, -outcome)
+```{r reg-flow-by-genage}
+est_flow_genage <- flow_use %>%
+  group_by(outcome, within, male, age_less30) %>%
+  nest() %>%
+  mutate(fit = map(data, ~ lm_robust(
+    update(mod, . ~ . - male - age_demean),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .x
+  ))) %>%
+  mutate(
+    tidy = map(fit, tidy),
+    tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+    tidy = map(tidy, ~ dplyr::select(.x, -outcome))
   ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ within, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Effect of Message B (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
+  dplyr::select(-data, -fit) %>%
+  unnest(cols = tidy) %>%
+  mutate(
+    term = str_replace(term, "treat", ""),
+    term = factor(term, LETTERS[2:4])
+  )
 ```
 
-## X日以内の返信に対するメッセージCの効果の異質性
-
-```{r plotC-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
-hetero_reply %>%
-  dplyr::filter(within != "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatC") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ within, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Effect of Message C (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-## X日以内の返信に対するメッセージDの効果の異質性
-
-```{r plotD-hetero-reply-within-gender-age, fig.width = 10, fig.height=7}
-hetero_reply %>%
-  dplyr::filter(within != "full") %>%
-  rowwise(everything()) %>%
-  summarize(
-    subset(tidy(est), term == "treatD") %>% select(-term, -outcome)
-  ) %>%
-  ggplot(aes(x = pos, y = estimate, color = outcome, shape = outcome)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_pointrange(
-      aes(ymin = conf.low, ymax = conf.high),
-      position = position_dodge(0.5)
-    ) +
-    geom_text(aes(y = -0.15, label = N), color = "black") +
-    facet_wrap(~ within, ncol = 2) +
-    scale_y_continuous(
-      breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
-    ) +
-    labs(
-      x = "Subset",
-      y = "Effect of Message D (95%CI)",
-      color = "Outcomes", shape = "Outcomes"
-    ) +
-    simplegg()
-```
-
-<!-- ## Change Threshold of Younger Group
-
-- 若年層の区切りを30～40歳の範囲で変えて、
-若年層の男性と女性におけるメッセージの効果を推定した -->
-
-```{r change-age-threshold-secondary, eval = FALSE}
-age_criterion_secondary <- 30:40 %>%
+```{r plot-reg-flow-female-less30}
+plot_list <- unique(est_flow$outcome) %>%
   purrr::map(function(x) {
-    testdt %>%
-      dplyr::filter(age <= x) %>%
-      group_by(within, male) %>%
-      do(
-        lm_robust(
-          update(model, . ~ . - male - age_demean),
-          cluster = RCTweek,
-          se_type = "stata",
-          data = .
-        ) %>%
-          tidy() %>%
-          dplyr::filter(str_detect(term, "treat")) %>%
-          select(-outcome)
-      ) %>%
-      ungroup() %>%
-      mutate(age = x)
-  }) %>%
-  reduce(bind_rows) %>%
-  mutate(male = factor(male, levels = 0:1, labels = c("Females", "Males")))
+    subset(est_flow_genage, outcome == x & male == 0 & age_less30 == 1) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(breaks = unique(est_flow$within)) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.15)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 
+## 異質性：30歳を上回る女性
 
-<!-- ## Message B Effect among Younger Group -->
+```{r plot-reg-flow-female-over30}
+plot_list <- unique(est_flow$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow_genage, outcome == x & male == 0 & age_less30 == 0) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(breaks = unique(est_flow$within)) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.12, 0.1)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
 
-```{r plotB-change-age-threshold-secondary, fig.width=15, fig.height=10, eval = FALSE}
-age_criterion_secondary %>%
-  dplyr::filter(term == "treatB") %>%
-  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_point(size = 3) +
-    geom_line(size = 1) +
-    geom_line(aes(y = conf.low), linetype = 2) +
-    geom_line(aes(y = conf.high), linetype = 2) +
-    facet_wrap(~ within, ncol = 2) +
-    scale_x_continuous(breaks = 30:40) +
-    scale_y_continuous(
-      limits = c(-0.17, 0.17), breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
-    simplegg()
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 
-<!-- ## Message C Effect among Younger Group -->
+## 異質性：30歳以下の男性
 
-```{r plotC-change-age-threshold-secondary, fig.width=15, fig.height=10, eval=FALSE}
-age_criterion_secondary %>%
-  dplyr::filter(term == "treatC") %>%
-  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_point(size = 3) +
-    geom_line(size = 1) +
-    geom_line(aes(y = conf.low), linetype = 2) +
-    geom_line(aes(y = conf.high), linetype = 2) +
-    facet_wrap(~ within, ncol = 2) +
-    scale_x_continuous(breaks = 30:40) +
-    scale_y_continuous(
-      limits = c(-0.17, 0.17), breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
-    simplegg()
+```{r plot-reg-flow-male-less30}
+plot_list <- unique(est_flow$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow_genage, outcome == x & male == 1 & age_less30 == 1) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(breaks = unique(est_flow$within)) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.1, 0.2)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 
-<!-- ## Message D Effect among Younger Group -->
+## 異質性：30歳を上回る男性
 
-```{r plotD-change-age-threshold-secondary, fig.width=15, fig.height=10, eval=FALSE}
-age_criterion_secondary %>%
-  dplyr::filter(term == "treatD") %>%
-  ggplot(aes(x = age, y = estimate, color = male, group = male)) +
-    geom_hline(aes(yintercept = 0), linetype = 2) +
-    geom_point(size = 3) +
-    geom_line(size = 1) +
-    geom_line(aes(y = conf.low), linetype = 2) +
-    geom_line(aes(y = conf.high), linetype = 2) +
-    facet_wrap(~ within, ncol = 2) +
-    scale_x_continuous(breaks = 30:40) +
-    scale_y_continuous(
-      limits = c(-0.17, 0.17), breaks = seq(-0.2, 0.2, by = 0.05)
-    ) +
-    labs(x = "Age Thresholds", y = "Estimates (95%CI)", color = "Gender") +
-    simplegg()
+```{r plot-reg-flow-male-over30}
+plot_list <- unique(est_flow$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow_genage, outcome == x & male == 1 & age_less30 == 0) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(breaks = unique(est_flow$within)) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.15, 0.1)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 ```
 
 ## 地域による異質性の検討

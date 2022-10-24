@@ -1,16 +1,42 @@
 ---
 title: |
-  Only You: A Field Experiment of Text Message to Prevent Free-Riding in Japan Marrow Donor Program
+  Only You
+subtitle: |
+  A Field Experiment of Text Message
+  to Prevent Free-riding in Japan Marrow Donor Program
 author:
-  - Hiroki Kato
-  - Fumio Ohtake
-  - Saiko Kurosawa
-  - Kazuhiro Yoshiuchi
-  - Takahiro Fukuda
+  - name: Hiroki Kato
+    inst: 1
+  - name: Fumio Ohtake
+    inst: 1, 2
+  - name: Saiko Kurosawa
+    inst: 3
+  - name: Kazuhiro Yoshiuchi
+    inst: 4
+  - name: Takahiro Fukuda
+    inst: 5
+institute:
+  - number: 1
+    name: Graduate School of Economics, Osaka University
+  - number: 2
+    name: Center for Infectious Disease Education and Research (CiDER), Osaka University
+  - number: 3
+    name: Department of Oncology, Ina Central Hospital
+  - number: 4
+    name: Graduate School of Medicine, Tokyo University
+  - number: 5
+    name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital
 output:
-  powerpoint_presentation:
-    slide_level: 2
-    reference_doc: template/mspptx/DarkBlue-Simple.pptx
+  bookdown::beamer_presentation2:
+    latex_engine: lualatex
+    number_sections: false
+    keep_tex: true
+    fig_caption: false
+    toc: false
+    dev: cairo_pdf
+    template: "template/tex/DarkBlue-Simple-LuaLatex-Beamer.tex"
+aspectratio: 169
+fontsize: 12
 ---
 
 ```{r include = FALSE, eval = FALSE, echo = FALSE}
@@ -19,7 +45,7 @@ library(here)
 rmarkdown::render(
   input = here("index.rmd"),
   output_format = "all",
-  output_file = "221014骨髄バンク介入実験分析.pptx",
+  output_file = "221024骨髄バンク介入実験分析.pdf",
   output_dir = "docs/slide"
 )
 ```
@@ -92,16 +118,16 @@ grDevices::windowsFonts(YuGothic = grDevices::windowsFont("Yu Gothic"))
 
 ```
 
-```{r child="Rmd/3-process-after-reply.rmd"}
+```{r child="Rmd/3-process-after-reply.rmd", eval = FALSE}
 
 ```
 
 # Appendix A. Heterogeneity by Region
 
-```{r child="Rmd/4-reply-toka-heterogeneity.rmd"}
+```{r child="Rmd/4-reply-toka-heterogeneity.rmd", eval = FALSE}
 
 ```
 
-```{r child="Rmd/5-process-toka-heterogeneity.rmd"}
+```{r child="Rmd/5-process-toka-heterogeneity.rmd", eval = FALSE}
 
 ```
