@@ -1,0 +1,39 @@
+
+```{r load-packages, include = FALSE}
+library(here)
+source(here("R", "_library.r"))
+source(here("R", "_outcome_labels.r"))
+```
+
+```{r load-data, include = FALSE}
+root <- "D:/JMDPフィールド実験"
+
+rawdt <- read_csv(
+  here(root, "shaped.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
+  dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
+  dplyr::filter(exg_stop_reply == 0) %>%
+  select(
+    id,
+    treat,
+    RCTweek,
+    month,
+    week,
+    toka,
+    male,
+    age,
+    coordinate1,
+    days_reply,
+    reply,
+    positive = intention
+  ) %>%
+  mutate(
+    negative = reply * (1 - positive),
+    age_less30 = if_else(age <= 30, 1, 0),
+    age_demean = age - mean(rawdt$age),
+  )
+```
