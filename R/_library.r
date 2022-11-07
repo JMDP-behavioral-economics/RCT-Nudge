@@ -10,6 +10,7 @@ library(patchwork)
 library(survival)
 library(grf)
 library(DiagrammeR)
+library(policytree)
 
 lapply(
   Sys.glob(here("R/func", "*.r")),
