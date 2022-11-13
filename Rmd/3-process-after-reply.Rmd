@@ -25,6 +25,8 @@ source(here("R", "_outcome_labels.r"))
 ```{r load-data, include = FALSE}
 root <- "D:/JMDPフィールド実験"
 
+schedule <- read_csv(here(root, "RCT-schedule.csv"))
+
 rawdt <- read_csv(
   here(root, "shaped.csv"),
   locale = locale(encoding = "cp932")
@@ -49,7 +51,10 @@ outcomes <- use %>%
     male,
     age,
     coordinate1,
-    exg_stop_reply
+    reply,
+    positive = intention,
+    exg_stop_reply,
+    days_reply
   ) %>%
   pivot_longer(test:donate, names_to = "outcome")
 
@@ -79,17 +84,7 @@ testdt <- outcomes %>%
 model <- value ~ treat + age_demean + male + coordinate1 + toka +
   factor(month) + factor(week)
 
-est_process1 <- testdt %>%
-  dplyr::filter(exg_stop_reply == 0) %>%
-  group_by(outcome) %>%
-  do(fit = lm_robust(
-      model,
-      cluster = RCTweek,
-      se_type = "stata",
-      data = .
-  ))
-
-est_process2 <- testdt %>%
+est_process <- testdt %>%
   group_by(outcome) %>%
   do(fit = lm_robust(
     model,
@@ -118,7 +113,7 @@ fisher <- 1:draw %>%
       nest() %>%
       mutate(
         est = map(data, ~ lm_robust(
-          update(mod, . ~ . - treat + simulate),
+          update(model, . ~ . - treat + simulate),
           se_type = "HC0",
           data = .x
         )),
@@ -138,7 +133,7 @@ fisher <- 1:draw %>%
       ungroup()
   }, .options = furrr_options(seed = seed))
 
-observed <- est_process2 %>%
+observed <- est_process %>%
   group_by(outcome) %>%
   mutate(
     coef = map(fit, coef),
@@ -188,7 +183,7 @@ ctrl_avg <- testdt %>%
 add_table <- bind_rows(ctrl_avg, fisher_p)
 attr(add_table, "position") <- 7:10
 
-est_process2 %>%
+est_process %>%
   pull(fit) %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
   modelsummary(
@@ -203,7 +198,7 @@ est_process2 %>%
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
   kableExtra::add_header_above(
-    c(" ", as.character(est_process2$outcome))
+    c(" ", as.character(est_process$outcome))
   ) %>%
   kableExtra::pack_rows(
     "Randomization-based test, p-value",
@@ -287,4 +282,38 @@ est_process_genage %>%
     shape = "Treatments", color = "Treatments"
   ) +
   simplegg()
+```
+
+## 返信日数とコーディネーション過程の関係
+
+```{r reg-process-speed}
+est_process_speed <- testdt %>%
+  dplyr::filter(reply == 1) %>%
+  mutate(weeks_reply = days_reply / 7) %>%
+  group_by(outcome) %>%
+  do(fit = lm_robust(
+    update(model, . ~ . + weeks_reply),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = subset(., exclude == 0)
+  ))
+
+est_process_speed %>%
+  pull(fit) %>%
+  setNames(paste0("(", seq_len(length(.)), ")")) %>%
+  modelsummary(
+    stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+    coef_map = c(
+      "treatB" = "B",
+      "treatC" = "C",
+      "treatD" = "D",
+      "weeks_reply" = "Reply weeks"
+    ),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type"
+  ) %>%
+  kableExtra::kable_styling(font_size = 8) %>%
+  kableExtra::add_header_above(
+    c(" ", as.character(est_process_speed$outcome))
+  ) %>%
+  kableExtra::column_spec(2:5, width = "5em")
 ```
