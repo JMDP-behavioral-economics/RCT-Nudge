@@ -159,3 +159,103 @@ plotdt %>%
   ) +
   simplegg()
 ```
+
+# 第一候補者選定への効果の異質性
+
+```{r rcf-candidate}
+use <- subset(testdt, outcome == "Candidate" & exclude == 0)
+
+# outcome variabes
+Y <- use$value
+
+# observed characteristics
+X <- as.matrix(use[, c("male", "age", "coordinate1", "toka")])
+
+# treatments
+W <- use$treat
+G <- use$RCTweek
+
+est <- multi_arm_causal_forest(X, Y, W, num.trees = 4000)
+tau <- predict(est, X, estimate.variance = TRUE)
+
+est
+```
+
+```{r rcf-candidate-plotdt}
+plotdt <- data.frame(X) %>%
+  cbind(tau$predictions) %>%
+  rename(
+    effect_B = `B - A.Y.1`,
+    effect_C = `C - A.Y.1`,
+    effect_D = `D - A.Y.1`
+  ) %>%
+  cbind(sqrt(tau$variance.estimates)) %>%
+  rename(
+    se_B = `1`,
+    se_C = `2`,
+    se_D = `3`
+  ) %>%
+  pivot_longer(
+    effect_B:se_D,
+    names_to = c(".value", "treat"),
+    names_sep = "_"
+  ) %>%
+  mutate(treat = factor(treat, labels = paste("Message", LETTERS[2:4])))
+```
+
+```{r rcf-candidate-dist, fig.width=10}
+average_tau <- average_treatment_effect(est) %>%
+  data.frame() %>%
+  mutate(treat = str_extract(contrast, "[B-D]")) %>%
+  mutate(treat = factor(treat, labels = paste("Message", treat)))
+
+negative_effect <- plotdt %>%
+  mutate(negative = if_else(effect < 0, 1, 0)) %>%
+  group_by(treat) %>%
+  summarize(negative = mean(negative))
+
+cate_summary <- average_tau %>%
+  left_join(negative_effect, by = "treat") %>%
+  mutate(summary = sprintf(
+    "ATE: %1.3f (s.e. = %1.3f)\n%1.1f%% negative effect",
+    estimate, std.err, negative * 100
+  ))
+
+plotdt %>%
+  ggplot(aes(x = effect, y = ..count.. / sum(..count..))) +
+  geom_histogram(aes(fill = effect < 0), breaks = seq(-.2, .25, by = .01)) +
+  geom_vline(aes(xintercept = estimate), linetype = 2, data = cate_summary) +
+  geom_text(
+    aes(x = 0.2, y = 0.05, label = summary),
+    size = 4, data = cate_summary
+  ) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.06)) +
+  scale_x_continuous(limits = c(-0.2, 0.4)) +
+  scale_fill_manual(values = c("grey80", "blue")) +
+  facet_wrap(~ treat) +
+  labs(
+    x = "Treatment effect (percentage points)",
+    y = "Fraction",
+    title = "Effect on Candidate"
+  ) +
+  simplegg() +
+  theme(legend.position = "none")
+```
+
+```{r rcf-candidate-age, fig.width = 10, fig.height=10}
+plotdt %>%
+  mutate(male = factor(
+    male, labels = c("Subset: Females", "Subset: Males")
+  )) %>%
+  ggplot(aes(x = age, y = effect)) +
+  geom_point(size = 2, color = "grey50") +
+  stat_smooth(se = FALSE, color = "red") +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  facet_wrap(treat ~ male, ncol = 2) +
+  labs(
+    x = "Age",
+    y = "Treatment effect (percentage points)",
+    title = "Effect on Candidate"
+  ) +
+  simplegg()
+```
