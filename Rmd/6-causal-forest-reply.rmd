@@ -1,4 +1,8 @@
 
+---
+title: Causal Forest
+---
+
 ```{r load-packages, include = FALSE}
 library(here)
 source(here("R", "_library.r"))
@@ -46,6 +50,8 @@ X <- as.matrix(use[, c("male", "age", "coordinate1", "toka")])
 W <- use$treat
 G <- use$RCTweek
 ```
+
+# 返信率への効果の異質性
 
 ```{r causal-forest-reply}
 est <- multi_arm_causal_forest(X, reply, W, num.trees = 4000)
@@ -102,57 +108,6 @@ plotdt %>%
   scale_x_continuous(limits = c(-0.2, 0.4)) +
   scale_fill_manual(values = c("grey80", "blue")) +
   facet_wrap(~ treat) +
-  labs(
-    x = "Treatment effect (percentage points)",
-    y = "Fraction",
-    title = "Effect on Reply"
-  ) +
-  simplegg() +
-  theme(legend.position = "none")
-```
-
-```{r causal-forest-reply-dist-gen, fig.width = 10, fig.height = 5}
-average_tau_male <- average_treatment_effect(est, subset = X[, 1] == 1) %>%
-  data.frame() %>%
-  mutate(treat = str_extract(contrast, "[B-D]")) %>%
-  mutate(treat = factor(treat, labels = paste("Message", treat))) %>%
-  mutate(male = 1)
-
-average_tau_female <- average_treatment_effect(est, subset = X[, 1] == 0) %>%
-  data.frame() %>%
-  mutate(treat = str_extract(contrast, "[B-D]")) %>%
-  mutate(treat = factor(treat, labels = paste("Message", treat))) %>%
-  mutate(male = 0)
-
-negative_effect <- plotdt %>%
-  mutate(negative = if_else(effect < 0, 1, 0)) %>%
-  group_by(treat, male) %>%
-  summarize(negative = mean(negative))
-
-cate_summary <- average_tau_male %>%
-  bind_rows(average_tau_female) %>%
-  left_join(negative_effect, by = c("treat", "male")) %>%
-  mutate(summary = sprintf(
-    "ATE: %1.3f (s.e. = %1.3f)\n%1.1f%% negative effect",
-    estimate, std.err, negative * 100
-  )) %>%
-  mutate(male = factor(male, labels = c("Subset: Females", "Subset: Males")))
-
-plotdt %>%
-  mutate(male = factor(
-    male, labels = c("Subset: Females", "Subset: Males")
-  )) %>%
-  ggplot(aes(x = effect, y = ..count.. / sum(..count..))) +
-  geom_histogram(aes(fill = effect < 0), breaks = seq(-.2, .25, by = .01)) +
-  geom_vline(aes(xintercept = estimate), linetype = 2, data = cate_summary) +
-  geom_text(
-    aes(x = 0.2, y = 0.05, label = summary),
-    size = 4, data = cate_summary
-  ) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.06)) +
-  scale_x_continuous(limits = c(-0.2, 0.4)) +
-  scale_fill_manual(values = c("grey80", "blue")) +
-  facet_wrap(male ~ treat) +
   labs(
     x = "Treatment effect (percentage points)",
     y = "Fraction",
