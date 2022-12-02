@@ -447,63 +447,160 @@ plotdt <- data.frame(X) %>%
     names_to = c(".value", "treat"),
     names_sep = "_"
   ) %>%
-  mutate(treat = factor(treat, labels = paste("Message", LETTERS[2:4])))
+  mutate(treat = factor(treat, labels = paste("Message", LETTERS[2:4]))) %>%
+  mutate(age_group = case_when(
+    age < 30 ~ names(age_group)[1],
+    age < 40 ~ names(age_group)[2],
+    TRUE ~ names(age_group)[3]
+  ))
 ```
 
-```{r rcf-negative-dist, fig.width = 10}
-average_tau <- average_treatment_effect(est) %>%
+```{r rcf-negative-dist, fig.width = 10, fig.cap="Heterogenous Message Effects on Negative Intention"}
+ate <- average_treatment_effect(est) %>%
   data.frame() %>%
   mutate(treat = str_extract(contrast, "[B-D]")) %>%
-  mutate(treat = factor(treat, labels = paste("Message", treat)))
-
-negative_effect <- plotdt %>%
-  mutate(negative = if_else(effect < 0, 1, 0)) %>%
-  group_by(treat) %>%
-  summarize(negative = mean(negative))
-
-cate_summary <- average_tau %>%
-  left_join(negative_effect, by = "treat") %>%
+  mutate(treat = factor(treat, labels = paste("Message", treat))) %>%
+  mutate(p = pnorm(abs(estimate / std.err), lower.tail = FALSE) * 2) %>%
   mutate(summary = sprintf(
-    "ATE: %1.3f (s.e. = %1.3f)\n%1.1f%% negative effect",
-    estimate, std.err, negative * 100
+    "ATE = %1.3f \n(std.err = %1.3f; p-value = %1.3f)",
+    estimate, std.err, p
   ))
 
 plotdt %>%
   ggplot(aes(x = effect, y = ..count.. / sum(..count..))) +
-  geom_histogram(aes(fill = effect < 0), breaks = seq(-.2, .25, by = .01)) +
-  geom_vline(aes(xintercept = estimate), linetype = 2, data = cate_summary) +
-  geom_text(
-    aes(x = 0.2, y = 0.05, label = summary),
-    size = 4, data = cate_summary
+  geom_histogram(
+    aes(fill = effect > 0),
+    breaks = seq(-.3, .3, by = .01),
+    color = "black"
   ) +
-  scale_x_continuous(limits = c(-0.2, 0.4)) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 0.06)) +
-  scale_fill_manual(values = c("grey80", "blue")) +
-  facet_wrap(~ treat) +
+  geom_segment(
+    aes(x = estimate, xend = estimate, y = 0, yend = 0.035),
+    linetype = 2, data = ate
+  ) +
+  geom_text(
+    aes(x = estimate, y = 0.038, label = summary),
+    size = 4, data = ate
+  ) +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 0.04),
+    breaks = seq(0, 0.03, 0.01)
+  ) +
+  scale_fill_manual(values = c("white", "red")) +
+  facet_wrap(~treat) +
   labs(
     x = "Treatment effect (percentage points)",
-    y = "Fraction",
-    title = "Effect on Reply with Negative Intention"
+    y = "Fraction"
   ) +
   simplegg() +
   theme(legend.position = "none")
 ```
 
+```{r rcf-negative-male-dist, fig.width = 10, fig.height=10, fig.cap = "Heterogeneous Message Effects on Negative Intention among Males."}
+male <- X[, 1] == 1
 
-```{r rcf-negative-age, fig.width = 10, fig.height=10}
+ate_male <- lapply(seq_along(age_group), function(i) {
+  average_treatment_effect(est, subset = male & age_group[[i]]) %>%
+    mutate(age_group = names(age_group)[i]) %>%
+    mutate(treat = str_extract(contrast, "[B-D]")) %>%
+    mutate(treat = factor(treat, labels = paste("Message", treat))) %>%
+    select(-contrast, -outcome) %>%
+    mutate(p = pnorm(abs(estimate / std.err), lower.tail = FALSE) * 2) %>%
+    mutate(summary = sprintf(
+      "ATE = %1.3f \n(std.err = %1.3f; p-value = %1.3f)",
+      estimate, std.err, p
+    ))
+}) %>% reduce(bind_rows)
+
 plotdt %>%
-  mutate(male = factor(
-    male, labels = c("Subset: Females", "Subset: Males")
-  )) %>%
-  ggplot(aes(x = age, y = effect)) +
-  geom_point(size = 2, color = "grey50") +
-  stat_smooth(se = FALSE, color = "red") +
-  geom_hline(aes(yintercept = 0), linetype = 2) +
-  facet_wrap(treat ~ male, ncol = 2) +
-  labs(
-    x = "Age",
-    y = "Treatment effect (percentage points)",
-    title = "Effect on Reply with Negative Intention"
+  dplyr::filter(male == 1) %>%
+  ggplot(aes(x = effect, y = ..count.. / sum(..count..))) +
+  geom_histogram(
+    aes(fill = effect > 0),
+    breaks = seq(-.25, .25, by = .01),
+    color = "black"
   ) +
-  simplegg()
+  geom_segment(
+    aes(x = estimate, xend = estimate, y = 0, yend = 0.02),
+    linetype = 2, data = ate_male
+  ) +
+  geom_text(
+    aes(x = estimate, y = 0.023, label = summary),
+    size = 4, data = ate_male
+  ) +
+  scale_fill_manual(values = c("white", "red")) +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 0.03),
+    breaks = seq(0, 0.02, 0.005)
+  ) +
+  facet_grid(age_group ~ treat) +
+  labs(x = "Treatment Effect (percentage points)", y = "Fraction") +
+  simplegg() +
+  theme(legend.position = "none")
+```
+
+```{r rcf-negative-female-dist, fig.width = 10, fig.height = 10, fig.cap = "Heterogeneous Message Effects on Negative Intention among Females."}
+female <- X[, 1] == 0
+
+ate_female <- lapply(seq_along(age_group), function(i) {
+  average_treatment_effect(est, subset = female & age_group[[i]]) %>%
+    mutate(age_group = names(age_group)[i]) %>%
+    mutate(treat = str_extract(contrast, "[B-D]")) %>%
+    mutate(treat = factor(treat, labels = paste("Message", treat))) %>%
+    select(-contrast, -outcome) %>%
+    mutate(p = pnorm(abs(estimate / std.err), lower.tail = FALSE) * 2) %>%
+    mutate(summary = sprintf(
+      "ATE = %1.3f \n(std.err = %1.3f; p-value = %1.3f)",
+      estimate, std.err, p
+    ))
+}) %>% reduce(bind_rows)
+
+plotdt %>%
+  dplyr::filter(male == 0) %>%
+  ggplot(aes(x = effect, y = ..count.. / sum(..count..))) +
+  geom_histogram(
+    aes(fill = effect > 0),
+    breaks = seq(-.25, .25, by = .01),
+    color = "black"
+  ) +
+  geom_segment(
+    aes(x = estimate, xend = estimate, y = 0, yend = 0.02),
+    linetype = 2, data = ate_female
+  ) +
+  geom_text(
+    aes(x = estimate, y = 0.025, label = summary),
+    size = 4, data = ate_female
+  ) +
+  scale_fill_manual(values = c("white", "red")) +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 0.03),
+    breaks = seq(0, 0.02, 0.005)
+  ) +
+  facet_grid(age_group ~ treat) +
+  labs(x = "Treatment Effect (percentage points)", y = "Fraction") +
+  simplegg() +
+  theme(legend.position = "none")
+```
+
+```{r rcf-negative-mean-character}
+plotdt %>%
+  mutate(
+    positive = if_else(effect > 0, "Positive", "Negative"),
+    male = factor(male, labels = c("Females", "Males"))
+  ) %>%
+  datasummary(
+    title = "Mean Characteristics of Those whose Effect is Negative/Positive",
+    male * age_group * (
+      (`コーディネーション回数` = coordinate) +
+      (`面談施設（10平方キロメートル当たり）` = hospital_per_area) +
+      (`PB採取可能施設（10平方キロメートル当たり）` = PB_per_area) +
+      (`BM採取可能施設（10平方キロメートル当たり）` = BM_per_area) +
+      (`大阪府` = prefecture大阪府) +
+      (`東京都` = prefecture東京都)
+    ) ~ mean * treat * positive,
+    data = .,
+    fmt = 3
+  )
 ```
