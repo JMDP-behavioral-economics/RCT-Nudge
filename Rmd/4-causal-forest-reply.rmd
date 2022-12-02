@@ -17,7 +17,7 @@ rawdt <- read_csv(
   locale = locale(encoding = "cp932")
 )
 
-use <- rawdt %>%
+  use <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
   dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
   dplyr::filter(exg_stop_reply == 0) %>%
@@ -28,8 +28,10 @@ use <- rawdt %>%
     month,
     week,
     toka,
+    prefecture,
     male,
     age,
+    coordinate,
     coordinate1,
     reply,
     positive = intention
@@ -44,7 +46,8 @@ positive <- use$positive
 negative <- use$negative
 
 # observed characteristics
-X <- as.matrix(use[, c("male", "age", "coordinate1", "toka")])
+X <- model.matrix(~ 0 + male + age + coordinate + prefecture, data = use)
+# X <- as.matrix(use[, c("male", "age", "coordinate", "prefecture")])
 
 # treatments
 W <- use$treat
@@ -54,8 +57,8 @@ G <- use$RCTweek
 # 返信率への効果の異質性
 
 ```{r rcf-reply}
-est <- multi_arm_causal_forest(X, reply, W, num.trees = 4000)
-tau <- predict(est, X, estimate.variance = TRUE)
+est <- multi_arm_causal_forest(X, reply, W)
+tau <- predict(est, X)
 
 plotdt <- data.frame(X) %>%
   cbind(tau$predictions) %>%
@@ -64,14 +67,8 @@ plotdt <- data.frame(X) %>%
     effect_C = `C - A.Y.1`,
     effect_D = `D - A.Y.1`
   ) %>%
-  cbind(sqrt(tau$variance.estimates)) %>%
-  rename(
-    se_B = `1`,
-    se_C = `2`,
-    se_D = `3`
-  ) %>%
   pivot_longer(
-    effect_B:se_D,
+    effect_B:effect_D,
     names_to = c(".value", "treat"),
     names_sep = "_"
   ) %>%
@@ -138,8 +135,8 @@ plotdt %>%
 # ポジティブな返信への効果の異質性
 
 ```{r rcf-positive}
-est <- multi_arm_causal_forest(X, positive, W, num.trees = 4000)
-tau <- predict(est, X, estimate.variance = TRUE)
+est <- multi_arm_causal_forest(X, positive, W)
+tau <- predict(est, X)
 
 plotdt <- data.frame(X) %>%
   cbind(tau$predictions) %>%
@@ -148,14 +145,8 @@ plotdt <- data.frame(X) %>%
     effect_C = `C - A.Y.1`,
     effect_D = `D - A.Y.1`
   ) %>%
-  cbind(sqrt(tau$variance.estimates)) %>%
-  rename(
-    se_B = `1`,
-    se_C = `2`,
-    se_D = `3`
-  ) %>%
   pivot_longer(
-    effect_B:se_D,
+    effect_B:effect_D,
     names_to = c(".value", "treat"),
     names_sep = "_"
   ) %>%
@@ -222,8 +213,8 @@ plotdt %>%
 # ネガティブな返信への効果の異質性
 
 ```{r rcf-negative}
-est <- multi_arm_causal_forest(X, negative, W, num.trees = 4000)
-tau <- predict(est, X, estimate.variance = TRUE)
+est <- multi_arm_causal_forest(X, negative, W)
+tau <- predict(est, X)
 
 plotdt <- data.frame(X) %>%
   cbind(tau$predictions) %>%
@@ -232,14 +223,8 @@ plotdt <- data.frame(X) %>%
     effect_C = `C - A.Y.1`,
     effect_D = `D - A.Y.1`
   ) %>%
-  cbind(sqrt(tau$variance.estimates)) %>%
-  rename(
-    se_B = `1`,
-    se_C = `2`,
-    se_D = `3`
-  ) %>%
   pivot_longer(
-    effect_B:se_D,
+    effect_B:effect_D,
     names_to = c(".value", "treat"),
     names_sep = "_"
   ) %>%
