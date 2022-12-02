@@ -17,10 +17,20 @@ rawdt <- read_csv(
   locale = locale(encoding = "cp932")
 )
 
-  use <- rawdt %>%
+hospital <- read_csv(
+  here(root, "hospital-list.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  dplyr::left_join(hospital, by = "prefecture") %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
   dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
   dplyr::filter(exg_stop_reply == 0) %>%
+  mutate(
+    PB_per_area = PB_hospital / (area / 100),
+    BM_per_area = BM_hospital / (area / 100)
+  ) %>%
   select(
     id,
     treat,
@@ -33,6 +43,9 @@ rawdt <- read_csv(
     age,
     coordinate,
     coordinate1,
+    hospital_per_area,
+    PB_per_area,
+    BM_per_area,
     reply,
     positive = intention
   ) %>%
@@ -46,7 +59,11 @@ positive <- use$positive
 negative <- use$negative
 
 # observed characteristics
-X <- model.matrix(~ 0 + male + age + coordinate + prefecture, data = use)
+X <- model.matrix(
+  ~ 0 + male + age + coordinate + hospital_per_area +
+    PB_per_area + BM_per_area + prefecture,
+  data = use
+)
 
 # create age groups
 age_group <- list(
@@ -78,7 +95,12 @@ plotdt <- data.frame(X) %>%
     names_to = c(".value", "treat"),
     names_sep = "_"
   ) %>%
-  mutate(treat = factor(treat, labels = paste("Message", LETTERS[2:4])))
+  mutate(treat = factor(treat, labels = paste("Message", LETTERS[2:4]))) %>%
+  mutate(age_group = case_when(
+    age < 30 ~ names(age_group)[1],
+    age < 40 ~ names(age_group)[2],
+    TRUE ~ names(age_group)[3]
+  ))
 ```
 
 ```{r rcf-reply-dist, fig.width = 10, fig.cap="Heterogenous Message Effects on Reply."}
@@ -140,11 +162,6 @@ ate_male <- lapply(seq_along(age_group), function(i) {
 
 plotdt %>%
   dplyr::filter(male == 1) %>%
-  mutate(age_group = case_when(
-    age < 30 ~ names(age_group)[1],
-    age < 40 ~ names(age_group)[2],
-    TRUE ~ names(age_group)[3]
-  )) %>%
   ggplot(aes(x = effect, y = ..count.. / sum(..count..))) +
   geom_histogram(
     aes(fill = effect > 0),
@@ -152,18 +169,18 @@ plotdt %>%
     color = "black"
   ) +
   geom_segment(
-    aes(x = estimate, xend = estimate, y = 0, yend = 0.05),
+    aes(x = estimate, xend = estimate, y = 0, yend = 0.04),
     linetype = 2, data = ate_male
   ) +
   geom_text(
-    aes(x = estimate, y = 0.055, label = summary),
+    aes(x = estimate, y = 0.045, label = summary),
     size = 4, data = ate_male
   ) +
   scale_fill_manual(values = c("white", "red")) +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0, 0.06),
-    breaks = seq(0, 0.05, 0.01)
+    limits = c(0, 0.05),
+    breaks = seq(0, 0.04, 0.01)
   ) +
   facet_grid(age_group ~ treat) +
   labs(x = "Treatment Effect (percentage points)", y = "Fraction") +
@@ -189,11 +206,6 @@ ate_female <- lapply(seq_along(age_group), function(i) {
 
 plotdt %>%
   dplyr::filter(male == 0) %>%
-  mutate(age_group = case_when(
-    age < 30 ~ names(age_group)[1],
-    age < 40 ~ names(age_group)[2],
-    TRUE ~ names(age_group)[3]
-  )) %>%
   ggplot(aes(x = effect, y = ..count.. / sum(..count..))) +
   geom_histogram(
     aes(fill = effect > 0),
@@ -201,23 +213,44 @@ plotdt %>%
     color = "black"
   ) +
   geom_segment(
-    aes(x = estimate, xend = estimate, y = 0, yend = 0.055),
+    aes(x = estimate, xend = estimate, y = 0, yend = 0.04),
     linetype = 2, data = ate_female
   ) +
   geom_text(
-    aes(x = estimate, y = 0.06, label = summary),
+    aes(x = estimate, y = 0.045, label = summary),
     size = 4, data = ate_female
   ) +
   scale_fill_manual(values = c("white", "red")) +
   scale_y_continuous(
     expand = c(0, 0),
-    limits = c(0, 0.07),
-    breaks = seq(0, 0.06, 0.01)
+    limits = c(0, 0.05),
+    breaks = seq(0, 0.04, 0.01)
   ) +
-  facet_grid(treat ~ age_group) +
+  facet_grid(age_group ~ treat) +
   labs(x = "Treatment Effect (percentage points)", y = "Fraction") +
   simplegg() +
   theme(legend.position = "none")
+```
+
+```{r}
+plotdt %>%
+  mutate(
+    positive = if_else(effect > 0, "Positive", "Negative"),
+    male = factor(male, labels = c("Females", "Males"))
+  ) %>%
+  datasummary(
+    title = "Mean Characteristics of Those whose Effect is Negative/Positive",
+    male * age_group * (
+      (`コーディネーション回数` = coordinate) +
+      (`面談施設（10平方キロメートル当たり）` = hospital_per_area) +
+      (`PB採取可能施設（10平方キロメートル当たり）` = PB_per_area) +
+      (`BM採取可能施設（10平方キロメートル当たり）` = BM_per_area) +
+      (`大阪府` = prefecture大阪府) +
+      (`東京都` = prefecture東京都)
+    ) ~ mean * treat * positive,
+    data = .,
+    fmt = 3
+  )
 ```
 
 # ポジティブな返信への効果の異質性
