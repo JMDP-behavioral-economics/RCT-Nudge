@@ -206,25 +206,6 @@ shape_schedule_dt <- schedule_dt %>%
     end_date
   )
 
-#+ include = FALSE
-combine <- shape_schedule_dt %>%
-  right_join(shape_rawdt, by = c("year", "month", "treat")) %>%
-  dplyr::filter(prefecture != "海外")
-
-#+ include = FALSE
-write.csv(
-  combine,
-  file = here(root, "shaped.csv"),
-  fileEncoding = "CP932",
-  quote = FALSE,
-  row.names = FALSE
-)
-
-write_csv(
-  shape_schedule_dt,
-  file = here(root, "RCT-schedule.csv")
-)
-
 #' //NOTE: 病院施設データの加工
 #+ include = FALSE
 hospital <- read_csv(
@@ -252,7 +233,27 @@ merge_mencho <- read_csv(
   dplyr::filter(code %in% as.character(1:47 * 1000)) %>%
   select(-code) %>%
   right_join(hospital, by = "prefecture") %>%
-  mutate(hospital_per_area = hospital / (area / 100))
+  mutate(
+    hospital_per_area = hospital / (area / 100),
+    PB_per_area = PB_hospital / (area / 100),
+    BM_per_area = BM_hospital / (area / 100),
+    DLI_per_area = DLI_hospital / (area / 100)
+  )
+
+combine <- shape_schedule_dt %>%
+  right_join(shape_rawdt, by = c("year", "month", "treat")) %>%
+  dplyr::filter(prefecture != "海外") %>%
+  left_join(merge_mencho, by = "prefecture") %>%
+  select(-area, -hospital, -PB_hospital, -BM_hospital, -DLI_hospital)
+
+#+ include = FALSE
+write.csv(
+  combine,
+  file = here(root, "shaped.csv"),
+  fileEncoding = "CP932",
+  quote = FALSE,
+  row.names = FALSE
+)
 
 write.csv(
   merge_mencho,
@@ -260,4 +261,9 @@ write.csv(
   fileEncoding = "CP932",
   quote = FALSE,
   row.names = FALSE
+)
+
+write_csv(
+  shape_schedule_dt,
+  file = here(root, "RCT-schedule.csv")
 )
