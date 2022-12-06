@@ -1,13 +1,9 @@
-out_lev <- c(
-  "reply", "intention", "test",
-  "candidate", "consent", "donate"
-)
-
-out_lab <- c(
-  "Reply",
-  "Intention",
-  "CT",
-  "Candidate",
-  "Consent",
-  "Donation"
+outcome_label <- list(
+  reply = "Reply",
+  positive = "Positive intention",
+  negative = "Negative intention",
+  test = "CT",
+  candidate = "Candidate",
+  consent = "Consent",
+  donate = "Donation"
 )
