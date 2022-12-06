@@ -1,5 +1,5 @@
 #' ---
-#' title: Random Causal Forest (Reply)
+#' title: Random Causal Forest (Reply with Negative Intention)
 #' ---
 #'
 #+ library-packages, include = FALSE
@@ -18,13 +18,15 @@ rawdt <- read_csv(
 use <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
   dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
-  dplyr::filter(exg_stop_reply == 0)
+  dplyr::filter(exg_stop_reply == 0) %>%
+  rename(positive = intention) %>%
+  mutate(negative = reply * (1 - positive))
 
-#+ rcf-reply-run, include = FALSE
+#+ rcf-negative-run, include = FALSE
 covariate <- ~ 0 + male + age + coordinate + hospital_per_area +
   PB_per_area + BM_per_area + prefecture
 
-Y <- use$reply
+Y <- use$negative
 X <- model.matrix(covariate, data = use)
 W <- use$treat
 G <- use$RCTweek
@@ -32,7 +34,7 @@ G <- use$RCTweek
 rcf <- multi_arm_causal_forest(X, Y, W)
 tau <- predict(rcf, X)
 
-#+ rcf-reply-data, include = FALSE
+#+ rcf-negative-data, include = FALSE
 age_group <- list(
   "Age: 20-29" = X[, 2] < 30,
   "Age: 30-39" = 30 <= X[, 2] & X[, 2] < 40,
@@ -58,7 +60,7 @@ df <- data.frame(X) %>%
     TRUE ~ names(age_group)[3]
   ))
 
-#+ rcf-reply-importance
+#+ rcf-negative-importance
 vi <- data.frame(names = colnames(X), idx = variable_importance(rcf)) %>%
   arrange(desc(idx)) %>%
   head(10) %>%
@@ -82,7 +84,7 @@ ggplot(vi, aes(x = reorder(names, idx), y = idx)) +
   coord_flip() +
   simplegg(flip = TRUE)
 
-#+ rcf-reply-dist, fig.width = 10, fig.cap = "Heterogenous Message Effects on Reply."
+#+ rcf-negative-dist, fig.width = 10, fig.cap = "Heterogenous Message Effects on Negative Intention."
 ate <- average_treatment_effect(rcf) %>%
   data.frame() %>%
   mutate(treat = str_extract(contrast, "[B-D]")) %>%
@@ -121,7 +123,7 @@ ggplot(df, aes(x = effect, y = ..count.. / sum(..count..))) +
   simplegg() +
   theme(legend.position = "none")
 
-#+ rcf-reply-male-dist, fig.width = 10, fig.height = 10, fig.cap = "Heterogenous Message Effects on Reply among Males."
+#+ rcf-negative-male-dist, fig.width = 10, fig.height = 10, fig.cap = "Heterogenous Message Effects on Negative Intentions among Males."
 ate_male <- lapply(seq_along(age_group), function(i) {
   average_treatment_effect(rcf, subset = X[, 1] == 1 & age_group[[i]]) %>%
     mutate(age_group = names(age_group)[i]) %>%
@@ -163,7 +165,7 @@ df %>%
   simplegg() +
   theme(legend.position = "none")
 
-#+ rcf-reply-female-dist, fig.width = 10, fig.height = 10, fig.cap = "Heterogeneous Message Effects on Reply among Females."
+#+ rcf-negative-female-dist, fig.width = 10, fig.height = 10, fig.cap = "Heterogeneous Message Effects on Negative Intention among Females."
 ate_female <- lapply(seq_along(age_group), function(i) {
   average_treatment_effect(rcf, subset = X[, 1] == 0 & age_group[[i]]) %>%
     mutate(age_group = names(age_group)[i]) %>%
@@ -205,7 +207,7 @@ df %>%
   simplegg() +
   theme(legend.position = "none")
 
-#+ rcf-reply-male-character
+#+ rcf-negative-male-character
 df %>%
   dplyr::filter(male == 1) %>%
   mutate(positive = if_else(effect > 0, "Positive", "Negative")) %>%
@@ -225,7 +227,7 @@ df %>%
     fmt = 3
   )
 
-#+ rcf-reply-female-character
+#+ rcf-negative-female-character
 df %>%
   dplyr::filter(male == 0) %>%
   mutate(positive = if_else(effect > 0, "Positive", "Negative")) %>%
