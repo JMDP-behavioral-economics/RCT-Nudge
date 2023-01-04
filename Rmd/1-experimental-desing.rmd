@@ -1,0 +1,6 @@
+---
+title: |
+  Only You: A Field Experiment of Text Message
+  to Prevent Free-riding in Japan Marrow Donor Program
+subtitle: Experimental Setup
+---
