@@ -169,9 +169,30 @@ schedule %>%
 - コーディネーション過程は提供に至るまでの各工程に到達したかどうかを記録している
   - 適合通知の返信については、返信したかどうかに加えて、返信日数・提供の意向についても記録している
   - 我々はコーディネーション過程に関する変数をアウトカムとして用いる
+
+```{r ongoing-attrition, echo=FALSE, message=FALSE}
+ongoing_balance <- rawdt %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
+  lm_robust(
+    ongoing ~ treat,
+    data = .,
+    cluster = RCTweek,
+    se_type = "stata"
+  ) %>%
+  {
+    f <- summary(.)$fstatistic[1]
+    numdf <- summary(.)$fstatistic[2]
+    dendf <- summary(.)$fstatistic[3]
+    p <- pf(f, numdf, dendf, lower.tail = FALSE)
+
+    sprintf("F-value = $%1.3f$; p-value = $%1.3f$", f, p)
+  }
+```
+
 - 分析対象は国内在住でコーディネーションが完全に終了している`r sum(table(use$treat))`名とする。
   - 海外に在住する人が1名いた
   - 現在もコーディネーションが進行している人が`r sum(rawdt$ongoing)`名いた
+  - コーディネーションの進行中の比率は実験群でバランスしている（`r ongoing_balance`）
   - 各実験群のサンプルサイズを二つ上の表のパネルBにまとめた
 - 個人属性に関するバランステストを二つ上の表のパネルCにまとめた
   - ドナー候補者の年齢は実験群間でアンバランスである（F検定、P値=$0.07$）。実験群C・Dのドナー候補者は実験群A・Bのドナー候補者よりも若い。
