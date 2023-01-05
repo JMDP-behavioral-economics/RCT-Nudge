@@ -161,13 +161,14 @@ schedule %>%
   kableExtra::add_header_above(c(" " = 1, "Month, Year" = 6))
 ```
 
-## Data and Estimation Strategy
+## Data and Empirical Strategy
 
 - 我々は2022年6月末に骨髄バンクが管理するコーディネーションデータの提供を受けた。
   - 観測単位はフィールド実験の対象であるドナー候補者である
   - データは性別・年齢・過去のコーディネーション回数・居住地域（都道府県レベル）の個人属性とコーディネーション過程が記録されている
 - コーディネーション過程は提供に至るまでの各工程に到達したかどうかを記録している
   - 適合通知の返信については、返信したかどうかに加えて、返信日数・提供の意向についても記録している
+  - コーディネーションが途中で中断した場合、その理由を記録している
   - 我々はコーディネーション過程に関する変数をアウトカムとして用いる
 
 ```{r ongoing-attrition, echo=FALSE, message=FALSE}
@@ -198,7 +199,7 @@ ongoing_balance <- rawdt %>%
   - ドナー候補者の年齢は実験群間でアンバランスである（F検定、P値=$0.07$）。実験群C・Dのドナー候補者は実験群A・Bのドナー候補者よりも若い。
 - ドナー候補者は実験群を選択できない、すなわち、実験群は外生的であるので、単純な二群比較は平均処置効果を識別できる。
   - 一部の共変量、および割り当ての週と月が実験群間で完全にバランスしていないので、単純な二群比較はバイアスを伴う可能性がある
-  - そこで、我々は以下の線形確率モデルを推定する
+  - そこで、我々は以下の線形確率モデルを推定する（$X_i$は個人属性ベクトル、$\lambda_m$と$\theta_w$はそれぞれ週・月のダミー変数）
 
 $$
   Y_{imw} =
@@ -207,5 +208,52 @@ $$
   + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
 $$
 
-- $X_i$は個人属性ベクトル
-- $\lambda_m$と$\theta_w$はそれぞれ週・月のダミー変数
+```{r exogenous-attrition, echo=FALSE, message=FALSE}
+exclude_data <- use %>%
+  select(treat, RCTweek, starts_with("exg_stop")) %>%
+  pivot_longer(
+    - (treat:RCTweek),
+    names_to = "outcome", values_to = "exclude",
+    names_prefix = "exg_stop_"
+  )
+
+exclude_balance <- exclude_data %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(est = map(
+    data,
+    ~lm_robust(exclude ~ treat, data = .x, cluster = RCTweek, se_type = "stata")
+  )) %>%
+  mutate(
+    f = map_dbl(est, ~ summary(.x)$fstatistic[1]),
+    numdf = map_dbl(est, ~ summary(.x)$fstatistic[2]),
+    dendf = map_dbl(est, ~ summary(.x)$fstatistic[3]),
+    p = pf(f, numdf, dendf, lower.tail = FALSE),
+    "p-value" = sprintf("%1.3f", p)
+  ) %>%
+  select(outcome, "p-value") %>%
+  dplyr::filter(outcome != "intention") %>%
+  mutate(outcome = factor(
+    outcome,
+    levels = names(outcome_label)[c(1, 4:7)],
+    labels = unlist(outcome_label[c(1, 4:7)])
+  ))
+
+exclude_data %>%
+  dplyr::filter(outcome != "intention") %>%
+  mutate(outcome = factor(
+    outcome,
+    levels = names(outcome_label)[c(1, 4:7)],
+    labels = unlist(outcome_label[c(1, 4:7)])
+  )) %>%
+  datasummary(
+    (`Outcome variables` = outcome) ~ exclude * mean * treat,
+    data = .,
+    fmt = 3,
+    title = "Balance Test of Exogenous Termination of The Coordination",
+    add_columns = exclude_balance[, 2],
+    align = "lccccc"
+  ) %>%
+  kableExtra::kable_styling() %>%
+  add_header_above(c(" " = 1, "Experimental Arms" = 4, " " = 1))
+```
