@@ -1,0 +1,12 @@
+---
+title: |
+  Only You: A Field Experiment of Text Message
+  to Prevent Free-riding in Japan Marrow Donor Program
+subtitle: Effects on Reply and Intention
+---
+
+```{r include=FALSE}
+library(here)
+source(here("R", "_library.r"))
+source(here("R", "_outcome_labels.r"))
+```
