@@ -10,3 +10,121 @@ library(here)
 source(here("R", "_library.r"))
 source(here("R", "_outcome_labels.r"))
 ```
+
+- ドナー候補者の意向が最も現れる返信とその時の提供意向に対する効果を推定する
+  - 返信のアウトカム変数は提供意向に関わらず適合通知に返信したらならば1を取るダミー変数
+  - 提供意向のアウトカム変数は適合通知に返信し、かつ提供の意向を示したならば1を取るダミー変数
+- 返信をする以前に患者側の都合でコーディネーションが中断してしまう可能性がある。
+  - このケースは個人の意向と無関係に生じるコーディネーションの中断なので、分析のサンプルから除外する
+  - 各実験群の0.5--0.7%をこのケースで除外しており、その比率は群間でバランスしている
+
+```{r echo=FALSE, message=FALSE}
+root <- "D:/JMDPフィールド実験"
+
+schedule <- read_csv(here(root, "RCT-schedule.csv"))
+
+rawdt <- read_csv(
+  here(root, "shaped.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
+  dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
+  dplyr::filter(exg_stop_reply == 0) %>%
+  rename(positive = intention) %>%
+  mutate(
+    negative = reply * (1 - positive),
+    age_demean = age - mean(rawdt$age),
+  ) %>%
+  select(reply, positive, negative, everything()) %>%
+  pivot_longer(reply:negative, "outcome") %>%
+  mutate(outcome = factor(
+    outcome,
+    levels = unlist(names(outcome_label)[1:3]),
+    labels = unlist(outcome_label[1:3])
+  ))
+```
+
+- 下表は個人属性や月・週ダミーをコントロールした線形確率モデルの推定結果である
+- すべてのコントロール変数を加えると、確率メッセージのみを加えたトリートメントB群は返信率を$1.32$%ポイント高めている
+  - これは統計的に5%水準で有意である
+  - コントロール（実験群A）の返信率が$88.35$%なので、実験群Bは返信率を`r sprintf("$%1.2f$", 100 * 0.0132 / 0.8835)`%高めている
+  - ただし、月・週ダミー変数を除いたモデルは効果サイズに大きな変化を与えないものの、統計的に非有意となるので、安定的ではない
+  - また、患者情報メッセージを加えている実験群C・Dは統計的に有意な効果をもっていない
+- すべてのコントロール変数を加えると、トリートメントB群は提供意向を$2.04$%ポイント高めている
+  - これは統計的に非有意である。
+  - コントロール群の提供意向の比率が$55.33$%なので、実験群Bは提供意向を`r sprintf("$%1.2f$", 100 * 0.0204 / 0.5533)`%高めている
+  - 月・週ダミー変数を除いたモデルは効果サイズに大きな変化を与えないものの、統計的に10%水準で有意となる
+  - 実験群C・Dは提供意向に対して統計的に有意な効果を持っていない
+- まとめると、他のドナー候補者が少ないことを伝えるメッセージはドナー候補者の返信と提供意向を促している可能性がある。
+  - 逆に、骨髄バンクに登録した患者の一部が移植を受けれていないという事実を伝え、ドナー候補者の利他性を刺激するメッセージはドナー候補者の返信と提供意向を促していない
+  - 実験群Dの効果がないのは、情報過多による認知負荷というよりむしろ、ドナー候補者の利他性を刺激するメッセージに効果がないことに起因していると考えられる
+
+```{r reg-reply-stock, echo=FALSE, message=FALSE}
+mod <- value ~ treat + age_demean + male + coordinate +
+  factor(prefecture) + factor(month) + factor(week)
+
+est_stock <- use %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(
+    fit1 = map(
+      data,
+      ~ lm_robust(
+        update(mod, . ~ . - factor(month) - factor(week)),
+        cluster = RCTweek, se_type = "stata", data = .
+      )
+    ),
+    fit2 = map(
+      data,
+      ~ lm_robust(
+        mod,
+        cluster = RCTweek, se_type = "stata", data = .
+      )
+    )
+  ) %>%
+  pivot_longer(
+    fit1:fit2,
+    names_prefix = "fit",
+    names_to = "model",
+    values_to = "fit"
+  )
+
+ctrl_avg <- use %>%
+  dplyr::filter(outcome != "Negative intention") %>%
+  dplyr::filter(treat == "A") %>%
+  group_by(outcome) %>%
+  summarize(mean = sprintf("%1.4f", mean(value)))
+
+add_table <- tibble::tribble(
+  ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)",
+  "Control average", ctrl_avg$mean[1], ctrl_avg$mean[1],
+  ctrl_avg$mean[2], ctrl_avg$mean[2],
+  "Demographics", "X", "X", "X", "X",
+  "Month and week dummies", "", "X", "", "X"
+)
+
+attr(add_table, "position") <- 7:10
+
+est_stock %>%
+  dplyr::filter(outcome != "Negative intention") %>%
+  pull(fit) %>%
+  setNames(paste0("(", seq_len(length(.)), ")")) %>%
+  modelsummary(
+    title = "Linear Probability Model of Reply and Intention",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 4,
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = add_table
+  ) %>%
+  kableExtra::kable_styling() %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "Reply" = 2, "Positive intention" = 2
+  ))
+```
