@@ -1,0 +1,119 @@
+---
+title: |
+  Only You: A Field Experiment of Text Message
+  to Prevent Free-riding in Japan Marrow Donor Program
+subtitle: Effects on Reply and Intention (Appendix)
+---
+
+```{r include=FALSE}
+library(here)
+source(here("R", "_library.r"))
+source(here("R", "_outcome_labels.r"))
+```
+
+```{r load-data, echo=FALSE, message=FALSE}
+root <- "D:/JMDPフィールド実験"
+
+schedule <- read_csv(here(root, "RCT-schedule.csv"))
+
+rawdt <- read_csv(
+  here(root, "shaped.csv"),
+  locale = locale(encoding = "cp932")
+)
+
+use <- rawdt %>%
+  mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
+  dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
+  dplyr::filter(exg_stop_reply == 0) %>%
+  rename(positive = intention) %>%
+  mutate(
+    negative = reply * (1 - positive),
+    age_demean = age - mean(rawdt$age),
+  ) %>%
+  select(reply, positive, negative, everything()) %>%
+  pivot_longer(reply:negative, "outcome") %>%
+  mutate(outcome = factor(
+    outcome,
+    levels = unlist(names(outcome_label)[1:3]),
+    labels = unlist(outcome_label[1:3])
+  ))
+```
+
+```{r logit-reply-stock, echo=FALSE, message=FALSE}
+mod <- value ~ treat + age_demean + male + coordinate +
+  factor(prefecture) + factor(month) + factor(week)
+
+est_stock <- use %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(
+    fit1 = map(
+      data,
+      ~ glm(
+        update(mod, . ~ . - factor(month) - factor(week)),
+        data = .,
+        family = binomial()
+      )
+    ),
+    fit2 = map(
+      data,
+      ~ glm(mod, data = ., family = binomial())
+    )
+  ) %>%
+  pivot_longer(
+    fit1:fit2,
+    names_prefix = "fit",
+    names_to = "model",
+    values_to = "fit"
+  )
+
+add_table <- tibble::tribble(
+  ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
+  "Demographics", "X", "X", "X", "X", "X", "X",
+  "Month and week dummies", "", "X", "", "X", "", "X"
+)
+
+attr(add_table, "position") <- 7:9
+
+tidy_custom.glm <- function(x, ...) {
+  tbl <- tidy(x) %>%
+    mutate(
+      or = exp(estimate),
+      lower.or = exp(estimate - 1.96 * std.error),
+      upper.or = exp(estimate + 1.96 * std.error)
+    )
+  
+  tbl
+}
+
+est_stock %>%
+  pull(fit) %>%
+  setNames(paste0("(", seq_len(length(.)), ")")) %>%
+  modelsummary(
+    title = "Logit Model of Reply and Intention",
+    estimate = "{or}",
+    statistic = "[{lower.or}, {upper.or}]",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    fmt = 3,
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = add_table
+  ) %>%
+  kableExtra::kable_styling() %>%
+  kableExtra::add_header_above(c(
+    " " = 1, "Reply" = 2, "Positive" = 2, "Negative" = 2
+  )) %>%
+  kableExtra::add_header_above(c(
+    " " = 3, "Intention" = 4
+  )) %>%
+  kableExtra::footnote(
+    paste(
+      "We report odds ratio and its 95% confidential interval.",
+      "Demographics are gender, (demeaned) age, number of past coordinations,",
+      "and prefectures."
+    )
+  )
+```
