@@ -18,7 +18,7 @@ source(here("R", "_outcome_labels.r"))
   - このケースは個人の意向と無関係に生じるコーディネーションの中断なので、分析のサンプルから除外する
   - 各実験群の0.5--0.7%をこのケースで除外しており、その比率は群間でバランスしている
 
-```{r echo=FALSE, message=FALSE}
+```{r load-data, echo=FALSE, message=FALSE}
 root <- "D:/JMDPフィールド実験"
 
 schedule <- read_csv(here(root, "RCT-schedule.csv"))
@@ -92,23 +92,22 @@ est_stock <- use %>%
   )
 
 ctrl_avg <- use %>%
-  dplyr::filter(outcome != "Negative intention") %>%
   dplyr::filter(treat == "A") %>%
   group_by(outcome) %>%
   summarize(mean = sprintf("%1.4f", mean(value)))
 
 add_table <- tibble::tribble(
-  ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)",
+  ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
   "Control average", ctrl_avg$mean[1], ctrl_avg$mean[1],
   ctrl_avg$mean[2], ctrl_avg$mean[2],
-  "Demographics", "X", "X", "X", "X",
-  "Month and week dummies", "", "X", "", "X"
+  ctrl_avg$mean[3], ctrl_avg$mean[3],
+  "Demographics", "X", "X", "X", "X", "X", "X",
+  "Month and week dummies", "", "X", "", "X", "", "X"
 )
 
 attr(add_table, "position") <- 7:10
 
 est_stock %>%
-  dplyr::filter(outcome != "Negative intention") %>%
   pull(fit) %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
   modelsummary(
@@ -125,6 +124,17 @@ est_stock %>%
   ) %>%
   kableExtra::kable_styling() %>%
   kableExtra::add_header_above(c(
-    " " = 1, "Reply" = 2, "Positive intention" = 2
-  ))
+    " " = 1, "Reply" = 2, "Positive" = 2, "Negative" = 2
+  )) %>%
+  kableExtra::add_header_above(c(
+    " " = 3, "Intention" = 4
+  )) %>%
+  kableExtra::footnote(
+    paste(
+      "* p < 0.1, ** p < 0.05, *** p < 0.01.",
+      "Standard errros are clustered at experimental weeks.",
+      "Demographics are gender, (demeaned) age, number of past coordinations,",
+      "and prefectures."
+    )
+  )
 ```
