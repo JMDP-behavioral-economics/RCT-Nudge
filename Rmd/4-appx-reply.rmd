@@ -21,7 +21,7 @@ rawdt <- read_csv(
   locale = locale(encoding = "cp932")
 )
 
-use <- rawdt %>%
+stock <- rawdt %>%
   mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
   dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
   dplyr::filter(exg_stop_reply == 0) %>%
@@ -37,13 +37,27 @@ use <- rawdt %>%
     levels = unlist(names(outcome_label)[1:3]),
     labels = unlist(outcome_label[1:3])
   ))
+
+flow <- stock %>%
+  mutate(
+    days_reply = if_else(is.na(days_reply), 10000, days_reply),
+    days4 = if_else(days_reply <= 4, value, 0),
+    days7 = if_else(days_reply <= 7, value, 0),
+    days10 = if_else(days_reply <= 10, value, 0),
+    days14 = if_else(days_reply <= 14, value, 0),
+    days21 = if_else(days_reply <= 21, value, 0),
+    days28 = if_else(days_reply <= 28, value, 0)
+  ) %>%
+  select(-value) %>%
+  pivot_longer(days4:days28, "within", "days") %>%
+  mutate(within = as.numeric(within))
 ```
 
 ```{r logit-reply-stock, echo=FALSE, message=FALSE}
 mod <- value ~ treat + age_demean + male + coordinate +
   factor(prefecture) + factor(month) + factor(week)
 
-est_stock <- use %>%
+est_stock <- stock %>%
   group_by(outcome) %>%
   nest() %>%
   mutate(
@@ -116,4 +130,88 @@ est_stock %>%
       "and prefectures."
     )
   )
+```
+
+```{r reg-reply-flow-subsample, echo=FALSE, message=FALSE}
+est_flow_sub <- flow %>%
+  mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
+  group_by(outcome, within, male, age_less30) %>%
+  nest() %>%
+  mutate(fit = map(data, ~ lm_robust(
+    update(mod, . ~ . - male - age_demean),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .x
+  ))) %>%
+  mutate(
+    tidy = map(fit, tidy),
+    tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+    tidy = map(tidy, ~ dplyr::select(.x, -outcome))
+  ) %>%
+  dplyr::select(-data, -fit) %>%
+  unnest(cols = tidy) %>%
+  mutate(
+    term = str_replace(term, "treat", ""),
+    term = factor(term, LETTERS[2:4])
+  )
+```
+
+```{r plot3-reg-reply-flow-subsample, echo=FALSE, message=FALSE, fig.width=15, fig.height=10, fig.cap="Effect on Reply within Specific Days after Sending (Females aged 30 and more)."}
+plot_list <- unique(est_flow_sub$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow_sub, outcome == x & male == 0 & age_less30 == 0) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(breaks = unique(est_flow_sub$within)) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.15, 0.1)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+```{r plot4-reg-reply-flow-subsample, echo=FALSE, message=FALSE, fig.width=15, fig.height=10, fig.cap="Effect on Reply within Specific Days after Sending (Males aged 30 and more)."}
+plot_list <- unique(est_flow_sub$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow_sub, outcome == x & male == 1 & age_less30 == 0) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(breaks = unique(est_flow_sub$within)) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.15, 0.1)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 ```
