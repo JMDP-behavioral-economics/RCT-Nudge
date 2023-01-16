@@ -89,14 +89,18 @@ est_stock <- stock %>%
       data,
       ~ lm_robust(
         update(mod, . ~ . - factor(month) - factor(week)),
-        cluster = RCTweek, se_type = "stata", data = .
+        data = .,
+        cluster = RCTweek,
+        se_type = "stata"
       )
     ),
     fit2 = map(
       data,
       ~ lm_robust(
         mod,
-        cluster = RCTweek, se_type = "stata", data = .
+        data = .,
+        cluster = RCTweek,
+        se_type = "stata"
       )
     )
   ) %>%

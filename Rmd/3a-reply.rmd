@@ -96,7 +96,7 @@ tidy_custom.glm <- function(x, ...) {
       lower.or = exp(estimate - 1.96 * std.error),
       upper.or = exp(estimate + 1.96 * std.error)
     )
-  
+
   tbl
 }
 
