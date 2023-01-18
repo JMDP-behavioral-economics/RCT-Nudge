@@ -11,12 +11,18 @@ source(here("R", "_library.r"))
 source(here("R", "_outcome_labels.r"))
 ```
 
-- ドナー候補者の意向が最も現れる返信とその時の提供意向に対する効果を推定する
+- ドナー候補者の意向が最も現れる返信に対する効果を推定する
   - 返信のアウトカム変数は提供意向に関わらず適合通知に返信したらならば1を取るダミー変数
-  - 提供意向のアウトカム変数は適合通知に返信し、かつ提供の意向を示したならば1を取るダミー変数
-- 返信をする以前に患者側の都合でコーディネーションが中断してしまう可能性がある。
-  - このケースは個人の意向と無関係に生じるコーディネーションの中断なので、分析のサンプルから除外する
-  - 各実験群の0.5--0.7%をこのケースで除外しており、その比率は群間でバランスしている
+- さらに、返信に対する効果を提供意向の観点から分解する
+  - 正の意向は適合通知に返信し、かつ提供の意向を示したならば1を取るダミー変数
+  - 逆に、負の意向は適合通知に返信し、かつ提供の意向を示さなければ1を取るダミー変数
+  - 適合通知に返信しなかった場合、正の意向と負の意向のアウトカム変数を0とコードする
+  - したがって、二つの意向に対する効果の和は必ず返信に対する効果となる
+  - コントロール（実験群A）の返信率は$88.35$%である。正の意向を伴って返信した比率は$55.33$%である一方で、負の意向を伴って返信した比率は$33.03$%である
+  - よって、返信者の`r sprintf("$%1.2f$", 100 * 0.5533 / 0.8835)`%が正の意向を持っている
+- 返信をする以前に患者側の都合でコーディネーションが中断してしまう可能性がある
+  - このケースはドナー候補者の意向と無関係に生じるコーディネーションの中断なので、分析のサンプルから除外する
+  - 各実験群の$0.5$--$0.7$%をこのケースで除外しており、その比率は群間でバランスしている
 
 ```{r load-data, echo=FALSE, message=FALSE}
 root <- "D:/JMDPフィールド実験"
@@ -48,23 +54,9 @@ stock <- rawdt %>%
 
 ## Estimation Results
 
-- 下表は個人属性や月・週ダミーをコントロールした線形確率モデルの推定結果である
-- すべてのコントロール変数を加えると、確率メッセージのみを加えたトリートメントB群は返信率を$1.32$%ポイント高めている
-  - これは統計的に5%水準で有意である
-  - コントロール（実験群A）の返信率が$88.35$%なので、実験群Bは返信率を`r sprintf("$%1.2f$", 100 * 0.0132 / 0.8835)`%高めている
-  - ただし、月・週ダミー変数を除いたモデルは効果サイズに大きな変化を与えないものの、統計的に非有意となるので、安定的ではない
-  - また、患者情報メッセージを加えている実験群C・Dは統計的に有意な効果をもっていない
-- すべてのコントロール変数を加えると、トリートメントB群は提供意向を$2.04$%ポイント高めている
-  - これは統計的に非有意である。
-  - コントロール群の提供意向の比率が$55.33$%なので、実験群Bは提供意向を`r sprintf("$%1.2f$", 100 * 0.0204 / 0.5533)`%高めている
-  - 月・週ダミー変数を除いたモデルは効果サイズに大きな変化を与えないものの、統計的に10%水準で有意となる
-  - 実験群C・Dは提供意向に対して統計的に有意な効果を持っていない
-- まとめると、他のドナー候補者が少ないことを伝えるメッセージはドナー候補者の返信と提供意向を促している可能性がある。
-  - 逆に、骨髄バンクに登録した患者の一部が移植を受けれていないという事実を伝え、ドナー候補者の利他性を刺激するメッセージはドナー候補者の返信と提供意向を促していない
-  - 実験群Dの効果がないのは、情報過多による認知負荷というよりむしろ、ドナー候補者の利他性を刺激するメッセージに効果がないことに起因していると考えられる
-
 ```{r reg-reply-stock, echo=FALSE, message=FALSE}
-mod <- value ~ treat + age_demean + male + coordinate +
+mod <- value ~ treat + age_demean + I(age_demean^2) + male + coordinate +
+  hospital_per_area + PB_per_area + BM_per_area +
   factor(prefecture) + factor(month) + factor(week)
 
 est_stock <- stock %>%
@@ -74,7 +66,7 @@ est_stock <- stock %>%
     fit1 = map(
       data,
       ~ lm_robust(
-        update(mod, . ~ . - factor(month) - factor(week)),
+        value ~ treat,
         data = .,
         cluster = RCTweek,
         se_type = "stata"
@@ -107,18 +99,18 @@ add_table <- tibble::tribble(
   "Control average", ctrl_avg$mean[1], ctrl_avg$mean[1],
   ctrl_avg$mean[2], ctrl_avg$mean[2],
   ctrl_avg$mean[3], ctrl_avg$mean[3],
-  "Demographics", "X", "X", "X", "X", "X", "X",
-  "Month and week dummies", "", "X", "", "X", "", "X"
+  "Covariates", "", "X", "", "X", "", "X"
 )
 
-attr(add_table, "position") <- 7:10
+attr(add_table, "position") <- 9:12
 
 est_stock %>%
   pull(fit) %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
   modelsummary(
-    title = "Linear Probability Model of Reply and Intention",
+    title = "Linear Probability Model of Replay and Intention",
     coef_map = c(
+      "(Intercept)" = "Constant",
       "treatB" = "Treatment B",
       "treatC" = "Treatment C",
       "treatD" = "Treatment D"
@@ -138,14 +130,25 @@ est_stock %>%
   kableExtra::footnote(
     paste(
       "* p < 0.1, ** p < 0.05, *** p < 0.01.",
-      "Standard errros are clustered at experimental weeks.",
-      "Demographics are gender, (demeaned) age, number of past coordinations,",
-      "and prefectures."
+      "Standard errors clustered by experimental weeks are reported in parentheses.",
+      "Covariates are gender, squared polynomial of (demeaned) age,",
+      "number of past coordinations, number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "prefecture dummies, month dummies, and week dummies."
     )
   )
 ```
 
-```{r reg-reply-stock-subsample, echo=FALSE, message=FALSE, fig.width=15, fig.height=10, fig.cap="Subsample Analysis by Gender and Age Group."}
+- 上表は線形確率モデルの推定結果である
+  - 奇数列は実験群ダミーのみを説明変数として用いているのに対して、偶数列は個人属性や月・週の固定効果も制御している
+  - すべての特定化で標準誤差をランダム化のユニットである実験週レベルでクラスタしている
+- 列(1)では、実験群Bは返信率を$0.01$もしくは`r sprintf("$%1.1f$", 100 * 0.0105 / 0.8835)`%高めている
+  - 個人属性などをコントロールすると、効果のサイズは大きく変化しないが、統計的に5%水準で有意となる
+  - 実験群Bの正の効果は正の意向を伴った返信への大きな効果から来ている。列(3)と(5)では、実験群Bが正の意向を伴った返信率を$0.02$もしくは`r sprintf("$%1.1f$", 100 * 0.0218 / 0.5533)`%高めている一方で、負の意向を伴った返信率を$0.01$もしくは`r sprintf("$%1.1f$", 100 * 0.0113 / 0.3303)`%下げている。ただし、これらは統計的に非有意である。
+- 実験群CとDは実験群Bよりも効果のサイズが小さく、統計的に非有意である。さらに、ロジット推定は効果の方向について上表と整合的な結果となるが、統計的に非有意である。総合すると、我々の介入は全体的に返信に大きな影響を与えていない。
+
+```{r reg-reply-stock-subsample, echo=FALSE, message=FALSE, fig.width=15, fig.height=10, fig.cap="Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We cluster standard errors by experimental weeks. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, prefecture dummies, month dummies, and week dummies."}
 est_stock_sub <- stock %>%
   mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
   group_by(outcome, male, age_less30) %>%
@@ -160,7 +163,9 @@ est_stock_sub <- stock %>%
     fit = map(est, tidy),
     fit = map(fit, ~ subset(.x, str_detect(term, "treat"))),
     fit = map(fit, ~ dplyr::select(.x, -outcome)),
-    N = map_chr(est, ~ paste0("N=", nobs(.x)))
+    N = map_chr(est, ~ paste("N =", nobs(.x))),
+    mean = map_dbl(data, ~ with(subset(., treat == "A"), mean(value))),
+    mean = sprintf("Control avg = %1.3f", mean)
   ) %>%
   select(-data, -est) %>%
   unnest(cols = fit) %>%
@@ -170,15 +175,19 @@ est_stock_sub <- stock %>%
       pos,
       levels = c("01", "00", "11", "10"),
       labels = c(
-        "Female\u00d7\nAge\u226430",
-        "Female\u00d7\n30<Age",
-        "Male\u00d7\nAge\u226430",
-        "Male\u00d7\n30<Age"
+        "Female\u00d7\nAge<30",
+        "Female\u00d7\n30\u2264Age",
+        "Male\u00d7\nAge<30",
+        "Male\u00d7\n30\u2264Age"
       )
     ),
     term = str_replace(term, "treat", ""),
     term = factor(term, LETTERS[2:4])
   )
+
+text <- est_stock_sub %>%
+  select(male, age_less30, pos, N, mean) %>%
+  distinct()
 
 plot_list <- unique(est_stock_sub$outcome) %>%
   purrr::map(function(x) {
@@ -196,9 +205,12 @@ plot_list <- unique(est_stock_sub$outcome) %>%
       ) +
       geom_text(
         aes(y = -0.125, label = N),
-        data = ungroup(est_stock_sub) %>%
-          select(male, age_less30, N, pos) %>%
-          distinct(),
+        data = subset(text, outcome == x),
+        color = "black"
+      ) +
+      geom_text(
+        aes(y = -0.15, label = mean),
+        data = subset(text, outcome == x),
         color = "black"
       ) +
       scale_y_continuous(
@@ -218,4 +230,10 @@ wrap_plots(plot_list, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-## Robustness Check of Heterogenous Treatment Effects
+- メッセージの効果は大きな異質性がある
+  - 上図は性別と年齢層（30歳未満かどうか）でサンプルを4分割して、各サブセットでメッセージの効果を推定している
+- 実験群BとDは30歳未満の男性の返信率を$0.06$もしくは`r sprintf("$%1.1f$", 100 * 0.06 / 0.744)`%高めている。
+  - とくに、実験群Bの返信に対する正の効果は、正の意向を伴う返信率を大きく高めていることに起因している。このグループで、実験群Bは正の意向を伴う返信率を$0.1$もしくは`r sprintf("$%1.1f$", 100 * 0.1 / 0.386)`%高めている一方で、負の意向を伴う返信率を$0.03$もしくは`r sprintf("$%1.1f$", 100 * 0.03 / 0.358)`%下げている。これらは統計的に有意な効果である。
+  - 対して、他の性年代のグループ（とくに、30歳以上の男女）では、メッセージが返信や意向に大きな影響を与えていない。ただし、30歳未満の女性で、実験群Dが正の意向を伴う返信率を$0.05$もしくは`r sprintf("$%1.1f$", 100 * 0.05 / 0.516)`%下げている。
+- したがって、他のドナー候補者が少ないというメッセージは若年男性の提供意向を高め、適合通知への返信を促している
+  - 若年男性ドナーは移植成績が良いにも関わらず、提供意向が他の性年代よりも明らかに低いことを考慮すると、実験群Bのメッセージは移植コーディネーションの効率性を改善しているといえる
