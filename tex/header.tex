@@ -1,0 +1,46 @@
+% ------------------------------ font
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+
+\setmainfont{Times New Roman}
+\setmainjfont[BoldFont=IPAexGothic]{IPAexMincho}
+
+% ------------------------------ math
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+
+% ------------------------------ author & bibliography
+\usepackage{authblk}
+\usepackage[semicolon]{natbib}
+
+% ------------------------------ appendix
+\usepackage[title]{appendix}
+
+% ------------------------------ tables
+\usepackage{here}
+\usepackage{longtable, booktabs, array}
+\usepackage{threeparttable, threeparttablex, multirow}
+\newcolumntype{d}{S[input-symbols = ()]}
+\usepackage{lscape}
+
+% ------------------------------- figures
+\usepackage{here}
+\usepackage{graphics, graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+% ------------------------------ page settings
+\usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry}
+\usepackage{setspace}
+\renewcommand{\baselinestretch}{1.5}
+% 文末脚注
+\usepackage{fn2end}
+
+% ------------------------------ hyperlink
+\usepackage{hyperref}
