@@ -1,0 +1,51 @@
+project:
+  render:
+    - notebook/body.ipynb
+  output-dir: docs
+
+jupyter:
+  kernelspec:
+    display_name: IR 4.2
+    language: R
+    name: ir42
+
+execute:
+  echo: false
+  warning: false
+  enabled: true
+
+number-sections: true
+pdf-engine: lualatex
+format:
+  pdf:
+    documentclass: article
+    papersize: a4paper
+    toc: false
+    number-sections: true
+    keep-tex: true
+    fig-format: pdf
+    fig-width: 15
+    fig-height: 10
+    include-in-header:
+      - tex/header.tex
+
+title: |
+  Only You:
+  A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program
+author:
+  - name: Hiroki Kato
+    affiliations:
+      - Graduate School of Economics, Osaka University, Japan
+  - name: Fumio Ohtake
+    affiliations:
+      - Graduate School of Economics, Osaka University, Japan
+      - Center for Infectious Disease Education and Research (CiDER), Osaka University, Japan
+  - name: Saiko Kurosawa
+    affiliations:
+      - Department of Oncology, Ina Central Hospital, Japan
+  - name: Kazuhiro Yoshiuchi
+    affiliations:
+      - Graduate School of Medicine, Tokyo University, Japan
+  - name: Takahiro Fukuda
+    affiliations:
+      - Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Japan
