@@ -195,7 +195,7 @@ Yoshiuchi \and Takahiro Fukuda}
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, sharp corners, interior hidden, frame hidden, enhanced, boxrule=0pt, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, interior hidden, borderline west={3pt}{0pt}{shadecolor}, sharp corners, boxrule=0pt, enhanced, frame hidden]}{\end{tcolorbox}}\fi
 
 \hypertarget{field-experiment}{%
 \section{Field Experiment}\label{field-experiment}}
@@ -471,6 +471,161 @@ Strategy}\label{data-and-empirical-strategy}}
   + \beta_3 \cdot \text{D}_{mw}
   + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
 \end{equation}
+
+\hypertarget{effects-on-reply-and-intentions}{%
+\section{Effects on Reply and
+Intentions}\label{effects-on-reply-and-intentions}}
+
+\begin{itemize}
+\tightlist
+\item
+  ドナー候補者の意向が最も現れる返信に対する効果を推定する
+
+  \begin{itemize}
+  \tightlist
+  \item
+    返信のアウトカム変数は提供意向に関わらず適合通知に返信したらならば1を取るダミー変数
+  \end{itemize}
+\item
+  さらに、返信に対する効果を提供意向の観点から分解する
+
+  \begin{itemize}
+  \tightlist
+  \item
+    正の意向は適合通知に返信し、かつ提供の意向を示したならば1を取るダミー変数
+  \item
+    逆に、負の意向は適合通知に返信し、かつ提供の意向を示さなければ1を取るダミー変数
+  \item
+    適合通知に返信しなかった場合、正の意向と負の意向のアウトカム変数を0とコードする
+  \item
+    したがって、二つの意向に対する効果の和は必ず返信に対する効果となる
+  \item
+    コントロール（実験群A）の返信率は\(88.35\)\%である。正の意向を伴って返信した比率は\(55.33\)\%である一方で、負の意向を伴って返信した比率は\(33.03\)\%である
+  \item
+    よって、返信者の\(62.63\)\%が正の意向を持っている
+  \end{itemize}
+\item
+  返信をする以前に患者側の都合でコーディネーションが中断してしまう可能性がある
+
+  \begin{itemize}
+  \tightlist
+  \item
+    このケースはドナー候補者の意向と無関係に生じるコーディネーションの中断なので、分析のサンプルから除外する
+  \item
+    各実験群の\(0.5\)--\(0.7\)\%をこのケースで除外しており、その比率は群間でバランスしている
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{estimation-results}{%
+\subsection{Estimation Results}\label{estimation-results}}
+
+\begin{table}
+
+\caption{Linear Probability Model of Replay and Intention}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{3}{c}{ } & \multicolumn{4}{c}{Intention} \\
+\cmidrule(l{3pt}r{3pt}){4-7}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Reply} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{Negative} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Constant & \num{0.8835}*** & \num{0.9692}*** & \num{0.5533}*** & \num{0.6909}*** & \num{0.3303}*** & \num{0.2784}***\\
+ & (\num{0.0065}) & (\num{0.0195}) & (\num{0.0125}) & (\num{0.0288}) & (\num{0.0089}) & (\num{0.0248})\\
+Treatment B & \num{0.0105} & \num{0.0131}** & \num{0.0218} & \num{0.0203}* & \num{-0.0113} & \num{-0.0073}\\
+ & (\num{0.0075}) & (\num{0.0061}) & (\num{0.0135}) & (\num{0.0122}) & (\num{0.0094}) & (\num{0.0075})\\
+Treatment C & \num{-0.0057} & \num{0.0001} & \num{-0.0053} & \num{-0.0063} & \num{-0.0004} & \num{0.0064}\\
+ & (\num{0.0081}) & (\num{0.0051}) & (\num{0.0151}) & (\num{0.0107}) & (\num{0.0150}) & (\num{0.0092})\\
+Treatment D & \num{0.0058} & \num{0.0067} & \num{0.0046} & \num{0.0073} & \num{0.0012} & \num{-0.0006}\\
+ & (\num{0.0074}) & (\num{0.0051}) & (\num{0.0166}) & (\num{0.0097}) & (\num{0.0138}) & (\num{0.0065})\\
+\midrule
+Control average & 0.8835 & 0.8835 & 0.5533 & 0.5533 & 0.3303 & 0.3303\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10985} & \num{10985} & \num{10985} & \num{10985} & \num{10985} & \num{10985}\\
+\bottomrule
+\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\begin{tablenotes}
+\item \textit{Note: } 
+\item * p < 0.1, ** p < 0.05, *** p < 0.01. Standard errors clustered by experimental weeks are reported in parentheses. Covariates are gender, squared polynomial of (demeaned) age, a dummy indicating that planned harvest method are BM and PBMC, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, prefecture dummies, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{itemize}
+\tightlist
+\item
+  上表は線形確率モデルの推定結果である
+
+  \begin{itemize}
+  \tightlist
+  \item
+    奇数列は実験群ダミーのみを説明変数として用いているのに対して、偶数列は個人属性や月・週の固定効果も制御している
+  \item
+    すべての特定化で標準誤差をランダム化のユニットである実験週レベルでクラスタしている
+  \end{itemize}
+\item
+  列(1)では、実験群Bは返信率を\(0.01\)もしくは\(1.2\)\%高めている
+
+  \begin{itemize}
+  \tightlist
+  \item
+    個人属性などをコントロールすると、効果のサイズは大きく変化しないが、統計的に5\%水準で有意となる
+  \item
+    実験群Bの正の効果は正の意向を伴った返信への大きな効果から来ている。列(3)と(5)では、実験群Bが正の意向を伴った返信率を\(0.02\)もしくは\(3.94\)\%高めている一方で、負の意向を伴った返信率を\(0.01\)もしくは\(3.42\)\%下げている。ただし、これらは統計的に非有意である。
+  \end{itemize}
+\item
+  実験群CとDは実験群Bよりも効果のサイズが小さく、統計的に非有意である。さらに、ロジット推定は効果の方向について上表と整合的な結果となるが、統計的に非有意である。総合すると、我々の介入は全体的に返信に大きな影響を与えていない。
+\end{itemize}
+
+\begin{figure}
+
+{\centering \includegraphics{body_files/figure-pdf/reg-reply-stock-subsample-output-1.png}
+
+}
+
+\caption{Effect on Reply and Intentions by Gender and Age Group. Note:
+These plots show the average effect (and associated 95\% confidential
+interval) on each outcome by gender and age group. We cluster standard
+errors by experimental weeks. We control number of past coordinations,
+number of hospitals per 10 square kilometers, number of hospitals with
+PBSC collection per 10 square kilometers, number of hospitals with BM
+collection per 10 square kilometers, prefecture dummies, month dummies,
+and week dummies.}
+
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  メッセージの効果は大きな異質性がある
+
+  \begin{itemize}
+  \tightlist
+  \item
+    上図は性別と年齢層（30歳未満かどうか）でサンプルを4分割して、各サブセットでメッセージの効果を推定している
+  \end{itemize}
+\item
+  実験群BとDは30歳未満の男性の返信率を\(0.06\)もしくは\(8.06\)\%高めている。
+
+  \begin{itemize}
+  \tightlist
+  \item
+    とくに、実験群Bの返信に対する正の効果は、正の意向を伴う返信率を大きく高めていることに起因している。このグループで、実験群Bは正の意向を伴う返信率を\(0.1\)もしくは\(25.91\)\%高めている一方で、負の意向を伴う返信率を\(0.03\)もしくは\(8.38\)\%下げている。これらは統計的に有意な効果である。
+  \item
+    対して、他の性年代のグループ（とくに、30歳以上の男女）では、メッセージが返信や意向に大きな影響を与えていない。ただし、30歳未満の女性で、実験群Dが正の意向を伴う返信率を\(0.05\)もしくは\(9.69\)\%下げている。
+  \end{itemize}
+\item
+  したがって、他のドナー候補者が少ないというメッセージは若年男性の提供意向を高め、適合通知への返信を促している
+
+  \begin{itemize}
+  \tightlist
+  \item
+    若年男性ドナーは移植成績が良いにも関わらず、提供意向が他の性年代よりも明らかに低いことを考慮すると、実験群Bのメッセージは移植コーディネーションの効率性を改善しているといえる
+  \end{itemize}
+\end{itemize}
 
 
 
