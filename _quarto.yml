@@ -28,6 +28,8 @@ format:
     fig-height: 10
     include-in-header:
       - tex/header.tex
+  html:
+    number-sections: true
 
 title: |
   Only You:
