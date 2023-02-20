@@ -1,2 +1,3 @@
 *.log
 git-worktree/
+.vscode/c_cpp_properties.json
