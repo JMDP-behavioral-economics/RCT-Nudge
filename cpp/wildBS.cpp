@@ -143,6 +143,14 @@ MatrixXd CRVE(const std::vector<ClusterData>& data, const VectorXd beta, const M
   return vcov;
 }
 
+double Wald(const VectorXd& beta, const MatrixXd& vcov, const int& pos, const double& rhs)
+{
+  double tar_beta = beta(pos - 1);
+  double tar_se = sqrt(vcov(pos - 1, pos - 1));
+  double wald = (tar_beta - rhs) / tar_se;
+  return wald;
+}
+
 // [[Rcpp::export]]
 NumericMatrix clusterOLS( const NumericMatrix &xcpp,
                           const NumericVector &ycpp,
@@ -156,4 +164,19 @@ NumericMatrix clusterOLS( const NumericMatrix &xcpp,
   SEXP s_vcov = Rcpp::wrap(vcov);
   NumericMatrix ss_vcov(s_vcov);
   return ss_vcov;
+}
+
+// [[Rcpp::export]]
+double ClusterOLS_Wald( const NumericMatrix &xcpp,
+                        const NumericVector &ycpp,
+                        const IntegerVector &gcpp,
+                        const int &pos,
+                        const double &rhs)
+{
+  std::vector<ClusterData> setup = create_cluster_data(xcpp, ycpp, gcpp);
+  CollectData calc = MatrixOperation(setup);
+  VectorXd beta = get_beta(calc);
+  MatrixXd vcov = CRVE(setup, beta, calc.XX);
+  double wald = Wald(beta, vcov, pos, rhs);
+  return wald;
 }
