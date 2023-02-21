@@ -32,10 +32,10 @@ std::vector<ClusterData> create_cluster_data( const NumericMatrix& xcpp,
   int n = g.size();
   std::vector<int> unique_clusters;
   std::vector<int>::iterator it_start, it_end;
-  it_start = unique_clusters.begin(), it_end = unique_clusters.end();
   int num_clusters = 0;
   for (int i = 0; i < n; i++)
   {
+    it_start = unique_clusters.begin(), it_end = unique_clusters.end();
     int cluster_id = g(i);
     if (std::find(it_start, it_end, cluster_id) == it_end)
     {
@@ -43,6 +43,7 @@ std::vector<ClusterData> create_cluster_data( const NumericMatrix& xcpp,
       num_clusters++;
     }
   }
+  Rcpp::Rcout << "cluster = " << unique_clusters.size() << "\n";
 
   // Create ClusterData object for each cluster
   int k = X.cols();
@@ -85,11 +86,14 @@ using Eigen::SelfAdjointEigenSolver;
 using Eigen::Lower;
 using Eigen::Upper;
 
-VectorXd OLS(const std::vector<ClusterData>& data)
+VectorXd doOLS(const std::vector<ClusterData>& data)
 {
   int k = data[0].X.cols(), g = data.size();
+  Rcpp::Rcout << "#columns =" << k << "\n";
+  Rcpp::Rcout << "#clusters =" << g << "\n";
   int n = 0;
   for (int i = 0; i < g; i++) n += data[i].X.rows();
+  Rcpp::Rcout << "#obs =" << n << "\n";
 
   // construct full design matrix and response vector
   MatrixXd X(n, k);
@@ -108,18 +112,18 @@ VectorXd OLS(const std::vector<ClusterData>& data)
   MatrixXd XX(MatrixXd(k, k).setZero().selfadjointView<Lower>().rankUpdate(X.adjoint()));
   const FullPivLU<MatrixXd> fplu(XX);
   MatrixXd invXX = fplu.inverse();
-  MatrixXd Xy = X * y;
+  MatrixXd Xy = X.adjoint() * y;
   VectorXd beta = invXX * Xy;
 
   return beta;
 }
 
 // [[Rcpp::export]]
-VectorXd runOLS(const NumericMatrix &xcpp,
-                const NumericVector &ycpp,
-                const IntegerVector &gcpp)
+VectorXd OLS( const NumericMatrix &xcpp,
+              const NumericVector &ycpp,
+              const IntegerVector &gcpp)
 {
   std::vector<ClusterData> setup = create_cluster_data(xcpp, ycpp, gcpp);
   Rcpp::Rcout << "Create dataset!\n";
-  return OLS(setup);
+  return doOLS(setup);
 }
