@@ -73,14 +73,18 @@ using Eigen::SelfAdjointEigenSolver;
 using Eigen::Lower;
 using Eigen::Upper;
 
-VectorXd doOLS(const std::vector<ClusterData>& data)
+struct CollectData
+{
+  MatrixXd XX;
+  MatrixXd Xy;
+};
+
+CollectData MatrixOperation(const std::vector<ClusterData> &data)
 {
   int k = data[0].X.cols(), g = data.size();
-  // Rcpp::Rcout << "#columns =" << k << "\n";
-  // Rcpp::Rcout << "#clusters =" << g << "\n";
   int n = 0;
-  for (int i = 0; i < g; i++) n += data[i].X.rows();
-  // Rcpp::Rcout << "#obs =" << n << "\n";
+  for (int i = 0; i < g; i++)
+    n += data[i].X.rows();
 
   // construct full design matrix and response vector
   MatrixXd X(n, k);
@@ -88,29 +92,68 @@ VectorXd doOLS(const std::vector<ClusterData>& data)
   int start = 0;
   for (int i = 0; i < g; i++)
   {
-    const ClusterData& cluster_data = data[i];
+    const ClusterData &cluster_data = data[i];
     int n_at_i = cluster_data.X.rows();
     X.block(start, 0, n_at_i, k) = cluster_data.X;
     y.segment(start, n_at_i) = cluster_data.y;
     start += n_at_i;
   }
 
-  // run OLS
+  // matrix operation
+  CollectData result;
+  
   MatrixXd XX(MatrixXd(k, k).setZero().selfadjointView<Lower>().rankUpdate(X.adjoint()));
   const FullPivLU<MatrixXd> fplu(XX);
-  MatrixXd invXX = fplu.inverse();
-  MatrixXd Xy = X.adjoint() * y;
-  VectorXd beta = invXX * Xy;
+  result.XX = fplu.inverse();
+  result.Xy = X.adjoint() * y;
 
+  return result;
+}
+
+VectorXd get_beta(const CollectData& data)
+{
+  VectorXd beta = data.XX * data.Xy;
   return beta;
 }
 
+MatrixXd CRVE(const std::vector<ClusterData>& data, const VectorXd beta, const MatrixXd invXtX)
+{
+  int k = beta.size(), g = data.size();
+  // compute the cluster-robust variance-covariance matrix (CRVE)
+  MatrixXd XeeX(k, k);
+  XeeX.setZero();
+  int n = 0;
+  for (int i = 0; i < g; i++)
+  {
+    const ClusterData &cluster_data = data[i];
+    VectorXd fitted = cluster_data.X * beta;
+    VectorXd resid = cluster_data.y - fitted;
+    MatrixXd gXeeX(k, k);
+    gXeeX = cluster_data.X.adjoint() * resid * resid.adjoint() * cluster_data.X;
+    XeeX += gXeeX;
+    n += cluster_data.X.rows();
+  }
+
+  MatrixXd vcov = invXtX * XeeX * invXtX;
+
+  double nd = n, kd = k, gd = g;
+  double factor = ((nd - 1) / (nd - kd)) * (gd / (gd - 1));
+  vcov *= factor;
+
+  return vcov;
+}
+
 // [[Rcpp::export]]
-VectorXd OLS( const NumericMatrix &xcpp,
-              const NumericVector &ycpp,
-              const IntegerVector &gcpp)
+NumericMatrix clusterOLS( const NumericMatrix &xcpp,
+                          const NumericVector &ycpp,
+                          const IntegerVector &gcpp)
 {
   std::vector<ClusterData> setup = create_cluster_data(xcpp, ycpp, gcpp);
-  // Rcpp::Rcout << "Create dataset!\n";
-  return doOLS(setup);
+  CollectData calc = MatrixOperation(setup);
+  VectorXd beta = get_beta(calc);
+  MatrixXd vcov = CRVE(setup, beta, calc.XX);
+
+  SEXP s_vcov = Rcpp::wrap(vcov);
+  NumericMatrix ss_vcov(s_vcov);
+  return ss_vcov;
 }
