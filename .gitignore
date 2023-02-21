@@ -2,3 +2,4 @@
 git-worktree/
 /.quarto/
 .vscode/c_cpp_properties.json
+body_cache

@@ -32,6 +32,7 @@ library(tidyverse)
 library(lubridate)
 library(estimatr)
 library(fixest)
+library(grf)
 library(modelsummary)
 library(kableExtra)
 library(flextable)
@@ -52,7 +53,7 @@ options(
 ```
 
 ```{r include=FALSE}
-root <- "D:/JMDPフィールド実験"
+root <- "E:/JMDPフィールド実験"
 
 outcome_label <- list(
   reply = "Reply",
@@ -484,12 +485,85 @@ wrap_plots(plot_list, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-しかしながら、メッセージの効果は大きな異質性がある。図\@ref(fig:subsample-reply)は性別と年齢層（30歳未満かどうか）でサンプルを4分割して、各サブセットでメッセージの効果を推定している。その結果、確率メッセージを加えた実験群BとDは30歳未満の男性の返信率を$0.06$もしくは$8.06$%高めている（ベースラインの返信率は$74.4$%）。とくに、確率メッセージだけを加えた実験群Bの効果は正の意向を伴う返信率の増加に起因している。このグループで、実験群Bは正の意向を伴う返信率を$0.1$もしくは$25.91$%高めている（ベースラインの比率は$38.6$%）一方で、負の意向を伴う返信率を$0.03$もしくは$8.38$%下げている（ベースラインの比率は$35.8$%）。これらは統計的に有意な効果である。他の性年代のグループ（とくに、30歳以上の男女）では、介入メッセージが返信や意向に大きな影響を与えていない[^female_less30]。したがって、他のドナー候補者が少ないというメッセージは若年男性の提供意向を高め、適合通知への返信を促している。若年男性ドナーは移植成績が良いにも関わらず、提供意向が他の性年代よりも明らかに低いことを考慮すると、確率メッセージは移植コーディネーションの効率性を改善しているといえる。
+しかしながら、メッセージの効果は大きな異質性がある。図\@ref(fig:subsample-reply)は性別と年齢層（30歳未満かどうか）でサンプルを4分割して、各サブセットでメッセージの効果を推定している。その結果、確率メッセージを加えた実験群BとDは30歳未満の男性の返信率を$0.06$もしくは$8.06$%高めている（ベースラインの返信率は$74.4$%）。とくに、確率メッセージだけを加えた実験群Bの効果は正の意向を伴う返信率の増加に起因している。このグループで、実験群Bは正の意向を伴う返信率を$0.1$もしくは$25.91$%高めている（ベースラインの比率は$38.6$%）一方で、負の意向を伴う返信率を$0.03$もしくは$8.38$%下げている（ベースラインの比率は$35.8$%）。これらは統計的に有意な効果である。逆に、二つの介入メッセージを加えた実験群Dは負の意向を伴う返信率を$0.31$もしくは$8.66$%下げており、これは統計的に5%水準で有意である。他の性年代のグループ（とくに、30歳以上の男女）では、介入メッセージが返信や意向に大きな影響を与えていない。ただし、30歳未満の女性で、実験群Dが統計的に有意に正の意向を伴う返信率を$0.05$もしくは$9.69$%下げている。したがって、他のドナー候補者が少ないというメッセージは若年男性の提供意向を高め、適合通知への返信を促している。若年男性ドナーは移植成績が良いにも関わらず、提供意向が他の性年代よりも明らかに低いことを考慮すると、確率メッセージは移植コーディネーションの効率性を改善しているといえる。
 
-[^female_less30]: ただし、30歳未満の女性で、実験群Dが統計的に有意に正の意向を伴う返信率を$0.05$もしくは$9.69$%下げている。
+## Robustness to Heterogenous Treatment Effects
 
-## Robustness to Heterogenous Message Effects
+前節では、介入効果は性別・年齢層によって大きく異質的であり、特に、他のドナー候補者が少ないという情報を提供することが若年男性の提供意向を高めて、返信を促していることを明らかにした。この小節では、この結果が頑健であることを確認する。
 
+はじめに、統計的推論に対する頑健性を検証する。ここまでの結果はトリートメントの割り当てに基づいて週レベルでクラスターした標準誤差を用いている。しかしながら、Camere (2008)はクラスターの数が少ないと、帰無仮説を過度に棄却してしまう恐れがあることを指摘し、クラスターワイルドブートストラップ法によるp値の計算を推奨している。我々は図\@ref(fig:subsample-reply)の結果にこの手法を適用して、統計的な有意性が頑健であるかどうかを検証する（表\@ref(tab:robust-subsample-reply)）。その結果、統計的な有意性は下がるものの、確率メッセージ（介入群B）が30歳未満の男性の正の意向を伴う返信率を統計的に10%水準で有意に高めている。
+
+```{r}
+#| include: false
+#| cache: true
+
+covariate <- ~ 0 + male + age + coordinate + hospital_per_area +
+  PB_per_area + BM_per_area + prefecture
+
+intdt <- subset(stock, outcome == "Positive intention")
+Y <- intdt$value
+X <- model.matrix(covariate, data = intdt)
+W <- intdt$treat
+G <- intdt$RCTweek
+
+rcf <- multi_arm_causal_forest(X, Y, W)
+```
+
+```{r}
+#| label: rcf-intention
+#| fig.cap: "Distribution of individual treatment effects on the positive intention estimated by the random causal effect."
+tau <- predict(rcf, X)
+plotdt <- data.frame(X) %>%
+  cbind(tau$predictions) %>%
+  rename(
+    effect_B = `B - A.Y.1`,
+    effect_C = `C - A.Y.1`,
+    effect_D = `D - A.Y.1`
+  ) %>%
+  pivot_longer(
+    effect_B:effect_D,
+    names_to = c(".value", "treat"),
+    names_sep = "_"
+  ) %>%
+  mutate(
+    treat = factor(treat, labels = paste("Message", LETTERS[2:4])),
+    age_less30 = if_else(age < 30, 1, 0),
+    pos = paste0(male, age_less30),
+    pos = factor(
+      pos,
+      levels = c("01", "00", "11", "10"),
+      labels = c(
+        "Female\u00d7\nAge<30",
+        "Female\u00d7\n30\u2264Age",
+        "Male\u00d7\nAge<30",
+        "Male\u00d7\n30\u2264Age"
+      )
+    )
+  )
+
+plotdt %>%
+  ggplot(aes(x = effect, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_histogram(
+    aes(fill = effect > 0),
+    breaks = seq(-.2, .25, by = .01),
+    color = "black"
+  ) +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 0.019),
+    breaks = seq(0, 0.06, 0.005)
+  ) +
+  scale_fill_manual(values = c("white", "grey50")) +
+  facet_grid(pos~treat) +
+  labs(
+    x = "Treatment effects",
+    y = "Fraction"
+  ) +
+  simplegg() +
+  theme(legend.position = "none")
+```
+
+次に、高次元の共変量の組み合わせによる効果の異質性を検証するために、機械学習の一種であるcausal forestを用いる。Causal forestは共変量の組み合わせでサブサンプルを作成し、各サブサンプル内で効果を推定する（これを個人レベルの介入効果とする）手法である。サブサンプルを作成するとき、この手法は予測効果の平均二乗誤差を最小にすることを通じて、効果の異質性を最大にするようにする。
 
 # (APPENDIX) Appendix {-}
 
@@ -581,6 +655,7 @@ est_stock %>%
 
 ```{r}
 #| include: false
+#| cahce: true
 
 est_stock_young <- stock %>%
   dplyr::filter(age < 30) %>%
