@@ -24,35 +24,22 @@ std::vector<ClusterData> create_cluster_data( const NumericMatrix& xcpp,
 {
   Map<MatrixXd> X(as<Map<MatrixXd>>(xcpp));
   Map<VectorXd> y(as<Map<VectorXd>>(ycpp));
-  Map<VectorXi> g(as<Map<VectorXi>>(gcpp));
 
   std::vector<ClusterData> cluster_data_vec;
   
   // Get the unique cluster IDs and the number of clusters
-  int n = g.size();
-  std::vector<int> unique_clusters;
-  std::vector<int>::iterator it_start, it_end;
-  int num_clusters = 0;
-  for (int i = 0; i < n; i++)
-  {
-    it_start = unique_clusters.begin(), it_end = unique_clusters.end();
-    int cluster_id = g(i);
-    if (std::find(it_start, it_end, cluster_id) == it_end)
-    {
-      unique_clusters.push_back(cluster_id);
-      num_clusters++;
-    }
-  }
-  Rcpp::Rcout << "cluster = " << unique_clusters.size() << "\n";
+  int n = gcpp.size();
+  std::map<int, int> count_g;
+  for (int i = 0; i < n; i++) count_g[gcpp[i]]++;
 
   // Create ClusterData object for each cluster
   int k = X.cols();
-  for (int i = 0; i < num_clusters; i++)
+  std::map<int, int>::iterator start, end;
+  start = count_g.begin(), end = count_g.end();
+  for (auto it = start; it != end; it++)
   {
-    int cluster_id = unique_clusters[i];
-
-    int n_at_i = 0;
-    for (int j = 0; j < n; j++) if(g(j) == cluster_id) n_at_i++;
+    int cluster_id = it->first;
+    int n_at_i = it->second;
 
     Eigen::MatrixXd X_cluster(n_at_i, k);
     Eigen::VectorXd y_cluster(n_at_i);
@@ -61,7 +48,7 @@ std::vector<ClusterData> create_cluster_data( const NumericMatrix& xcpp,
     int row_index = 0;
     for (int j = 0; j < n; j++)
     {
-      if (g(j) == cluster_id)
+      if (gcpp[j] == cluster_id)
       {
         X_cluster.row(row_index) = X.row(j);
         y_cluster(row_index) = y(j);
@@ -89,11 +76,11 @@ using Eigen::Upper;
 VectorXd doOLS(const std::vector<ClusterData>& data)
 {
   int k = data[0].X.cols(), g = data.size();
-  Rcpp::Rcout << "#columns =" << k << "\n";
-  Rcpp::Rcout << "#clusters =" << g << "\n";
+  // Rcpp::Rcout << "#columns =" << k << "\n";
+  // Rcpp::Rcout << "#clusters =" << g << "\n";
   int n = 0;
   for (int i = 0; i < g; i++) n += data[i].X.rows();
-  Rcpp::Rcout << "#obs =" << n << "\n";
+  // Rcpp::Rcout << "#obs =" << n << "\n";
 
   // construct full design matrix and response vector
   MatrixXd X(n, k);
@@ -124,6 +111,6 @@ VectorXd OLS( const NumericMatrix &xcpp,
               const IntegerVector &gcpp)
 {
   std::vector<ClusterData> setup = create_cluster_data(xcpp, ycpp, gcpp);
-  Rcpp::Rcout << "Create dataset!\n";
+  // Rcpp::Rcout << "Create dataset!\n";
   return doOLS(setup);
 }
