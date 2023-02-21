@@ -1,3 +1,4 @@
 *.log
 git-worktree/
 /.quarto/
+.vscode/c_cpp_properties.json
