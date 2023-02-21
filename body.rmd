@@ -38,6 +38,7 @@ library(flextable)
 library(officer)
 library(RCTtoolbox)
 library(patchwork)
+source(here("R", "wildBS.r"))
 
 options(
   knitr.table.format = "markdown",
@@ -490,9 +491,7 @@ wrap_plots(plot_list, ncol = 2) +
 ## Robustness to Heterogenous Message Effects
 
 
-
 # (APPENDIX) Appendix {-}
-# Estimation of Logit Models
 
 ```{r}
 #| include: false
@@ -576,6 +575,82 @@ est_stock %>%
     colwidths = c(3, 4)
   ) %>%
   align(j = -1, align = "center", part = "all") %>%
+  width(j = 1, 1) %>%
+  fontsize(size = 9, part = "all")
+```
+
+```{r}
+#| include: false
+
+est_stock_young <- stock %>%
+  dplyr::filter(age < 30) %>%
+  group_by(outcome, male) %>%
+  nest() %>%
+  mutate(est = map(data, ~ lm_robust(
+    update(mod$ctrl, . ~ . - male - age_demean),
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .x
+  )))
+
+wildBS_p <- est_stock_young %>%
+  select(-est) %>%
+  mutate(
+    treatB = map_dbl(data, ~ wildBS(
+      update(mod$ctrl, . ~ . - male - age_demean),
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatB = 0",
+      B = 1000
+    )),
+    treatD = map_dbl(data, ~ wildBS(
+      update(mod$ctrl, . ~ . - male - age_demean),
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatD = 0",
+      B = 1000
+    ))
+  ) %>%
+  select(-data)
+```
+
+```{r}
+#| label: robust-subsample-reply
+#| tab.cap: Linear Probability Model of Replay and Intention (Males and Females Less than 30)
+
+add_table <- data.frame(rbind(
+  c("Wild-bootstrap, p-value", rep("", 6)),
+  c("B = 0", sprintf("%1.2f", wildBS_p$treatB)),
+  c("D = 0", sprintf("%1.2f", wildBS_p$treatD))
+))
+
+attr(add_table, "position") <- 9:11
+
+est_stock_young %>%
+  pull(est) %>%
+  modelsummary(
+    coef_map = c(
+      "(Intercept)" = "Constant",
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 4,
+    align = "lcccccc",
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = add_table
+  ) %>%
+  flextable::add_header_row(values = c(
+    "", "Reply", "Positive", "Negative",
+    "Reply", "Positive", "Negative"
+  )) %>%
+  flextable::add_header_row(
+    values = c("", "Female", "Male"),
+    colwidths = c(1, 3, 3)
+  ) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  padding(i = 9:11, j = 1, padding = 20) %>%
   width(j = 1, 1) %>%
   fontsize(size = 9, part = "all")
 ```

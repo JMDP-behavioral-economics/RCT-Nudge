@@ -19,7 +19,7 @@ wildBS <- function(model, data, subset = NULL, cluster, H0, B) {
   # diagnostic hypothesis
   H0 <- gsub(" ", "", H0)
   split <- strsplit(H0, "=")[[1]]
-  pos <- as.integer(seq_len(ncol(x))[colnames(x) == split[1]])
+  pos <- as.integer(seq_len(ncol(X))[colnames(X) == split[1]])
   rhs <- as.numeric(split[2])
 
   # true wald
