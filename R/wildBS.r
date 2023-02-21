@@ -1,62 +1,49 @@
 library(here)
-library(tidyverse)
-library(lubridate)
-library(estimatr)
 library(Rcpp)
-
-outcome_label <- list(
-  reply = "Reply",
-  positive = "Positive intention",
-  negative = "Negative intention",
-  test = "CT",
-  candidate = "Candidate",
-  consent = "Consent",
-  donate = "Donation"
-)
-
-root <- "D:/JMDPフィールド実験"
-
-rawdt <- read_csv(
-  here(root, "shaped.csv"),
-  locale = locale(encoding = "cp932")
-)
-
-use <- rawdt %>%
-  mutate(treat = factor(treat, levels = LETTERS[1:4])) %>%
-  dplyr::filter(ongoing == 0 & prefecture != "海外") %>%
-  dplyr::filter(exg_stop_reply == 0) %>%
-  rename(positive = intention) %>%
-  mutate(
-    negative = reply * (1 - positive),
-    age_demean = age - mean(rawdt$age),
-  ) %>%
-  select(reply, positive, negative, everything()) %>%
-  pivot_longer(reply:negative, "outcome") %>%
-  mutate(outcome = factor(
-    outcome,
-    levels = unlist(names(outcome_label)[1:3]),
-    labels = unlist(outcome_label[1:3])
-  ))
-
-mod <- value ~ treat + age_demean + male + coordinate +
-  hospital_per_area + PB_per_area + BM_per_area +
-  factor(month) + factor(week)
-
-func_ols <- lm_robust(
-  mod,
-  data = subset(use, outcome == "Reply"),
-  cluster = RCTweek,
-  se_type = "stata"
-)
-
-summary(func_ols)
-
+library(rlang)
 sourceCpp(here("cpp", "wildBS.cpp"))
 
-estdt <- model.frame(mod, data = use, subset = outcome == "Reply", cluster = RCTweek)
-x <- model.matrix(mod, estdt)
-y <- estdt[, "value"]
-g <- as.integer(estdt[, "(cluster)"])
+wildBS <- function(model, data, subset = NULL, cluster, H0, B) {
+  # create dataset
+  args <- enquos(cluster = cluster, subset = subset)
+  args <- lapply(args, eval_tidy, data)
+  args$data <- data
+  args$na.action <- na.omit
+  args$formula <- model
 
-runOLS(x, y, g)
-coef(func_ols)
+  estdt <- do.call("model.frame", args)
+  X <- model.matrix(model, estdt)
+  Y <- estdt[, 1]
+  G <- as.integer(estdt[, "(cluster)"])
+
+  # diagnostic hypothesis
+  H0 <- gsub(" ", "", H0)
+  split <- strsplit(H0, "=")[[1]]
+  pos <- as.integer(seq_len(ncol(x))[colnames(x) == split[1]])
+  rhs <- as.numeric(split[2])
+
+  # true wald
+  wald <- ClusterOLS_Wald(X, Y, G, pos, rhs)
+
+  # crate restricted dataset
+  resY <- Y - X[, pos] * rhs
+  resX <- X[, -pos]
+
+  # wild bootstrap
+  boot_wald <- do_wildBS(resX, resY, X, G, pos, rhs, B = B)
+
+  # return p-value
+  mean(abs(boot_wald) > abs(wald))
+}
+
+# example
+if (FALSE) {
+  wildBS(
+    mod,
+    use,
+    subset = outcome == "Positive intention" & male == 1 & age < 30,
+    cluster = RCTweek,
+    H0 = "treatB = 0",
+    B = 2000
+  )
+}

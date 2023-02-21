@@ -18,19 +18,16 @@ using Rcpp::NumericMatrix;
 using Rcpp::IntegerVector;
 using Rcpp::as;
 
-std::vector<ClusterData> create_cluster_data( const NumericMatrix& xcpp,
-                                              const NumericVector& ycpp,
-                                              const IntegerVector& gcpp)
+std::vector<ClusterData> create_cluster_data( const MatrixXd& X,
+                                              const VectorXd& y,
+                                              const VectorXi& g)
 {
-  Map<MatrixXd> X(as<Map<MatrixXd>>(xcpp));
-  Map<VectorXd> y(as<Map<VectorXd>>(ycpp));
-
   std::vector<ClusterData> cluster_data_vec;
   
   // Get the unique cluster IDs and the number of clusters
-  int n = gcpp.size();
+  int n = g.size();
   std::map<int, int> count_g;
-  for (int i = 0; i < n; i++) count_g[gcpp[i]]++;
+  for (int i = 0; i < n; i++) count_g[g(i)]++;
 
   // Create ClusterData object for each cluster
   int k = X.cols();
@@ -48,7 +45,7 @@ std::vector<ClusterData> create_cluster_data( const NumericMatrix& xcpp,
     int row_index = 0;
     for (int j = 0; j < n; j++)
     {
-      if (gcpp[j] == cluster_id)
+      if (g(j) == cluster_id)
       {
         X_cluster.row(row_index) = X.row(j);
         y_cluster(row_index) = y(j);
@@ -156,7 +153,11 @@ NumericMatrix clusterOLS( const NumericMatrix &xcpp,
                           const NumericVector &ycpp,
                           const IntegerVector &gcpp)
 {
-  std::vector<ClusterData> setup = create_cluster_data(xcpp, ycpp, gcpp);
+  Map<MatrixXd> X(as<Map<MatrixXd>>(xcpp));
+  Map<VectorXd> y(as<Map<VectorXd>>(ycpp));
+  Map<VectorXi> g(as<Map<VectorXi>>(gcpp));
+
+  std::vector<ClusterData> setup = create_cluster_data(X, y, g);
   CollectData calc = MatrixOperation(setup);
   VectorXd beta = get_beta(calc);
   MatrixXd vcov = CRVE(setup, beta, calc.XX);
@@ -173,10 +174,73 @@ double ClusterOLS_Wald( const NumericMatrix &xcpp,
                         const int &pos,
                         const double &rhs)
 {
-  std::vector<ClusterData> setup = create_cluster_data(xcpp, ycpp, gcpp);
+  Map<MatrixXd> X(as<Map<MatrixXd>>(xcpp));
+  Map<VectorXd> y(as<Map<VectorXd>>(ycpp));
+  Map<VectorXi> g(as<Map<VectorXi>>(gcpp));
+
+  std::vector<ClusterData> setup = create_cluster_data(X, y, g);
   CollectData calc = MatrixOperation(setup);
   VectorXd beta = get_beta(calc);
   MatrixXd vcov = CRVE(setup, beta, calc.XX);
   double wald = Wald(beta, vcov, pos, rhs);
   return wald;
+}
+
+#include <random>
+
+double runif()
+{
+  static std::mt19937_64 mt64(0);
+  std::uniform_real_distribution<double> get_rand_uni_real(0.0, 1.0);
+  return get_rand_uni_real(mt64);
+}
+
+// [[Rcpp::export]]
+NumericVector do_wildBS(const NumericMatrix &res_xcpp,
+                        const NumericVector &res_ycpp,
+                        const NumericVector &xcpp,
+                        const IntegerVector &gcpp,
+                        const int &pos,
+                        const double &rhs,
+                        const int &B)
+{
+  // run restricted OLS
+  Map<MatrixXd> res_X(as<Map<MatrixXd>>(res_xcpp));
+  Map<VectorXd> res_y(as<Map<VectorXd>>(res_ycpp));
+  Map<VectorXi> g(as<Map<VectorXi>>(gcpp));
+
+  std::vector<ClusterData> restricted_data = create_cluster_data(res_X, res_y, g);
+  CollectData res_calc = MatrixOperation(restricted_data);
+  VectorXd restricted_beta = get_beta(res_calc);
+
+  NumericVector pseudo_wald(B);
+  for (int b = 0; b < B; b++)
+  {
+    // create pseudo dataset
+    Map<MatrixXd> X(as<Map<MatrixXd>>(xcpp));
+    std::vector<ClusterData> pseudo_data = create_cluster_data(X, res_y, g);
+    int g_size = pseudo_data.size();
+    for (int i = 0; i < g_size; i++)
+    {
+      VectorXd fitted = pseudo_data[i].X * restricted_beta;
+      VectorXd resid = pseudo_data[i].y - fitted;
+      double rand = runif();
+      if (rand < 0.5)
+      {
+        pseudo_data[i].y = fitted - resid;
+      }
+      else
+      {
+        pseudo_data[i].y = fitted + resid;
+      }
+    }
+
+    // run unrestricted OLS with pseudo data
+    CollectData pseudo_calc = MatrixOperation(pseudo_data);
+    VectorXd pseudo_beta = get_beta(pseudo_calc);
+    MatrixXd pseudo_vcov = CRVE(pseudo_data, pseudo_beta, pseudo_calc.XX);
+    double pseudo_b_wald = Wald(pseudo_beta, pseudo_vcov, pos, rhs);
+    pseudo_wald[b] = pseudo_b_wald;
+  }
+  return pseudo_wald;
 }
