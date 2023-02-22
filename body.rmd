@@ -26,6 +26,16 @@ output:
     number-sections: true
 ---
 
+```{r}
+#| include: false
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
 ```{r include=FALSE}
 library(here)
 library(tidyverse)
@@ -40,6 +50,7 @@ library(officer)
 library(RCTtoolbox)
 library(patchwork)
 source(here("R", "wildBS.r"))
+source(here("R", "ft_theme.r"))
 
 options(
   knitr.table.format = "markdown",
@@ -53,7 +64,7 @@ options(
 ```
 
 ```{r include=FALSE}
-root <- "E:/JMDPフィールド実験"
+root <- "D:/JMDPフィールド実験"
 
 outcome_label <- list(
   reply = "Reply",
@@ -141,7 +152,8 @@ schedule <- read_csv(here(root, "RCT-schedule.csv")) %>%
 #| tab.cap: Assignment Schedule
 
 flextable(schedule) %>%
-  align(j = -1, align = "center", part = "all")
+  align(j = -1, align = "center", part = "all") %>%
+  ft_theme()
 ```
 
 我々は2021年9月から2022年2月にかけて骨髄バンクが適合通知を送付したドナー候補者11,154名をフィールド実験の対象とした。実験群の割り当ては骨髄バンク事務局の業務の無理のない範囲で週単位でクラスターランダム化した。このとき、週・月の固定効果を取り除けるように、実験群が週・月でバランスするように割り当てた。割り当てのスケジュールは表\@ref(tab:assignment)にまとめている。
@@ -264,7 +276,8 @@ as_grouped_data(tbl, groups = "type") %>%
   padding(i = 8:13, j = 1, padding = 20) %>%
   padding(i = 6, j = 1, padding = 20) %>%
   width(j = 1, 2) %>%
-  fontsize(size = 9, part = "all")
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
 ```
 
 表\@ref(tab:experiment-summary)はフィールド実験を概観している。パネルAは各実験群の介入をまとめており、パネルBは各実験群のサンプルサイズを示している。パネルCは共変量のバランステストの結果を示しており、割り当てのランダム化が成功しているかどうかを検証している。ほとんどの共変量が群間でバランスしているので、実験群の割り当てはおおよそランダムである。ただし、実験群C・Dのドナー候補者は実験群A・Bのドナー候補者よりも若く、群間でアンバランスな可能性がある（F-test, p-value = $0.07$）。
@@ -393,7 +406,8 @@ est_stock %>%
   ) %>%
   align(j = -1, align = "center", part = "all") %>%
   width(j = 1, 1) %>%
-  fontsize(size = 9, part = "all")
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
 ```
 
 表\@ref(tab:full-reply)は線形確率モデルの推定結果である。奇数列は実験群ダミーのみを説明変数として用いているのに対して、偶数列は個人属性や月・週の固定効果も制御している。列(1)は、確率メッセージを加えた適合通知を送付する実験群Bが返信率を$0.01$もしくは$1.2$%高めていることを示している。個人属性などをコントロールする（列(2)）と、効果のサイズは大きく変化しないが、統計的に5%水準で有意となる。この効果は正の意向を伴った返信の増加に由来している。列(3)と(5)では、実験群Bが正の意向を伴った返信率を$0.02$もしくは$3.94$%高めている一方で、負の意向を伴った返信率を$0.01$もしくは$3.42$%下げている。ただし、これらの統計的な有意性は、個人属性などをコントロールしても、弱い。また、実験群CとDは実験群Bよりも効果のサイズが小さく、統計的に非有意である。我々は頑健性の分析としてロジットモデルを推定した（表\@ref(tab:full-reply-logit)）。その結果は効果の方向について上表と整合的であるが、統計的に非有意である。総合すると、我々の介入は全体的に返信に大きな影響を与えていない。
@@ -491,14 +505,14 @@ wrap_plots(plot_list, ncol = 2) +
 
 前節では、介入効果は性別・年齢層によって大きく異質的であり、特に、他のドナー候補者が少ないという情報を提供することが若年男性の提供意向を高めて、返信を促していることを明らかにした。この小節では、この結果が頑健であることを確認する。
 
-はじめに、統計的推論に対する頑健性を検証する。ここまでの結果はトリートメントの割り当てに基づいて週レベルでクラスターした標準誤差を用いている。しかしながら、Camere (2008)はクラスターの数が少ないと、帰無仮説を過度に棄却してしまう恐れがあることを指摘し、クラスターワイルドブートストラップ法によるp値の計算を推奨している。我々は図\@ref(fig:subsample-reply)の結果にこの手法を適用して、統計的な有意性が頑健であるかどうかを検証する（表\@ref(tab:robust-subsample-reply)）。その結果、統計的な有意性は下がるものの、確率メッセージ（介入群B）が30歳未満の男性の正の意向を伴う返信率を統計的に10%水準で有意に高めている。
+はじめに、統計的推論に対する頑健性を検証する。ここまでの結果はトリートメントの割り当てに基づいて週レベルでクラスターした標準誤差を用いている。しかしながら、Cameron et al. (2008)はクラスターの数が少ないと、帰無仮説を過度に棄却してしまう恐れがあることを指摘し、クラスターワイルドブートストラップ法によるp値の計算を推奨している。我々は図\@ref(fig:subsample-reply)で示した分析にこの手法を適用して、統計的な有意性が頑健であるかどうかを検証する。補論の表\@ref(tab:robust-subsample-reply)は介入メッセージによって統計的に有意な影響を受ける若年層の結果を示している。その結果、すべてのメッセージの効果の統計的な有意性は下がり、ほとんどの結果が統計的に非有意となる。しかしながら、確率メッセージ（介入群B）が30歳未満の男性の正の意向を伴う返信率を統計的に10%水準で有意に高めている。
 
 ```{r}
 #| include: false
 #| cache: true
 
-covariate <- ~ 0 + male + age + coordinate + hospital_per_area +
-  PB_per_area + BM_per_area + prefecture
+covariate <- ~ 0 + male + age + coordinate1 + hospital_per_area +
+  PB_per_area + BM_per_area
 
 intdt <- subset(stock, outcome == "Positive intention")
 Y <- intdt$value
@@ -509,9 +523,13 @@ G <- intdt$RCTweek
 rcf <- multi_arm_causal_forest(X, Y, W)
 ```
 
+次に、より柔軟に異質性を検証するために、causal forestを用いる。Causal forestは与えられた共変量で多くのサブサンプルを作成し、各サブサンプル内で効果を推定する手法である。この手法は各サブサンプルの平均効果の分散を最大にして、サブサンプルを構築している[^mse]。我々は性別、年齢、過去のコーディネーション経験の有無、10平方キロメートル当たりの病院・骨髄採取可能な病院・末梢血幹細胞採取可能な病院を共変量として用いている。
+
+[^mse]: 各サブサンプルの平均効果の分散を最大にすることで、サブサンプルの平均効果の平均二乗誤差（個人の真の効果からの乖離の程度）を最小化にできる。
+
 ```{r}
 #| label: rcf-intention
-#| fig.cap: "Distribution of individual treatment effects on the positive intention estimated by the random causal effect."
+#| fig.cap: "Distribution of treatment effects on the positive intention estimated by the random causal effect."
 tau <- predict(rcf, X)
 plotdt <- data.frame(X) %>%
   cbind(tau$predictions) %>%
@@ -526,7 +544,7 @@ plotdt <- data.frame(X) %>%
     names_sep = "_"
   ) %>%
   mutate(
-    treat = factor(treat, labels = paste("Message", LETTERS[2:4])),
+    treat = factor(treat, labels = paste("Treatment", LETTERS[2:4])),
     age_less30 = if_else(age < 30, 1, 0),
     pos = paste0(male, age_less30),
     pos = factor(
@@ -545,25 +563,135 @@ plotdt %>%
   ggplot(aes(x = effect, y = after_stat(count) / sum(after_stat(count)))) +
   geom_histogram(
     aes(fill = effect > 0),
-    breaks = seq(-.2, .25, by = .01),
+    breaks = seq(-0.3, 0.3, by = 0.025),
     color = "black"
   ) +
-  scale_y_continuous(
-    expand = c(0, 0),
-    limits = c(0, 0.019),
-    breaks = seq(0, 0.06, 0.005)
-  ) +
   scale_fill_manual(values = c("white", "grey50")) +
-  facet_grid(pos~treat) +
+  facet_grid(treat~pos) +
   labs(
     x = "Treatment effects",
     y = "Fraction"
   ) +
-  simplegg() +
+  simplegg(axis_title_size = 10, axis_text_size = 9) +
   theme(legend.position = "none")
 ```
 
-次に、高次元の共変量の組み合わせによる効果の異質性を検証するために、機械学習の一種であるcausal forestを用いる。Causal forestは共変量の組み合わせでサブサンプルを作成し、各サブサンプル内で効果を推定する（これを個人レベルの介入効果とする）手法である。サブサンプルを作成するとき、この手法は予測効果の平均二乗誤差を最小にすることを通じて、効果の異質性を最大にするようにする。
+```{r}
+#| include: false
+
+ate <- average_treatment_effect(rcf, subset = X[, 1] == 1 & X[, 2] < 30)
+ate[, 5] <- pnorm(abs(ate[, 1] / ate[, 2]), lower.tail = FALSE) * 2
+ate
+```
+
+図\@ref(fig:rcf-intention)は正の意向を伴う返信に対する効果の分布を示している。この図もまた確率メッセージ（介入群B）が若年男性のほとんど（92%）の提供意向を高め、返信を促していることが分かる。この群の介入群Bの平均効果は$0.11$パーセンテージポイント（$\text{s.e.} = 0.04; p\text{-value}<0.01$）であり、図\@ref(fig:subsample-reply)の推定値と似ている。
+
+```{r}
+#| include: false
+
+plotdt %>%
+  dplyr::filter(treat == "Treatment B") %>%
+  mutate(positive = effect > 0) %>%
+  group_by(pos, positive) %>%
+  summarize_at(
+    vars(coordinate1, hospital_per_area, PB_per_area, BM_per_area),
+    list(~ mean(.))
+  ) %>%
+  knitr::kable()
+```
+
+また、この図は確率メッセージが他の性年代のドナー候補者のおよそ半数の提供意向を高め、返信を促していることが分かる。正の効果を受けるドナー候補者は、負の効果を受けるドナー候補者よりも、過去にコーディネーションを経験しておらず、居住都道府県の病院の数が多い（コーディネーションに関わる移動コストが低い）傾向にある。他の介入群についても、居住都道府県の病院の数が多いと、介入群の効果は正になりやすい。しかしながら、利他メッセージを加えた介入群CとDは過去にコーディネーションの経験がある人の提供意向を促進しやすい。
+
+## Response Speed to Notification
+
+我々のデータは返信日数を記録しているので、トリートメント効果の経時的変化を検証できる。我々は$d$日以内に返信する確率$\text{Pr}(D_{imw} \le d)$を線形確率モデルで推定する。このとき、アウトカム変数は$d$日以内に返信したならば1を取るようなダミー変数である。介入群CとDに含まれる利他メッセージは適合通知に早く返信することで患者の移植率の改善に貢献できることを強調しているので、$d$の値が小さいほど、正の効果となると予想できる。ただし、$d$の値を十分に大きくすると、$\text{Pr}(D_{imw} \le d)$に対する効果は前々小節で示した返信に対する効果と一致する。
+
+```{r}
+#| include: false
+
+flow <- stock %>%
+  mutate(
+    days_reply = if_else(is.na(days_reply), 10000, days_reply),
+    days4 = if_else(days_reply <= 4, value, 0),
+    days7 = if_else(days_reply <= 7, value, 0),
+    days10 = if_else(days_reply <= 10, value, 0),
+    days14 = if_else(days_reply <= 14, value, 0),
+    days21 = if_else(days_reply <= 21, value, 0),
+    days28 = if_else(days_reply <= 28, value, 0)
+  ) %>%
+  select(-value) %>%
+  pivot_longer(days4:days28, names_to = "within", names_prefix = "days") %>%
+  mutate(within = as.numeric(within))
+```
+
+```{r}
+#| include: false
+
+est_flow <- flow %>%
+  group_by(outcome, within) %>%
+  nest() %>%
+  mutate(fit = map(data, ~ lm_robust(
+    mod$ctrl,
+    cluster = RCTweek,
+    se_type = "stata",
+    data = .x
+  ))) %>%
+  mutate(
+    tidy = map(fit, tidy),
+    tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+    tidy = map(tidy, ~ dplyr::select(.x, -outcome))
+  ) %>%
+  dplyr::select(-data, -fit) %>%
+  unnest(cols = tidy) %>%
+  mutate(
+    term = str_replace(term, "treat", ""),
+    term = factor(term, LETTERS[2:4])
+  )
+
+ctrl_avg <- flow %>%
+  dplyr::filter(treat == "A") %>%
+  group_by(outcome, within) %>%
+  summarize(mean = mean(value)) %>%
+  mutate(mean = sprintf("%1d\n(%1.3f)", within, mean))
+```
+
+```{r}
+#| label: fig-full-speed
+#| fig-cap: "Effect on Reply within Specific Days after Sending Notification. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome."
+#| fig.width: 15
+#| fig.height: 10
+
+plot_list <- unique(est_flow$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow, outcome == x) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(
+        breaks = subset(ctrl_avg, outcome == x)$within,
+        labels = subset(ctrl_avg, outcome == x)$mean
+      ) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.025), limits = c(-0.1, 0.05)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification\n(Control average)",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
 
 # (APPENDIX) Appendix {-}
 
@@ -650,10 +778,12 @@ est_stock %>%
   ) %>%
   align(j = -1, align = "center", part = "all") %>%
   width(j = 1, 1) %>%
-  fontsize(size = 9, part = "all")
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
 ```
 
 ```{r}
+#| eval: false
 #| include: false
 #| cahce: true
 
@@ -690,13 +820,14 @@ wildBS_p <- est_stock_young %>%
 ```
 
 ```{r}
+#| eval: false
 #| label: robust-subsample-reply
 #| tab.cap: Linear Probability Model of Replay and Intention (Males and Females Less than 30)
 
 add_table <- data.frame(rbind(
   c("Wild-bootstrap, p-value", rep("", 6)),
-  c("B = 0", sprintf("%1.2f", wildBS_p$treatB)),
-  c("D = 0", sprintf("%1.2f", wildBS_p$treatD))
+  c("B = 0", sprintf("%1.4f", wildBS_p$treatB)),
+  c("D = 0", sprintf("%1.4f", wildBS_p$treatD))
 ))
 
 attr(add_table, "position") <- 9:11
@@ -727,5 +858,6 @@ est_stock_young %>%
   align(j = -1, align = "center", part = "all") %>%
   padding(i = 9:11, j = 1, padding = 20) %>%
   width(j = 1, 1) %>%
-  fontsize(size = 9, part = "all")
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
 ```
