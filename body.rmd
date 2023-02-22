@@ -656,7 +656,7 @@ ctrl_avg <- flow %>%
 ```
 
 ```{r}
-#| label: fig-full-speed
+#| label: full-speed
 #| fig-cap: "Effect on Reply within Specific Days after Sending Notification. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome."
 #| fig.width: 15
 #| fig.height: 10
@@ -692,6 +692,10 @@ wrap_plots(plot_list, ncol = 2) +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 ```
+
+適合通知は7日以内の返信を目安として記載しており、コントロール群のドナー候補者の33%が7日以内に返信し、その内68%が正の提供意向を示している。また、この群のドナー候補者の55%が10日以内に返信し、その内69%が正の提供意向を示している。さらに、この群のドナー候補者の87%が4週間以内に返信し、その内62%が正の提供意向を示している。したがって、コントロール群の最終的な返信率は88%なので、ほとんどのドナー候補者が4週間以内に返信をしている。また、返信に占める正の提供意向の比率が経時的に減少していくことは、返信が遅いほど、負の提供意向を示しやすいことを示唆している。
+
+図\@ref(fig:full-speed)はフルサンプルの結果である。
 
 # (APPENDIX) Appendix {-}
 
