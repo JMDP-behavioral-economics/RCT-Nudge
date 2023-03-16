@@ -679,10 +679,10 @@ predict_int_rcf %>%
 #| include: false
 
 subset_cond <- list(
-  X[, "male"] == 1 & X[, "age"] < 30,
   X[, "male"] == 0 & X[, "age"] < 30,
-  X[, "male"] == 1 & X[, "age"] >= 30,
-  X[, "male"] == 0 & X[, "age"] >= 30
+  X[, "male"] == 0 & X[, "age"] >= 30,
+  X[, "male"] == 1 & X[, "age"] < 30,
+  X[, "male"] == 1 & X[, "age"] >= 30
 )
 
 ate_int_rcf <- subset_cond %>%
@@ -691,8 +691,8 @@ ate_int_rcf <- subset_cond %>%
   mutate(
     z = abs(estimate / std.err),
     p = 2 * pnorm(z, lower.tail = FALSE),
-    gender = rep(c("Males", "Females", "Males", "Females"), each = 3),
-    age = rep(c("Young", "Elder"), each = 6)
+    gender = rep(c("Females", "Males"), each = 6),
+    age = rep(c("Young", "Elder", "Young", "Elder"), each = 3)
   )
 
 tbl_int_rcf <- ate_int_rcf %>%
@@ -738,6 +738,68 @@ tbl_int_rcf %>%
 @fig-int-rcf-cate は各実験群の正の意向を伴う返信に対する効果の分布である。特徴的な結果は30歳未満の男性の90%が実験群Bに対してポジティブな反応を示していることである。random causal forestは実験群Bの30歳未満の男性に対する平均効果が12.5ポイントであり、統計的に有意である（@tbl-int-rcf-cate）。これは@fig-subsample-reply で得られた推定値とほとんど一致する。
 
 また、他の性年代グループに対して、介入群の効果は統計的に非有意である。これは介入群に対してポジティブな反応を示す人とネガティブな反応を示す人が同程度に存在しているからである。では、どのような特徴を持った人がポジティブな反応を示しやすいのだろうか。我々は各性年代グループの中で正の影響を受ける人とそうでない人の平均的な個人属性の差を検証した（@tbl-covariate-int-rcf）。30歳以上の男女のグループでは、高齢の人や過去のコーディネート経験が多い人がメッセージにポジティブな反応を示しやすい。また、30歳以上の女性のグループでは、病院の数が多い人がメッセージにポジティブな反応を示しやすい一方で、30歳以上の男性のグループでは、病院の数が少ない人がメッセージにポジティブな反応を示しやすい。30歳未満の女性のグループでは、若い人がメッセージにポジティブな反応を示しやすい。また、このグループでは、過去のコーディネート経験が多い人ほど介入群CとDにポジティブな反応を示しやすく、病院の数が多い人ほど介入群Dにポジティブな反応を示しやすい。
+
+```{r}
+#| label: est-correlation-int-rcf
+#| include: false
+
+int_tau_pred <- int_tau$predictions[, , 1]
+
+est_tau_corr1 <- subset_cond %>%
+  purrr::map(~ lm_robust(
+    int_tau_pred[., 3] ~ int_tau_pred[., 1] + int_tau_pred[., 2],
+    se_type = "HC0"
+  ))
+
+int_tau_pred_abs <- abs(int_tau$predictions[, , 1])
+est_tau_corr2 <- subset_cond %>%
+  purrr::map(~ lm_robust(
+    int_tau_pred_abs[., 3] ~ int_tau_pred_abs[., 1] + int_tau_pred_abs[., 2],
+    se_type = "HC0"
+  ))
+
+tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
+  flatten() %>%
+  setNames(paste0("(", seq_len(length(.)), ")")) %>%
+  modelsummary(
+    coef_map = c(
+      "(Intercept)" = "Constant",
+      "int_tau_pred[., 1]" = "Predicted effect of B",
+      "int_tau_pred[., 2]" = "Predicted effect of C",
+      "int_tau_pred_abs[., 1]" = "Abosulte of predicted effect of B",
+      "int_tau_pred_abs[., 2]" = "Abosulte of predicted effect of C"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 4,
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE"
+  )
+```
+
+```{r}
+#| label: tbl-correlation-int-rcf
+#| tbl-cap: Correlation of Predicted Tratment Effects
+
+tbl_tau_corr %>%
+  add_header_row(
+    values = c("", rep(c("Age<30", "30\u2264Age", "Age<30", "30\u2264Age"), 2))
+  ) %>%
+  add_header_row(
+    values = c("", rep(c("Females", "Males"), 2)),
+    colwidths = c(1, 2, 2, 2, 2)
+  ) %>%
+  add_header_row(
+    values = c("", "Predicted effect of D", "Absolute of predicted effect of D"),
+    colwidths = c(1, 4, 4)
+  ) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  add_footer_lines(paste(
+    "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+    "Robust standard errors are reported in parentheses."
+  )) %>%
+  width(j = 1, 1) %>%
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
+```
 
 ## Response Speed to Notification
 
