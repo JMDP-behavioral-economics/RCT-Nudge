@@ -68,6 +68,7 @@ execute:
 
 
 ```{r}
+#| label: library
 #| include: false
 #| vscode: {languageId: r}
 
@@ -98,6 +99,7 @@ options(
 
 
 ```{r}
+#| label: outcome-label
 #| include: false
 #| vscode: {languageId: r}
 
@@ -143,6 +145,7 @@ outcome_label <- list(
 二種類の介入メッセージの効果を推定するために、我々は四つの実験群を設ける。実験群Aは介入メッセージのない適合通知を送る（コントロール群）。実験群BとCはそれぞれ確率メッセージと患者情報メッセージを送る。さらに、情報過多による認知負荷の負の影響を検証するために、二つの介入メッセージを両方加えた適合通知を送付する実験群Dも設ける。
 
 ```{r}
+#| label: read-schedule-data
 #| include: false
 #| vscode: {languageId: r}
 
@@ -167,6 +170,7 @@ schedule <- read_csv(here(root, "RCT-schedule.csv")) %>%
 
 flextable(schedule) %>%
   align(j = -1, align = "center", part = "all") %>%
+  padding(j=1:7, padding.top = 5, padding.bottom = 5, part="all") %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
@@ -176,6 +180,7 @@ flextable(schedule) %>%
 ## Data and Empirical Strategy
 
 ```{r}
+#| label: read-experiment-data
 #| include: false
 #| vscode: {languageId: r}
 
@@ -190,6 +195,7 @@ use <- rawdt %>%
 ```
 
 ```{r}
+#| label: balance-test-ongoing
 #| eval: false
 #| vscode: {languageId: r}
 
@@ -216,6 +222,7 @@ lm_robust(
 追加的なデータとして、我々はJMDPがホームページ上で公開している施設リストを用いる。このデータは病院の住所に加えて、骨髄採取が可能かどうか、末梢血幹細胞採取が可能かどうかを含んでいる。我々はこのデータを都道府県レベルで集計して、10平方キロメートル当たりの病院の数を計算し、コーディネーションデータと都道府県をキーとして突合する。我々はこの変数をコーディネーションや提供のトラベリングコストとみなす。
 
 ```{r}
+#| label: experiment-summary
 #| include: false
 
 summary_stat <- use %>%
@@ -301,9 +308,11 @@ tbl_experiment_summary %>%
   as_flextable(hide_grouplabel = TRUE) %>%
   add_header_row(values = c("", "Experimental Arms", ""), colwidths = c(1, 4, 1)) %>%
   align(j = -1, align = "center", part = "all") %>%
-  padding(2:4, padding = 20) %>%
-  padding(6, padding = 20) %>%
-  padding(8:13, padding = 20) %>%
+  padding(j=1:6, padding.top=5, padding.bottom = 5, part = "all") %>%
+  padding(2:4, padding.left = 10) %>%
+  padding(6, padding.left = 10) %>%
+  padding(8:13, padding.left = 10) %>%
+  width(j = 1, 2) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
@@ -321,9 +330,10 @@ tbl_experiment_summary %>%
 
 ここで、$X_i$は個人属性ベクトル、$\lambda_m$と$\theta_w$はそれぞれ週・月のダミー変数である。我々はランダム化のユニットである実験週レベルでクラスタした標準誤差を使用する。
 
-# Results: Effects on Reply and Intentions
+# Experimental Results
 
 ```{r}
+#| label: balance-test-exogeneous-stop-reply
 #| eval: false
 
 lm_robust(
@@ -343,6 +353,7 @@ lm_robust(
 ```
 
 ```{r}
+#| label: create-stock-data
 #| include: false
 #| vscode: {languageId: r}
 
@@ -369,6 +380,7 @@ stock <- use %>%
 ## Main Results
 
 ```{r}
+#| label: est-full-reply
 #| include: false
 
 mod <- list(
@@ -443,7 +455,6 @@ tbl_est_stock <- est_stock %>%
 ```{r}
 #| label: tbl-full-reply
 #| tbl-cap: Linear Probability Model of Replay and Intention
-#| output: asis
 #| vscode: {languageId: r}
 
 tbl_est_stock %>%
@@ -496,6 +507,7 @@ tbl_est_stock %>%
 @tbl-full-reply は線形確率モデルの推定結果である。奇数列は実験群ダミーのみを説明変数として用いているのに対して、偶数列は個人属性や月・週の固定効果も制御している。列(1)は、確率メッセージを加えた適合通知を送付する実験群Bが返信率を1ポイントもしくは$1.2$%高めていることを示している。個人属性などをコントロールする（列(2)）と、効果のサイズは大きく変化しないが、統計的に5%水準で有意となる。この効果は正の意向を伴った返信の増加に由来している。列(3)と(5)では、実験群Bが正の意向を伴った返信率を2ポイントもしくは$3.94$%高めている一方で、負の意向を伴った返信率を1ポイントもしくは$3.42$%下げている。ただし、これらの統計的な有意性は弱い。また、実験群CとDは実験群Bよりも効果のサイズが小さく、統計的に非有意である。我々は頑健性の分析としてロジットモデルを推定した（@full-reply-logit）。その結果は効果の方向について上表と整合的であるが、統計的に非有意である。総合すると、我々の介入は全体的に返信に大きな影響を与えていない。
 
 ```{r}
+#| label: est-subsample-reply
 #| include: false
 
 est_stock_sub <- stock %>%
@@ -598,6 +610,7 @@ wrap_plots(plot_list, ncol = 2) +
 メッセージ効果の異質性についていくつかの頑健性の分析を行う。はじめに、ワイルドクラスターブートストラップ法でp値を計算する。クラスターの数が少ないと、クラスター標準誤差は帰無仮説を過剰に棄却してしまう。それを修正するために、ワイルドクラスターブートストラップ法を用いる。@tbl-young-reply は30歳未満の女性（列(1)--(3)）と30歳未満の男性（列(4)--(6)）でサンプルを限定して推定している。その結果、ワイルドブートストラップ法でも確率メッセージが30歳未満男性の返信、特に正の意向を伴う返信を増やすという結果を得られる。ただし、それ以外の効果はワイルドブートストラップ法によって棄却できなくなる。
 
 ```{r}
+#| label: est-int-rcf
 #| include: false
 
 covariate <- ~ 0 + male + age + coordinate + hospital_per_area +
@@ -662,6 +675,7 @@ predict_int_rcf %>%
 ```
 
 ```{r}
+#| label: est-int-rcf-cate
 #| include: false
 
 subset_cond <- list(
@@ -689,7 +703,7 @@ tbl_int_rcf <- ate_int_rcf %>%
 ```
 
 ```{r}
-#| label: tbl-int-rcf
+#| label: tbl-int-rcf-cate
 #| tbl-cap: Conditional Average Treatment Effect Estimated by RCF.
 
 tbl_int_rcf %>%
@@ -712,21 +726,23 @@ tbl_int_rcf %>%
   add_header_row(values = c("", "Females", "Males"), colwidths = c(1, 3, 3)) %>%
   align(j = -1, align = "center", part = "all") %>%
   colformat_double(j = -1, digits = 3) %>%
-  padding(2:4, padding = 20) %>%
-  padding(6:8, padding = 20) %>%
+  padding(j=1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
+  padding(2:4, padding.left = 10) %>%
+  padding(6:8, padding.left = 10) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
 
 次に、random causal forestによって効果の異質性を検証する。この手法は与えられた共変量の組合せでサンプルを分割し、各サブサンプル内でトリートメント効果を推定する。これにより、研究者によって与えられた共変量で特徴づけられるサンプルの個別の介入効果を得られる。サンプルを分割する共変量の組合せは推定されるサブサンプルのトリートメント効果の平均二乗誤差を最小にするように決める。裏返すと、これは各サブサンプルのトリートメント効果の分散を最大にすることである。
 
-@fig-int-rcf は各実験群の正の意向を伴う返信に対する効果の分布である。特徴的な結果は30歳未満の男性の90%が実験群Bに対してポジティブな反応を示していることである。random causal forestは実験群Bの30歳未満の男性に対する平均効果が12.5ポイントであり、統計的に有意である（@tbl-int-rcf）。これは@fig-subsample-reply で得られた推定値とほとんど一致する。
+@fig-int-rcf-cate は各実験群の正の意向を伴う返信に対する効果の分布である。特徴的な結果は30歳未満の男性の90%が実験群Bに対してポジティブな反応を示していることである。random causal forestは実験群Bの30歳未満の男性に対する平均効果が12.5ポイントであり、統計的に有意である（@tbl-int-rcf-cate）。これは@fig-subsample-reply で得られた推定値とほとんど一致する。
 
 また、他の性年代グループに対して、介入群の効果は統計的に非有意である。これは介入群に対してポジティブな反応を示す人とネガティブな反応を示す人が同程度に存在しているからである。では、どのような特徴を持った人がポジティブな反応を示しやすいのだろうか。我々は各性年代グループの中で正の影響を受ける人とそうでない人の平均的な個人属性の差を検証した（@tbl-covariate-int-rcf）。30歳以上の男女のグループでは、高齢の人や過去のコーディネート経験が多い人がメッセージにポジティブな反応を示しやすい。また、30歳以上の女性のグループでは、病院の数が多い人がメッセージにポジティブな反応を示しやすい一方で、30歳以上の男性のグループでは、病院の数が少ない人がメッセージにポジティブな反応を示しやすい。30歳未満の女性のグループでは、若い人がメッセージにポジティブな反応を示しやすい。また、このグループでは、過去のコーディネート経験が多い人ほど介入群CとDにポジティブな反応を示しやすく、病院の数が多い人ほど介入群Dにポジティブな反応を示しやすい。
 
 ## Response Speed to Notification
 
 ```{r}
+#| label: create-flow-data
 #| include: false
 #| vscode: {languageId: r}
 
@@ -748,6 +764,7 @@ flow <- stock %>%
 我々のデータは返信日数を含んでいるので、効果の経時的な推移を検証する。そこで、$d$日以内に返信する確率$\text{Pr}(D_{imw} \le d)$を線形確率モデルで推定する。このとき、アウトカム変数は$d$日以内に返信したならば1を取るようなダミー変数である。$d$の値を十分に大きくすると、$\text{Pr}(D_{imw} \le d)$に対する効果は前小節で示した返信に対する効果と一致する。また、前小節と同様に、$\text{Pr}(D_{imw} \le d)$に対する効果を提供意向の観点から二つの効果に分解する。正の意向については、提供意向があり、かつ$d$日以内に返信したならば1を取るようなダミー変数である。負の意向については、提供意向がなく、かつ$d$日以内に返信したならば1を取るようなダミー変数である。
 
 ```{r}
+#| label: est-subsample-speed
 #| include: false
 #| vscode: {languageId: r}
 
@@ -863,9 +880,10 @@ wrap_plots(plot_list_female, ncol = 2) +
 
 @fig-young-female-speed は30歳未満の女性にサンプルを限定している。その結果、
 
-# Results: Effects on Coordination Process
+## Effects on Coordination Process
 
 ```{r}
+#| label: create-coordination-data
 #| include: false
 #| vscode: {languageId: r}
 
@@ -892,6 +910,7 @@ coordination <- use %>%
 ```
 
 ```{r}
+#| label: est-full-coordination
 #| include: false
 
 est_coordination <- coordination %>%
@@ -1001,6 +1020,7 @@ tbl_est_coordination %>%
 ```
 
 ```{r}
+#| label: est-subsample-coordination
 #| include: false
 #| vscode: {languageId: r}
 
@@ -1094,10 +1114,10 @@ wrap_plots(plot_list, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-## Robustness to Heterogenous Message Effects
-
 ```{r}
+#| label: est-donate-rcf
 #| include: false
+#| eval: false
 
 donate <- subset(coordination, outcome == "Donation")
 Y <- donate$value
@@ -1112,6 +1132,7 @@ donate_tau <- predict(donate_rcf, X)
 ```{r}
 #| label: fig-donate-rcf
 #| fig-cap: Distribution of Individual Treatment Effects on Donation Estimated by Random Causal Forest.
+#| eval: false
 
 predict_donate_rcf <- data.frame(X) %>%
   cbind(donate_tau$predictions) %>%
@@ -1159,7 +1180,9 @@ predict_donate_rcf %>%
 ```
 
 ```{r}
+#| label: est-donate-rcf-cate
 #| include: false
+#| eval: false
 
 subset_cond <- list(
   X[, "male"] == 1 & X[, "age"] < 30,
@@ -1186,8 +1209,9 @@ tbl_donate_rcf <- ate_donate_rcf %>%
 ```
 
 ```{r}
-#| label: tbl-donate-rcf
+#| label: tbl-donate-rcf-cate
 #| tbl-cap: Conditional Average Treatment Effect Estimated by RCF.
+#| eval: false
 
 tbl_donate_rcf %>%
   mutate(age = recode(
@@ -1209,17 +1233,17 @@ tbl_donate_rcf %>%
   add_header_row(values = c("", "Females", "Males"), colwidths = c(1, 3, 3)) %>%
   align(j = -1, align = "center", part = "all") %>%
   colformat_double(j = -1, digits = 3) %>%
-  padding(2:4, padding = 20) %>%
-  padding(6:8, padding = 20) %>%
+  padding(j=1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
+  padding(2:4, padding.left = 10) %>%
+  padding(6:8, padding.left = 10) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
 
 # Appendix {-}
 
-<!-- Logit estimation -->
-
 ```{r}
+#| label: est-full-reply-logit
 #| include: false
 
 est_stock_logit <- stock %>%
@@ -1279,7 +1303,7 @@ tbl_stock_logit <- est_stock_logit %>%
 ```
 
 ```{r}
-#| label: full-reply-logit
+#| label: tbl-full-reply-logit
 #| tbl-cap: Logit Model of Reply and Intention
 
 tbl_stock_logit %>%
@@ -1298,6 +1322,9 @@ tbl_stock_logit %>%
 ```
 
 ```{r}
+#| label: est-full-coordination-logit
+#| include: false
+
 est_coordination_logit <- coordination %>%
   group_by(outcome) %>%
   nest() %>%
@@ -1343,7 +1370,7 @@ tbl_coordination_logit <- est_coordination_logit %>%
 ```
 
 ```{r}
-#| label: full-coordination-logit
+#| label: tbl-full-coordination-logit
 #| tbl-cap: Logit Model of Coordination
 
 tbl_coordination_logit %>%
@@ -1360,6 +1387,7 @@ tbl_coordination_logit %>%
 <!-- Wild clustered bootstrap -->
 
 ```{r}
+#| label: est-wildbs-young-reply
 #| include: false
 
 ate_bs <- stock %>%
@@ -1382,9 +1410,7 @@ ate_bs <- stock %>%
       B = 1000
     ))
   )
-```
 
-```{r}
 tbl_stock_sub <- est_stock_sub %>%
   dplyr::filter(age_less30 == 1) %>%
   pull(est) %>%
@@ -1407,7 +1433,7 @@ tbl_stock_sub <- est_stock_sub %>%
 ```
 
 ```{r}
-#| label: tbl-young-reply
+#| label: tbl-wildbs-young-reply
 #| tbl-cap: Linear Probability Model of Reply and Intentions among Young Males and Females
 
 tbl_stock_sub %>%
@@ -1419,11 +1445,13 @@ tbl_stock_sub %>%
     values = c("", "Young females", "Young males"),
     colwidths = c(1, 3, 3)
   ) %>%
+  width(j=1, 1) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
 
 ```{r}
+#| label: est-wildbs-young-male-coordinate
 #| include: false
 
 ate_bs_coordination <- coordination %>%
@@ -1439,9 +1467,7 @@ ate_bs_coordination <- coordination %>%
       B = 1000
     ))
   )
-```
 
-```{r}
 tbl_coordination_sub <- est_coordination_sub %>%
   dplyr::filter(age_less30 == 1 & male == 1) %>%
   pull(est) %>%
@@ -1463,7 +1489,7 @@ tbl_coordination_sub <- est_coordination_sub %>%
 ```
 
 ```{r}
-#| label: tbl-young-male-coordination
+#| label: tbl-wildbs-young-male-coordinate
 #| tbl-cap: Linear Probability Model of Coordination among Young Males
 
 tbl_coordination_sub %>%
@@ -1472,12 +1498,14 @@ tbl_coordination_sub %>%
     values = c("", "CT", "Candidate", "Consent", "Donation")
   ) %>%
   fontsize(size = 9, part = "all")  %>%
+  width(j=1, 1) %>%
   ft_theme()
 ```
 
 <!-- RCF -->
 
 ```{r}
+#| label: est-t-test-covariate-int-rcf
 #| include: false
 
 cov_int_rcf <- predict_int_rcf %>%
@@ -1499,7 +1527,7 @@ cov_int_rcf <- predict_int_rcf %>%
 ```
 
 ```{r}
-#| label: tbl-covariate-int-rcf
+#| label: tbl-t-test-covariate-int-rcf
 #| tbl-cap: Balance Test of Covariates Grouped By Predicted Treatment Effect
 
 cov_int_rcf %>%
@@ -1523,16 +1551,21 @@ cov_int_rcf %>%
   ) %>%
   align(j = -1, align = "center", part = "all") %>%
   colformat_double(j = -1, digits = 2) %>%
-  padding(2:6, padding = 20) %>%
-  padding(8:12, padding = 20) %>%
-  padding(14:18, padding = 20) %>%
-  padding(20:24, padding = 20) %>%
+  padding(j=1:10, padding.top = 5, padding.bottom = 5, part="all") %>%
+  padding(2:6, j = 1, padding.left = 10) %>%
+  padding(8:12, j = 1, padding.left = 10) %>%
+  padding(14:18, j = 1, padding.left = 10) %>%
+  padding(20:24, j = 1, padding.left = 10) %>%
+  width(j = -1, 0.7) %>%
+  width(j = 1, 1.27) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
 
 ```{r}
+#| label: est-t-test-covariate-donate-rcf
 #| include: false
+#| eval: false
 
 cov_donate_rcf <- predict_donate_rcf %>%
   mutate(positive = if_else(effect > 0, 1, 0)) %>%
@@ -1553,8 +1586,9 @@ cov_donate_rcf <- predict_donate_rcf %>%
 ```
 
 ```{r}
-#| label: tbl-covariate-donate-rcf
+#| label: tbl-t-test-covariate-donate-rcf
 #| tbl-cap: Balance Test of Covariates Grouped By Predicted Treatment Effect (Donation)
+#| eval: false
 
 cov_donate_rcf %>%
   as_grouped_data("pos") %>%
@@ -1577,10 +1611,13 @@ cov_donate_rcf %>%
   ) %>%
   align(j = -1, align = "center", part = "all") %>%
   colformat_double(j = -1, digits = 2) %>%
-  padding(2:6, padding = 20) %>%
-  padding(8:12, padding = 20) %>%
-  padding(14:18, padding = 20) %>%
-  padding(20:24, padding = 20) %>%
+  padding(j=1:10, padding.top = 5, padding.bottom = 5, part="all") %>%
+  padding(2:6, j = 1, padding.left = 10) %>%
+  padding(8:12, j = 1, padding.left = 10) %>%
+  padding(14:18, j = 1, padding.left = 10) %>%
+  padding(20:24, j = 1, padding.left = 10) %>%
+  width(j = -1, 0.7) %>%
+  width(j = 1, 1.27) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
