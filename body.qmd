@@ -22,6 +22,7 @@ author:
 date: last-modified
 date-format: '[Last Updated on] MMMM D, YYYY'
 pdf-engine: lualatex
+bibliography: biblio.bib
 format:
   pdf:
     documentclass: bxjsarticle
@@ -66,6 +67,26 @@ execute:
   enabled: true
 ---
 
+# Introduction {#sec-intro}
+
+Allogenic stem cell transplantation is one of the treatments with the lowest recurrence rate for blood diseases such as leukemia. In this treatment method, (1) diseased cells and healthy hematopoietic stem cells are simultaneously killed by anticancer drugs and radiation, and (2) healthy hematopoietic stem cells donated by another person are transplanted. One requirement for bone marrow transplantation (hematopoietic stem cell transplantation) is that the donor's white blood cell type, called HLA, matches the patient's HLA.[^hapro] While the matching probability between two random people is less than 1%, the most likely HLA match is between siblings, with a probability of approximately 30%. The matching probability between parents and children is very low. If there is no matched donor among blood relatives, the patient must seek a donor from an unrelated person. In Japan, the patient generally seeks unrelated donors through the Japan Marrow Donor Program (JMDP). However, coordination by the JMDP results in a long transplant process, and only 60% of registered patients receive a transplant [@Hirakawa2018].
+
+[^hapro]: Recently, transplants between blood relatives with semi-matched HLA, called haploidentical transplants, have become widespread. In addition, the transplantation of blood cells contained in the umbilical cord and placenta connecting mother and child (cord blood transplant) has also become popular. Unlike bone marrow transplants, cord blood transplants can be performed even without the requirement of a perfect HLA match.
+
+There are two types of policies for the donor pool to increase patient survival. The first type is to increase the number of potential donors, which increases the matching probability. Compared to when the patient matches fewer than four donors, when the patient matches more than 200 donors, the patient's transplant rate increases from 45% to 74% [@Hirakawa2018]. However, while the number of potential donors for JMDP has roughly doubled between 2000 and 2015, the probability of first-time matching has only increased by about 5% [@Takanashi2016].[^reason] In other words, increasing the pool size would be ineffective because the marginal benefit of increasing the number of potential donors is small.
+
+[^reason]: This is because the probability of a new member with a rare HLA type is low.
+
+The second type is to increase the proportion of people in the donor pool who are less likely to refuse to donate. This type of measure contributes to the quality of the donor pool. @Hirakawa2018 shows that many coordinations are interrupted before their first step, the confirmatory typing, due to the donor side reasons (see the @sec-background section for the coordination flow). Therefore, creating a pool with many potential donors who are willing to donate would increase the transplant rate. The marginal benefit of measures that improve the quality of the donor pool should be higher than that of measures that increase the size of the donor pool.
+
+Then, this study examines the effectiveness of information provision as one policy improving the quality of the donor pool. When a person registered with the JMDP becomes a potential donor for a patient, the potential donor receives a compatibility notice from the JMDP. The potential donors who respond to the notification by indicating a willingness to donate then take coordination for transplantation. We added a message to the compatibility notice based on information published by the JMDP and conducted a field experiment from September 2021 to February 2022 to test the effect of the added message. We asked the JMDP to provide data on the coordination process (including whether or not they responded to the notification and their willingness to donate) for those who received the compatibility notice during the experimental period and analyze the effect of providing information.
+
+There are two intervention messages. One is information that there are few potential donors per patient registered in the JMDP. Stem cell donation through JMDP is a public good since multiple potential donors per patient take coordination simultaneously. Thus, potential donors have the incentive to free-ride. The first message prevents potential donors from free-riding behavior caused by the over-estimated expectation about the number of other ongoing potential donors. Another message is that only about half of the patients registered with the JMDP receive transplants. This information aims to increase the value of the altruistic behavior of stem cell donation. Our field experiment shows that information about the small number of potential donors per patient encourages young males to reply to the compatibility notice and indicate their willingness to donate.
+
+<!-- この研究は日本に限らず他国の類似する骨髄バンクにおける施策へ貢献するものである。JMDPでは、若年男性の移植成績が良いにも関わらず、ドナー都合によるコーディネーションの中断率が高い[@Hirakawa2018]。同様の問題はXXXXでも生じている。我々のフィールド実験はこの問題を解決するための一つの施策を提示できる。
+
+また、この研究は経済学における一連の公共財研究にも貢献している。標準的な経済学は、公共財は自身の努力とは無関係に便益を受けられるという性質を持つので、自身がコストをかけて努力するインセンティブがなく、ただ乗り行動が生じることを指摘している。 -->
+
 
 ```{r}
 #| label: library
@@ -103,7 +124,7 @@ options(
 #| include: false
 #| vscode: {languageId: r}
 
-root <- "D:/JMDPフィールド実験"
+root <- "E:/JMDPフィールド実験"
 
 outcome_label <- list(
   reply = "Reply",
@@ -116,33 +137,33 @@ outcome_label <- list(
 )
 ```
 
-# Field Experiment
-## Background: Coordination Process of JMDP
+# Field Experiment {#sec-experiment}
+## Background: Coordination Process of JMDP {#sec-background}
 
 
-フィールド実験の介入のタイミングとデータの理解を促すために、骨髄バンクに登録したドナー候補者が幹細胞を提供するに至るまでの工程を概観しておく。はじめに、あるドナー候補者のHLAが骨髄バンクに登録した患者のHLAと一致すると、骨髄バンクの事務局はその候補者に幹細胞提供を依頼する適合通知を送付する[^SNS]。ドナー候補者は適合通知に対して提供の意向と問診表を記入して、返信する。
+To promote an understanding of the timing of interventions in our field experiment, we provide an overview of the coordination process leading up to the donation of stem cells by a potential donor registered with the JMDP. First, when a potential donor matches a patient registered with the JMDP, the JMDP office sends the potential donor the compatibility notice requesting stem cell donation.[^SNS] The potential donor responds to the notification by filling out a medical questionnaire and indicating the willingness to donate.
 
-[^SNS]: 適合通知を送付したことを伝えるSMSメッセージも送付している。
+[^SNS]: JMDP also sends the potential donor an SMS message informing that the JMDP sends the compatibility notice.
 
-提供を希望したドナー候補者はおよそ1カ月以内に確認検査を受ける。確認検査では、コーディネーターが提供方法（骨髄採取・末梢血幹細胞採取）を詳細に説明し、ドナー候補者とその家族の意向について調査する。このとき、ドナー候補者は希望する採取方法を選べる。また、調整医師が問診・診察・感染症の有無や血液型を調べるための一般血液検査を実施する。この検査を通じて、ドナー候補者が、骨髄バンクが設定した基準を満たしているかどうかを調べる。
+After that, the coordination for the transplant starts. The potential donor undergoes the confirmatory typing within approximately one month. In this step, the coordinator explains in detail the donation procedure (bone marrow collection and peripheral blood stem cell collection) and investigates the intentions of the potential donor and family. At this time, the potential donor can choose the collection method. In addition, the coordinating physician conducts an interview, medical examination, and general blood tests to determine the presence of infection and blood type. These tests examine whether the potential donor meets the criteria set by the JMDP.
 
-骨髄バンクに登録したドナーは同時に最大10人のドナー候補者とのコーディネーションを進められる。患者の主治医は確認検査まで至った複数のドナー候補者の中から最も最適な候補者（第一候補者）を選ぶ。重要な点であるが、ドナー候補者は自身とマッチした患者が何人のドナーとのコーディネーションを進めているかを知ることができない。また、コーディネーターや調整医師もこの点を知らないので、ドナー候補者が他者からその情報を得ることもできない。
+Patients can proceed with coordination with up to 10 potential donors at the same time. The patient's physician selects the most suitable candidate from potential donors who take the confirmatory typing. Importantly, the potential donor does not know how many other donors the matched patient coordinates with. Nor can a potential donor obtain this information from the coordinator or coordinating physician.
 
-第一候補者となったドナーはコーディネーターと調整医師からの説明を再度受けて、最終的な意思決定をする（最終同意）。このとき、ドナーの家族の代表者も採取に同意する必要がある。また、最終同意後、ドナーは自分の意向を変えられない。最終的な同意をした後、ドナーは約1週間の入院をして、術前検査と採取準備（貧血を防ぐための自己血採血）を受ける。この後、ドナーは幹細胞を採取する処置を受ける。確認検査から採取までの期間はおよそ3～4カ月程度である。
+The candidate needs to make a final consent after receiving explanations from the coordinator and coordinating physician. At this time, a representative of the donor's family must also consent to the collection. In addition, the candidate cannot change his/her intention after that. After giving final consent, the first candidate is hospitalized for approximately one week to take preoperative testing and prepare for collection. After this, the donor undergoes a procedure to collect the stem cells. The time between the confirmation test and collection is approximately 3-4 months.
 
 ## Experimental Design
 
 ![Intervention Messages](image/intervention.png){#fig-intervention}
 
-我々は、骨髄バンクがドナー候補者に幹細胞提供を依頼する適合通知の内容に介入を施した。上図に介入の内容を示す。介入前の適合通知はドナー候補者として選ばれたこと、7日以内に提供意思と問診表を記入して返信してほしいことを記載している。また、適合通知と併せて同封した資料の一つは先の小節で述べた採取までの流れを示したハンドブックである。
+Our intervention is the content of the compatibility notice in which the JMDP requests stem cell donations from potential donors. The @fig-intervention shows our intervention. Before the intervention, the compatibility notice states that the potential donor should return within seven days indicating to donate and completing a medical questionnaire. One of the materials enclosed along with the notification is a handbook that describes the coordination process, which we overview in the previous subsection.
 
-我々はコーディネーションの促進を目的として、適合通知に行動科学の知見に基づく二種類のメッセージを追加した（@fig-intervention）[^pressure]。確率メッセージは骨髄バンクに登録した患者とHLA型が一致するドナー登録者が少ないことを強調している。これは同時に進行している他のドナー候補者の数に関する信念の過大評価を防ぎ、幹細胞提供の「ただ乗り」行動を抑制できる可能性がある。
+We added two messages to the compatibility notice to facilitate coordination (@fig-intervention).[^pressure] The probability message highlights the small number of potential donors per patient registered with the JMDP. This message prevents overestimation of beliefs about the number of other ongoing potential donors and may discourage free-riding behavior in stem cell donation.
 
-[^pressure]: メッセージの作成の際、我々はドナー候補者に過度なプレッシャーを与えないように適切な配慮をしている。第一に、嘆願調のようなメッセージを避けている。第二に、メッセージの作成に際して、骨髄バンクが公開している情報のみを使用している。第三に、これまでと同様に移植リスクに関する説明をしている。
+[^pressure]: When having made intervention messages, we have taken appropriate care not to put undue pressure on potential donors. First, we avoid messages that sound like a plea. Second, we use only publicly available information from the JMDP. Third, we explain the risks of transplantation as usual.
 
-患者メッセージは骨髄バンクを通して移植を受けられる患者が半数しかいないことを強調している。これは自分が協力しなくても患者は助かるだろうという認識を修正し、ドナー候補者の利他性を刺激していることを目的としている。さらに、提供に至るまでの期間を短くすることの重要性を強調することで、適合通知への早い返信を促している。
+The patient message emphasizes that only half of the patients can receive a transplant through the JMDP. This message aims to correct the perception that patients are saved without the cooperation and to stimulate altruism in potential donors. Furthermore, emphasizing the importance of shortening the coordination time encourages early replies to the compatibility notice.
 
-二種類の介入メッセージの効果を推定するために、我々は四つの実験群を設ける。実験群Aは介入メッセージのない適合通知を送る（コントロール群）。実験群BとCはそれぞれ確率メッセージと患者情報メッセージを送る。さらに、情報過多による認知負荷の負の影響を検証するために、二つの介入メッセージを両方加えた適合通知を送付する実験群Dも設ける。
+We made four experimental arms to estimate the effects of the two intervention messages. Experimental arm A sends the standard compatibility notice without intervention messages (control group). Experimental arms B and C receive the probability message and the patient message, respectively. In addition, to test the negative effect of cognitive load due to information overload, we also made an experimental arm D adding two intervention messages to one compatibility notice.
 
 ```{r}
 #| label: read-schedule-data
@@ -175,7 +196,7 @@ flextable(schedule) %>%
   ft_theme()
 ```
 
-我々は2021年9月から2022年2月にかけて骨髄バンクが適合通知を送付したドナー候補者11,154名をフィールド実験の対象とした。実験群の割り当ては骨髄バンク事務局の業務の無理のない範囲で週単位でクラスターランダム化した。このとき、週・月の固定効果を取り除けるように、実験群が週・月でバランスするように割り当てた。割り当てのスケジュールは @tbl-assignment にまとめている。
+Our experimental subjects are 11,154 potential donors to whom the JMDP sent the compatibility notice between September 2021 and February 2022. The assignment of experimental groups is cluster-randomized based on a week because we preserve as much randomness as feasible by the JMDP office. We assigned four experimental groups to balance on week and month to remove week/month fixed effects. We summarize the assignment schedule in @tbl-assignment.
 
 ## Data and Empirical Strategy
 
@@ -215,11 +236,11 @@ lm_robust(
 }
 ```
 
-我々は2022年6月末に骨髄バンクが管理するコーディネーションデータの提供を受けた。観測単位はフィールド実験の対象であるドナー候補者である。個人属性として性別・年齢・過去のコーディネーション回数・居住地域（都道府県レベル）を記録している。コーディネーションの過程について、提供に至るまでの各工程（適合通知への返信・確認検査・第一候補者選定・最終同意・採取）に到達したかどうかを記録しており、これらをアウトカム変数として用いる。特に、適合通知の返信については、返信したかどうかに加えて、返信日数・提供意向についても記録している。コーディネーションが途中で中断した場合、その理由を三つのカテゴリー（患者理由・ドナーの健康以外の理由・ドナーの健康上の理由）で記録している。分析対象は国内在住でコーディネーションが完全に終了している11,049名とする[^exclude]。
+We received the coordination data maintained by the JMDP at the end of June 2022. The observation unit is the experimental subject. As individual attributes, the data record gender, age, number of past coordination, and region of residence (at the prefectural level). For the coordination process, the data records whether or not to reach each step (reply to the compatibility notice, the confirmatory typing, the candidate selection, the final consent, and the collection). We use these variables as outcome variables. In particular, for replies to the compatibility notice, the data additionally record the number of days of reply and the intention to donate. If the coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, reasons other than donor's health, and donor's health reasons). In analysis, we use 11,049 individuals who reside in Japan and whose coordination has been completed [^exclude].
 
-[^exclude]: 海外に在住している人が1人いた。また、データ提供時点でコーディネーションが進行している人が104名いた。コーディネーションが進行している人の比率は実験群間でバランスしている（F-value, p-value = $0.956$）
+[^exclude]: one person resided abroad. There were also 104 persons for whom coordination was in progress when we received the data. The proportion of people with ongoing coordination is well balanced across experimental arms (F-value, p-value = $0.956$).
 
-追加的なデータとして、我々はJMDPがホームページ上で公開している施設リストを用いる。このデータは病院の住所に加えて、骨髄採取が可能かどうか、末梢血幹細胞採取が可能かどうかを含んでいる。我々はこのデータを都道府県レベルで集計して、10平方キロメートル当たりの病院の数を計算し、コーディネーションデータと都道府県をキーとして突合する。我々はこの変数をコーディネーションや提供のトラベリングコストとみなす。
+As additional data, we use the list of hospitals published by the JMDP on its website. In addition to hospital addresses, this data includes whether bone marrow (BM) collection and peripheral blood stem cell (PBSC) collection are available. We aggregate this data at the prefectural level, calculate the number of hospitals per 10 square kilometers, and merge it and the coordination data using the prefecture as a merge key. We consider this variable as the traveling cost of coordination and donation.
 
 ```{r}
 #| label: experiment-summary
@@ -317,20 +338,20 @@ tbl_experiment_summary %>%
   ft_theme()
 ```
 
-@tbl-experiment-summary はフィールド実験の概要を示している。パネルAは各実験群の介入をまとめており、パネルBは各実験群のサンプルサイズを示している。パネルCは共変量のバランステストの結果を示しており、割り当てのランダム化が成功しているかどうかを検証している。ほとんどの共変量が群間でバランスしているので、実験群の割り当てはおおよそランダムである。ただし、実験群C・Dのドナー候補者は実験群A・Bのドナー候補者よりも若く、群間でアンバランスな可能性がある（F-test, p-value = $0.067$）。
+@tbl-experiment-summary summarizes the field experiments. Panel A shows the interventions for each experimental group, and Panel B shows the sample size for each experimental group. Panel C shows the balance test, which examines whether the randomization is successful. Since most covariates are well-balanced across groups, the clustered assignment is approximately random. However, potential donors in experimental groups C and D may be younger than those in experimental groups A and B (F-test, p-value = $0.067$).
 
-ドナー候補者は実験群を選択できない、すなわち、実験群は外生的であるので、単純な二群比較は平均処置効果を識別できる。ただし、年齢および割り当ての週と月の数が実験群間で完全にバランスしていないので、単純な二群比較はバイアスを伴う可能性がある。そこで、二群比較に加えて、我々は$m$月の第$w$週に適合通知を受け取った個人$i$について以下の線形確率モデルを推定する、
+Since potential donors cannot choose the experimental group, i.e., the experimental group is exogenous, a simple difference in means can identify the average treatment effect. However, this leads to bias because age and the number of weeks and months of the assignment are not perfectly balanced across experimental groups. Therefore, in addition to the difference-in-mean test, we estimate the following linear probability model for individual $i$ who received the compatibility notice in a week $w$ of month $m$.
 
-\begin{equation}
+$$
   Y_{imw} =
   \beta_1 \cdot \text{B}_{mw} + \beta_2 \cdot \text{C}_{mw}
   + \beta_3 \cdot \text{D}_{mw}
-  + X'_i \gamma + \lambda_m + \theta_w + u_{imw}
-\end{equation}
+  + X'_i \gamma + \lambda_m + \theta_w + u_{imw},
+$$
 
-ここで、$X_i$は個人属性ベクトル、$\lambda_m$と$\theta_w$はそれぞれ週・月のダミー変数である。我々はランダム化のユニットである実験週レベルでクラスタした標準誤差を使用する。
+where $X_i$ is the individual attribute vector and $\lambda_m$ and $\theta_w$ are the week and month dummy variables, respectively. We use standard errors clustered at the experimental week level, a unit of randomization.
 
-# Experimental Results
+# Experimental Results {#sec-result}
 
 ```{r}
 #| label: balance-test-exogeneous-stop-reply
@@ -373,11 +394,11 @@ stock <- use %>%
   ))
 ```
 
-はじめに、ドナー候補者の意向が最も現れる返信に対する効果を推定する。返信のアウトカム変数は提供意向に関わらず適合通知に返信したらならば1を取るダミー変数である。さらに、提供意向の変数を用いて、返信に対する効果を二つに分解する。第一に、正の意向を示して、適合通知に返信した効果である。アウトカム変数は適合通知に返信し、かつ提供の意向を示したならば1を取るダミー変数である。第二に、負の意向を示して、適合通知に返信した効果である。アウトカム変数は適合通知に返信し、かつ提供の意向を示さなければ1を取るダミー変数である。これらの効果を推定するとき、返信していない場合を0とコーディングして、非返信者もサンプルに含める。提供の意向に関する二つのアウトカム変数の和は必ず返信のアウトカム変数と一致するので、二つの意向に対する効果の和は必ず返信に対する効果となる。コントロール（実験群A）の返信率は$88.35$%である。正の意向を伴って返信した比率は$55.33$%である一方で、負の意向を伴って返信した比率は$33.03$%である。したがって、適合通知に返信したドナー候補者の$62.63$%が提供したいと考えている。
+## Effects on Reply and Intention {#sec-reply}
 
-返信をする以前に患者側の都合でコーディネーションが中断してしまう可能性がある。このケースはドナー候補者の意向と無関係に生じるコーディネーションの中断なので、分析のサンプルから除外する。各実験群の$0.5$--$0.7$%をこのケースで除外しており、その比率は群間でバランスしている（F-test, p-value=$0.242$）。
+To begin, we estimate the effect of our interventions on reply, which is the most likely manifestation of the potential donor's intention. The outcome variable for replying is a dummy variable that takes one if the potential donor replies to the compatibility notice regardless of donor intention. We decompose the message effect on response to the notification into two parts. The first is the effect on replying with a positive intention. For estimation, the outcome variable is a dummy variable that takes one if the potential donor replied to the notice and indicated the willingness to donate. The second is the effect on replying with a negative intention. The outcome variable is a dummy variable that takes one if the potential donor replied to the notice and did not indicate the willingness to donate. When estimating these effects, we include non-responders in the sample, coding their outcomes as 0. Since the sum of the two outcome variables for the intention to donate is always equal to the dummy variable for the reply, the sum of the effects on the positive and negative intentions is always the effect on replying. The response rate is $88.35$% in the control arm. The proportion of replying with positive intention is $55.33$%, while the proportion of replying with negative intention is $33.03$% in the control arm. Thus, $62.63$% of potential donors who replied to the compatibility notice were willing to donate.
 
-## Main Results
+The coordination may be interrupted by the patient before potential donors reply. Since this case occurs independently of the potential donor's intention, we exclude it from the sample in our analysis. We exclude $0.5$--$0.7$% of each experimental group, and the proportions are well balanced across groups (F-test, p-value=$0.242$).
 
 ```{r}
 #| label: est-full-reply
@@ -605,7 +626,7 @@ wrap_plots(plot_list, ncol = 2) +
 
 他の性年代のグループ（とくに、30歳以上の男女）では、介入メッセージが返信や意向に大きな影響を与えていない。ただし、30歳未満の女性で、実験群Dが正の意向を伴う返信率を$0.05$もしくは$9.69$%下げている。したがって、他のドナー候補者が少ないというメッセージは若年男性の提供意向を高め、適合通知への返信を促している。若年男性ドナーは移植成績が良いにも関わらず、提供意向が他の性年代よりも明らかに低いことを考慮すると、確率メッセージは移植コーディネーションの効率性を改善しているといえる。
 
-## Robustness to Heterogenous Effect
+## Robustness to Heterogenous Effect {#sec-robustness}
 
 メッセージ効果の異質性についていくつかの頑健性の分析を行う。はじめに、ワイルドクラスターブートストラップ法でp値を計算する。クラスターの数が少ないと、クラスター標準誤差は帰無仮説を過剰に棄却してしまう。それを修正するために、ワイルドクラスターブートストラップ法を用いる。@tbl-young-reply は30歳未満の女性（列(1)--(3)）と30歳未満の男性（列(4)--(6)）でサンプルを限定して推定している。その結果、ワイルドブートストラップ法でも確率メッセージが30歳未満男性の返信、特に正の意向を伴う返信を増やすという結果を得られる。ただし、それ以外の効果はワイルドブートストラップ法によって棄却できなくなる。
 
@@ -942,7 +963,7 @@ wrap_plots(plot_list_female, ncol = 2) +
 
 @fig-young-female-speed は30歳未満の女性にサンプルを限定している。その結果、
 
-## Effects on Coordination Process
+## Effects on Coordination Process {#sec-process}
 
 ```{r}
 #| label: create-coordination-data
