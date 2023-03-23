@@ -13,6 +13,38 @@
   langid = {english}
 }
 
+@article{Athey2016,
+  title = {Recursive Partitioning for Heterogeneous Causal Effects},
+  author = {Athey, Susan and Imbens, Guido},
+  year = {2016},
+  month = jul,
+  journal = {Proceedings of the National Academy of Sciences},
+  volume = {113},
+  number = {27},
+  pages = {7353--7360},
+  issn = {0027-8424, 1091-6490},
+  doi = {10.1073/pnas.1510489113},
+  urldate = {2023-03-23},
+  abstract = {In this paper we propose methods for estimating heterogeneity in causal effects in experimental and observational studies and for conducting hypothesis tests about the magnitude of differences in treatment effects across subsets of the population. We provide a data-driven approach to partition the data into subpopulations that differ in the magnitude of their treatment effects. The approach enables the construction of valid confidence intervals for treatment effects, even with many covariates relative to the sample size, and without ``sparsity'' assumptions. We propose an ``honest'' approach to estimation, whereby one sample is used to construct the partition and another to estimate treatment effects for each subpopulation. Our approach builds on regression tree methods, modified to optimize for goodness of fit in treatment effects and to account for honest estimation. Our model selection criterion anticipates that bias will be eliminated by honest estimation and also accounts for the effect of making additional splits on the variance of treatment effect estimates within each subpopulation. We address the challenge that the ``ground truth'' for a causal effect is not observed for any individual unit, so that standard approaches to cross-validation must be modified. Through a simulation study, we show that for our preferred method honest estimation results in nominal coverage for 90\% confidence intervals, whereas coverage ranges between 74\% and 84\% for nonhonest approaches. Honest estimation requires estimating the model with a smaller sample size; the cost in terms of mean squared error of treatment effects for our preferred method ranges between 7\textendash 22\%.},
+  langid = {english}
+}
+
+@article{Athey2019,
+  title = {Estimating {{Treatment Effects}} with {{Causal Forests}}: {{An Application}}},
+  shorttitle = {Estimating {{Treatment Effects}} with {{Causal Forests}}},
+  author = {Athey, Susan and Wager, Stefan},
+  year = {2019},
+  journal = {Observational Studies},
+  volume = {5},
+  number = {2},
+  pages = {37--51},
+  issn = {2767-3324},
+  doi = {10.1353/obs.2019.0001},
+  urldate = {2021-09-24},
+  abstract = {We apply causal forests to a dataset derived from the National Study of Learning Mindsets, and discusses resulting practical and conceptual challenges. This note will appear in an upcoming issue of Observational Studies, Empirical Investigation of Methods for Heterogeneity, that compiles several analyses of the same dataset.},
+  langid = {english}
+}
+
 @article{Cameron2008,
   title = {{{BOOTSTRAP-BASED IMPROVEMENTS FOR INFERENCE WITH CLUSTERED ERRORS}}},
   author = {Cameron, A Colin and Gelbach, Jonah B and Miller, Douglas L},
@@ -23,6 +55,23 @@
   number = {3},
   pages = {414--427},
   abstract = {Researchers have increasingly realized the need to account for within-group dependence in estimating standard errors of regression parameter estimates. The usual solution is to calculate cluster-robust standard errors that permit heteroskedasticity and within-cluster error correlation, but presume that the number of clusters is large. Standard asymptotic tests can over-reject, however, with few (five to thirty) clusters. We investigate inference using cluster bootstrap-t procedures that provide asymptotic refinement. These procedures are evaluated using Monte Carlos, including the example of Bertrand, Duflo, and Mullainathan (2004). Rejection rates of 10\% using standard methods can be reduced to the nominal size of 5\% using our methods.},
+  langid = {english}
+}
+
+@article{Davis2017,
+  title = {Using {{Causal Forests}} to {{Predict Treatment Heterogeneity}}: {{An Application}} to {{Summer Jobs}}},
+  shorttitle = {Using {{Causal Forests}} to {{Predict Treatment Heterogeneity}}},
+  author = {Davis, Jonathan M.V. and Heller, Sara B.},
+  year = {2017},
+  month = may,
+  journal = {American Economic Review},
+  volume = {107},
+  number = {5},
+  pages = {546--550},
+  issn = {0002-8282},
+  doi = {10.1257/aer.p20171000},
+  urldate = {2023-02-21},
+  abstract = {To estimate treatment heterogeneity in two randomized controlled trials of a youth summer jobs program, we implement Wager and Athey's (2015) causal forest algorithm. We provide a step-by-step explanation targeted at applied researchers of how the algorithm predicts treatment effects based on observables. We then explore how useful the predicted heterogeneity is in practice by testing whether youth with larger predicted treatment effects actually respond more in a hold-out sample. Our application highlights some limitations of the causal forest, but it also suggests that the method can identify treatment heterogeneity for some outcomes that more standard interaction approaches would have missed.},
   langid = {english}
 }
 
@@ -82,6 +131,22 @@
   urldate = {2021-09-24},
   langid = {japanese},
   keywords = {Marrow Donor Program}
+}
+
+@article{Wager2018,
+  title = {Estimation and {{Inference}} of {{Heterogeneous Treatment Effects}} Using {{Random Forests}}},
+  author = {Wager, Stefan and Athey, Susan},
+  year = {2018},
+  month = jul,
+  journal = {Journal of the American Statistical Association},
+  volume = {113},
+  number = {523},
+  pages = {1228--1242},
+  issn = {0162-1459, 1537-274X},
+  doi = {10.1080/01621459.2017.1319839},
+  urldate = {2021-09-24},
+  abstract = {Many scientific and engineering challenges\textemdash ranging from personalized medicine to customized marketing recommendations\textemdash require an understanding of treatment effect heterogeneity. In this article, we develop a nonparametric causal forest for estimating heterogeneous treatment effects that extends Breiman's widely used random forest algorithm. In the potential outcomes framework with unconfoundedness, we show that causal forests are pointwise consistent for the true treatment effect and have an asymptotically Gaussian and centered sampling distribution. We also discuss a practical method for constructing asymptotic confidence intervals for the true treatment effect that are centered at the causal forest estimates. Our theoretical results rely on a generic Gaussian theory for a large family of random forest algorithms. To our knowledge, this is the first set of results that allows any type of random forest, including classification and regression forests, to be used for provably valid statistical inference. In experiments, we find causal forests to be substantially more powerful than classical methods based on nearest-neighbor matching, especially in the presence of irrelevant covariates.},
+  langid = {english}
 }
 
 @article{Zhang2011,

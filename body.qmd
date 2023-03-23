@@ -124,7 +124,7 @@ options(
 #| include: false
 #| vscode: {languageId: r}
 
-root <- "E:/JMDPフィールド実験"
+root <- "D:/JMDPフィールド実験"
 
 outcome_label <- list(
   reply = "Reply",
@@ -525,7 +525,7 @@ tbl_est_stock %>%
   # )
 ```
 
-@tbl-full-reply は線形確率モデルの推定結果である。奇数列は実験群ダミーのみを説明変数として用いているのに対して、偶数列は個人属性や月・週の固定効果も制御している。列(1)は、確率メッセージを加えた適合通知を送付する実験群Bが返信率を1ポイントもしくは$1.2$%高めていることを示している。個人属性などをコントロールする（列(2)）と、効果のサイズは大きく変化しないが、統計的に5%水準で有意となる。この効果は正の意向を伴った返信の増加に由来している。列(3)と(5)では、実験群Bが正の意向を伴った返信率を2ポイントもしくは$3.94$%高めている一方で、負の意向を伴った返信率を1ポイントもしくは$3.42$%下げている。ただし、これらの統計的な有意性は弱い。また、実験群CとDは実験群Bよりも効果のサイズが小さく、統計的に非有意である。我々は頑健性の分析としてロジットモデルを推定した（@full-reply-logit）。その結果は効果の方向について上表と整合的であるが、統計的に非有意である。総合すると、我々の介入は全体的に返信に大きな影響を与えていない。
+@tbl-full-reply are the estimation results of the linear probability model. Odd columns use only the experimental arm dummies as an explanatory variable, whereas even columns additionally control for individual attributes and month and week fixed effects. Column (1) shows that the experimental arm B, which sends the probability message, increases the reply rate by 1 percentage point or $1.2$%. Controlling for individual attributes and other factors (column (2)) does not significantly change the size of the effect, but it is statistically significant at the 5% level. This effect stems from an increase in replies with positive intentions. Columns (3) and (5) show that experimental arm B increases the replay rate with positive intentions by 2 percentage points or $3.94$% while it decreases the reply rate with negative intentions by 1  percentage point or $3.42$%. Their statistical significance is weak. In addition, experimental arms C and D have smaller effect sizes than experimental arm B and are statistically non-significant. We estimated a logit model as a robustness analysis (@full-reply-logit). The results are consistent with the above table for the direction of the effect but are statistically non-significant. In sum, our intervention has an insignificant impact on replies overall.
 
 ```{r}
 #| label: est-subsample-reply
@@ -620,15 +620,15 @@ wrap_plots(plot_list, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-次に、メッセージの効果の異質性を検証するために、我々は性別と年齢層（30歳未満かどうか）でサンプルを4分割して、各サブセットでメッセージの効果を推定している。 @fig-subsample-reply はその係数プロットである。その結果、確率メッセージを加えた実験群BとDは30歳未満の男性の返信率を6ポイントもしくは$8.06$%高めている（ベースラインの返信率は$74.4$%）。
+Next, to test the heterogeneity of message effects, we divide the sample into four subsets by gender and age group (less than 30 or not) and estimate the message effects in each sub-group. @fig-subsample-reply is the coefficient plot. The results show that experimental groups B and D, which add at least the probability message, increase the reply rate for young males by 6 percentage points or $8.06$% (the baseline reply rate is $74.4$%).
 
-確率メッセージだけを加えた実験群Bの効果は正の意向を伴う返信率の増加に起因している。このグループで、実験群Bは正の意向を伴う返信率を10ポイントもしくは$25.91$%高めている（ベースラインの比率は$38.6$%）が、負の意向を伴う返信率を3ポイントもしくは$8.38$%下げている（ベースラインの比率は$35.8$%）。これらは統計的に有意な効果である。一方で、確率メッセージと利他メッセージを加えた実験群Dは正の意向を伴う返信と負の意向を伴う返信を同程度増やしている。特に、実験群Dは負の意向を伴う返信率を3ポイントもしくは$8.38$%高めていて、これは統計的に有意である。
+The effect of experimental arm B with the addition of only probability messages results from an increase in the reply rate with positive intention. Among males under 30, experimental arm B increases the reply rate with positive intention by 10 percentage points or $25.91$% (baseline rate of $38.6$%) but decreases the reply rate with negative intention by 3 percentage points or $8.38$% (baseline rate of $35.8$%). These are statistically significant effects. On the other hand, experimental group D, which adds the probability and patient messages, increases the reply rate with positive and negative intentions by the same amount. In particular, experimental arm D increases the reply rate with negative intention by 3 percentage points or $8.38$%, which is statistically significant.
 
-他の性年代のグループ（とくに、30歳以上の男女）では、介入メッセージが返信や意向に大きな影響を与えていない。ただし、30歳未満の女性で、実験群Dが正の意向を伴う返信率を$0.05$もしくは$9.69$%下げている。したがって、他のドナー候補者が少ないというメッセージは若年男性の提供意向を高め、適合通知への返信を促している。若年男性ドナーは移植成績が良いにも関わらず、提供意向が他の性年代よりも明らかに低いことを考慮すると、確率メッセージは移植コーディネーションの効率性を改善しているといえる。
+Among the other gender and age groups (especially men and women over 30), our intervention has no significant effect on replies or intentions. However, among women under 30, experimental group D reduces the reply rate with positive intention by $5$ percentage points or $9.69$%. Thus, the message that potential donors per patient are few increases young men's willingness to donate and encourages them to reply to the compatibility notice. Given that young male donors have lower donation intentions than the other gender-age group despite their better transplant outcomes, the probability message improves the efficiency of transplant coordination.
 
 ## Robustness to Heterogenous Effect {#sec-robustness}
 
-メッセージ効果の異質性についていくつかの頑健性の分析を行う。はじめに、ワイルドクラスターブートストラップ法でp値を計算する。クラスターの数が少ないと、クラスター標準誤差は帰無仮説を過剰に棄却してしまう。それを修正するために、ワイルドクラスターブートストラップ法を用いる。@tbl-young-reply は30歳未満の女性（列(1)--(3)）と30歳未満の男性（列(4)--(6)）でサンプルを限定して推定している。その結果、ワイルドブートストラップ法でも確率メッセージが30歳未満男性の返信、特に正の意向を伴う返信を増やすという結果を得られる。ただし、それ以外の効果はワイルドブートストラップ法によって棄却できなくなる。
+We perform robust checks of the heterogeneity of message effects. First, we compute p-values using the wild cluster bootstrap method [@Cameron2008]. When the number of clusters is small, the cluster standard errors over-reject the null hypothesis. To correct this, we use the wild cluster bootstrap method. @tbl-young-reply in Appendix is estimation results, restricting the sample to women under 30 (columns (1)--(3)) and men under 30 (columns (4)--(6)). The results show that even with the wild bootstrap method, the probability message (experimental arm B) increases the reply rate with positive intentions among males under 30.
 
 ```{r}
 #| label: est-int-rcf
@@ -754,15 +754,16 @@ tbl_int_rcf %>%
   ft_theme()
 ```
 
-次に、random causal forestによって効果の異質性を検証する。この手法は与えられた共変量の組合せでサンプルを分割し、各サブサンプル内でトリートメント効果を推定する。これにより、研究者によって与えられた共変量で特徴づけられるサンプルの個別の介入効果を得られる。サンプルを分割する共変量の組合せは推定されるサブサンプルのトリートメント効果の平均二乗誤差を最小にするように決める。裏返すと、これは各サブサンプルのトリートメント効果の分散を最大にすることである。
+We then test for heterogenous effects by random causal forest [@Davis2017; @Athey2019]. This method divides the sample by combinations of covariates and estimates treatment effects within each subsample. This yields predicted values of individual treatment effects, which is a function of the covariates given by the researcher. The combination of covariates creating subsamples is determined to minimize the mean squared error of the estimated heterogeneous treatment effect. This minimization is equivalent to maximizing the variance of the estimated treatment effect [@Athey2016].
 
-@fig-int-rcf-cate は各実験群の正の意向を伴う返信に対する効果の分布である。特徴的な結果は30歳未満の男性の90%が実験群Bに対してポジティブな反応を示していることである。random causal forestは実験群Bの30歳未満の男性に対する平均効果が12.5ポイントであり、統計的に有意である（@tbl-int-rcf-cate）。これは@fig-subsample-reply で得られた推定値とほとんど一致する。
+@fig-int-rcf-cate is the distribution of the predicted treatment effect of each experimental arm on replies with positive intention. Notably, 90% of men under 30 respond positively to the probability message. The random causal forest shows that the average treatment effect of experimental arm B among young males is $12.5$ percentage points, which is statistically significant (@tbl-int-rcf-cate). The estimated treatment effect is almost consistent with the estimates obtained in @fig-subsample-reply.
 
-また、他の性年代グループに対して、介入群の効果は統計的に非有意である。これは介入群に対してポジティブな反応を示す人とネガティブな反応を示す人が同程度に存在しているからである。では、どのような特徴を持った人がポジティブな反応を示しやすいのだろうか。我々は各性年代グループの中で正の影響を受ける人とそうでない人の平均的な個人属性の差を検証した（@tbl-covariate-int-rcf）。30歳以上の男女のグループでは、高齢の人や過去のコーディネート経験が多い人がメッセージにポジティブな反応を示しやすい。また、30歳以上の女性のグループでは、病院の数が多い人がメッセージにポジティブな反応を示しやすい一方で、30歳以上の男性のグループでは、病院の数が少ない人がメッセージにポジティブな反応を示しやすい。30歳未満の女性のグループでは、若い人がメッセージにポジティブな反応を示しやすい。また、このグループでは、過去のコーディネート経験が多い人ほど介入群CとDにポジティブな反応を示しやすく、病院の数が多い人ほど介入群Dにポジティブな反応を示しやすい。
+We also confirm that our intervention has a statistically non-significant effect for the other gender-age groups. This result is because there exist roughly equal numbers of people who react positively and negatively to the intervention. Then, what characteristics make people more likely to have a positive response? We examined the differences in average personal attributes of those who are positively affected and those who are not within each gender-age group (@tbl-covariate-int-rcf). In the group of men and women over 30, those who are older and have more past coordination experience are more likely to respond positively to the intervention message. In the group of women over 30, those with more hospitals were more likely to react positively to the intervention message. On the other hand, in the group of men over 30 years old, those with fewer hospitals were more likely to respond positively to the intervention message. In the group of women under 30, younger people were more likely to respond positively to the intervention message. Moreover, those with more previous coordination experience are more likely to respond positively to experimental arms C and D, and those with more hospitals are more likely to respond positively to intervention group D.
 
 ```{r}
 #| label: est-correlation-int-rcf
 #| include: false
+#| eval: false
 
 int_tau_pred <- int_tau$predictions[, , 1]
 
@@ -799,6 +800,7 @@ tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
 ```{r}
 #| label: tbl-correlation-int-rcf
 #| tbl-cap: Correlation of Predicted Tratment Effects
+#| eval: false
 
 tbl_tau_corr %>%
   add_header_row(
@@ -844,7 +846,7 @@ flow <- stock %>%
   mutate(within = as.numeric(within))
 ```
 
-我々のデータは返信日数を含んでいるので、効果の経時的な推移を検証する。そこで、$d$日以内に返信する確率$\text{Pr}(D_{imw} \le d)$を線形確率モデルで推定する。このとき、アウトカム変数は$d$日以内に返信したならば1を取るようなダミー変数である。$d$の値を十分に大きくすると、$\text{Pr}(D_{imw} \le d)$に対する効果は前小節で示した返信に対する効果と一致する。また、前小節と同様に、$\text{Pr}(D_{imw} \le d)$に対する効果を提供意向の観点から二つの効果に分解する。正の意向については、提供意向があり、かつ$d$日以内に返信したならば1を取るようなダミー変数である。負の意向については、提供意向がなく、かつ$d$日以内に返信したならば1を取るようなダミー変数である。
+Since our data include the number of reply days, we examine the effect over time and estimate the effect on the probability $\text{Pr}(D_{imw} \le d)$, which is a probability of replying within $d$ days, in a linear probability model. In this model, the outcome variable is a dummy taking one if the potential donor replied to the compatibility notice within $d$ days. If the value of $d$ is sufficiently large, the effect on $\text{Pr}(D_{imw} \le d)$ is consistent with the effect on replies shown in the previous subsection. Also, as in the previous subsection, we decompose the effect on $\text{Pr}(D_{imw} \le d)$ into two effects in terms of the donor's intention. For positive intention, the outcome is a dummy variable taking one if the potential donor replied within $d$ days and indicated the intention to donate. For negative intention, the outcome variable is a dummy variable that takes one if the potential donor replied within $d$ days and did not indicate the intention to donate. 
 
 ```{r}
 #| label: est-subsample-speed
@@ -920,9 +922,9 @@ wrap_plots(plot_list_male, ncol = 2) +
 ```
 
 
-我々の介入メッセージの効果は異質的であるので、返信スピードに対する効果も異質性に注目する。@fig-young-male-speed は30歳未満の男性にサンプルを限定している。JMDPは適合通知に返信の目安として7日を明記している。このサブサンプルの統制群において、7日以内に返信した人の割合は21%である。また、返信日数が早ければ早いほど、適合通知に返信した人の中で提供したいと考える人が多く存在する。例えば、4日以内に返信した人の68%が提供したいと考えており、28日以内に返信した人の51%が提供したいと考えている。言い換えれば、返信が遅い人ほど、提供の意思を持っていない可能性がある。
+Since the effects of our intervention messages are heterogeneous, we also focus on heterogeneity in this subsection. @fig-young-male-speed restricts the sample to men under 30. The JMDP specifies seven days as a suggested reply time in the compatibility notice. In the control group of this subsample, 21% of potential donors replied within seven days. The earlier the reply date, the more likely it is that those who replied to the notification are willing to donate. For example, 68% of those who responded within four days wanted to donate, and 51% of those who responded within 28 days had the willingness to donate. In other words, the slower a potential donor replies, the less likely a potential donor is to be willing to donate.
 
-この性年代グループでは、確率メッセージのみを加えた介入群Bが正の意向を伴う返信を増やしていることが明らかになった。この効果は主に返信に10日以上かかるドナー候補者の行動によって生じている。介入群Bは10日以内の返信や正の意向を伴う返信に対して統計的に有意な効果を持っていないが、14--28日以内の返信や正の意向を伴う返信に対して統計的に有意な効果を持っている。また、特筆すべき結果として、介入群Bは7--10日以内に負の意向を伴って返信する確率を下げている。
+In this gender-age group, we have already found that experimental arm B, which added only the probability message, increases the reply rate with positive intention. This effect is primarily due to the behavior of potential donors who take longer than 10 days to reply. Experimental arm B does not have statistically significant effects on the reply rate within 10 days and the reply rate with positive intentions. Experimental arm B has statistically significant effects on the reply rate within 14--28 days and the reply rate with positive intentions. In addition, a notable result is that experimental arm B reduces the probability of replying with negative intentions within 7--10 days.
 
 ```{r}
 #| label: fig-young-female-speed
@@ -961,9 +963,9 @@ wrap_plots(plot_list_female, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-@fig-young-female-speed は30歳未満の女性にサンプルを限定している。その結果、
+@fig-young-female-speed restricts the sample to women under 30. We already found that experimental arm C, adding only the patient information, has no statistically significant effect on the overall reply rate and intention. However, when focusing on short-term behavior, experimental arm C statistically significantly increases the reply rate within four days and the reply rate within 10--28 days by 5 percentage points. The positive effect on the reply rate within 4 days results from equal increases in positive and negative intentions. However, the positive effect on the reply rate within 10--29 days is mainly due to an increase in reply rate with a negative intention. However, the statistical significance of the effect of arm C on intentions is weak. Surprisingly, experimental group B, which is effective for young men, reduced the positive intention and the reply rate within 7--14 days.
 
-## Effects on Coordination Process {#sec-process}
+## Effects on the Coordination Process {#sec-process}
 
 ```{r}
 #| label: create-coordination-data
@@ -991,6 +993,8 @@ coordination <- use %>%
     )
   )
 ```
+
+Finally, we examine the impact on each step in the coordination process after replying to the compatibility notice. As explained in @sec-process, the coordination process has four stages: confirmatory typing (CT), candidate selection, final consent, and donation. We use as an outcome variable a dummy variable taking one if a potential donor has reached each step. Also, as in the analysis in @sec-reply, we exclude samples that are likely to have been terminated independently of the potential donor's intentions. When estimating the effect on CT, we exclude cases of interruptions due to the patient. Since the patient's physician can select the healthiest potential donor as a candidate at the candidate selection stage, when estimating the effect on the process after candidate selection, we exclude cases of interruptions due to the donor's health reasons or patient. However, we must be careful in interpreting the effect on the process after candidate selection, since sample exclusion may not completely remove the physician's decision. In the control group, 23% of potential donors took CT, 8% of potential donors became candidates, and 6% of potential donors ultimately donated.
 
 ```{r}
 #| label: est-full-coordination
@@ -1102,6 +1106,8 @@ tbl_est_coordination %>%
   # )
 ```
 
+@tbl-tbl-full-coordination is the estimated result of the linear probability model. The results show that experimental arm B, adding only the probability message, increases the probability of reaching the CT by 3 percentage points or 13%, which is statistically significant. Controlling for covariates, experimental arm D, adding both the probability message and the patient message, also increases the probability of taking the CT by 3 percentage points or 13%, which is statistically significant. The results so far are also obtained by estimating with a logit model [@tbl-full-coordination-logit]. Experimental arm D also increases the probability of candidate selection and reaching a final consent, which is weakly statistically significant and is not statistically significant in the estimation with the logit model.
+
 ```{r}
 #| label: est-subsample-coordination
 #| include: false
@@ -1196,6 +1202,8 @@ wrap_plots(plot_list, ncol = 2) +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 ```
+
+@fig-subsample-coordination is a coefficient plot of the subsample analysis divided by gender and age. The results show that experimental arm B increases the probability of taking the CT for males under age 30. Surprisingly, this experimental arm also statistically significantly increases the donation probability for this gender-age group. However, we have not been able to distinguish whether this is an effect of potential donor intent or simply reflects the tendency of patient physicians to select younger men with better transplant records. Furthermore, when computing p-values using the wild cluster bootstrap method, we cannot reject the null hypothesis for a positive effect of experimental arm B. Thus, these results are not robust. Experimental arm B also statistically significantly increases the probability of CT for men over 30 years old. Experimental arm D statistically significantly increases the probability of CT for men and women over 30 years old.
 
 ```{r}
 #| label: est-donate-rcf
@@ -1323,6 +1331,10 @@ tbl_donate_rcf %>%
   ft_theme()
 ```
 
+# Conclusion {#sec-conclusion}
+
+Our field experiment revealed that adding information to the compatibility notice, which informs that becoming a potential donor, affects the donor's willingness to donate. In particular, the information that there were fewer potential donors per patient increases the willingness of young men to donate. Examining why the effects were heterogeneous is a topic for future work.
+
 # Appendix {-}
 
 ```{r}
@@ -1414,11 +1426,11 @@ est_coordination_logit <- coordination %>%
   mutate(
     fit1 = map(
       data,
-      ~ glm(mod$unctrl, data = ., family = binomial())
+      ~ glm(mod$unctrl, data = subset(., exclude == 0), family = binomial())
     ),
     fit2 = map(
       data,
-      ~ glm(mod$ctrl, data = ., family = binomial())
+      ~ glm(mod$ctrl, data = subset(., exclude == 0), family = binomial())
     )
   ) %>%
   pivot_longer(
@@ -1704,3 +1716,5 @@ cov_donate_rcf %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
+
+# References {-}
