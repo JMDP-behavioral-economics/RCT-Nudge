@@ -17,7 +17,7 @@ $$ {#eq-cond-noreply}
 が成立していることである。ここで、$\delta_b \le \delta_c$ならば、$(\delta_c/\delta_b)^t$は$t$の増加関数であり、そうでなければ、$(\delta_c/\delta_b)^t$は$t$の減少関数となる。したがって、ドナーが適合通知に返信しないことが最適となる条件を以下の命題にまとめられる。
 
 \noindent
-**Proposition 1.** $\sum_t x_t = 0$ is optimal if and only if (a) $\delta_b \le \delta_c$ and $b < c$ or (b) $\delta_c < \delta_b$ and $b < (\delta_c/\delta_b)^T$.
+**Proposition 1**. $\sum_t x_t = 0$ is optimal if and only if (a) $\delta_b \le \delta_c$ and $b < c$ or (b) $\delta_c < \delta_b$ and $b < (\delta_c/\delta_b)^T$.
 
 \noindent
 この命題は次の示唆を与えている。すなわち、提供価値$b$が十分に小さいドナー候補者は返信しないことを選択するのが最適である。ただし、いつでも助けられると考えている（$\delta_b$が十分に高い）ドナー候補者は提供価値が低くても、返信することが最適である。
@@ -27,18 +27,78 @@ $$ {#eq-cond-noreply}
 次に、最適行動が返信となる人がいつ返信するのかについて考察する。このとき、@eq-problem の最適化問題は以下の問題に簡略化できる。
 $$
 \begin{equation}
-  \max_t b\delta_b^t - c \delta_c^t
+  \max_t U(t) = b\delta_b^t - c \delta_c^t
 \end{equation}
 $$ {#eq-problem2}
-ここで、$U'(t) = 0$を満たす$t$（$t^*$と表記する）を以下のように得られる。
+この最適化問題の一階条件を得られる。
 $$
-\begin{align}
-\begin{split}
-  \frac{\partial U}{\partial t}(t) = b \delta_b^t \ln \delta_b - c \delta_c^t \ln\delta_c &= 0 \\
+\begin{equation}
+  \frac{\partial U}{\partial t}(t) = b \delta_b^t \ln \delta_b - c \delta_c^t \ln\delta_c
+\end{equation}
+$$ {#eq-foc}
+したがって、$U'(t) = 0$を満たす$t$（$t^*$と表記する）は
+$$
+\begin{equation}
   t^* = \frac{\ln(c/b) + \ln(\ln\delta_c/\ln\delta_b)}{\ln(\delta_b/\delta_c)}
-\end{split}
-\end{align}
-$$ {#eq-star}
-意向では、命題1にしたがって、$\delta_b \le \delta_c$を満たすドナーと$\delta_c < \delta_b$を満たすドナーに分けて、最適時期を導出する。
+\end{equation}
+$$ {#eq-t-star}
+となる。
 
-命題1より、$\delta_b \le \delta_c$となるドナーは、$b \ge c$となるとき、返信が最適行動となる。したがって、$\delta_b \le \delta_c$かつ$b \ge c$のもとでの最適解を得る。
+命題1にしたがって、我々は$\delta_b \le \delta_c$と$\delta_c < \delta_b$のそれぞれの場合で$t^*$が最適であるかどうかを確認する。初めに$\delta_b \le \delta_c$の場合を考える。この選好を持つドナーについて、$b \ge c$ならば、返信が最適行動となる。したがって、$\delta_b \le \delta_c$かつ$b \ge c$のもとで$t^*$が最適解かを検証する。@eq-foc より、$t \ge t^*$で$(\partial U/\partial t)(U) \ge 0$となる。逆に、$t < t^*$で$(\partial U/\partial t)(U) < 0$となる。したがって、$t^*$は$U(t)$を最小にする。すなわち、$t^*$は最適ではなく、$t=0$もしくは$t=T$が最適である。$t=0$の効用は$U(0) = b - c$であり、$t = T$の効用は$U(T) = b \delta_b^T - c \delta_c^T$である。$\delta_b \le \delta_c$より、常に$U(0) > U(T)$を満たす。したがって、$t = 0$が最適となる。
+
+\noindent
+**Proposition 2**. $x_0 = 1$ is optimal if and only if $\delta_b \le \delta_c$ and $b \ge c$.
+
+\noident
+命題1と組み合わせると、「今でないと助けられない」と考えている（$\delta_b \le \delta_c$）人の行動は返信しないか、すぐに返信するかのどちらかである。
+
+次に、$\delta_b > \delta_c$の場合を考える。この選好を持つドナーについて、$b\ge c(\delta_c/\delta_b)^T$ならば、返信が最適行動となる。したがって、$\delta_b > \delta_c$かつ$b\ge c(\delta_c/\delta_b)^T$のもとで$t^*$が最適解かを検証する。@eq-foc より、$t \le t^*$で$(\partial U/\partial t)(U) \ge 0$となる。逆に、$t > t^*$で$(\partial U/\partial t)(U) < 0$となる。したがって、$t^*$は$U(t)$を最大にするので、$t^*$は最適解である。ただし、$t^* \le 0$ならば、すべての$0 \le t \le T$で$(\partial U/\partial t)(U) \le 0$となるので、$t^* = 0$が最適である。また、$t^* \ge 0$ならば、すべての$0 \le t \le T$で$(\partial U/\partial t)(U) \ge 0$となるので、$t^* = T$が最適である。したがって、最適解を以下のようにまとめることができる。
+$$
+\begin{equation}
+\begin{cases}
+  x_0 = 1  &\text{if}\quad t^* \le 0 \\
+  x_{t^*} = 1 &\text{if}\quad 0 < t^* < T \\
+  x_T = 1  &\text{if}\quad T \le t^*
+\end{cases}
+\end{equation}
+$$ {#eq-solution}
+
+$t^*$が提供価値$b$や提供価値の時間割引因子$\delta_b$によってどのように変化するのかを考察する。$t = t^*$で条件づけたもとで一階条件 @eq-foc を$t$、$b$、$\delta_b$について一階微分を以下のように得る。
+$$
+  \frac{\partial U'}{\partial t}\biggl|_{t = t^*} 
+  = b \delta_b^{t^*} (\ln\delta_b)^2 - c \delta_c^{t^*} (\ln\delta_c)^2
+$$ {#eq-foc-wrt-t}
+$$
+  \frac{\partial U'}{\partial b}\biggl|_{t = t^*} 
+  = \delta_b^{t^*} \ln\delta_b
+$$ {#eq-foc-wrt-b}
+$$
+  \frac{\partial U'}{\partial \delta_b}\biggl|_{t = t^*}
+  = b \delta_b^{t^*-1}(t^*\ln\delta_b + 1)
+$$ {#eq-foc-wrt-delta}
+@eq-foc-wrt-t と @eq-foc-wrt-b を用いて、陰関数定理は
+$$
+  \frac{dt^*}{db} = - \frac{\delta_b^{t^*} \ln\delta_b}{b \delta_b^{t^*} (\ln\delta_b)^2 - c \delta_c^{t^*} (\ln\delta_c)^2}
+$$ {#eq-dtdb}
+を与える。@eq-foc-wrt-t は最適化問題の二階条件なので、$t = t^*$のもとでは必ず負となる。また、$\delta_b < 1$より、@eq-foc-wrt-b も負となる。したがって、@eq-dtdb は常に負となる。同様に、@eq-foc-wrt-t と @eq-foc-wrt-delta を用いて、陰関数定理は
+$$
+  \frac{dt^*}{d\delta_b} = -\frac{b \delta_b^{t^*-1}(t^*\ln\delta_b + 1)}{b \delta_b^{t^*} (\ln\delta_b)^2 - c \delta_c^{t^*} (\ln\delta_c)^2}
+$$ {#eq-dtdd}
+を与える。よって、$t^*\ln\delta_b + 1 > 0$ならば、$\frac{dt^*}{d\delta_b} > 0$となる。この式は以下のように書き換えられる。
+$$
+\begin{equation}
+\begin{split}
+  t^* &< -\frac{1}{\ln\delta_b} \\
+  \ln\left(\frac{c}{b}\right) + \ln\left(\frac{\ln\delta_c}{\ln\delta_b}\right) &< \frac{\ln\delta_c}{\ln\delta_b} - 1 \\
+  \ln\left(\frac{c}{b}\right) &< \frac{\ln\delta_c}{\ln\delta_b} - \ln\left(\frac{\ln\delta_c}{\ln\delta_b}\right) - 1 \\
+  \ln\left(\frac{c}{b}\right) &< F(\delta_b) - 1 \\
+\end{split}
+\end{equation}
+$$ {#eq-cond-dtdd}
+ここで、$F(\delta_b) = \ln\delta_c / \ln\delta_b - \ln(\ln\delta_c / \ln\delta_b)$であり、$F''(\delta_b) > 0$を常に満たす。$F(\delta_b)$は$\delta_b = \delta_c$で最小となり、$F(\delta_c) = 1$となる。したがって、$F(\delta_b) - 1 > 0$を常に満たす。したがって、$b > c$は$\frac{dt^*}{d\delta_b} > 0$の十分条件となる。以上の議論を以下の命題にまとめられる。
+
+\noindent
+**Propositon 3**. Suppose that $\delta_b > \delta_c$ and $b\ge c(\delta_c/\delta_b)^T$. Let $t^*$ be $t$ holding $U'(t) = 0$. Then, $x_0 = 1$ is optimal if and only if $t^* \le 0$. $x_{t^*} is optimal if and only if $0 < t^* < T$. $x_T = 1$ is optimal if and only if $T \le t^*$. $t^*$ is decreasing in $b$, and increasing in $\delta_b$ if $b > c$.
+
+\noindent
+「いつでも助けられる」と考えている人について、後で返信することが最適となりうる。情報提供の介入を通じた提供価値の上昇は早く返信するようになる。また、情報提供の介入が提供価値を大幅に高め、時間割引因子を小幅に減らすとき、介入は返信行動を早める。
