@@ -1331,6 +1331,49 @@ tbl_donate_rcf %>%
   ft_theme()
 ```
 
+# Discussion {#sec-discussion}
+
+我々は返信の意思決定に関する意思決定モデルを構築し、情報提供介入のメカニズムを整理する。ドナー候補者は0期から$T$期の間にいつ返信をするのかを決める。ある$t$期の効用は$U(t) = b\delta_b^t - c\delta_c^t$とし、ここで$b$と$c$はそれぞれ提供の（期待）価値とコストである。また、$\delta_b$と$\delta_c$は時間割引因子であり、提供価値と提供コストで異なることを許容する。また、すべての期で$U(t)$が負となるとき、ドナー候補者は適合通知に返信しない。この節では、理論モデルから得られる示唆のみを提示し、詳細な導出を補論に示す。
+
+```{r}
+optT <- function(b, db, dc = 0.6, c = 10, T = 10) {
+  if (db <= dc) {
+    if (b < c) return(NA) else return(0)
+  } else {
+    if (b < (dc / db)^T) return(NA)
+    tstar <- (log(c/b) + log(log(dc)/log(db))) / log(db/dc)
+    if (tstar <= 0) return(0)
+    if (tstar >= T) return(T)
+    return(tstar)
+  }
+}
+
+sim_data <- expand.grid(
+  b = seq(0.0001, 20, length.out = 100),
+  db = seq(0.0001, 0.9999, length.out = 100)
+)
+
+optim_data <- sim_data %>%
+  rowwise() %>%
+  mutate(optimum = optT(b, db)) %>%
+  ungroup()
+
+optim_data %>%
+  ggplot(aes(x = db, y = b, fill = optimum))+
+    geom_raster() +
+    scale_fill_gradient(high = "#132B43", low = "#d2e9fa", na.value = NA) +
+    labs(
+      x = "Time disount factor with donation value",
+      y = "Donation value",
+      fill = "Optimal response speed"
+    ) +
+    simplegg() +
+    theme(panel.grid.major.y = element_blank())
+```
+
+理論モデルの結果は以下のようにまとめられる。第一に、提供価値$b$が低いドナー候補者は返信しないことを選択するのが最適である。返信の有無を決める提供価値の基準は時間割引因子$\delta_b$に依存する。$\delta_b$の値が十分に高い（$\delta_b > \delta_c$）、すなわち「いつでも助けられる」と考える人について提供価値の基準は$\delta_b$の値が低い（$\delta_b \le \delta_c$）、すなわち「今でないと助けられない」と考える人よりも低い。第二に、「今でないと助けられない」と考える人の最適行動は返信しないか、すぐに返信するのどちらかである。第三に、「いつでも助けられる」と考える人の最適な返信時期は提供価値・コスト・二つの時間割引因子に依存する。とくに、提供価値の増加は返信時期を早める。また、提供価値が十分に高いとき、提供価値の時間割引因子の上昇は返信時期を遅くする。
+
+
 # Conclusion {#sec-conclusion}
 
 Our field experiment revealed that adding information to the compatibility notice, which informs that becoming a potential donor, affects the donor's willingness to donate. In particular, the information that there were fewer potential donors per patient increases the willingness of young men to donate. Examining why the effects were heterogeneous is a topic for future work.
