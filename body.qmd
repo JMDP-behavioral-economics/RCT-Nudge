@@ -407,8 +407,7 @@ The coordination may be interrupted by the patient before potential donors reply
 mod <- list(
   unctrl = value ~ treat,
   ctrl = value ~ treat + age_demean + I(age_demean^2) + male + coordinate +
-    hospital_per_area + PB_per_area + BM_per_area +
-    factor(prefecture) + factor(month) + factor(week)
+    hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week)
 )
 
 est_stock <- stock %>%
@@ -421,7 +420,7 @@ est_stock <- stock %>%
         mod$unctrl,
         data = .,
         cluster = RCTweek,
-        se_type = "stata"
+        se_type = "CR2"
       )
     ),
     fit2 = map(
@@ -430,7 +429,7 @@ est_stock <- stock %>%
         mod$ctrl,
         data = .,
         cluster = RCTweek,
-        se_type = "stata"
+        se_type = "CR2"
       )
     )
   ) %>%
@@ -490,14 +489,14 @@ tbl_est_stock %>%
   align(j = -1, align = "center", part = "all") %>%
   add_footer_lines(paste(
     "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
-    "Standard errors clustered by experimental weeks",
-    "are reported in parentheses.",
+    "The clustered standard errors with the CR2 adjustment",
+    "are reported in parenetheses (cluster unit is experimental weeks).",
     "Covariates are gender, squared polynomial of (demeaned) age,",
     "number of past coordinations,",
     "number of hospitals per 10 square kilometers,",
     "number of hospitals with PBSC collection per 10 square kilometers,",
     "number of hospitals with BM collection per 10 square kilometers,",
-    "prefecture dummies, month dummies, and week dummies."
+    "month dummies, and week dummies."
   )) %>%
   width(j = 1, 1) %>%
   fontsize(size = 9, part = "all")  %>%
@@ -519,7 +518,7 @@ tbl_est_stock %>%
       # "number of hospitals per 10 square kilometers,",
       # "number of hospitals with PBSC collection per 10 square kilometers,",
       # "number of hospitals with BM collection per 10 square kilometers,",
-      # "prefecture dummies, month dummies, and week dummies."
+      # "month dummies, and week dummies."
   #   ),
   #   threeparttable = TRUE
   # )
@@ -538,7 +537,7 @@ est_stock_sub <- stock %>%
     mutate(est = map(data, ~ lm_robust(
       update(mod$ctrl, . ~ . - male - age_demean),
       cluster = RCTweek,
-      se_type = "stata",
+      se_type = "CR2",
       data = .x
     )))
 
@@ -576,7 +575,7 @@ text <- plotdt_stock_sub %>%
 
 ```{r}
 #| label: fig-subsample-reply
-#| fig-cap: 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We cluster standard errors by experimental weeks. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, prefecture dummies, month dummies, and week dummies.'
+#| fig-cap: 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We cluster standard errors by experimental weeks. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
 #| vscode: {languageId: r}
 
 plot_list <- unique(plotdt_stock_sub$outcome) %>%
@@ -594,17 +593,17 @@ plot_list <- unique(plotdt_stock_sub$outcome) %>%
         width = 0
       ) +
       geom_text(
-        aes(y = -0.125, label = N),
+        aes(y = -0.15, label = N),
         data = subset(text, outcome == x),
         color = "black"
       ) +
       geom_text(
-        aes(y = -0.15, label = mean),
+        aes(y = -0.175, label = mean),
         data = subset(text, outcome == x),
         color = "black"
       ) +
       scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.17, 0.17)
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
       ) +
       labs(
         title = paste("Outcome:", x),
@@ -634,8 +633,8 @@ We perform robust checks of the heterogeneity of message effects. First, we comp
 #| label: est-int-rcf
 #| include: false
 
-covariate <- ~ 0 + male + age + coordinate + hospital_per_area +
-  PB_per_area + BM_per_area
+covariate <- ~ 0 + male + age + coordinate +
+  hospital_per_area + PB_per_area + BM_per_area
 
 Y <- use$intention
 X <- model.matrix(covariate, data = use)
@@ -781,7 +780,7 @@ est_tau_corr2 <- subset_cond %>%
   ))
 
 tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
-  flatten() %>%
+  purrr::flatten() %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
   modelsummary(
     coef_map = c(
@@ -845,7 +844,7 @@ speed %>%
       days_reply ~ treat + age_demean + I(age_demean^2) + male + coordinate +
         hospital_per_area + PB_per_area + BM_per_area +
         factor(prefecture) + factor(month) + factor(week),
-      se_type = "stata",
+      se_type = "CR2",
       cluster = RCTweek,
       data = d
     )
@@ -899,7 +898,7 @@ est_flow_sub <- flow %>%
     fit = map(data, ~ lm_robust(
       update(mod$ctrl, . ~ . - male - age_demean),
       cluster = RCTweek,
-      se_type = "stata",
+      se_type = "CR2",
       data = .x
     )),
     avg = map_chr(data, ~ sprintf(
@@ -942,7 +941,7 @@ plot_list_male <- unique(est_flow_sub$outcome) %>%
         labels = subset(est_flow_sub, male == 1 & outcome == x)$avg
       ) +
       scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.1, 0.2)
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
       ) +
       labs(
         title = paste("Outcome:", x),
@@ -984,7 +983,9 @@ plot_list_female <- unique(est_flow_sub$outcome) %>%
         labels = subset(est_flow_sub, male == 0 & outcome == x)$avg
       ) +
       scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
+        breaks = seq(-0.3, 0.3, by = 0.05),
+        labels = sprintf("%1.2f", seq(-0.3, 0.3, by = 0.05)),
+        limits = c(-0.25, 0.2)
       ) +
       labs(
         title = paste("Outcome:", x),
@@ -1047,7 +1048,7 @@ est_coordination <- coordination %>%
         mod$unctrl,
         data = subset(., exclude == 0),
         cluster = RCTweek,
-        se_type = "stata"
+        se_type = "CR2"
       )
     ),
     fit2 = map(
@@ -1056,7 +1057,7 @@ est_coordination <- coordination %>%
         mod$ctrl,
         data = subset(., exclude == 0),
         cluster = RCTweek,
-        se_type = "stata"
+        se_type = "CR2"
       )
     ),
     avg = map_chr(
@@ -1111,14 +1112,14 @@ tbl_est_coordination %>%
   align(j = -1, align = "center", part = "all") %>%
   add_footer_lines(paste(
     "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
-    "Standard errors clustered by experimental weeks",
-    "are reported in parentheses.",
+    "The clustered standard errors with the CR2 adjustment",
+    "are reported in parenetheses (cluster unit is experimental weeks).",
     "Covariates are gender, squared polynomial of (demeaned) age,",
     "number of past coordinations,",
     "number of hospitals per 10 square kilometers,",
     "number of hospitals with PBSC collection per 10 square kilometers,",
     "number of hospitals with BM collection per 10 square kilometers,",
-    "prefecture dummies, month dummies, and week dummies."
+    "month dummies, and week dummies."
   )) %>%
   width(j = 1, 1) %>%
   fontsize(size = 9, part = "all") %>%
@@ -1137,7 +1138,7 @@ tbl_est_coordination %>%
   #     "number of hospitals per 10 square kilometers,",
   #     "number of hospitals with PBSC collection per 10 square kilometers,",
   #     "number of hospitals with BM collection per 10 square kilometers,",
-  #     "prefecture dummies, month dummies, and week dummies."
+  #     "month dummies, and week dummies."
   #   ),
   #   threeparttable = TRUE
   # )
@@ -1157,7 +1158,7 @@ est_coordination_sub <- coordination %>%
   mutate(est = map(data, ~ lm_robust(
     update(mod$ctrl, . ~ . - male - age_demean),
     cluster = RCTweek,
-    se_type = "stata",
+    se_type = "CR2",
     data = subset(.x, exclude == 0)
   )))
 
@@ -1195,8 +1196,14 @@ text <- pdt_coordination_sub %>%
 ```
 
 ```{r}
+pdt_coordination_sub %>%
+  dplyr::filter(age_less30 == 1 & male == 1) %>%
+  dplyr::filter(term == "B")
+```
+
+```{r}
 #| label: fig-subsample-coordination
-#| fig-cap: 'Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We cluster standard errors by experimental weeks. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, prefecture dummies, month dummies, and week dummies.'
+#| fig-cap: 'Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We cluster standard errors by experimental weeks. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
 #| vscode: {languageId: r}
 
 plot_list <- unique(pdt_coordination_sub$outcome) %>%
@@ -1241,132 +1248,6 @@ wrap_plots(plot_list, ncol = 2) +
 ```
 
 @fig-subsample-coordination is a coefficient plot of the subsample analysis divided by gender and age. The results show that experimental arm B increases the probability of taking the CT for males under age 30. Surprisingly, this experimental arm also statistically significantly increases the donation probability for this gender-age group. However, we have not been able to distinguish whether this is an effect of potential donor intent or simply reflects the tendency of patient physicians to select younger men with better transplant records. Furthermore, when computing p-values using the wild cluster bootstrap method, we cannot reject the null hypothesis for a positive effect of experimental arm B. Thus, these results are not robust. Experimental arm B also statistically significantly increases the probability of CT for men over 30 years old. Experimental arm D statistically significantly increases the probability of CT for men and women over 30 years old.
-
-```{r}
-#| label: est-donate-rcf
-#| include: false
-#| eval: false
-
-donate <- subset(coordination, outcome == "Donation")
-Y <- donate$value
-X <- model.matrix(covariate, data = donate)
-W <- donate$treat
-G <- donate$RCTweek
-
-donate_rcf <- multi_arm_causal_forest(X, Y, W)
-donate_tau <- predict(donate_rcf, X)
-```
-
-```{r}
-#| label: fig-donate-rcf
-#| fig-cap: Distribution of Individual Treatment Effects on Donation Estimated by Random Causal Forest.
-#| eval: false
-
-predict_donate_rcf <- data.frame(X) %>%
-  cbind(donate_tau$predictions) %>%
-  rename(
-    effect_B = `B - A.Y.1`,
-    effect_C = `C - A.Y.1`,
-    effect_D = `D - A.Y.1`
-  ) %>%
-  pivot_longer(
-    effect_B:effect_D,
-    names_to = c(".value", "treat"),
-    names_sep = "_"
-  ) %>%
-  mutate(
-    treat = factor(treat, labels = paste("Message", LETTERS[2:4])),
-    age_less30 = if_else(age < 30, 1, 0),
-    pos = paste0(male, age_less30),
-    pos = factor(
-      pos,
-      levels = c("01", "00", "11", "10"),
-      labels = c(
-        "Female\u00d7\nAge<30",
-        "Female\u00d7\n30\u2264Age",
-        "Male\u00d7\nAge<30",
-        "Male\u00d7\n30\u2264Age"
-      )
-    )
-  )
-
-predict_donate_rcf %>%
-  ggplot(aes(x = effect, y = after_stat(count) / sum(after_stat(count)))) +
-  geom_histogram(
-    aes(fill = effect > 0),
-    breaks = seq(-.2, .2, by = .01),
-    color = "black"
-  ) +
-  scale_fill_manual(values = c("white", "red")) +
-  facet_grid(treat~pos) +
-  labs(
-    x = "Treatment effects",
-    y = "Fraction"
-  ) +
-  simplegg() +
-  theme(legend.position = "none")
-```
-
-```{r}
-#| label: est-donate-rcf-cate
-#| include: false
-#| eval: false
-
-subset_cond <- list(
-  X[, "male"] == 1 & X[, "age"] < 30,
-  X[, "male"] == 0 & X[, "age"] < 30,
-  X[, "male"] == 1 & X[, "age"] >= 30,
-  X[, "male"] == 0 & X[, "age"] >= 30
-)
-
-ate_donate_rcf <- subset_cond %>%
-  purrr::map(~ average_treatment_effect(donate_rcf, subset = .)) %>%
-  reduce(bind_rows) %>%
-  mutate(
-    z = abs(estimate / std.err),
-    p = 2 * pnorm(z, lower.tail = FALSE),
-    gender = rep(c("Males", "Females", "Males", "Females"), each = 3),
-    age = rep(c("Young", "Elder"), each = 6)
-  )
-
-tbl_donate_rcf <- ate_donate_rcf %>%
-  select(gender, age, contrast, estimate, std.err, p) %>%
-  pivot_wider(names_from = gender, values_from = estimate:p) %>%
-  select(age, contrast, ends_with("Females"), ends_with("Males")) %>%
-  mutate(contrast = str_extract(contrast, "[B-D]"))
-```
-
-```{r}
-#| label: tbl-donate-rcf-cate
-#| tbl-cap: Conditional Average Treatment Effect Estimated by RCF.
-#| eval: false
-
-tbl_donate_rcf %>%
-  mutate(age = recode(
-    age,
-    "Young" = "Age: Less than 30",
-    "Elder" = "Age: More than or equal to 30"
-  )) %>%
-  as_grouped_data("age") %>%
-  as_flextable(hide_grouplabel = TRUE) %>%
-  set_header_labels(
-    contrast = "",
-    estimate_Females = "Estimate",
-    std.err_Females = "S.E.",
-    p_Females = "P-value",
-    estimate_Males = "Estimate",
-    std.err_Males = "S.E.",
-    p_Males = "P-value"
-  ) %>%
-  add_header_row(values = c("", "Females", "Males"), colwidths = c(1, 3, 3)) %>%
-  align(j = -1, align = "center", part = "all") %>%
-  colformat_double(j = -1, digits = 3) %>%
-  padding(j=1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
-  padding(2:4, padding.left = 10) %>%
-  padding(6:8, padding.left = 10) %>%
-  fontsize(size = 9, part = "all")  %>%
-  ft_theme()
-```
 
 # Discussion {#sec-discussion}
 
@@ -1643,6 +1524,7 @@ tbl_stock_sub %>%
 
 ate_bs_coordination <- coordination %>%
   dplyr::filter(age < 30 & male == 1) %>%
+  dplyr::filter(exclude == 0) %>%
   group_by(outcome) %>%
   nest() %>%
   mutate(
@@ -1805,6 +1687,133 @@ cov_donate_rcf %>%
   padding(20:24, j = 1, padding.left = 10) %>%
   width(j = -1, 0.7) %>%
   width(j = 1, 1.27) %>%
+  fontsize(size = 9, part = "all")  %>%
+  ft_theme()
+```
+
+
+```{r}
+#| label: est-donate-rcf
+#| include: false
+#| eval: false
+
+donate <- subset(coordination, outcome == "Donation")
+Y <- donate$value
+X <- model.matrix(covariate, data = donate)
+W <- donate$treat
+G <- donate$RCTweek
+
+donate_rcf <- multi_arm_causal_forest(X, Y, W)
+donate_tau <- predict(donate_rcf, X)
+```
+
+```{r}
+#| label: fig-donate-rcf
+#| fig-cap: Distribution of Individual Treatment Effects on Donation Estimated by Random Causal Forest.
+#| eval: false
+
+predict_donate_rcf <- data.frame(X) %>%
+  cbind(donate_tau$predictions) %>%
+  rename(
+    effect_B = `B - A.Y.1`,
+    effect_C = `C - A.Y.1`,
+    effect_D = `D - A.Y.1`
+  ) %>%
+  pivot_longer(
+    effect_B:effect_D,
+    names_to = c(".value", "treat"),
+    names_sep = "_"
+  ) %>%
+  mutate(
+    treat = factor(treat, labels = paste("Message", LETTERS[2:4])),
+    age_less30 = if_else(age < 30, 1, 0),
+    pos = paste0(male, age_less30),
+    pos = factor(
+      pos,
+      levels = c("01", "00", "11", "10"),
+      labels = c(
+        "Female\u00d7\nAge<30",
+        "Female\u00d7\n30\u2264Age",
+        "Male\u00d7\nAge<30",
+        "Male\u00d7\n30\u2264Age"
+      )
+    )
+  )
+
+predict_donate_rcf %>%
+  ggplot(aes(x = effect, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_histogram(
+    aes(fill = effect > 0),
+    breaks = seq(-.2, .2, by = .01),
+    color = "black"
+  ) +
+  scale_fill_manual(values = c("white", "red")) +
+  facet_grid(treat~pos) +
+  labs(
+    x = "Treatment effects",
+    y = "Fraction"
+  ) +
+  simplegg() +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| label: est-donate-rcf-cate
+#| include: false
+#| eval: false
+
+subset_cond <- list(
+  X[, "male"] == 1 & X[, "age"] < 30,
+  X[, "male"] == 0 & X[, "age"] < 30,
+  X[, "male"] == 1 & X[, "age"] >= 30,
+  X[, "male"] == 0 & X[, "age"] >= 30
+)
+
+ate_donate_rcf <- subset_cond %>%
+  purrr::map(~ average_treatment_effect(donate_rcf, subset = .)) %>%
+  reduce(bind_rows) %>%
+  mutate(
+    z = abs(estimate / std.err),
+    p = 2 * pnorm(z, lower.tail = FALSE),
+    gender = rep(c("Males", "Females", "Males", "Females"), each = 3),
+    age = rep(c("Young", "Elder"), each = 6)
+  )
+
+tbl_donate_rcf <- ate_donate_rcf %>%
+  select(gender, age, contrast, estimate, std.err, p) %>%
+  pivot_wider(names_from = gender, values_from = estimate:p) %>%
+  select(age, contrast, ends_with("Females"), ends_with("Males")) %>%
+  mutate(contrast = str_extract(contrast, "[B-D]"))
+```
+
+```{r}
+#| label: tbl-donate-rcf-cate
+#| tbl-cap: Conditional Average Treatment Effect Estimated by RCF.
+#| eval: false
+
+tbl_donate_rcf %>%
+  mutate(age = recode(
+    age,
+    "Young" = "Age: Less than 30",
+    "Elder" = "Age: More than or equal to 30"
+  )) %>%
+  as_grouped_data("age") %>%
+  as_flextable(hide_grouplabel = TRUE) %>%
+  set_header_labels(
+    contrast = "",
+    estimate_Females = "Estimate",
+    std.err_Females = "S.E.",
+    p_Females = "P-value",
+    estimate_Males = "Estimate",
+    std.err_Males = "S.E.",
+    p_Males = "P-value"
+  ) %>%
+  add_header_row(values = c("", "Females", "Males"), colwidths = c(1, 3, 3)) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  colformat_double(j = -1, digits = 3) %>%
+  padding(j=1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
+  padding(2:4, padding.left = 10) %>%
+  padding(6:8, padding.left = 10) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
