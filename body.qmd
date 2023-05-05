@@ -69,7 +69,7 @@ execute:
 
 # Introduction {#sec-intro}
 
-同種造血幹細胞移植は白血病などの血液病に対する最も再発率の低い治療法の一つである。この治療法では、(1)抗がん剤や放射線によって異常な細胞と健康な造血幹細胞を同時に殺し、(2)他者から提供された健康な造血幹細胞を移植する。骨髄移植（造血幹細胞移植）における要件は、ドナーのHLAと呼ばれる白血球の型が患者のHLAと一致していることである[^hapro]。 ランダムに選ばれた二人のマッチング確率は1%未満である一方で、兄弟姉妹間で一致する可能性が最も高く、その確率は30%程度である。また、親子間のマッチング確率はかなり低い。親族の中に適合するドナーがいなければ、患者は近親者以外からドナーを探さなければならない。日本において、患者は一般的に日本骨髄バンク（JMDP）を介して非近親者のドナーを探すことになる。しかしながら、JMDPによるコーディネーションは移植に至るまで長時間を要し、登録患者の60%のみが移植を受けられない [@Hirakawa2018]。
+同種造血幹細胞移植は白血病などの血液病に対する最も再発率の低い治療法の一つである。この治療法では、(1)抗がん剤や放射線によって異常な細胞と健康な造血幹細胞を同時に殺し、(2)他者から提供された健康な造血幹細胞を移植する。骨髄移植（造血幹細胞移植）における要件は、ドナーのHLAと呼ばれる白血球の型が患者のHLAと一致していることである[^hapro]。ランダムに選ばれた二人のマッチング確率は1%未満である一方で、兄弟姉妹間で一致する可能性が最も高く、その確率は30%程度である。また、親子間のマッチング確率はかなり低い。親族の中に適合するドナーがいなければ、患者は近親者以外からドナーを探さなければならない。日本において、患者は一般的に日本骨髄バンク（JMDP）を介して非近親者のドナーを探すことになる。しかしながら、JMDPによるコーディネーションは移植に至るまで長時間を要し、登録患者の60%のみが移植を受けられない [@Hirakawa2018]。
 
 [^hapro]: 近年、ハプロ移植と呼ばれる、半合致したHLAを持つ近親者間での移植が広がりつつある。加えて、母子をつなぐさい帯や胎盤に含まれる血液細胞の移植（さい帯血移植）も同様に人気になっている。骨髄移植と異なり、HLAが完全に合致していなくても、さい帯血移植は実施できる。
 
@@ -130,6 +130,8 @@ options(
   modelsummary_factory_latex = "kableExtra",
   modelsummary_factory_word = "flextable"
 )
+
+tidy_custom.lm_robust <- function(x, ...) broom::tidy(x)
 ```
 
 
@@ -238,7 +240,7 @@ lm_robust(
   ongoing ~ treat,
   data = rawdt,
   cluster = RCTweek,
-  se_type = "stata"
+  se_type = "CR2"
 ) %>%
 {
   f <- summary(.)$fstatistic[1]
@@ -252,7 +254,7 @@ lm_robust(
 
 We received the coordination data maintained by the JMDP at the end of June 2022. The observation unit is the experimental subject. As individual attributes, the data record gender, age, number of past coordination, and region of residence (at the prefectural level). For the coordination process, the data records whether or not to reach each step (reply to the compatibility notice, the confirmatory typing, the candidate selection, the final consent, and the collection). We use these variables as outcome variables. In particular, for replies to the compatibility notice, the data additionally record the number of days of reply and the intention to donate. If the coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, reasons other than donor's health, and donor's health reasons). In analysis, we use 11,049 individuals who reside in Japan and whose coordination has been completed [^exclude].
 
-[^exclude]: one person resided abroad. There were also 104 persons for whom coordination was in progress when we received the data. The proportion of people with ongoing coordination is well balanced across experimental arms (F-value, p-value = $0.956$).
+[^exclude]: one person resided abroad. There were also 104 persons for whom coordination was in progress when we received the data. The proportion of people with ongoing coordination is well balanced across experimental arms (F-value, p-value = $0.964$).
 
 As additional data, we use the list of hospitals published by the JMDP on its website. In addition to hospital addresses, this data includes whether bone marrow (BM) collection and peripheral blood stem cell (PBSC) collection are available. We aggregate this data at the prefectural level, calculate the number of hospitals per 10 square kilometers, and merge it and the coordination data using the prefecture as a merge key. We consider this variable as the traveling cost of coordination and donation.
 
@@ -292,7 +294,7 @@ balance_p <- use %>%
   do(est = lm_robust(
     value ~ treat,
     clusters = RCTweek,
-    se_type = "stata",
+    se_type = "CR2",
     data = .
   )) %>%
   summarize(
@@ -338,10 +340,16 @@ tbl_experiment_summary <- bind_rows(size, balance_test)
 #| vscode: {languageId: r}
 
 tbl_experiment_summary %>%
-  rename(`F-test, p-value` = p) %>%
   as_grouped_data("type") %>%
   as_flextable(hide_grouplabel = TRUE) %>%
+  set_header_labels(vars = "", p = "F-test, p-value") %>%
   add_header_row(values = c("", "Experimental Arms", ""), colwidths = c(1, 4, 1)) %>%
+  add_footer_lines(paste(
+    "Notes: Balance test regresses a covariate on treatment dummies",
+    "and test a null hypothesis that all coefficients are zero.",
+    "We use the clustered standard error with the CR2 adjustment for inference",
+    "(cluster unit is experimental week)."
+  )) %>%
   align(j = -1, align = "center", part = "all") %>%
   padding(j=1:6, padding.top=5, padding.bottom = 5, part = "all") %>%
   padding(2:4, padding.left = 10) %>%
@@ -375,7 +383,7 @@ lm_robust(
   exg_stop_reply ~ treat,
   data = use,
   cluster = RCTweek,
-  se_type = "stata"
+  se_type = "CR2"
 ) %>%
 {
   f <- summary(.)$fstatistic[1]
@@ -589,7 +597,7 @@ text <- plotdt_stock_sub %>%
 
 ```{r}
 #| label: fig-subsample-reply
-#| fig-cap: 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We cluster standard errors by experimental weeks. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
+#| fig-cap: 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
 #| vscode: {languageId: r}
 
 plot_list <- unique(plotdt_stock_sub$outcome) %>%
@@ -661,7 +669,7 @@ int_tau <- predict(int_rcf, X)
 
 ```{r}
 #| label: fig-int-rcf
-#| fig-cap: Distribution of Individual Treatment Effects on Intention Estimated by Random Causal Forest.
+#| fig-cap: Distribution of Individual Treatment Effects on Intention Estimated by Random Causal Forest. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.
 
 predict_int_rcf <- data.frame(X) %>%
   cbind(int_tau$predictions) %>%
@@ -763,6 +771,13 @@ tbl_int_rcf %>%
   padding(j=1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
   padding(2:4, padding.left = 10) %>%
   padding(6:8, padding.left = 10) %>%
+  add_footer_lines(paste(
+    "Notes: See Athey and Wager (2019) for",
+    "estimation method of conditional average treatment effect (CATE).",
+    "Since these estimates are asymptotically normal,",
+    "we calculate z-score under the null hypothesis that CATE is zero,",
+    "and obtain p-value."
+  )) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
@@ -936,7 +951,7 @@ est_flow_sub
 
 ```{r}
 #| label: fig-young-male-speed
-#| fig-cap: 'Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome.'
+#| fig-cap: 'Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
 #| vscode: {languageId: r}
 
 plot_list_male <- unique(est_flow_sub$outcome) %>%
@@ -978,7 +993,7 @@ In this gender-age group, we have already found that experimental arm B, which a
 
 ```{r}
 #| label: fig-young-female-speed
-#| fig-cap: 'Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome.'
+#| fig-cap: 'Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
 #| vscode: {languageId: r}
 
 plot_list_female <- unique(est_flow_sub$outcome) %>%
@@ -1211,7 +1226,7 @@ text <- pdt_coordination_sub %>%
 
 ```{r}
 #| label: fig-subsample-coordination
-#| fig-cap: 'Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We cluster standard errors by experimental weeks. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
+#| fig-cap: 'Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'
 #| vscode: {languageId: r}
 
 plot_list <- unique(pdt_coordination_sub$outcome) %>%
@@ -1265,7 +1280,7 @@ wrap_plots(plot_list, ncol = 2) +
 
 ```{r}
 #| label: fig-theory-simulation
-#| fig-cap: Simulation of Optimal Response Speed 
+#| fig-cap: "Simulation of Optimal Response Speed. Note: We assume $c = 10$, $\\delta_c = 0.6$, and $T = 10$."
 
 optT <- function(b, db, dc = 0.6, c = 10, T = 10) {
   if (db <= dc) {
@@ -1391,6 +1406,15 @@ tbl_stock_logit %>%
     values = c("", "Intention"),
     colwidths = c(3, 4)
   ) %>%
+  add_footer_lines(paste(
+    "Notes: We show odds ratios and associated 95 percent confidential intervals.",
+    "Covariates are gender, squared polynomial of (demeaned) age,",
+    "number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies."
+  )) %>%
   align(j = -1, align = "center", part = "all") %>%
   width(j = 1, 1) %>%
   fontsize(size = 9, part = "all") %>%
@@ -1456,6 +1480,15 @@ tbl_coordination_logit %>%
   ) %>%
   align(j = -1, align = "center", part = "all") %>%
   width(j = 1, 1) %>%
+  add_footer_lines(paste(
+    "Notes: We show odds ratios and associated 95 percent confidential intervals.",
+    "Covariates are gender, squared polynomial of (demeaned) age,",
+    "number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies."
+  )) %>%
   fontsize(size = 9, part = "all") %>%
   ft_theme()
 ```
@@ -1502,6 +1535,7 @@ tbl_stock_sub <- est_stock_sub %>%
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
     add_rows = data.frame(rbind(
       c("Covariates", rep("X", 6)),
+      c("Bootstrap p-value", rep("", 6)),
       c("B = 0", sprintf("%1.3f", ate_bs$treatB)),
       c("D = 0", sprintf("%1.3f", ate_bs$treatD))
     ))
@@ -1518,11 +1552,24 @@ tbl_stock_sub %>%
     values = c("", "Reply", "Positive", "Negative", "Reply", "Positive", "Negative")
   ) %>%
   add_header_row(
-    values = c("", "Young females", "Young males"),
+    values = c("", "Females", "Males"),
     colwidths = c(1, 3, 3)
   ) %>%
+  add_footer_lines(paste(
+    "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+    "The clustered standard errors with the CR2 adjustment",
+    "are reported in parenetheses (cluster unit is experimental weeks).",
+    "Covariates are number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies.",
+    "Bootstrap p-value is based on the wild cluster bootstrap-t with a null hypothesis imposed,",
+    "which is proposed by Cameron et al. (2008)."
+  )) %>%
   width(j=1, 1) %>%
-  fontsize(size = 9, part = "all")  %>%
+  padding(12:13, padding.left = 10) %>%
+  fontsize(size = 9, part = "all") %>%
   ft_theme()
 ```
 
@@ -1560,6 +1607,7 @@ tbl_coordination_sub <- est_coordination_sub %>%
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
     add_rows = data.frame(rbind(
       c("Covariates", rep("X", 4)),
+      c("Bootstrap p-value", rep("", 4)),
       c("B = 0", sprintf("%1.3f", ate_bs_coordination$treatB))
     ))
   )
@@ -1574,8 +1622,21 @@ tbl_coordination_sub %>%
   add_header_row(
     values = c("", "CT", "Candidate", "Consent", "Donation")
   ) %>%
-  fontsize(size = 9, part = "all")  %>%
   width(j=1, 1) %>%
+  add_footer_lines(paste(
+    "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+    "The clustered standard errors with the CR2 adjustment",
+    "are reported in parenetheses (cluster unit is experimental weeks).",
+    "Covariates are number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies.",
+    "Bootstrap p-value is based on the wild cluster bootstrap-t with a null hypothesis imposed,",
+    "which is proposed by Cameron et al. (2008)."
+  )) %>%
+  padding(12, padding.left = 10) %>%
+  fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
 
