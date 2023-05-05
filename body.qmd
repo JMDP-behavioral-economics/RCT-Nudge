@@ -69,7 +69,21 @@ execute:
 
 # Introduction {#sec-intro}
 
-Allogenic stem cell transplantation is one of the treatments with the lowest recurrence rate for blood diseases such as leukemia. In this treatment method, (1) diseased cells and healthy hematopoietic stem cells are simultaneously killed by anticancer drugs and radiation, and (2) healthy hematopoietic stem cells donated by another person are transplanted. One requirement for bone marrow transplantation (hematopoietic stem cell transplantation) is that the donor's white blood cell type, called HLA, matches the patient's HLA.[^hapro] While the matching probability between two random people is less than 1%, the most likely HLA match is between siblings, with a probability of approximately 30%. The matching probability between parents and children is very low. If there is no matched donor among blood relatives, the patient must seek a donor from an unrelated person. In Japan, the patient generally seeks unrelated donors through the Japan Marrow Donor Program (JMDP). However, coordination by the JMDP results in a long transplant process, and only 60% of registered patients receive a transplant [@Hirakawa2018].
+同種造血幹細胞移植は白血病などの血液病に対する最も再発率の低い治療法の一つである。この治療法では、(1)抗がん剤や放射線によって異常な細胞と健康な造血幹細胞を同時に殺し、(2)他者から提供された健康な造血幹細胞を移植する。骨髄移植（造血幹細胞移植）における要件は、ドナーのHLAと呼ばれる白血球の型が患者のHLAと一致していることである[^hapro]。 ランダムに選ばれた二人のマッチング確率は1%未満である一方で、兄弟姉妹間で一致する可能性が最も高く、その確率は30%程度である。また、親子間のマッチング確率はかなり低い。親族の中に適合するドナーがいなければ、患者は近親者以外からドナーを探さなければならない。日本において、患者は一般的に日本骨髄バンク（JMDP）を介して非近親者のドナーを探すことになる。しかしながら、JMDPによるコーディネーションは移植に至るまで長時間を要し、登録患者の60%のみが移植を受けられない [@Hirakawa2018]。
+
+[^hapro]: 近年、ハプロ移植と呼ばれる、半合致したHLAを持つ近親者間での移植が広がりつつある。加えて、母子をつなぐさい帯や胎盤に含まれる血液細胞の移植（さい帯血移植）も同様に人気になっている。骨髄移植と異なり、HLAが完全に合致していなくても、さい帯血移植は実施できる。
+
+患者の生存確率を高めるためのドナープールに対する介入は二種類ある。第一に、潜在的なドナーの人数を増やして、マッチング確率を高めるような政策である。4人未満のドナーと合致する患者と比較して、200人以上のドナーと合致する患者の移植率は45%から74%に上昇する [@Hirakawa2018]。しかしながら、2000年から2015年にかけて潜在的なドナーの数は約二倍に増えたにもかかわらず、初回マッチング確率は5%程度しか増えていない [@Takanashi2016][^reason]。したがって、潜在的なドナーを増やすことの限界便益は小さいので、プールの規模を拡大することは非効率的であるだろう。
+
+[^reason]: これは珍しいHLAの型を持つ新しいドナーの確率が低いからである。
+
+第二の政策はドナープールに提供を断らない潜在的なドナーの比率を高めることである。この種の政策はドナープールの質に貢献するものである。@Hirakawa2018 は多くの移植コーディネーションはドナー側の都合により、コーディネーションの第一過程である確認検査の前に中断していることを示している（コーディネーションの過程は @sec-background を参照）。したがって、提供の意思の強い多くの潜在ドナーでできたプールを作ることは移植率を高めるだろう。また、ドナープールの質を改善する政策の限界便益はドナープールの規模を拡大する政策のそれよりも高いだろう。
+
+そこで、本研究はドナープールの質を改善する政策の一つとして情報提供の効果を検証する。JMDPに登録した人がある患者の潜在的なドナーとなると、潜在ドナーはJMDPから適合通知を受け取る。そして、提供意思を示して適合通知に返信する潜在ドナーは移植のためのコーディネーションを受ける。我々はJMDPによって公開されている情報に基づいて適合通知に新規のメッセージを加えて、追加メッセージの効果を検証するフィールド実験を2021年9月から2022年2月にかけて実施した。介入メッセージは二つある。第一に、患者一人あたりの潜在的なドナーの数が少ないという情報（確率情報）である。患者一人につき複数の潜在的なドナーが同時にコーディネーションを受けるので、JMDPを通じた幹細胞移植は公共財の性質を持つ。したがって、同時にコーディネーションを受けている潜在的なドナーが多ければ多いほど、フリーライドするインセンティブが強くなる。第一のメッセージはコーディネーション進行中のドナーの数に関する過剰な期待によって生じるただ乗り行動を妨げることを目的としている。もう一つのメッセージはJMDPに登録した患者の半分しか移植を受けられないというもの（利他情報）である。この情報は幹細胞提供という利他行動の価値を高めることを目的としている。また、このメッセージは候補となるドナーが早く見つけられるほど、移植率を高められることも明記して、適合通知に早く返信してもらうことを目的としている。
+
+我々はJMDPに実験機関に適合通知を受け取った人に関するコーディネーション過程のデータの提供を依頼し、情報を提供することの効果を分析した。我々のフィールド実験は情報提供の効果は異質的であることを示している。確率情報は移植成績がよいにもかかわらず適合通知への返信率が低い若年層の男性に効果的であるが、利他情報は若年男性に効果的でなかった。さらに、二つの情報を同時に提供する介入も、利他情報に強く影響を受けてしまうために、効果的でなかった。
+
+<!-- Allogenic stem cell transplantation is one of the treatments with the lowest recurrence rate for blood diseases such as leukemia. In this treatment method, (1) diseased cells and healthy hematopoietic stem cells are simultaneously killed by anticancer drugs and radiation, and (2) healthy hematopoietic stem cells donated by another person are transplanted. One requirement for bone marrow transplantation (hematopoietic stem cell transplantation) is that the donor's white blood cell type, called HLA, matches the patient's HLA.[^hapro] While the matching probability between two random people is less than 1%, the most likely HLA match is between siblings, with a probability of approximately 30%. The matching probability between parents and children is very low. If there is no matched donor among blood relatives, the patient must seek a donor from an unrelated person. In Japan, the patient generally seeks unrelated donors through the Japan Marrow Donor Program (JMDP). However, coordination by the JMDP results in a long transplant process, and only 60% of registered patients receive a transplant [@Hirakawa2018].
 
 [^hapro]: Recently, transplants between blood relatives with semi-matched HLA, called haploidentical transplants, have become widespread. In addition, the transplantation of blood cells contained in the umbilical cord and placenta connecting mother and child (cord blood transplant) has also become popular. Unlike bone marrow transplants, cord blood transplants can be performed even without the requirement of a perfect HLA match.
 
@@ -81,7 +95,7 @@ The second type is to increase the proportion of people in the donor pool who ar
 
 Then, this study examines the effectiveness of information provision as one policy improving the quality of the donor pool. When a person registered with the JMDP becomes a potential donor for a patient, the potential donor receives a compatibility notice from the JMDP. The potential donors who respond to the notification by indicating a willingness to donate then take coordination for transplantation. We added a message to the compatibility notice based on information published by the JMDP and conducted a field experiment from September 2021 to February 2022 to test the effect of the added message. We asked the JMDP to provide data on the coordination process (including whether or not they responded to the notification and their willingness to donate) for those who received the compatibility notice during the experimental period and analyze the effect of providing information.
 
-There are two intervention messages. One is information that there are few potential donors per patient registered in the JMDP. Stem cell donation through JMDP is a public good since multiple potential donors per patient take coordination simultaneously. Thus, potential donors have the incentive to free-ride. The first message prevents potential donors from free-riding behavior caused by the over-estimated expectation about the number of other ongoing potential donors. Another message is that only about half of the patients registered with the JMDP receive transplants. This information aims to increase the value of the altruistic behavior of stem cell donation. Our field experiment shows that information about the small number of potential donors per patient encourages young males to reply to the compatibility notice and indicate their willingness to donate.
+There are two intervention messages. One is information that there are few potential donors per patient registered in the JMDP. Stem cell donation through JMDP is a public good since multiple potential donors per patient take coordination simultaneously. Thus, potential donors have the incentive to free-ride. The first message prevents potential donors from free-riding behavior caused by the over-estimated expectation about the number of other ongoing potential donors. Another message is that only about half of the patients registered with the JMDP receive transplants. This information aims to increase the value of the altruistic behavior of stem cell donation. Our field experiment shows that information about the small number of potential donors per patient encourages young males to reply to the compatibility notice and indicate their willingness to donate. -->
 
 <!-- この研究は日本に限らず他国の類似する骨髄バンクにおける施策へ貢献するものである。JMDPでは、若年男性の移植成績が良いにも関わらず、ドナー都合によるコーディネーションの中断率が高い[@Hirakawa2018]。同様の問題はXXXXでも生じている。我々のフィールド実験はこの問題を解決するための一つの施策を提示できる。
 
@@ -762,7 +776,6 @@ We also confirm that our intervention has a statistically non-significant effect
 ```{r}
 #| label: est-correlation-int-rcf
 #| include: false
-#| eval: false
 
 int_tau_pred <- int_tau$predictions[, , 1]
 
@@ -799,7 +812,6 @@ tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
 ```{r}
 #| label: tbl-correlation-int-rcf
 #| tbl-cap: Correlation of Predicted Tratment Effects
-#| eval: false
 
 tbl_tau_corr %>%
   add_header_row(
@@ -826,6 +838,8 @@ tbl_tau_corr %>%
 ## Response Speed to Notification
 
 ```{r}
+#| eval: false
+
 speed <- stock %>%
   dplyr::filter(outcome == "Reply" & value == 1) %>%
   {
@@ -1193,12 +1207,6 @@ text <- pdt_coordination_sub %>%
   ungroup() %>%
   select(male, age_less30, pos, N, mean, outcome) %>%
   distinct()
-```
-
-```{r}
-pdt_coordination_sub %>%
-  dplyr::filter(age_less30 == 1 & male == 1) %>%
-  dplyr::filter(term == "B")
 ```
 
 ```{r}
@@ -1575,7 +1583,7 @@ tbl_coordination_sub %>%
 
 ```{r}
 #| label: est-t-test-covariate-int-rcf
-#| include: false
+#| eval: false
 
 cov_int_rcf <- predict_int_rcf %>%
   mutate(positive = if_else(effect > 0, 1, 0)) %>%
@@ -1598,6 +1606,7 @@ cov_int_rcf <- predict_int_rcf %>%
 ```{r}
 #| label: tbl-t-test-covariate-int-rcf
 #| tbl-cap: Balance Test of Covariates Grouped By Predicted Treatment Effect
+#| eval: false
 
 cov_int_rcf %>%
   as_grouped_data("pos") %>%
