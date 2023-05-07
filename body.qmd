@@ -252,7 +252,7 @@ lm_robust(
 }
 ```
 
-We received the coordination data maintained by the JMDP at the end of June 2022. The observation unit is the experimental subject. As individual attributes, the data record gender, age, number of past coordination, and region of residence (at the prefectural level). For the coordination process, the data records whether or not to reach each step (reply to the compatibility notice, the confirmatory typing, the candidate selection, the final consent, and the collection). We use these variables as outcome variables. In particular, for replies to the compatibility notice, the data additionally record the number of days of reply and the intention to donate. If the coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, reasons other than donor's health, and donor's health reasons). In analysis, we use 11,049 individuals who reside in Japan and whose coordination has been completed [^exclude].
+We received the coordination data maintained by the JMDP at the end of June 2022. The observation unit is the experimental subject. As individual attributes, the data record gender, age, number of past coordination, and region of residence (at the prefectural level). For the coordination process, the data records whether or not to reach each step (reply to the compatibility notice, the confirmatory typing, the candidate selection, the final consent, and the collection). We use these variables as outcome variables. In particular, for replies to the compatibility notice, the data additionally record the number of days of reply and the intention to donate. If the coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, reasons other than donor's health, and donor's health reasons). In analysis, we use 11,049 individuals who reside in Japan and whose coordination has been completed.[^exclude]
 
 [^exclude]: one person resided abroad. There were also 104 persons for whom coordination was in progress when we received the data. The proportion of people with ongoing coordination is well balanced across experimental arms (F-value, p-value = $0.964$).
 
@@ -348,7 +348,7 @@ tbl_experiment_summary %>%
     "Notes: Balance test regresses a covariate on treatment dummies",
     "and test a null hypothesis that all coefficients are zero.",
     "We use the clustered standard error with the CR2 adjustment for inference",
-    "(cluster unit is experimental week)."
+    "(cluster unit is an experimental week)."
   )) %>%
   align(j = -1, align = "center", part = "all") %>%
   padding(j=1:6, padding.top=5, padding.bottom = 5, part = "all") %>%
@@ -360,9 +360,9 @@ tbl_experiment_summary %>%
   ft_theme()
 ```
 
-@tbl-experiment-summary summarizes the field experiments. Panel A shows the interventions for each experimental group, and Panel B shows the sample size for each experimental group. Panel C shows the balance test, which examines whether the randomization is successful. Since most covariates are well-balanced across groups, the clustered assignment is approximately random. However, potential donors in experimental groups C and D may be younger than those in experimental groups A and B (F-test, p-value = $0.067$).
+@tbl-experiment-summary summarizes the field experiments. Panel A shows the interventions for each experimental group, and Panel B shows the sample size for each experimental group. Panel C shows the balance test, which examines whether the randomization is successful. Since most covariates are well-balanced across groups, the clustered assignment is approximately random. However, potential donors in experimental groups C and D may be younger than those in experimental groups A and B (F-test, p-value = $0.096$).
 
-Since potential donors cannot choose the experimental group, i.e., the experimental group is exogenous, a simple difference in means can identify the average treatment effect. However, this leads to bias because age and the number of weeks and months of the assignment are not perfectly balanced across experimental groups. Therefore, in addition to the difference-in-mean test, we estimate the following linear probability model for individual $i$ who received the compatibility notice in a week $w$ of month $m$.
+Our target parameter is the overall population average treatment effect, which can be identified by the difference in means due to exogenous treatment assignment. In addition to the difference in means, we estimate a linear probability model to remove month/week fixed effects and to increase the precision of inference by adding covariates. Our estimation model for individual $i$ who received the compatibility notice in a week $w$ of month $m$ is as follows:
 
 $$
   Y_{imw} =
@@ -372,6 +372,10 @@ $$
 $$
 
 where $X_i$ is the individual attribute vector and $\lambda_m$ and $\theta_w$ are the week and month dummy variables, respectively. We use standard errors clustered at the experimental week level, a unit of randomization.
+
+For inference, we use standard errors clustered by experimental week, which is the unit of randomization. If the distribution of the treatment variable is skewed (the skewness of the binary variable indicating experimental arm B is approximately 1), the standard clustered standard errors will be small, which leads to an excessively low coverage probability of the confidence interval. Therefore, following the recommendation of @Imbens2016, we adjust and report standard errors and degrees of freedom by CR2.[^true-bias]
+
+[^true-bias]: If the proportion of clusters sampled from the population is large and the variance of the within-cluster average treatment effect is large, the true cluster standard errors can be extremely conservative [@Abadie2023]. The CR2 adjustment can remove bias in the estimation of cluster standard errors but cannot correct for bias in the true cluster standard errors. Therefore, it should be interpreted with caution.
 
 # Experimental Results {#sec-result}
 
@@ -418,9 +422,11 @@ stock <- use %>%
 
 ## Effects on Reply and Intention {#sec-reply}
 
-To begin, we estimate the effect of our interventions on reply, which is the most likely manifestation of the potential donor's intention. The outcome variable for replying is a dummy variable that takes one if the potential donor replies to the compatibility notice regardless of donor intention. We decompose the message effect on response to the notification into two parts. The first is the effect on replying with a positive intention. For estimation, the outcome variable is a dummy variable that takes one if the potential donor replied to the notice and indicated the willingness to donate. The second is the effect on replying with a negative intention. The outcome variable is a dummy variable that takes one if the potential donor replied to the notice and did not indicate the willingness to donate. When estimating these effects, we include non-responders in the sample, coding their outcomes as 0. Since the sum of the two outcome variables for the intention to donate is always equal to the dummy variable for the reply, the sum of the effects on the positive and negative intentions is always the effect on replying. The response rate is $88.35$% in the control arm. The proportion of replying with positive intention is $55.33$%, while the proportion of replying with negative intention is $33.03$% in the control arm. Thus, $62.63$% of potential donors who replied to the compatibility notice were willing to donate.
+To begin, we estimate the effect of our interventions on reply, which is the most likely manifestation of the potential donor's intention. The outcome variable for replying is a dummy variable that takes one if the potential donor replies to the compatibility notice regardless of donor intention. The response rate is $88.35$% in the control arm (experimental arm A).
 
-The coordination may be interrupted by the patient before potential donors reply. Since this case occurs independently of the potential donor's intention, we exclude it from the sample in our analysis. We exclude $0.5$--$0.7$% of each experimental group, and the proportions are well balanced across groups (F-test, p-value=$0.242$).
+We decompose the message effect on response to the notification into two parts. The first is the effect on replying with a positive intention. For estimation, the outcome variable is a dummy variable that takes one if the potential donor replied to the notice and indicated the willingness to donate. The second is the effect on replying with a negative intention. The outcome variable is a dummy variable that takes one if the potential donor replied to the notice and did not indicate the willingness to donate. When estimating these effects, we include non-responders in the sample, coding their outcomes as 0. Since the sum of the two outcome variables for the intention to donate is always equal to the dummy variable for the reply, the sum of the effects on the positive and negative intentions is always the effect on replying. The proportion of replying with positive intention is $55.33$%, while the proportion of replying with negative intention is $33.03$% in the control arm. Thus, $62.63$% of potential donors who replied to the compatibility notice were willing to donate.
+
+The coordination may be interrupted by the patient before potential donors reply. Since this case occurs independently of the potential donor's intention, we exclude it from the sample in our analysis. We exclude $0.5$--$0.7$% of each experimental group, and the proportions are well balanced across groups (F-test, p-value=$0.301$).
 
 ```{r}
 #| label: est-full-reply
@@ -475,14 +481,13 @@ add_table <- tibble::tribble(
   "Covariates", "", "X", "", "X", "", "X"
 )
 
-attr(add_table, "position") <- 9:12
+attr(add_table, "position") <- 7:8
 
 tbl_est_stock <- est_stock %>%
   pull(fit) %>%
   setNames(paste0("(", seq_len(length(.)), ")")) %>%
   modelsummary(
     coef_map = c(
-      "(Intercept)" = "Constant",
       "treatB" = "Treatment B",
       "treatC" = "Treatment C",
       "treatD" = "Treatment D"
@@ -512,7 +517,7 @@ tbl_est_stock %>%
   add_footer_lines(paste(
     "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
     "The clustered standard errors with the CR2 adjustment",
-    "are reported in parenetheses (cluster unit is experimental weeks).",
+    "are reported in parenetheses (cluster unit is an experimental week).",
     "Covariates are gender, squared polynomial of (demeaned) age,",
     "number of past coordinations,",
     "number of hospitals per 10 square kilometers,",
@@ -546,7 +551,7 @@ tbl_est_stock %>%
   # )
 ```
 
-@tbl-full-reply are the estimation results of the linear probability model. Odd columns use only the experimental arm dummies as an explanatory variable, whereas even columns additionally control for individual attributes and month and week fixed effects. Column (1) shows that the experimental arm B, which sends the probability message, increases the reply rate by 1 percentage point or $1.2$%. Controlling for individual attributes and other factors (column (2)) does not significantly change the size of the effect, but it is statistically significant at the 5% level. This effect stems from an increase in replies with positive intentions. Columns (3) and (5) show that experimental arm B increases the replay rate with positive intentions by 2 percentage points or $3.94$% while it decreases the reply rate with negative intentions by 1  percentage point or $3.42$%. Their statistical significance is weak. In addition, experimental arms C and D have smaller effect sizes than experimental arm B and are statistically non-significant. We estimated a logit model as a robustness analysis (@full-reply-logit). The results are consistent with the above table for the direction of the effect but are statistically non-significant. In sum, our intervention has an insignificant impact on replies overall.
+@tbl-full-reply is the estimation results of the linear probability model. Odd columns use only the experimental arm dummies as an explanatory variable, whereas even columns additionally control for individual attributes and month and week fixed effects. The results show that all experimental arms, with or without covariates or month/week fixed effects, have no statistically significant effects on overall replies or replies with positive or negative intentions. We estimated a logit model as robustness ( @full-reply-logit ) and obtained the same results (95 percent confidential interval of odds ratio includes 1).
 
 ```{r}
 #| label: est-subsample-reply
@@ -641,18 +646,14 @@ wrap_plots(plot_list, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-Next, to test the heterogeneity of message effects, we divide the sample into four subsets by gender and age group (less than 30 or not) and estimate the message effects in each sub-group. @fig-subsample-reply is the coefficient plot. The results show that experimental groups B and D, which add at least the probability message, increase the reply rate for young males by 6 percentage points or $8.06$% (the baseline reply rate is $74.4$%).
+Next, to test the heterogeneity of message effects, we divide the sample into four subsets by gender and age group (less than 30 or not) and estimate the message effects in each sub-group. @fig-subsample-reply is the coefficient plot. As a result, experimental arm B, which added only the probability message, statistically significantly increases the reply rates with the intention to donate by about 10 percentage points or $25.91$% (the control average is $38.6$%) for young men. Since experimental arm B reduces the rate of replies without donating intentions, the effect of this group on the overall reply rate is 6 percentage points (statistically significant at 10% level), which is smaller than its effect on replies with donating intentions.[^wild-bs] Given that young male donors have lower donation intentions than the other gender-age group despite their better transplant outcomes, the probability message improves the efficiency of transplant coordination. Note that, among the other gender and age groups, our intervention has no significant effect on replies or intentions.
 
-The effect of experimental arm B with the addition of only probability messages results from an increase in the reply rate with positive intention. Among males under 30, experimental arm B increases the reply rate with positive intention by 10 percentage points or $25.91$% (baseline rate of $38.6$%) but decreases the reply rate with negative intention by 3 percentage points or $8.38$% (baseline rate of $35.8$%). These are statistically significant effects. On the other hand, experimental group D, which adds the probability and patient messages, increases the reply rate with positive and negative intentions by the same amount. In particular, experimental arm D increases the reply rate with negative intention by 3 percentage points or $8.38$%, which is statistically significant.
+[^wild-bs]: Instead of cluster standard errors with the CR2 adjustment, we compute p-values by the wild cluster bootstrap method [@Cameron2008] and find similar results. See @tbl-wildbs-youngmen-reply.
 
-Among the other gender and age groups (especially men and women over 30), our intervention has no significant effect on replies or intentions. However, among women under 30, experimental group D reduces the reply rate with positive intention by $5$ percentage points or $9.69$%. Thus, the message that potential donors per patient are few increases young men's willingness to donate and encourages them to reply to the compatibility notice. Given that young male donors have lower donation intentions than the other gender-age group despite their better transplant outcomes, the probability message improves the efficiency of transplant coordination.
-
-## Robustness to Heterogenous Effect {#sec-robustness}
-
-We perform robust checks of the heterogeneity of message effects. First, we compute p-values using the wild cluster bootstrap method [@Cameron2008]. When the number of clusters is small, the cluster standard errors over-reject the null hypothesis. To correct this, we use the wild cluster bootstrap method. @tbl-young-reply in Appendix is estimation results, restricting the sample to women under 30 (columns (1)--(3)) and men under 30 (columns (4)--(6)). The results show that even with the wild bootstrap method, the probability message (experimental arm B) increases the reply rate with positive intentions among males under 30.
+## Random Causal Forest {#sec-rcf}
 
 ```{r}
-#| label: est-int-rcf
+#| label: rcf-int
 #| include: false
 
 covariate <- ~ 0 + male + age + coordinate +
@@ -663,13 +664,25 @@ X <- model.matrix(covariate, data = use)
 W <- use$treat
 G <- use$RCTweek
 
+subset_cond <- list(
+  X[, "male"] == 0 & X[, "age"] < 30,
+  X[, "male"] == 0 & X[, "age"] >= 30,
+  X[, "male"] == 1 & X[, "age"] < 30,
+  X[, "male"] == 1 & X[, "age"] >= 30
+)
+
+
 int_rcf <- multi_arm_causal_forest(X, Y, W)
 int_tau <- predict(int_rcf, X)
 ```
 
+To dig deeper into the heterogeneity of intervention effects, we use a fully nonparametric method to test for heterogeneous effects called random causal forest (RCF) [@Davis2017; @Athey2019]. This method divides the sample by combinations of covariates and estimates treatment effects within each subsample. A set of subsamples is determined to maximize the variance of the treatment effect [@Athey2016]. This method produces predicted treatment effects, which is a function of the covariates.[^tech-detail]
+
+[^tech-detail]: See @Wager2018 and @Athey2019a for technical and implementation details.
+
 ```{r}
-#| label: fig-int-rcf
-#| fig-cap: Distribution of Individual Treatment Effects on Intention Estimated by Random Causal Forest. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.
+#| label: fig-rcf-int-boxplot
+#| fig-cap: 'Boxplot of Predicted Treatment Effects by Gender and Age. Notes: Blue fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.'
 
 predict_int_rcf <- data.frame(X) %>%
   cbind(int_tau$predictions) %>%
@@ -684,128 +697,64 @@ predict_int_rcf <- data.frame(X) %>%
     names_sep = "_"
   ) %>%
   mutate(
-    treat = factor(treat, labels = paste("Message", LETTERS[2:4])),
-    age_less30 = if_else(age < 30, 1, 0),
-    pos = paste0(male, age_less30),
-    pos = factor(
-      pos,
-      levels = c("01", "00", "11", "10"),
-      labels = c(
-        "Female\u00d7\nAge<30",
-        "Female\u00d7\n30\u2264Age",
-        "Male\u00d7\nAge<30",
-        "Male\u00d7\n30\u2264Age"
-      )
-    )
+    male = factor(male, labels = c("Females", "Males")),
+    treat = factor(treat, labels = paste("Message", LETTERS[2:4]))
   )
 
 predict_int_rcf %>%
-  ggplot(aes(x = effect, y = after_stat(count) / sum(after_stat(count)))) +
-  geom_histogram(
-    aes(fill = effect > 0),
-    breaks = seq(-.2, .2, by = .01),
-    color = "black"
-  ) +
-  scale_fill_manual(values = c("white", "red")) +
-  facet_grid(treat~pos) +
-  labs(
-    x = "Treatment effects",
-    y = "Fraction"
-  ) +
-  simplegg() +
-  theme(legend.position = "none")
+  ggplot(aes(x = age, y = effect)) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  geom_boxplot(aes(group = age)) +
+  stat_smooth(se = FALSE, color = "blue") +
+  facet_grid(treat ~ male) +
+  labs(x = "Age", y = "Predicted treatment effect") +
+  simplegg()
 ```
 
 ```{r}
-#| label: est-int-rcf-cate
 #| include: false
 
-subset_cond <- list(
-  X[, "male"] == 0 & X[, "age"] < 30,
-  X[, "male"] == 0 & X[, "age"] >= 30,
-  X[, "male"] == 1 & X[, "age"] < 30,
-  X[, "male"] == 1 & X[, "age"] >= 30
-)
+predict_int_rcf %>%
+  dplyr::filter(male == "Males") %>%
+  dplyr::filter(30 < age & age <= 40) %>%
+  dplyr::filter(treat == "Message B") %>%
+  mutate(high = if_else(effect >= 0.1, 1, 0)) %>%
+  group_by(high) %>%
+  summarize_at(vars(coordinate:BM_per_area), list(~ mean(.)))
 
-ate_int_rcf <- subset_cond %>%
-  purrr::map(~ average_treatment_effect(int_rcf, subset = .)) %>%
-  reduce(bind_rows) %>%
-  mutate(
-    z = abs(estimate / std.err),
-    p = 2 * pnorm(z, lower.tail = FALSE),
-    gender = rep(c("Females", "Males"), each = 6),
-    age = rep(c("Young", "Elder", "Young", "Elder"), each = 3)
-  )
-
-tbl_int_rcf <- ate_int_rcf %>%
-  select(gender, age, contrast, estimate, std.err, p) %>%
-  pivot_wider(names_from = gender, values_from = estimate:p) %>%
-  select(age, contrast, ends_with("Females"), ends_with("Males")) %>%
-  mutate(contrast = str_extract(contrast, "[B-D]"))
+predict_int_rcf %>%
+  dplyr::filter(45 < age) %>%
+  dplyr::filter(treat == "Message C") %>%
+  mutate(positive = if_else(effect >= 0, 1, 0)) %>%
+  group_by(positive) %>%
+  summarize_at(vars(coordinate:BM_per_area), list(~mean(.)))
 ```
 
-```{r}
-#| label: tbl-int-rcf-cate
-#| tbl-cap: Conditional Average Treatment Effect Estimated by RCF.
+@fig-rcf-int-boxplot plots the predicted treatment effect on replies with positive intention for each experimental group against age. Notably, for all men under age 25, the effect for experimental group B is positive. As a result, the RCF shows the average treatment effect of 12.1 percentage points for experimental group B among men under age 30, which is similar to the results of the subsample analysis of the linear regression analysis presented in @fig-subsample-reply (see @tbl-rcf-int-cate). For a small fraction of men aged 30~40, the effect of experimental group B is more than 10 percentage points. We find that such men live in places with relatively more hospitals and have a lower traveling cost of coordination and donation.
 
-tbl_int_rcf %>%
-  mutate(age = recode(
-    age,
-    "Young" = "Age: Less than 30",
-    "Elder" = "Age: More than or equal to 30"
-  )) %>%
-  as_grouped_data("age") %>%
-  as_flextable(hide_grouplabel = TRUE) %>%
-  set_header_labels(
-    contrast = "",
-    estimate_Females = "Estimate",
-    std.err_Females = "S.E.",
-    p_Females = "P-value",
-    estimate_Males = "Estimate",
-    std.err_Males = "S.E.",
-    p_Males = "P-value"
-  ) %>%
-  add_header_row(values = c("", "Females", "Males"), colwidths = c(1, 3, 3)) %>%
-  align(j = -1, align = "center", part = "all") %>%
-  colformat_double(j = -1, digits = 3) %>%
-  padding(j=1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
-  padding(2:4, padding.left = 10) %>%
-  padding(6:8, padding.left = 10) %>%
-  add_footer_lines(paste(
-    "Notes: See Athey and Wager (2019) for",
-    "estimation method of conditional average treatment effect (CATE).",
-    "Since these estimates are asymptotically normal,",
-    "we calculate z-score under the null hypothesis that CATE is zero,",
-    "and obtain p-value."
-  )) %>%
-  fontsize(size = 9, part = "all")  %>%
-  ft_theme()
-```
-
-We then test for heterogenous effects by random causal forest [@Davis2017; @Athey2019]. This method divides the sample by combinations of covariates and estimates treatment effects within each subsample. This yields predicted values of individual treatment effects, which is a function of the covariates given by the researcher. The combination of covariates creating subsamples is determined to minimize the mean squared error of the estimated heterogeneous treatment effect. This minimization is equivalent to maximizing the variance of the estimated treatment effect [@Athey2016].
-
-@fig-int-rcf-cate is the distribution of the predicted treatment effect of each experimental arm on replies with positive intention. Notably, 90% of men under 30 respond positively to the probability message. The random causal forest shows that the average treatment effect of experimental arm B among young males is $12.5$ percentage points, which is statistically significant (@tbl-int-rcf-cate). The estimated treatment effect is almost consistent with the estimates obtained in @fig-subsample-reply.
-
-We also confirm that our intervention has a statistically non-significant effect for the other gender-age groups. This result is because there exist roughly equal numbers of people who react positively and negatively to the intervention. Then, what characteristics make people more likely to have a positive response? We examined the differences in average personal attributes of those who are positively affected and those who are not within each gender-age group (@tbl-covariate-int-rcf). In the group of men and women over 30, those who are older and have more past coordination experience are more likely to respond positively to the intervention message. In the group of women over 30, those with more hospitals were more likely to react positively to the intervention message. On the other hand, in the group of men over 30 years old, those with fewer hospitals were more likely to respond positively to the intervention message. In the group of women under 30, younger people were more likely to respond positively to the intervention message. Moreover, those with more previous coordination experience are more likely to respond positively to experimental arms C and D, and those with more hospitals are more likely to respond positively to intervention group D.
+The effects of experimental group C, with only altruistic messages added, are largely heterogeneous. For women in their early 30s, most treatment effects are negative. For men and women in their late 40s and older, the median value of treatment effect is positive but widely distributed. Surprisingly, we find that, for men and women in this age group, those for whom experimental group C has a positive effect live in areas with relatively few hospitals (high traveling costs).
 
 ```{r}
-#| label: est-correlation-int-rcf
+#| label: rcf-int-cate-corr
 #| include: false
 
-int_tau_pred <- int_tau$predictions[, , 1]
+int_tau_pred <- data.frame(int_tau$predictions[, , 1])
+colnames(int_tau_pred) <- c("B", "C", "D")
 
 est_tau_corr1 <- subset_cond %>%
   purrr::map(~ lm_robust(
-    int_tau_pred[., 3] ~ int_tau_pred[., 1] + int_tau_pred[., 2],
+    D ~ I(B + C),
+    data = subset(int_tau_pred, .),
     se_type = "HC0"
   ))
 
-int_tau_pred_abs <- abs(int_tau$predictions[, , 1])
 est_tau_corr2 <- subset_cond %>%
   purrr::map(~ lm_robust(
-    int_tau_pred_abs[., 3] ~ int_tau_pred_abs[., 1] + int_tau_pred_abs[., 2],
+    D ~ B + C,
+    data = subset(int_tau_pred, .),
     se_type = "HC0"
   ))
+
 
 tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
   purrr::flatten() %>%
@@ -813,11 +762,11 @@ tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
   modelsummary(
     coef_map = c(
       "(Intercept)" = "Constant",
-      "int_tau_pred[., 1]" = "Predicted effect of B",
-      "int_tau_pred[., 2]" = "Predicted effect of C",
-      "int_tau_pred_abs[., 1]" = "Abosulte of predicted effect of B",
-      "int_tau_pred_abs[., 2]" = "Abosulte of predicted effect of C"
+      "I(B + C)" = "B + C",
+      "B" = "B",
+      "C" = "C"
     ),
+    statistic = c("({std.error})", "conf.int"),
     stars = c("***" = .01, "**" = .05, "*" = .1),
     fmt = 4,
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE"
@@ -825,7 +774,7 @@ tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
 ```
 
 ```{r}
-#| label: tbl-correlation-int-rcf
+#| label: tbl-rcf-int-cate-corr
 #| tbl-cap: Correlation of Predicted Tratment Effects
 
 tbl_tau_corr %>%
@@ -836,60 +785,26 @@ tbl_tau_corr %>%
     values = c("", rep(c("Females", "Males"), 2)),
     colwidths = c(1, 2, 2, 2, 2)
   ) %>%
-  add_header_row(
-    values = c("", "Predicted effect of D", "Absolute of predicted effect of D"),
-    colwidths = c(1, 4, 4)
-  ) %>%
   align(j = -1, align = "center", part = "all") %>%
   add_footer_lines(paste(
     "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
-    "Robust standard errors are reported in parentheses."
+    "Robust standard errors are reported in parentheses.",
+    "Square brackets show 95 percent confidential intervals."
   )) %>%
   width(j = 1, 1) %>%
   fontsize(size = 9, part = "all") %>%
   ft_theme()
 ```
 
+Experimental groups B and D contain probability messages. However, for young men, despite the positive effect of experimental group B on replies with intentions, experimental group D has no effect. To test this point, we analyze the correlation of treatment effects for each experimental group as predicted by the RCF.
+
+If the participants fully understood the information in the message D, then the effect of experimental arm D should be the sum of the effects of experimental arms B and C. Columns (1)--(4) of @tbl-rcf-int-cate-corr regress the predicted treatment effect of D on the sum of the predicted treatment effects of B and C. If we cannot reject that the coefficient on this explanatory variable is 1, the potential donor would have perfectly received the information from the message in experimental arm D. However, for all gender and age groups, the coefficient is around $0.3$--$0.4$, allowing us to reject the null hypothesis that the coefficient is 1. In other words, potential donors do not receive exactly the information from experimental group D.
+
+Donors who do not receive accurate information may focus on either the probability or the altruistic message, or they may discount the information in two messages to the same degree. To test this point, columns (4)--(8) of @tbl-rcf-int-cate-corr regress the predicted treatment effect in D on the predicted treatment effect in B and C. The results show that for young men and women, the correlation between the treatment effects of B and D is statistically non-significant, while the positive correlation between the predicted treatment effects of C and D is statistically significant. In other words, young men and women value the altruistic message rather than the probability message when the compatibility notice presents both two messages simultaneously. This is the reason why experimental arm D, which includes probability messages, has no effect on young men.
+
+Interestingly, when we add the two messages simultaneously to the compatibility notice, men and women over 30 years of age give more weight to the probability message than to the altruistic message. For men and women in their late 40s and older, the altruistic message (experimental arm C) is, on average, more effective than the probability message (experimental arm B). However, because they place more importance on the probability message in treatment D, the treatment effect for this arm is close to zero on average.
+
 ## Response Speed to Notification
-
-```{r}
-#| eval: false
-
-speed <- stock %>%
-  dplyr::filter(outcome == "Reply" & value == 1) %>%
-  {
-    list(
-      "full" = .,
-      "Young female" = subset(., male == 0 & age <= 30),
-      "Elder female" = subset(., male == 0 & age > 30),
-      "Young male" = subset(., male == 1 & age <= 30),
-      "Elder male" = subset(., male == 1 & age > 30)
-    )
-  }
-
-speed %>%
-  lapply(function(d) {
-    lm_robust(
-      days_reply ~ treat + age_demean + I(age_demean^2) + male + coordinate +
-        hospital_per_area + PB_per_area + BM_per_area +
-        factor(prefecture) + factor(month) + factor(week),
-      se_type = "CR2",
-      cluster = RCTweek,
-      data = d
-    )
-  }) %>%
-  modelsummary(
-    coef_map = c(
-      "treatB" = "Treat B",
-      "treatC" = "Treat C",
-      "treatD" = "Treat D"
-    ),
-    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
-    output = "kableExtra"
-  )
-
-```
-
 
 ```{r}
 #| label: create-flow-data
@@ -1493,39 +1408,102 @@ tbl_coordination_logit %>%
   ft_theme()
 ```
 
-<!-- Wild clustered bootstrap -->
+<!-- //NOTE: Wild clustered bootstrap -->
 
 ```{r}
-#| label: est-wildbs-young-reply
+#| label: est-wildbs-youngmen-reply
 #| include: false
 
-ate_bs <- stock %>%
-  dplyr::filter(age < 30) %>%
-  group_by(outcome, male) %>%
+est_stock_youngmen <- stock %>%
+  dplyr::filter(male == 1 & age < 30) %>%
+  group_by(outcome) %>%
   nest() %>%
   mutate(
-    treatB = map_dbl(data, ~ wildBS(
+    fit1 = map(
+      data,
+      ~ lm_robust(
+        mod$unctrl,
+        data = .,
+        cluster = RCTweek,
+        se_type = "CR2"
+      )
+    ),
+    fit2 = map(
+      data,
+      ~ lm_robust(
+        update(mod$ctrl, . ~ . - male - age_demean),
+        data = .,
+        cluster = RCTweek,
+        se_type = "CR2"
+      )
+    )
+  ) %>%
+  pivot_longer(
+    fit1:fit2,
+    names_prefix = "fit",
+    names_to = "model",
+    values_to = "fit"
+  )
+
+ate_bs <- stock %>%
+  dplyr::filter(male == 1 & age < 30) %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(
+    treatB_1 = map_dbl(data, ~ wildBS(
+      mod$unctrl,
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatB = 0",
+      B = 1000
+    )),
+    treatD_1 = map_dbl(data, ~ wildBS(
+      mod$unctrl,
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatD = 0",
+      B = 1000
+    )),
+    treatB_2 = map_dbl(data, ~ wildBS(
       update(mod$ctrl, . ~ . - male - age_demean),
       data = .x,
       cluster = RCTweek,
       H0 = "treatB = 0",
       B = 1000
     )),
-    treatD = map_dbl(data, ~ wildBS(
+    treatD_2 = map_dbl(data, ~ wildBS(
       update(mod$ctrl, . ~ . - male - age_demean),
       data = .x,
       cluster = RCTweek,
       H0 = "treatD = 0",
       B = 1000
     ))
+  ) %>%
+  pivot_longer(
+    treatB_1:treatD_2,
+    names_pattern = "(.*)_(.*)",
+    names_to = c(".value", "model")
   )
 
-tbl_stock_sub <- est_stock_sub %>%
-  dplyr::filter(age_less30 == 1) %>%
-  pull(est) %>%
+ctrl_avg <- stock %>%
+  dplyr::filter(male == 1 & age < 30) %>%
+  group_by(outcome) %>%
+  summarize(mean = mean(value))
+
+add_tabs <- data.frame(rbind(
+  c("Control average", sprintf("%1.4f", rep(ctrl_avg$mean, each = 2))),
+  c("Covariates", rep(c("", "X"), length.out = 6)),
+  c("Bootstrap p-value", rep("", 6)),
+  c("B = 0", sprintf("%1.4f", ate_bs$treatB)),
+  c("D = 0", sprintf("%1.4f", ate_bs$treatD))
+))
+
+attr(add_tabs, "position") <- 7:11
+
+tbl_stock_sub <- est_stock_youngmen %>%
+  pull(fit) %>%
   modelsummary(
     coef_map = c(
-      "(Intercept)" = "Constant",
       "treatB" = "Treatment B",
       "treatC" = "Treatment C",
       "treatD" = "Treatment D"
@@ -1533,27 +1511,23 @@ tbl_stock_sub <- est_stock_sub %>%
     stars = c("***" = .01, "**" = .05, "*" = .1),
     fmt = 4,
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = data.frame(rbind(
-      c("Covariates", rep("X", 6)),
-      c("Bootstrap p-value", rep("", 6)),
-      c("B = 0", sprintf("%1.3f", ate_bs$treatB)),
-      c("D = 0", sprintf("%1.3f", ate_bs$treatD))
-    ))
+    add_rows = add_tabs
   )
 ```
 
 ```{r}
-#| label: tbl-wildbs-young-reply
-#| tbl-cap: Linear Probability Model of Reply and Intentions among Young Males and Females
+#| label: tbl-wildbs-youngmen-reply
+#| tbl-cap: Linear Probability Model of Reply and Intentions for Males Less Then 30 Years
 
 tbl_stock_sub %>%
   align(j = -1, align = "center", part = "all") %>%
   add_header_row(
-    values = c("", "Reply", "Positive", "Negative", "Reply", "Positive", "Negative")
+    values = c("", "Reply", "Positive", "Negative"),
+    colwidths = c(1, 2, 2, 2)
   ) %>%
   add_header_row(
-    values = c("", "Females", "Males"),
-    colwidths = c(1, 3, 3)
+    values = c("", "Intention"),
+    colwidths = c(3, 4)
   ) %>%
   add_footer_lines(paste(
     "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
@@ -1568,7 +1542,7 @@ tbl_stock_sub %>%
     "which is proposed by Cameron et al. (2008)."
   )) %>%
   width(j=1, 1) %>%
-  padding(12:13, padding.left = 10) %>%
+  padding(10:11, padding.left = 10) %>%
   fontsize(size = 9, part = "all") %>%
   ft_theme()
 ```
@@ -1640,7 +1614,116 @@ tbl_coordination_sub %>%
   ft_theme()
 ```
 
-<!-- RCF -->
+<!-- //NOTE: RCF -->
+
+```{r}
+#| label: rcf-int-cate
+#| include: false
+
+ate_int_rcf <- subset_cond %>%
+  purrr::map(~ average_treatment_effect(int_rcf, subset = .)) %>%
+  reduce(bind_rows) %>%
+  mutate(
+    z = abs(estimate / std.err),
+    p = 2 * pnorm(z, lower.tail = FALSE),
+    gender = rep(c("Females", "Males"), each = 6),
+    age = rep(c("Young", "Elder", "Young", "Elder"), each = 3)
+  )
+
+tbl_int_rcf <- ate_int_rcf %>%
+  select(gender, age, contrast, estimate, std.err, p) %>%
+  pivot_wider(names_from = gender, values_from = estimate:p) %>%
+  select(age, contrast, ends_with("Females"), ends_with("Males")) %>%
+  mutate(contrast = str_extract(contrast, "[B-D]"))
+```
+
+```{r}
+#| label: tbl-rcf-int-cate
+#| tbl-cap: Conditional Average Treatment Effect Estimated by RCF.
+
+tbl_int_rcf %>%
+  mutate(age = recode(
+    age,
+    "Young" = "Age: Less than 30",
+    "Elder" = "Age: More than or equal to 30"
+  )) %>%
+  as_grouped_data("age") %>%
+  as_flextable(hide_grouplabel = TRUE) %>%
+  set_header_labels(
+    contrast = "",
+    estimate_Females = "Estimate",
+    std.err_Females = "S.E.",
+    p_Females = "P-value",
+    estimate_Males = "Estimate",
+    std.err_Males = "S.E.",
+    p_Males = "P-value"
+  ) %>%
+  add_header_row(values = c("", "Females", "Males"), colwidths = c(1, 3, 3)) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  colformat_double(j = -1, digits = 3) %>%
+  padding(j=1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
+  padding(2:4, padding.left = 10) %>%
+  padding(6:8, padding.left = 10) %>%
+  add_footer_lines(paste(
+    "Notes: See Athey and Wager (2019) for",
+    "estimation method of conditional average treatment effect (CATE).",
+    "Since these estimates are asymptotically normal,",
+    "we calculate z-score under the null hypothesis that CATE is zero,",
+    "and obtain p-value."
+  )) %>%
+  fontsize(size = 9, part = "all")  %>%
+  ft_theme()
+```
+
+```{r}
+#| label: fig-rcf-int-dist
+#| fig-cap: Distribution of Individual Treatment Effects on Intention Estimated by Random Causal Forest. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.
+#| eval: false
+
+predict_int_rcf <- data.frame(X) %>%
+  cbind(int_tau$predictions) %>%
+  rename(
+    effect_B = `B - A.Y.1`,
+    effect_C = `C - A.Y.1`,
+    effect_D = `D - A.Y.1`
+  ) %>%
+  pivot_longer(
+    effect_B:effect_D,
+    names_to = c(".value", "treat"),
+    names_sep = "_"
+  ) %>%
+  mutate(
+    treat = factor(treat, labels = paste("Message", LETTERS[2:4])),
+    age_less30 = if_else(age < 30, 1, 0),
+    pos = paste0(male, age_less30),
+    pos = factor(
+      pos,
+      levels = c("01", "00", "11", "10"),
+      labels = c(
+        "Female\u00d7\nAge<30",
+        "Female\u00d7\n30\u2264Age",
+        "Male\u00d7\nAge<30",
+        "Male\u00d7\n30\u2264Age"
+      )
+    )
+  )
+
+predict_int_rcf %>%
+  ggplot(aes(x = effect, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_histogram(
+    aes(fill = effect > 0),
+    breaks = seq(-.2, .2, by = .01),
+    color = "black"
+  ) +
+  scale_fill_manual(values = c("white", "red")) +
+  facet_grid(treat~pos) +
+  labs(
+    x = "Treatment effects",
+    y = "Fraction"
+  ) +
+  simplegg() +
+  theme(legend.position = "none")
+```
 
 ```{r}
 #| label: est-t-test-covariate-int-rcf
