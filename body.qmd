@@ -422,7 +422,7 @@ stock <- use %>%
 
 ## Effects on Reply and Intention {#sec-reply}
 
-To begin, we estimate the effect of our interventions on reply, which is the most likely manifestation of the potential donor's intention. The outcome variable for replying is a dummy variable that takes one if the potential donor replies to the compatibility notice regardless of donor intention. The response rate is $88.35$% in the control arm (experimental arm A).
+To begin, we estimate the effect of our interventions on reply, which is the most likely to reflect the potential donor's intention. The outcome variable for replying is a dummy variable that takes one if the potential donor replies to the compatibility notice regardless of donor intention. The response rate is $88.35$% in the control arm (experimental arm A).
 
 We decompose the message effect on response to the notification into two parts. The first is the effect on replying with a positive intention. For estimation, the outcome variable is a dummy variable that takes one if the potential donor replied to the notice and indicated the willingness to donate. The second is the effect on replying with a negative intention. The outcome variable is a dummy variable that takes one if the potential donor replied to the notice and did not indicate the willingness to donate. When estimating these effects, we include non-responders in the sample, coding their outcomes as 0. Since the sum of the two outcome variables for the intention to donate is always equal to the dummy variable for the reply, the sum of the effects on the positive and negative intentions is always the effect on replying. The proportion of replying with positive intention is $55.33$%, while the proportion of replying with negative intention is $33.03$% in the control arm. Thus, $62.63$% of potential donors who replied to the compatibility notice were willing to donate.
 
@@ -800,11 +800,11 @@ Experimental groups B and D contain probability messages. However, for young men
 
 If the participants fully understood the information in the message D, then the effect of experimental arm D should be the sum of the effects of experimental arms B and C. Columns (1)--(4) of @tbl-rcf-int-cate-corr regress the predicted treatment effect of D on the sum of the predicted treatment effects of B and C. If we cannot reject that the coefficient on this explanatory variable is 1, the potential donor would have perfectly received the information from the message in experimental arm D. However, for all gender and age groups, the coefficient is around $0.3$--$0.4$, allowing us to reject the null hypothesis that the coefficient is 1. In other words, potential donors do not receive exactly the information from experimental group D.
 
-Donors who do not receive accurate information may focus on either the probability or the altruistic message, or they may discount the information in two messages to the same degree. To test this point, columns (4)--(8) of @tbl-rcf-int-cate-corr regress the predicted treatment effect in D on the predicted treatment effect in B and C. The results show that for young men and women, the correlation between the treatment effects of B and D is statistically non-significant, while the positive correlation between the predicted treatment effects of C and D is statistically significant. In other words, young men and women value the altruistic message rather than the probability message when the compatibility notice presents both two messages simultaneously. This is the reason why experimental arm D, which includes probability messages, has no effect on young men.
+Donors who do not receive accurate information may focus on either the probability or the altruistic message, or they may discount the information in two messages to the same degree. To test this point, columns (4)--(8) of @tbl-rcf-int-cate-corr regress the predicted treatment effect in D on the predicted treatment effect in B and C. The results show that for young men and women, the correlation between the treatment effects of B and D is statistically non-significant, while the positive correlation between the predicted treatment effects of C and D is statistically significant. In other words, young men and women value the altruistic message rather than the probability message when the compatibility notice presents both two messages simultaneously. This is the reason why experimental arm D, which includes probability messages, has no effect among young men.
 
 Interestingly, when we add the two messages simultaneously to the compatibility notice, men and women over 30 years of age give more weight to the probability message than to the altruistic message. For men and women in their late 40s and older, the altruistic message (experimental arm C) is, on average, more effective than the probability message (experimental arm B). However, because they place more importance on the probability message in treatment D, the treatment effect for this arm is close to zero on average.
 
-## Response Speed to Notification
+## Response Speed to Notification {#sec-reply-speed}
 
 ```{r}
 #| label: create-flow-data
@@ -826,7 +826,19 @@ flow <- stock %>%
   mutate(within = as.numeric(within))
 ```
 
-Since our data include the number of reply days, we examine the effect over time and estimate the effect on the probability $\text{Pr}(D_{imw} \le d)$, which is a probability of replying within $d$ days, in a linear probability model. In this model, the outcome variable is a dummy taking one if the potential donor replied to the compatibility notice within $d$ days. If the value of $d$ is sufficiently large, the effect on $\text{Pr}(D_{imw} \le d)$ is consistent with the effect on replies shown in the previous subsection. Also, as in the previous subsection, we decompose the effect on $\text{Pr}(D_{imw} \le d)$ into two effects in terms of the donor's intention. For positive intention, the outcome is a dummy variable taking one if the potential donor replied within $d$ days and indicated the intention to donate. For negative intention, the outcome variable is a dummy variable that takes one if the potential donor replied within $d$ days and did not indicate the intention to donate. 
+```{r}
+#| include: false
+
+with(subset(use, treat == "A" & reply == 1), summary(days_reply))
+with(subset(use, treat == "A" & reply == 1 & intention == 1), summary(days_reply))
+with(subset(use, treat == "A" & reply == 1 & intention == 0), summary(days_reply))
+with(subset(flow, treat == "A" & outcome == "Reply" & within == 7), summary(value))
+with(subset(flow, treat == "A" & outcome == "Positive intention" & within == 7), summary(value))
+```
+
+Since our data include the number of reply days, we examine the effect over time and estimate the effect on the probability $\text{Pr}(D_{imw} \le d)$, which is a probability of replying within $d$ days, in a linear probability model. In this model, the outcome variable is a dummy taking one if the potential donor replied to the compatibility notice within $d$ days. If the value of $d$ is sufficiently large, the effect on $\text{Pr}(D_{imw} \le d)$ is consistent with the effect on replies shown in @sec-reply. Also, we decompose the effect on $\text{Pr}(D_{imw} \le d)$ into two effects in terms of the donor's intention. For positive intention, the outcome is a dummy variable taking one if the potential donor replied within $d$ days and indicated the intention to donate. For negative intention, the outcome variable is a dummy variable that takes one if the potential donor replied within $d$ days and did not indicate the intention to donate. We focus on $d = \{4, 7, 10, 14, 21, 28\}$.
+
+In the control arm, the average response speed among repliers was 10 days. The average response speed of replies with positive or negative intentions was 9 and 12 days, respectively. The longest response time was 46 days. In addition, 33 percent of the control group responded within seven  days, which is stated as a guideline in the compatibility notice, and 23 percent of the control group responded with positive intentions (including those who did not respond).
 
 ```{r}
 #| label: est-subsample-speed
@@ -902,9 +914,7 @@ wrap_plots(plot_list_male, ncol = 2) +
 ```
 
 
-Since the effects of our intervention messages are heterogeneous, we also focus on heterogeneity in this subsection. @fig-young-male-speed restricts the sample to men under 30. The JMDP specifies seven days as a suggested reply time in the compatibility notice. In the control group of this subsample, 21% of potential donors replied within seven days. The earlier the reply date, the more likely it is that those who replied to the notification are willing to donate. For example, 68% of those who responded within four days wanted to donate, and 51% of those who responded within 28 days had the willingness to donate. In other words, the slower a potential donor replies, the less likely a potential donor is to be willing to donate.
-
-In this gender-age group, we have already found that experimental arm B, which added only the probability message, increases the reply rate with positive intention. This effect is primarily due to the behavior of potential donors who take longer than 10 days to reply. Experimental arm B does not have statistically significant effects on the reply rate within 10 days and the reply rate with positive intentions. Experimental arm B has statistically significant effects on the reply rate within 14--28 days and the reply rate with positive intentions. In addition, a notable result is that experimental arm B reduces the probability of replying with negative intentions within 7--10 days.
+Since the effects on the stock variables seen in the previous subsections are heterogeneous, this subsection focuses on the heterogeneity of the effects on the flow variables. @fig-young-male-speed restricts the sample to men under 30. In the control group of this subsample, 21% of potential donors replied within seven days (JMDP recommendation of response speed). In this subset, we have already found that experimental arm B, which added only the probability message, increases the reply rate with positive intention. This positive effect is observed after 14 days. Experimental arm B does not have statistically significant effects on the reply within 14 days and the reply with positive intentions within 10 days. Experimental arm B has statistically significant effects on the reply within 21 and 28 days and the reply with positive intentions within 14, 21, and 28 days. In addition, a notable result is that experimental arm B reduces the probability of replying with negative intentions within 10 days.
 
 ```{r}
 #| label: fig-young-female-speed
@@ -945,7 +955,7 @@ wrap_plots(plot_list_female, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-@fig-young-female-speed restricts the sample to women under 30. We already found that experimental arm C, adding only the patient information, has no statistically significant effect on the overall reply rate and intention. However, when focusing on short-term behavior, experimental arm C statistically significantly increases the reply rate within four days and the reply rate within 10--28 days by 5 percentage points. The positive effect on the reply rate within 4 days results from equal increases in positive and negative intentions. However, the positive effect on the reply rate within 10--29 days is mainly due to an increase in reply rate with a negative intention. However, the statistical significance of the effect of arm C on intentions is weak. Surprisingly, experimental group B, which is effective for young men, reduced the positive intention and the reply rate within 7--14 days.
+@fig-young-female-speed restricts the sample to women under 30. We already found that experimental arm C, adding only the patient information, has no statistically significant effect on the overall reply rate and intention. However, when focusing on short-term behavior, experimental arm C statistically significantly increases the reply within four days and the reply within 10--28 days by more than 5 percentage points. In particular, experimental arm C has a statistically significant increase in the probability of replying with positive intentions within four days. Surprisingly, experimental group B, which is effective for young men, reduced the reply within 7--14 days and the reply with positive intention within seven days.
 
 ## Effects on the Coordination Process {#sec-process}
 
@@ -976,7 +986,7 @@ coordination <- use %>%
   )
 ```
 
-Finally, we examine the impact on each step in the coordination process after replying to the compatibility notice. As explained in @sec-process, the coordination process has four stages: confirmatory typing (CT), candidate selection, final consent, and donation. We use as an outcome variable a dummy variable taking one if a potential donor has reached each step. Also, as in the analysis in @sec-reply, we exclude samples that are likely to have been terminated independently of the potential donor's intentions. When estimating the effect on CT, we exclude cases of interruptions due to the patient. Since the patient's physician can select the healthiest potential donor as a candidate at the candidate selection stage, when estimating the effect on the process after candidate selection, we exclude cases of interruptions due to the donor's health reasons or patient. However, we must be careful in interpreting the effect on the process after candidate selection, since sample exclusion may not completely remove the physician's decision. In the control group, 23% of potential donors took CT, 8% of potential donors became candidates, and 6% of potential donors ultimately donated.
+Finally, we examine the impact on each step in the coordination process after replying to the compatibility notice. As explained in @sec-background, the coordination process has four stages: confirmatory typing (CT), candidate selection, final consent, and donation. We use as an outcome variable a dummy variable taking one if a potential donor has reached each step. Also, as in the analysis in @sec-reply, we exclude samples that are likely to have been terminated independently of the potential donor's intentions. When estimating the effect on CT, we exclude cases of interruptions due to the patient. Since the patient's physician can select the healthiest potential donor as a candidate at the candidate selection stage, when estimating the effect on the process after candidate selection, we exclude cases of interruptions due to the donor's health reasons or patient. However, we must be careful in interpreting the effect on the process after candidate selection, since sample exclusion may not completely remove the physician's decision. In the control group, 23% of potential donors took CT, 8% of potential donors became candidates, and 6% of potential donors ultimately donated.
 
 ```{r}
 #| label: est-full-coordination
@@ -1088,7 +1098,7 @@ tbl_est_coordination %>%
   # )
 ```
 
-@tbl-tbl-full-coordination is the estimated result of the linear probability model. The results show that experimental arm B, adding only the probability message, increases the probability of reaching the CT by 3 percentage points or 13%, which is statistically significant. Controlling for covariates, experimental arm D, adding both the probability message and the patient message, also increases the probability of taking the CT by 3 percentage points or 13%, which is statistically significant. The results so far are also obtained by estimating with a logit model [@tbl-full-coordination-logit]. Experimental arm D also increases the probability of candidate selection and reaching a final consent, which is weakly statistically significant and is not statistically significant in the estimation with the logit model.
+@tbl-tbl-full-coordination is the estimated result of the linear probability model. The results show that experimental arm B, adding only the probability message, increases the probability of reaching the CT by 3 percentage points or 13%, which is statistically significant. Controlling for covariates, experimental arm D, adding both the probability message and the patient message, also increases the probability of taking the CT by 3 percentage points or 13%, which is statistically significant. The results so far are also obtained by estimating with a logit model (@tbl-full-coordination-logit).
 
 ```{r}
 #| label: est-subsample-coordination
@@ -1185,7 +1195,7 @@ wrap_plots(plot_list, ncol = 2) +
   theme(legend.position = "bottom")
 ```
 
-@fig-subsample-coordination is a coefficient plot of the subsample analysis divided by gender and age. The results show that experimental arm B increases the probability of taking the CT for males under age 30. Surprisingly, this experimental arm also statistically significantly increases the donation probability for this gender-age group. However, we have not been able to distinguish whether this is an effect of potential donor intent or simply reflects the tendency of patient physicians to select younger men with better transplant records. Furthermore, when computing p-values using the wild cluster bootstrap method, we cannot reject the null hypothesis for a positive effect of experimental arm B. Thus, these results are not robust. Experimental arm B also statistically significantly increases the probability of CT for men over 30 years old. Experimental arm D statistically significantly increases the probability of CT for men and women over 30 years old.
+@fig-subsample-coordination is a coefficient plot of the subsample analysis divided by gender and age. The results show that experimental arm B may increase the probability of taking the CT for males under age 30, which is statistically significant at 10 percent level (@tbl-wildbs-young-male-coordinate). Experimental arm B also statistically significantly increases the probability of CT for men over 30 years old.
 
 # Discussion {#sec-discussion}
 
@@ -1552,9 +1562,10 @@ tbl_stock_sub %>%
 #| include: false
 
 ate_bs_coordination <- coordination %>%
-  dplyr::filter(age < 30 & male == 1) %>%
+  dplyr::filter(male == 1) %>%
   dplyr::filter(exclude == 0) %>%
-  group_by(outcome) %>%
+  mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
+  group_by(outcome, age_less30) %>%
   nest() %>%
   mutate(
     treatB = map_dbl(data, ~ wildBS(
@@ -1566,12 +1577,27 @@ ate_bs_coordination <- coordination %>%
     ))
   )
 
+ctrl_avg <- coordination %>%
+  dplyr::filter(male == 1) %>%
+  dplyr::filter(exclude == 0) %>%
+  mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
+  group_by(age_less30, outcome) %>%
+  summarize(mean = mean(value))
+
+add_tabs <- data.frame(rbind(
+  c("Control average", sprintf("%1.4f", ctrl_avg$mean)),
+  c("Covariates", rep("X", 8)),
+  c("Bootstrap p-value", rep("", 8)),
+  c("B = 0", sprintf("%1.4f", ate_bs_coordination$treatB))
+))
+
+attr(add_tabs, "position") <- 7:10
+
 tbl_coordination_sub <- est_coordination_sub %>%
-  dplyr::filter(age_less30 == 1 & male == 1) %>%
+  dplyr::filter(male == 1) %>%
   pull(est) %>%
   modelsummary(
     coef_map = c(
-      "(Intercept)" = "Constant",
       "treatB" = "Treatment B",
       "treatC" = "Treatment C",
       "treatD" = "Treatment D"
@@ -1579,22 +1605,22 @@ tbl_coordination_sub <- est_coordination_sub %>%
     stars = c("***" = .01, "**" = .05, "*" = .1),
     fmt = 4,
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = data.frame(rbind(
-      c("Covariates", rep("X", 4)),
-      c("Bootstrap p-value", rep("", 4)),
-      c("B = 0", sprintf("%1.3f", ate_bs_coordination$treatB))
-    ))
+    add_rows = add_tabs
   )
 ```
 
 ```{r}
 #| label: tbl-wildbs-young-male-coordinate
-#| tbl-cap: Linear Probability Model of Coordination among Young Males
+#| tbl-cap: Linear Probability Model of Coordination among Males
 
 tbl_coordination_sub %>%
   align(j = -1, align = "center", part = "all") %>%
   add_header_row(
-    values = c("", "CT", "Candidate", "Consent", "Donation")
+    values = c("", rep(c("CT", "Candidate", "Consent", "Donation"), 2))
+  ) %>%
+  add_header_row(
+    values = c("", "30\u2264Age", "Age<30"),
+    colwidths = c(1, 4, 4)
   ) %>%
   width(j=1, 1) %>%
   add_footer_lines(paste(
@@ -1609,7 +1635,7 @@ tbl_coordination_sub %>%
     "Bootstrap p-value is based on the wild cluster bootstrap-t with a null hypothesis imposed,",
     "which is proposed by Cameron et al. (2008)."
   )) %>%
-  padding(12, padding.left = 10) %>%
+  padding(10, padding.left = 10) %>%
   fontsize(size = 9, part = "all")  %>%
   ft_theme()
 ```
