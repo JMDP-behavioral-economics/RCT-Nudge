@@ -16,6 +16,16 @@ output:
     toc: false
 ---
 
+```{r include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  dev = "ragg_png"
+)
+```
+
 # Introduction {#intro}
 
 同種造血幹細胞移植は白血病などの血液病に対する最も再発率の低い治療法の一つである。この治療法では、(1)抗がん剤や放射線によって異常な細胞と健康な造血幹細胞を同時に殺し、(2)他者から提供された健康な造血幹細胞を移植する。骨髄移植（造血幹細胞移植）における要件は、ドナーのHLAと呼ばれる白血球の型が患者のHLAと一致していることである[^hapro]。ランダムに選ばれた二人のマッチング確率は1%未満である一方で、兄弟姉妹間で一致する可能性が最も高く、その確率は30%程度である。また、親子間のマッチング確率はかなり低い。親族の中に適合するドナーがいなければ、患者は近親者以外からドナーを探さなければならない。日本において、患者は一般的に日本骨髄バンク（JMDP）を介して非近親者のドナーを探すことになる。しかしながら、JMDPによるコーディネーションは移植に至るまで長時間を要し、登録患者の60%のみが移植を受けられない [@Hirakawa2018]。
@@ -33,6 +43,35 @@ output:
 我々はJMDPに実験機関に適合通知を受け取った人に関するコーディネーション過程のデータの提供を依頼し、情報を提供することの効果を分析した。我々のフィールド実験は情報提供の効果は異質的であることを示している。確率情報は移植成績がよいにもかかわらず適合通知への返信率が低い若年層の男性に効果的であるが、利他情報は若年男性に効果的でなかった。さらに、二つの情報を同時に提供する介入も、利他情報に強く影響を受けてしまうために、効果的でなかった。
 
 # Field Experiment {#experiment}
+
+```{r library, include=FALSE}
+library(here)
+library(tidyverse)
+library(lubridate)
+library(estimatr)
+library(fixest)
+library(grf)
+library(modelsummary)
+library(kableExtra)
+library(flextable)
+library(officer)
+library(RCTtoolbox)
+library(patchwork)
+lapply(list.files(here("R/func"), "r", full.names = TRUE), source)
+
+options(
+  knitr.table.format = "markdown",
+  kableExtra.auto_format = FALSE,
+  modelsummary_stars_note = FALSE,
+  modelsummary_factory_default = "flextable",
+  modelsummary_factory_html = "kableExtra",
+  modelsummary_factory_latex = "kableExtra",
+  modelsummary_factory_word = "flextable"
+)
+
+tidy_custom.lm_robust <- function(x, ...) broom::tidy(x)
+```
+
 ## Background: Coordination Process of JMDP {#background}
 
 フィールド実験の介入のタイミングの理解を促すために、JMDPに登録した潜在ドナーによる幹細胞の提供までのコーディネーション過程を概観しておく。はじめに、潜在ドナーがJMDPに登録した患者とマッチすると、JMDP事務局は潜在ドナーに幹細胞提供を依頼する適合通知（compatibility notice）を送付する[^SNS]。潜在ドナーは問診票を記入し、提供意思の有無を示して、適合通知に返信する。
@@ -57,4 +96,33 @@ knitr::include_graphics("image/intervention.png")
 
 [^pressure]: 介入メッセージを作成したとき、我々は潜在ドナーに対して過度な心理的プレッシャーを与えないように配慮している。具体的には、第一に、嘆願調のような表現を避けている。第二に、JMDPが公開している情報のみを用いている。また、移植リスクは通常通り説明している。
 
-第二のメッセージはEarly Coordination messageである。このメッセージは登録患者の半数程度しか移植を受けられないことを強調して、潜在ドナーの利他性を刺激している。さらに、このメッセージは適切な潜在ドナーが早く見つかるほど、患者の生存率が高くなることを伝えている。
+第二のメッセージはEarly Coordinationメッセージである。このメッセージは登録患者の半数程度しか移植を受けられないことを強調して、潜在ドナーの利他性を刺激している。さらに、このメッセージは適切な潜在ドナーが早く見つかるほど、患者の生存率が高くなることを伝えている。<!--//TODO: 簡単に仮説を明記する-->
+
+我々は二つの介入メッセージの効果を推定するために四つの実験群を設けた。実験群Aは介入メッセージなしの標準的な適合通知を送付した（コントロール群）。実験群BとCはそれぞれ確率メッセージとEarly Coordinationメッセージを追加した適合通知を送付した。実験群Dは二つの介入メッセージを同時に加えた適合通知を送付した。この実験群は情報過多による認知負荷の負の影響を検証する目的で設けた。
+
+```{r schedule-data, include=FALSE}
+root <- "D:/JMDPフィールド実験"
+
+schedule <- read_csv(here(root, "RCT-schedule.csv")) %>%
+  mutate(
+    my = paste0(month, "/", year - 2000),
+    my = factor(
+      my,
+      levels = c("9/21", "10/21", "11/21", "12/21", "1/22", "2/22"),
+      labels = c("Sep 21", "Oct 21", "Nov 21", "Dec 21", "Jan 22", "Feb 22")
+    ),
+    week = factor(week, levels = 1:4, labels = paste("Week", 1:4))
+  ) %>%
+  dplyr::select(week, my, treat) %>%
+  pivot_wider(values_from = treat, names_from = my)
+```
+
+```{r assignment, tab.cap = "Assignment Schedule"}
+flextable(schedule) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  padding(j=1:7, padding.top = 5, padding.bottom = 5, part="all") %>%
+  fontsize(size = 9, part = "all")  %>%
+  ft_theme()
+```
+
+実験参加者は2021年9月から2022年2月の間に適合通知を受け取った11,154名の潜在ドナーである。JMDP事務局に無理のない範囲でランダムネスを保つために、我々は実験群を週単位のクラスターランダム化で割り当てた。このとき、可能な限り週と月で実験群がバランスするように設計している。表 \@ref(tab:assignment) に割り当てスケジュールをまとめている。
