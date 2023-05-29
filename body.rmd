@@ -22,7 +22,9 @@ knitr::opts_chunk$set(
   warning = FALSE,
   error = FALSE,
   message = FALSE,
-  dev = "ragg_png"
+  dev = "ragg_png",
+  fig.width = 15,
+  fig.height = 10
 )
 ```
 
@@ -464,7 +466,7 @@ text <- plotdt_stock_sub %>%
   distinct()
 ```
 
-```{r coefplot-reg-stock-subset, fig.width=15, fig.height=10, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 plot_list <- unique(plotdt_stock_sub$outcome) %>%
   purrr::map(function(x) {
@@ -508,6 +510,156 @@ wrap_plots(plot_list, ncol = 2) +
 ```
 
 メッセージ効果の異質性を検証するために、我々はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定する。図 \@ref(fig:coefplot-reg-stock-subset) は係数プロットである。結果として、若い男性グループで、確率メッセージのみを加えた実験群Bが正の意向を伴う返信を約10ポイント（コントロール平均が$38.6$%なので、$25.91$%増加）増やしており、これは統計的に有意である。実験群Bはこのグループにおける提供意向を伴わない返信率を下げているので、全体の返信率に対する効果は6ポイントであり、正の意向を伴う返信に対する効果よりも小さい。<!--//TODO Wild bootstrapを入れるならその議論を追記 -->他の性・年代と比較して、移植成績が良いにも関わらず若い男性の提供意欲は低いことを考慮すれば、確率メッセージはコーディネーションの効率性を改善しているといえる。ただし、他の性・年代グループで、我々の介入は返信や意向に対して統計的に有意な効果をもたない。
+
+## Random Causal Forest {#rcf}
+
+```{r rcf-int, include=FALSE}
+covariate <- ~ 0 + male + age + coordinate +
+  hospital_per_area + PB_per_area + BM_per_area
+
+Y <- use$intention
+X <- model.matrix(covariate, data = use)
+W <- use$treat
+G <- use$RCTweek
+
+subset_cond <- list(
+  X[, "male"] == 0 & X[, "age"] < 30,
+  X[, "male"] == 0 & X[, "age"] >= 30,
+  X[, "male"] == 1 & X[, "age"] < 30,
+  X[, "male"] == 1 & X[, "age"] >= 30
+)
+
+
+int_rcf <- multi_arm_causal_forest(X, Y, W)
+int_tau <- predict(int_rcf, X)
+```
+
+介入効果の異質性を深堀りするために、我々は完全にノンパラメトリックに介入効果の異質性を検証できるrandom causal forest (RCF)を用いる[@Athey2016; @Wager2018]。この手法は回帰木アルゴリズムに基づいており、観察可能な特徴で条件づけた平均トリートメント効果を推定する。この手法は労働[@Davis2017]・教育[@Carlana2022]・節電[@Murakami2022]などの広い文脈で用いられている。
+
+このアルゴリズムは研究者によって与えられた共変量の一つ$X_j$を用いて、サンプルを二つのサブサンプル（リーフ）に分割する。具体的に、このアルゴリズムは$X_j \le x$であるサンプルと$X_j > x$であるサンプルに分割する。回帰木はアウトカム変数の平均二乗誤差（誤差はあるリーフに属するサンプルのアウトカムの平均値と観察されるアウトカムの差である）を最小にするように特定の閾値$x$を決める。RCFはあるリーフに属する平均処置効果（条件付き平均処置効果）を推定することが目的なので、予測処置効果の期待平均二乗誤差を最小にするように閾値$x$を決める。この最小化はリーフ間の条件付き平均効果の分散（異質性）を高めかつ、リーフ内の分散を抑えることと同じである。これを終端条件に達するまで各リーフで二つのリーフに分けるプロセスを繰り返す。RCFは終端のリーフにおける条件付き平均処置効果を予測する。
+
+回帰木アルゴリズムの欠点は予測値の分散が大きく（過学習）なり、予測精度が落ちることである。これを防ぐために、RCFはアンサンブル法と呼ばれるアルゴリズムを導入している。これは全データから重複なしのサブサンプルを数千個作り、各サブサンプルで回帰木を育てる。最終的な結果は数千個の回帰木の予測値の平均とする[^tech-detail]。
+
+大雑把に言えば、RCFは観察される個人属性で介入の処置効果を予測する。すなわち、介入を受けていない人についても、その人の属性に基づいて処置効果を予測できる。ただし、この手法は処置の割り当てが潜在成果変数と条件つきにランダムであることを仮定してなければならない。実験群はおおよそランダムに割り当てられているので、我々はこの手法を用いることができる。この小節では、意向を伴う返信への効果に着目する。RCFに用いる共変量は性別・年齢・過去のコーディネーション経験・在住地域の病院の密度である。
+
+[^tech-detail]:技術的な詳細は @Athey2016 ・ @Wager2018 を参照せよ。また、本研究ではRCFを特殊ケースとして扱う一般化ランダムフォレストと呼ばれる手法を用いているが、直観は変わらない。一般化ランダムフォレストの詳細は @Athey2019 ・ @Athey2019a を参照せよ。
+
+```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Gender and Age. Notes: Blue fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.'}
+
+predict_int_rcf <- data.frame(X) %>%
+  cbind(int_tau$predictions) %>%
+  rename(
+    effect_B = `B - A.Y.1`,
+    effect_C = `C - A.Y.1`,
+    effect_D = `D - A.Y.1`
+  ) %>%
+  pivot_longer(
+    effect_B:effect_D,
+    names_to = c(".value", "treat"),
+    names_sep = "_"
+  ) %>%
+  mutate(
+    male = factor(male, labels = c("Females", "Males")),
+    treat = factor(treat, labels = paste("Message", LETTERS[2:4]))
+  )
+
+predict_int_rcf %>%
+  ggplot(aes(x = age, y = effect)) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  geom_boxplot(aes(group = age)) +
+  stat_smooth(se = FALSE, color = "blue") +
+  facet_grid(treat ~ male) +
+  labs(x = "Age", y = "Predicted treatment effect") +
+  simplegg()
+```
+
+```{r include=FALSE}
+predict_int_rcf %>%
+  dplyr::filter(male == "Males") %>%
+  dplyr::filter(30 < age & age <= 40) %>%
+  dplyr::filter(treat == "Message B") %>%
+  mutate(high = if_else(effect >= 0.1, 1, 0)) %>%
+  group_by(high) %>%
+  summarize_at(vars(coordinate:BM_per_area), list(~ mean(.)))
+
+predict_int_rcf %>%
+  dplyr::filter(45 < age) %>%
+  dplyr::filter(treat == "Message C") %>%
+  mutate(positive = if_else(effect >= 0, 1, 0)) %>%
+  group_by(male, positive) %>%
+  summarize_at(vars(coordinate:BM_per_area), list(~ mean(.)))
+
+predict_int_rcf %>%
+  group_by(treat) %>%
+  summarize_at(vars(effect), list(~var(.)))
+```
+
+図\@ref(fig:boxplot-rcf-int)は意向を伴う返信に対する各実験群の予測トリートメント効果の分布を年齢別にプロットしている。注目するべきこととして、25歳以下の男性のすべてに対して、実験群Bの効果は正である。結果として、RCFは30歳以下の男性における実験群Bの平均効果は12.1ポイントであり、図\@ref(fig:reg-stock-subset)で示した線形確率モデルのサブサンプル分析の結果と近い値である（表\@ref(tab:rcf-int-cate)参照）。また、30--40代男性の一部に対して、実験群Bの効果は10ポイント以上とである。そのような男性は相対的に病院の数が多い地域に住んでおり、コーディネーションや提供のトラベリングコストが低いことがわかっている。
+
+Early coordinationメッセージのみを加えた実験群Cの効果は大きく異質的である。30代前半の女性に対して、ほとんどのトリートメント効果は負である。40代後半以上の男女に対して、処置効果の中央値は正であるが広く分布している。驚くべきことに、この年齢層の男女において、実験群Cが正の効果を持つ人は相対的に病院の数が少ない（トラベリングコストが高い）地域に住んでいることがわかっている。
+
+```{r rcf-int-corr, tab.cap='Correlation of Predicted Treatment Effects'}
+int_tau_pred <- data.frame(int_tau$predictions[, , 1])
+colnames(int_tau_pred) <- c("B", "C", "D")
+
+est_tau_corr1 <- subset_cond %>%
+  purrr::map(~ lm_robust(
+    D ~ I(B + C),
+    data = subset(int_tau_pred, .),
+    se_type = "HC0"
+  ))
+
+est_tau_corr2 <- subset_cond %>%
+  purrr::map(~ lm_robust(
+    D ~ B + C,
+    data = subset(int_tau_pred, .),
+    se_type = "HC0"
+  ))
+
+tbl_tau_corr <- list(est_tau_corr1, est_tau_corr2) %>%
+  purrr::flatten() %>%
+  setNames(paste0("(", seq_len(length(.)), ")")) %>%
+  modelsummary(
+    coef_map = c(
+      "(Intercept)" = "Constant",
+      "I(B + C)" = "B + C",
+      "B" = "B",
+      "C" = "C"
+    ),
+    statistic = c("({std.error})", "conf.int"),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 4,
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE"
+  )
+
+tbl_tau_corr %>%
+  add_header_row(
+    values = c("", rep(c("Age<30", "30\u2264Age", "Age<30", "30\u2264Age"), 2))
+  ) %>%
+  add_header_row(
+    values = c("", rep(c("Females", "Males"), 2)),
+    colwidths = c(1, 2, 2, 2, 2)
+  ) %>%
+  add_header_row(
+    values = c("", "Treatment effect D"),
+    colwidths = c(1, 8)
+  ) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  add_footer_lines(paste(
+    "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+    "Robust standard errors are reported in parentheses.",
+    "Square brackets show 95 percent confidential intervals."
+  )) %>%
+  width(j = 1, 1) %>%
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
+```
+
+実験群Dは確率メッセージ（実験群B）とearly Coordinationメッセージ（実験群C）の両方を加えている。したがって、もし潜在ドナーが実験群Dの情報を完全に理解しているならば、実験群Dの効果は実験群BとCの効果の合計となるはずである。この点を検証するために、表\@ref(tab:rcfint-corr)の列(1)--(4)は実験群Dの処置効果を実験群BとCの効果の合計で回帰している。どの性・年代でも実験群BとCの効果の合計が1ポイント増えると、実験群Dの効果は0.3--0.4ポイント増加する。95%信頼区間は1を含まないので、この増分は1ポイントより統計的に有意に低い。この結果は潜在ドナーが実験群Dの情報を完全に理解しておらず、情報過多による認知負荷になっていること示唆している。
+
+完全に情報を受け取っていない潜在ドナーは確率メッセージもしくはearly coordinationメッセージのどちらかを重視するか、二つの情報を同程度割り引いて評価しているだろう。この点を検証するために、表\@ref(tab:rcfint-corr)の列(4)--(8)は実験群Dの処置効果を実験群Bの効果と実験群Cの効果で回帰している。その結果、若年層の男女では、実験群CとDの偏相関は実験群BとDの偏相関よりも強い。すなわち、彼らは確率メッセージよりもearly coordinationメッセージを重視している。したがって、確率メッセージを提供しているにも関わらず、実験群Dが30歳未満の男性に効果がないのである。
+
+興味深いことに、高齢層の男女では、実験群CとDの偏相関は実験群BとDの偏相関よりも弱い。すなわち、彼らはearly coordinationメッセージよりも確率メッセージを重視している。したがって、40代後半以上の男女における実験群Cの効果の中央値が8ポイント程度であるにも関わらず、実験群Dの処置効果の中央値はほとんどゼロである。
 
 # Appendix {-}
 
@@ -589,6 +741,57 @@ tbl_stock_logit %>%
   )) %>%
   align(j = -1, align = "center", part = "all") %>%
   width(j = 1, 1) %>%
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
+```
+
+```{r rcf-int-cate, tab.cap = 'Conditional Average Treatment Effect Estimated by RCF'}
+ate_int_rcf <- subset_cond %>%
+  purrr::map(~ average_treatment_effect(int_rcf, subset = .)) %>%
+  reduce(bind_rows) %>%
+  mutate(
+    z = abs(estimate / std.err),
+    p = 2 * pnorm(z, lower.tail = FALSE),
+    gender = rep(c("Females", "Males"), each = 6),
+    age = rep(c("Young", "Elder", "Young", "Elder"), each = 3)
+  )
+
+tbl_int_rcf <- ate_int_rcf %>%
+  select(gender, age, contrast, estimate, std.err, p) %>%
+  pivot_wider(names_from = gender, values_from = estimate:p) %>%
+  select(age, contrast, ends_with("Females"), ends_with("Males")) %>%
+  mutate(contrast = str_extract(contrast, "[B-D]"))
+
+tbl_int_rcf %>%
+  mutate(age = recode(
+    age,
+    "Young" = "Age: Less than 30",
+    "Elder" = "Age: More than or equal to 30"
+  )) %>%
+  as_grouped_data("age") %>%
+  as_flextable(hide_grouplabel = TRUE) %>%
+  set_header_labels(
+    contrast = "",
+    estimate_Females = "Estimate",
+    std.err_Females = "S.E.",
+    p_Females = "P-value",
+    estimate_Males = "Estimate",
+    std.err_Males = "S.E.",
+    p_Males = "P-value"
+  ) %>%
+  add_header_row(values = c("", "Females", "Males"), colwidths = c(1, 3, 3)) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  colformat_double(j = -1, digits = 3) %>%
+  padding(j = 1:7, padding.top = 5, padding.bottom = 5, part = "all") %>%
+  padding(2:4, padding.left = 10) %>%
+  padding(6:8, padding.left = 10) %>%
+  add_footer_lines(paste(
+    "Notes: See Athey and Wager (2019) for",
+    "estimation method of conditional average treatment effect (CATE).",
+    "Since these estimates are asymptotically normal,",
+    "we calculate z-score under the null hypothesis that CATE is zero,",
+    "and obtain p-value."
+  )) %>%
   fontsize(size = 9, part = "all") %>%
   ft_theme()
 ```
