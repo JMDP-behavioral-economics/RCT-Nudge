@@ -165,7 +165,7 @@ ongoing_f <- lm_robust(
 
 追加的なデータとして、我々はJMDPがウェブ上で公開している医療機関リストを用いる。このリストは完全な住所・骨髄採取（BM collection）が可能かどうか・末梢血幹細胞採取（PBSC collection）が可能かどうかを含んでいる。我々はこのリストを都道府県レベルで集約し、10平方キロメートルあたりの病院数を計算し、それをコーディネーションデータと都道府県をマージキーにして突合した。我々はこの変数をコーディネーションや提供のトラベルコストとして考慮する。
 
-```{r summary, include=FALSE}
+```{r summary, tab.cap = 'Overview of Field Experiment'}
 summary_stat <- use %>%
   select(
     male,
@@ -235,9 +235,7 @@ size <- with(use, sprintf("%1d", table(treat))) %>%
   }
 
 tbl_experiment_summary <- bind_rows(size, balance_test)
-```
 
-```{r flex-summary, tab.cap = "Overview of Field Experiment"}
 tbl_experiment_summary %>%
   as_grouped_data("type") %>%
   as_flextable(hide_grouplabel = TRUE) %>%
@@ -259,7 +257,7 @@ tbl_experiment_summary %>%
   ft_theme()
 ```
 
-表 \@ref(tab:flex-summary) はフィールド実験の概要である。パネルAは各実験群の介入を示しており、パネルBは各実験群のサンプルサイズを示している。パネルCはランダム化が成功しているかどうかを検証するバランステストである。多くの変数が実験群間で平均的にバランスしているので、実験群の割り当てはおおよそランダムである。<!-- //TODO 年齢違いを入れるか -->
+表 \@ref(tab:summary) はフィールド実験の概要である。パネルAは各実験群の介入を示しており、パネルBは各実験群のサンプルサイズを示している。パネルCはランダム化が成功しているかどうかを検証するバランステストである。多くの変数が実験群間で平均的にバランスしているので、実験群の割り当てはおおよそランダムである。<!-- //TODO 年齢違いを入れるか -->
 
 我々の関心のあるパラメータは母集団全体の平均処置効果であり、実験群間の平均値の差で識別できる。それに加えて、我々は月・週固定効果を取り除き、共変量を加えることで推論の確度を高めるために、線形確率モデルを推定する。$m$月の$w$週に適合通知を受け取った個人$i$についての推定モデルは以下の通りである。
 
@@ -325,7 +323,7 @@ stock <- use %>%
   ))
 ```
 
-```{r reg-stock, include=FALSE}
+```{r reg-stock, tab.cap = 'Linear Probability Model of Reply and Intention'}
 mod <- list(
   unctrl = value ~ treat,
   ctrl = value ~ treat + age_demean + I(age_demean^2) + male + coordinate +
@@ -391,9 +389,7 @@ tbl_est_stock <- est_stock %>%
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
     add_rows = add_table,
   )
-```
 
-```{r flex-reg-stock, tab.cap = "Linear Probability Model of Reply and Intention"}
 tbl_est_stock %>%
   add_header_row(
     values = c("", "Reply", "Positive", "Negative"),
@@ -420,7 +416,7 @@ tbl_est_stock %>%
   ft_theme()
 ```
 
-表 \@ref(tab:flex-reg-stock) は線形確率モデルの推定結果である。奇数列は実験群ダミーだけを説明変数に入れており、単純な平均値の差に対応している。偶数列は実験群ダミーに加えて、個人属性・月および週の固定効果をコントロールしている。推定結果はすべての実験群は、共変量の有無に関わらず、返信や意向に対して統計的に有意な効果を持っていない。我々は代替手法としてロジットモデルを推定（表 \@ref(tab:flex-logit-stock) ）し、同様の結果を得ている（オッズ比の95%信頼区間が1を含んでいる）。
+表 \@ref(tab:reg-stock) は線形確率モデルの推定結果である。奇数列は実験群ダミーだけを説明変数に入れており、単純な平均値の差に対応している。偶数列は実験群ダミーに加えて、個人属性・月および週の固定効果をコントロールしている。推定結果はすべての実験群は、共変量の有無に関わらず、返信や意向に対して統計的に有意な効果を持っていない。我々は代替手法としてロジットモデルを推定（表 \@ref(tab:logit-stock) ）し、同様の結果を得ている（オッズ比の95%信頼区間が1を含んでいる）。
 
 ```{r reg-stock-subset, include=FALSE}
 est_stock_sub <- stock %>%
@@ -725,7 +721,7 @@ est_flow_sub
 
 ```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-plot_list_male <- unique(est_flow_sub$outcome) %>%
+plot_list_young_male <- unique(est_flow_sub$outcome) %>%
   purrr::map(function(x) {
     subset(est_flow_sub, male == 1 & age_less30 == 1 & outcome == x) %>%
       ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
@@ -752,7 +748,7 @@ plot_list_male <- unique(est_flow_sub$outcome) %>%
       simplegg()
   })
 
-wrap_plots(plot_list_male, ncol = 2) +
+wrap_plots(plot_list_young_male, ncol = 2) +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 ```
@@ -761,7 +757,7 @@ wrap_plots(plot_list_male, ncol = 2) +
 
 ```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-plot_list_female <- unique(est_flow_sub$outcome) %>%
+plot_list_young_female <- unique(est_flow_sub$outcome) %>%
   purrr::map(function(x) {
     subset(est_flow_sub, male == 0 & age_less30 == 1 & outcome == x) %>%
       ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
@@ -790,7 +786,7 @@ plot_list_female <- unique(est_flow_sub$outcome) %>%
       simplegg()
   })
 
-wrap_plots(plot_list_female, ncol = 2) +
+wrap_plots(plot_list_young_female, ncol = 2) +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 ```
@@ -994,7 +990,9 @@ wrap_plots(plot_list, ncol = 2) +
 
 # Appendix {-}
 
-```{r logit-stock, include=FALSE}
+<!-- //NOTE ロジット推定 -->
+
+```{r logit-stock, tab.cap = 'Logit Model of Reply and Intention'}
 est_stock_logit <- stock %>%
   group_by(outcome) %>%
   nest() %>%
@@ -1049,9 +1047,7 @@ tbl_stock_logit <- est_stock_logit %>%
     gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
     fmt = fmt_sprintf("%.3f")
   )
-```
 
-```{r flex-logit-stock, tab.cap="Logit Model of Reply and Intention"}
 tbl_stock_logit %>%
   flextable::add_header_row(
     values = c("", "Reply", "Positive", "Negative"),
@@ -1075,6 +1071,348 @@ tbl_stock_logit %>%
   fontsize(size = 9, part = "all") %>%
   ft_theme()
 ```
+
+```{r logit-coordination, tab.cap = 'Logit Model of Coordination'}
+est_coordination_logit <- coordination %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(
+    fit1 = map(
+      data,
+      ~ glm(mod$unctrl, data = subset(., exclude == 0), family = binomial())
+    ),
+    fit2 = map(
+      data,
+      ~ glm(mod$ctrl, data = subset(., exclude == 0), family = binomial())
+    )
+  ) %>%
+  pivot_longer(
+    fit1:fit2,
+    names_prefix = "fit",
+    names_to = "model",
+    values_to = "fit"
+  )
+
+add_tables <- tibble::tribble(
+  ~term, ~mod1, ~mod2, ~mod3, ~mod4, ~mod5, ~mod6, ~mod7, ~mod8,
+  "Covariates", "", "X", "", "X", "", "X", "", "X"
+)
+
+attr(add_tables, "position") <- 7
+
+tbl_coordination_logit <- est_coordination_logit %>%
+  pull(fit) %>%
+  setNames(paste0("(", seq_len(length(.)), ")")) %>%
+  modelsummary(
+    estimate = "{or}",
+    statistic = "[{lower.or}, {upper.or}]",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    add_rows = add_tables,
+    gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
+    fmt = fmt_sprintf("%.3f")
+  )
+
+tbl_coordination_logit %>%
+  flextable::add_header_row(
+    values = c("", "CT", "Candidate", "Consent", "Donation"),
+    colwidths = c(1, 2, 2, 2, 2)
+  ) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  width(j = 1, 1) %>%
+  add_footer_lines(paste(
+    "Notes: We show odds ratios and associated 95 percent confidential intervals.",
+    "Covariates are gender, squared polynomial of (demeaned) age,",
+    "number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies."
+  )) %>%
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
+```
+
+<!-- //NOTE Wild bootstrap p-value for robust inference -->
+
+```{r wildbs-young-male-stock, eval = FALSE, tab.cap = 'Linear Probability Model of Reply and Intentions for Males Less Then 30 Years'}
+est_stock_youngmen <- stock %>%
+  dplyr::filter(male == 1 & age < 30) %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(
+    fit1 = map(
+      data,
+      ~ lm_robust(
+        mod$unctrl,
+        data = .,
+        cluster = RCTweek,
+        se_type = "CR2"
+      )
+    ),
+    fit2 = map(
+      data,
+      ~ lm_robust(
+        update(mod$ctrl, . ~ . - male - age_demean),
+        data = .,
+        cluster = RCTweek,
+        se_type = "CR2"
+      )
+    )
+  ) %>%
+  pivot_longer(
+    fit1:fit2,
+    names_prefix = "fit",
+    names_to = "model",
+    values_to = "fit"
+  )
+
+ate_bs <- stock %>%
+  dplyr::filter(male == 1 & age < 30) %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(
+    treatB_1 = map_dbl(data, ~ wildBS(
+      mod$unctrl,
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatB = 0",
+      B = 1000
+    )),
+    treatD_1 = map_dbl(data, ~ wildBS(
+      mod$unctrl,
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatD = 0",
+      B = 1000
+    )),
+    treatB_2 = map_dbl(data, ~ wildBS(
+      update(mod$ctrl, . ~ . - male - age_demean),
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatB = 0",
+      B = 1000
+    )),
+    treatD_2 = map_dbl(data, ~ wildBS(
+      update(mod$ctrl, . ~ . - male - age_demean),
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatD = 0",
+      B = 1000
+    ))
+  ) %>%
+  pivot_longer(
+    treatB_1:treatD_2,
+    names_pattern = "(.*)_(.*)",
+    names_to = c(".value", "model")
+  )
+
+ctrl_avg <- stock %>%
+  dplyr::filter(male == 1 & age < 30) %>%
+  group_by(outcome) %>%
+  summarize(mean = mean(value))
+
+add_tabs <- data.frame(rbind(
+  c("Control average", sprintf("%1.4f", rep(ctrl_avg$mean, each = 2))),
+  c("Covariates", rep(c("", "X"), length.out = 6)),
+  c("Bootstrap p-value", rep("", 6)),
+  c("B = 0", sprintf("%1.4f", ate_bs$treatB)),
+  c("D = 0", sprintf("%1.4f", ate_bs$treatD))
+))
+
+attr(add_tabs, "position") <- 7:11
+
+tbl_stock_sub <- est_stock_youngmen %>%
+  pull(fit) %>%
+  modelsummary(
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 4,
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = add_tabs
+  )
+
+tbl_stock_sub %>%
+  align(j = -1, align = "center", part = "all") %>%
+  add_header_row(
+    values = c("", "Reply", "Positive", "Negative"),
+    colwidths = c(1, 2, 2, 2)
+  ) %>%
+  add_header_row(
+    values = c("", "Intention"),
+    colwidths = c(3, 4)
+  ) %>%
+  add_footer_lines(paste(
+    "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+    "The clustered standard errors with the CR2 adjustment",
+    "are reported in parenetheses (cluster unit is experimental weeks).",
+    "Covariates are number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies.",
+    "Bootstrap p-value is based on the wild cluster bootstrap-t with a null hypothesis imposed,",
+    "which is proposed by Cameron et al. (2008)."
+  )) %>%
+  width(j = 1, 1) %>%
+  padding(10:11, padding.left = 10) %>%
+  fontsize(size = 9, part = "all") %>%
+  ft_theme()
+```
+
+```{r wildbs-young-male-coordination, eval = FALSE, tbl.cap = 'Linear Probability Model of Coordination among Males'}
+ate_bs_coordination <- coordination %>%
+  dplyr::filter(male == 1) %>%
+  dplyr::filter(exclude == 0) %>%
+  mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
+  group_by(outcome, age_less30) %>%
+  nest() %>%
+  mutate(
+    treatB = map_dbl(data, ~ wildBS(
+      update(mod$ctrl, . ~ . - male - age_demean),
+      data = .x,
+      cluster = RCTweek,
+      H0 = "treatB = 0",
+      B = 1000
+    ))
+  )
+
+ctrl_avg <- coordination %>%
+  dplyr::filter(male == 1) %>%
+  dplyr::filter(exclude == 0) %>%
+  mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
+  group_by(age_less30, outcome) %>%
+  summarize(mean = mean(value))
+
+add_tabs <- data.frame(rbind(
+  c("Control average", sprintf("%1.4f", ctrl_avg$mean)),
+  c("Covariates", rep("X", 8)),
+  c("Bootstrap p-value", rep("", 8)),
+  c("B = 0", sprintf("%1.4f", ate_bs_coordination$treatB))
+))
+
+attr(add_tabs, "position") <- 7:10
+
+tbl_coordination_sub <- est_coordination_sub %>%
+  dplyr::filter(male == 1) %>%
+  pull(est) %>%
+  modelsummary(
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 4,
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = add_tabs
+  )
+
+tbl_coordination_sub %>%
+  align(j = -1, align = "center", part = "all") %>%
+  add_header_row(
+    values = c("", rep(c("CT", "Candidate", "Consent", "Donation"), 2))
+  ) %>%
+  add_header_row(
+    values = c("", "30\u2264Age", "Age<30"),
+    colwidths = c(1, 4, 4)
+  ) %>%
+  width(j=1, 1) %>%
+  add_footer_lines(paste(
+    "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+    "The clustered standard errors with the CR2 adjustment",
+    "are reported in parenetheses (cluster unit is experimental weeks).",
+    "Covariates are number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies.",
+    "Bootstrap p-value is based on the wild cluster bootstrap-t with a null hypothesis imposed,",
+    "which is proposed by Cameron et al. (2008)."
+  )) %>%
+  padding(10, padding.left = 10) %>%
+  fontsize(size = 9, part = "all")  %>%
+  ft_theme()
+```
+
+<!-- //NOTE Additional analysis of flow data -->
+
+```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+
+plot_list_old_male <- unique(est_flow_sub$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow_sub, male == 1 & age_less30 == 0 & outcome == x) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(
+        breaks = subset(est_flow_sub, male == 1 & age_less30 == 0 & outcome == x)$within,
+        labels = subset(est_flow_sub, male == 1 & age_less30 == 0 & outcome == x)$avg
+      ) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification\n(Control average)",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list_old_male, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+
+plot_list_old_female <- unique(est_flow_sub$outcome) %>%
+  purrr::map(function(x) {
+    subset(est_flow_sub, male == 0 & age_less30 == 0 & outcome == x) %>%
+      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
+      geom_hline(aes(yintercept = 0), linetype = 2) +
+      geom_point(size = 3, position = position_dodge(2)) +
+      geom_errorbar(
+        aes(ymin = conf.low, ymax = conf.high),
+        position = position_dodge(2),
+        width = 0
+      ) +
+      scale_x_continuous(
+        breaks = subset(est_flow_sub, male == 0 & age_less30 == 0 & outcome == x)$within,
+        labels = subset(est_flow_sub, male == 0 & age_less30 == 0 & outcome == x)$avg
+      ) +
+      scale_y_continuous(
+        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
+      ) +
+      labs(
+        title = paste("Outcome:", x),
+        x = "Days after sending notification\n(Control average)",
+        y = "Estimated Effects (95%CI)",
+        color = "Treatment", shape = "Treatment"
+      ) +
+      simplegg()
+  })
+
+wrap_plots(plot_list_old_female, ncol = 2) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+<!-- //NOTE RCF -->
 
 ```{r rcf-int-cate, tab.cap = 'Conditional Average Treatment Effect Estimated by RCF'}
 ate_int_rcf <- subset_cond %>%
