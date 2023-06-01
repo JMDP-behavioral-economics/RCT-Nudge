@@ -16,7 +16,7 @@ estimation_model <- function(is_fe = params$is_fe){
 
 lm_all_stock <- function(data,
                           cluster = params$is_cluster,
-                          se_type = params$se_type,
+                          se_type = params$main_se_type,
                           fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -88,7 +88,7 @@ lm_all_stock <- function(data,
 
 lm_subset_stock <- function(dt,
                             cluster = params$is_cluster,
-                            se_type = params$se_type,
+                            se_type = params$main_se_type,
                             fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -144,7 +144,7 @@ lm_subset_stock <- function(dt,
 
 lm_subset_flow <- function( dt,
                             cluster = params$is_cluster,
-                            se_type = params$se_type,
+                            se_type = params$main_se_type,
                             fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -182,7 +182,7 @@ lm_subset_flow <- function( dt,
 
 lm_all_coordination <- function(data,
                                 cluster = params$is_cluster,
-                                se_type = params$se_type,
+                                se_type = params$main_se_type,
                                 fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -252,7 +252,7 @@ lm_all_coordination <- function(data,
 
 lm_subset_coordination <- function( data,
                                     cluster = params$is_cluster,
-                                    se_type = params$se_type,
+                                    se_type = params$main_se_type,
                                     fe = params$is_fe)
 {
   res <- lm_subset_stock(data, cluster, se_type, fe)

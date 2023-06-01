@@ -15,8 +15,10 @@ output:
     numnber-sections: true
     toc: false
 params:
+  is_fe: TRUE
   is_cluster: FALSE
-  se_type: "stata"
+  main_se_type: "stata"
+  cluster_se_type: "CR2"
 ---
 
 ```{r include=FALSE}

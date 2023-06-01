@@ -1,6 +1,6 @@
 summary_experiment <- function( data,
                                 cluster = params$is_cluster,
-                                se_type = params$se_type)
+                                se_type = params$main_se_type)
 {
   summary_stat <- data %>%
     select(
