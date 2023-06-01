@@ -1,3 +1,5 @@
+library(rlang)
+
 estimation_model <- function(is_fe = params$is_fe){
   mod <- list(
     unctrl = value ~ treat,
@@ -6,7 +8,7 @@ estimation_model <- function(is_fe = params$is_fe){
   )
 
   if (is_fe) {
-    mod[[2]] <- update(mod[[2]], . ~ . + factor(month) + factor(week))
+    mod$ctrl <- update(mod$ctrl, . ~ . + factor(month) + factor(week))
   }
 
   mod
@@ -363,4 +365,194 @@ logit_all_coordination <- function( data,
     "logit_all_coordination"
   )
   tbl_coordination_logit
+}
+
+wildbs_subset_stock <- function(data,
+                                subset,
+                                se_type = params$cluster_se_type,
+                                fe = params$is_fe,
+                                treat,
+                                B = 1000)
+{
+  subset <- enquo(subset)
+  subset_eval <- eval_tidy(subset, data)
+  usedt <- data[subset_eval, , drop = FALSE]
+
+  mod <- estimation_model(fe)
+  mod$ctrl <- update(mod$ctrl, . ~ . - male - age_demean)
+
+  est <- usedt %>%
+    group_by(outcome) %>%
+    nest() %>%
+    mutate(
+      fit1 = map(
+        data,
+        ~ lm_robust(
+          mod$unctrl,
+          data = .,
+          cluster = RCTweek,
+          se_type = se_type
+        )
+      ),
+      fit2 = map(
+        data,
+        ~ lm_robust(
+          mod$ctrl,
+          data = .,
+          cluster = RCTweek,
+          se_type = se_type
+        )
+      )
+    ) %>%
+    pivot_longer(
+      fit1:fit2,
+      names_prefix = "fit",
+      names_to = "model",
+      values_to = "fit"
+    )
+  
+  bs <- usedt %>%
+    group_by(outcome) %>%
+    nest()
+  
+  if ("B" %in% treat) {
+    bs <- bs %>%
+      mutate(
+        treatB_1 = map_dbl(data, ~ wildBS(
+          mod$unctrl,
+          data = .x,
+          cluster = RCTweek,
+          H0 = "treatB = 0",
+          B = B
+        )),
+        treatB_2 = map_dbl(data, ~ wildBS(
+          mod$ctrl,
+          data = .x,
+          cluster = RCTweek,
+          H0 = "treatB = 0",
+          B = B
+        ))
+      )
+  }
+  
+  if ("C" %in% treat) {
+    bs <- bs %>%
+      mutate(
+        treatC_1 = map_dbl(data, ~ wildBS(
+          mod$unctrl,
+          data = .x,
+          cluster = RCTweek,
+          H0 = "treatC = 0",
+          B = B
+        )),
+        treatC_2 = map_dbl(data, ~ wildBS(
+          mod$ctrl,
+          data = .x,
+          cluster = RCTweek,
+          H0 = "treatC = 0",
+          B = B
+        ))
+      )
+  }
+
+  if ("D" %in% treat) {
+    bs <- bs %>%
+      mutate(
+        treatD_1 = map_dbl(data, ~ wildBS(
+          mod$unctrl,
+          data = .x,
+          cluster = RCTweek,
+          H0 = "treatD = 0",
+          B = B
+        )),
+        treatD_2 = map_dbl(data, ~ wildBS(
+          mod$ctrl,
+          data = .x,
+          cluster = RCTweek,
+          H0 = "treatD = 0",
+          B = B
+        ))
+      )
+  }
+
+  bs <- bs %>%
+    pivot_longer(
+      -(outcome:data),
+      names_pattern = "(.*)_(.*)",
+      names_to = c(".value", "model")
+    )
+  
+  ctrl_avg <- usedt %>%
+    group_by(outcome) %>%
+    summarize(mean = mean(value))
+
+  add_tabs <- rbind(
+    c("Control average", sprintf("%1.4f", rep(ctrl_avg$mean, each = 2))),
+    c("Covariates", rep(c("", "X"), nrow(ctrl_avg))),
+    c("Bootstrap, p-value", rep("", nrow(ctrl_avg) * 2))
+  )
+
+  if ("B" %in% treat) {
+    add_tabs <- rbind(
+      add_tabs,
+      c("B = 0", sprintf("%1.4f", bs$treatB))
+    )
+  }
+
+  if ("C" %in% treat) {
+    add_tabs <- rbind(
+      add_tabs,
+      c("C = 0", sprintf("%1.4f", bs$treatC))
+    )
+  }
+
+  if ("D" %in% treat) {
+    add_tabs <- rbind(
+      add_tabs,
+      c("D = 0", sprintf("%1.4f", bs$treatD))
+    )
+  }
+
+  add_tabs <- data.frame(add_tabs)
+  attr(add_tabs, "position") <- 7:(9 + length(treat))
+
+  tbl <- est %>%
+    pull(fit) %>%
+    modelsummary(
+      coef_map = c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D"
+      ),
+      stars = c("***" = .01, "**" = .05, "*" = .1),
+      fmt = 4,
+      gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+      add_rows = add_tabs
+    )
+  
+  res <- list(
+    table = tbl,
+    check = length(treat)
+  )  
+  class(res) <- append(class(res), "wildbs_subset_stock")
+  res
+}
+
+wildbs_subset_coordination <- function( data,
+                                        subset,
+                                        se_type = params$cluster_se_type,
+                                        fe = params$is_fe,
+                                        treat,
+                                        B = 1000)
+{
+  subset <- enquo(subset)
+  
+  res <- wildbs_subset_stock( data,
+                              !!subset,
+                              se_type,
+                              fe,
+                              treat,
+                              B)
+  class(res) <- c("list", "wildbs_subset_coordination")
+  res
 }
