@@ -14,6 +14,9 @@ output:
   bookdown::word_document2:
     numnber-sections: true
     toc: false
+params:
+  is_cluster: FALSE
+  se_type: "stata"
 ---
 
 ```{r include=FALSE}
@@ -70,6 +73,8 @@ options(
   modelsummary_factory_latex = "kableExtra",
   modelsummary_factory_word = "flextable"
 )
+
+data_root <- "D:/JMDPフィールド実験"
 ```
 
 ## Background: Coordination Process of JMDP {#background}
@@ -101,9 +106,7 @@ knitr::include_graphics("image/intervention.png")
 我々は二つの介入メッセージの効果を推定するために四つの実験群を設けた。実験群Aは介入メッセージなしの標準的な適合通知を送付した（コントロール群）。実験群BとCはそれぞれ確率メッセージとEarly Coordinationメッセージを追加した適合通知を送付した。実験群Dは二つの介入メッセージを同時に加えた適合通知を送付した。この実験群は情報過多による認知負荷の負の影響を検証する目的で設けた。
 
 ```{r schedule-data, include=FALSE}
-root <- "D:/JMDPフィールド実験"
-
-schedule <- read_csv(here(root, "RCT-schedule.csv")) %>%
+schedule <- read_csv(here(data_root, "RCT-schedule.csv")) %>%
   mutate(
     my = paste0(month, "/", year - 2000),
     my = factor(
@@ -130,14 +133,8 @@ flextable(schedule) %>%
 ## Data and Empirical Strategy
 
 ```{r experiment-data, include=FALSE}
-rawdt <- read_csv(here(root, "shaped.csv"), locale = locale(encoding = "cp932"))
-
-use <- rawdt %>%
-  dplyr::filter(ongoing == 0) %>%
-  mutate(
-    treat = factor(treat, levels = LETTERS[1:4]),
-    plan_two_methods = if_else(plan_method == "BM/PB", 1, 0)
-  )
+rawdt <- read_csv(here(data_root, "shaped.csv"), locale = locale(encoding = "cp932"))
+use <- dataset(rawdt)
 ```
 
 我々はJMDPの協力のもと、コーディネーションデータを2022年6月末に受け取った。観測単位は実験参加者である。個人属性として、データは性別・年齢・コーディネーション経験回数・都道府県レベルの在住地区を記録している。コーディネーション過程として、データは各段階（適合通知への返信・確認検査・候補者選定・最終同意・採取）に到達したかどうかを記録している。我々はこれらの変数をアウトカム変数として用いる。特に、適合通知への返信について、データは返信日数と提供意向を追加的に記録している。コーディネーションが中断したならば、データは中断理由を三つのカテゴリ（患者側の理由・健康以外のドナー理由・ドナーの健康理由）で記録している。分析では、日本在住かつコーディネーションが（中断を含めて）終了している11,049名の潜在ドナーを用いる[^exclude]。
@@ -164,7 +161,7 @@ ongoing_f <- lm_robust(
 追加的なデータとして、我々はJMDPがウェブ上で公開している医療機関リストを用いる。このリストは完全な住所・骨髄採取（BM collection）が可能かどうか・末梢血幹細胞採取（PBSC collection）が可能かどうかを含んでいる。我々はこのリストを都道府県レベルで集約し、10平方キロメートルあたりの病院数を計算し、それをコーディネーションデータと都道府県をマージキーにして突合した。我々はこの変数をコーディネーションや提供のトラベルコストとして考慮する。
 
 ```{r summary, tab.cap = 'Overview of Field Experiment'}
-summary_stat <- use %>%
+summary_stat <- use$cs %>%
   select(
     male,
     age,
@@ -180,7 +177,7 @@ summary_stat <- use %>%
   pivot_longer(-treat, names_to = "vars", values_to = "mean") %>%
   pivot_wider(names_from = "treat", values_from = "mean")
 
-balance_p <- use %>%
+balance_p <- use$cs %>%
   select(
     male,
     age,
@@ -221,7 +218,7 @@ balance_test <- summary_stat %>%
     "BM_per_area" = "Number of hospitals listed with BM collection"
   ))
 
-size <- with(use, sprintf("%1d", table(treat))) %>%
+size <- with(use$cs, sprintf("%1d", table(treat))) %>%
   {
     tribble(
       ~vars, ~A, ~B, ~C, ~D, ~p, ~type,
@@ -278,9 +275,9 @@ $$
 ```{r exogenous-balance, include=FALSE}
 exogenous_f <- lm_robust(
   exg_stop_reply ~ treat,
-  data = use,
-  cluster = RCTweek,
-  se_type = "CR2"
+  data = use$cs,
+  cluster = if(FALSE) RCTweek,
+  se_type = "HC0"
 ) %>%
 {
   f <- summary(.)$fstatistic[1]
@@ -294,33 +291,6 @@ exogenous_f <- lm_robust(
 
 潜在ドナーが返信する前に、患者側の都合でコーディネーションが中断してしまう可能性がある。これは潜在ドナーの意向と独立に生じるので、我々は各実験群でそのようなケースに該当する$0.5$--$0.7$%を分析サンプルから除外している。ただし、このケースは実験群間でバランスしている（`r exogenous_f`）。
 
-```{r stock-data, include=FALSE}
-outcome_label <- list(
-  reply = "Reply",
-  positive = "Positive intention",
-  negative = "Negative intention",
-  test = "CT",
-  candidate = "Candidate",
-  consent = "Consent",
-  donate = "Donation"
-)
-
-stock <- use %>%
-  dplyr::filter(exg_stop_reply == 0) %>%
-  rename(positive = intention) %>%
-  mutate(
-    negative = reply * (1 - positive),
-    age_demean = age - mean(rawdt$age),
-  ) %>%
-  select(reply, positive, negative, everything()) %>%
-  pivot_longer(reply:negative, names_to = "outcome") %>%
-  mutate(outcome = factor(
-    outcome,
-    levels = unlist(names(outcome_label)[1:3]),
-    labels = unlist(outcome_label[1:3])
-  ))
-```
-
 ```{r reg-stock, tab.cap = 'Linear Probability Model of Reply and Intention'}
 mod <- list(
   unctrl = value ~ treat,
@@ -328,7 +298,7 @@ mod <- list(
     hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week)
 )
 
-est_stock <- stock %>%
+est_stock <- use$stock %>%
   group_by(outcome) %>%
   nest() %>%
   mutate(
@@ -358,7 +328,7 @@ est_stock <- stock %>%
     values_to = "fit"
   )
 
-ctrl_avg <- stock %>%
+ctrl_avg <- use$stock %>%
   dplyr::filter(treat == "A") %>%
   group_by(outcome) %>%
   summarize(mean = sprintf("%1.4f", mean(value)))
@@ -417,7 +387,7 @@ tbl_est_stock %>%
 表 \@ref(tab:reg-stock) は線形確率モデルの推定結果である。奇数列は実験群ダミーだけを説明変数に入れており、単純な平均値の差に対応している。偶数列は実験群ダミーに加えて、個人属性・月および週の固定効果をコントロールしている。推定結果はすべての実験群は、共変量の有無に関わらず、返信や意向に対して統計的に有意な効果を持っていない。我々は代替手法としてロジットモデルを推定（表 \@ref(tab:logit-stock) ）し、同様の結果を得ている（オッズ比の95%信頼区間が1を含んでいる）。
 
 ```{r reg-stock-subset, include=FALSE}
-est_stock_sub <- stock %>%
+est_stock_sub <- use$stock %>%
   mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
   group_by(outcome, male, age_less30) %>%
   nest() %>%
@@ -511,10 +481,10 @@ wrap_plots(plot_list, ncol = 2) +
 covariate <- ~ 0 + male + age + coordinate +
   hospital_per_area + PB_per_area + BM_per_area
 
-Y <- use$intention
-X <- model.matrix(covariate, data = use)
-W <- use$treat
-G <- use$RCTweek
+Y <- use$cs$intention
+X <- model.matrix(covariate, data = use$cs)
+W <- use$cs$treat
+G <- use$cs$RCTweek
 
 subset_cond <- list(
   X[, "male"] == 0 & X[, "age"] < 30,
@@ -657,37 +627,21 @@ tbl_tau_corr %>%
 
 ## Response Speed to Notification {#reply-speed}
 
-```{r flow-data, include=FALSE}
-flow <- stock %>%
-  mutate(
-    days_reply = if_else(is.na(days_reply), 10000, days_reply),
-    days4 = if_else(days_reply <= 4, value, 0),
-    days7 = if_else(days_reply <= 7, value, 0),
-    days10 = if_else(days_reply <= 10, value, 0),
-    days14 = if_else(days_reply <= 14, value, 0),
-    days21 = if_else(days_reply <= 21, value, 0),
-    days28 = if_else(days_reply <= 28, value, 0)
-  ) %>%
-  select(-value) %>%
-  pivot_longer(days4:days28, names_to = "within", names_prefix = "days") %>%
-  mutate(within = as.numeric(within))
-```
-
 Early Coordinationメッセージはコーディネーション期間が長くなると、患者の生存確率を下げてしまうという事実を提供している。したがって、このメッセージは適合通知への早期返信を促している可能性がある。この可能性を検証するために、我々は特定の期間以内に返信する確率への効果を線形確率モデルで推定する。アウトカム変数は潜在ドナーが$d$日以内に返信したならば1を取るダミー変数である。$d$日以降に返信した・返信しなかった場合、アウトカム変数は0となる。$d$の値を十分に大きくすれば、この分析は第\@ref(intention)節の結果と一致する。さらに、第\@ref(intention)節と同様に、我々はドナーの意向の視点から二つの効果に分解する。一つは提供意向を伴う$d$日以内の返信への効果である。アウトカムは$d$日以内に返信し、かつ提供の意向を示したならば1を取るダミー変数である。もう一つは提供意向を伴わない$d$日以内の返信への効果である。アウトカムは$d$日以内に返信し、かつ提供の意向を示さなければ1を取るダミー変数である。$d$日以降に返信した・返信しなかった場合、これらのアウトカムも0とコーディングされる。我々は$d = \{4, 7, 10, 14, 21, 28\}$に焦点を当てる。
 
 ```{r reply-speed-ctrl, include=FALSE}
-ctrl <- with(subset(use, treat == "A" & reply == 1), mean(days_reply))
-ctrl_positive <- with(subset(use, treat == "A" & reply == 1 & intention == 1), mean(days_reply))
-ctrl_negative <- with(subset(use, treat == "A" & reply == 1 & intention == 0), mean(days_reply))
-ctrl_max <- with(subset(use, treat == "A" & reply == 1), max(days_reply))
-ctrl_7days <- with(subset(flow, treat == "A" & within == 7 & outcome == "Reply"), mean(value))
-ctrl_positive_7days <- with(subset(flow, treat == "A" & within == 7 & outcome == "Positive intention"), mean(value))
+ctrl <- with(subset(use$cs, treat == "A" & reply == 1), mean(days_reply))
+ctrl_positive <- with(subset(use$cs, treat == "A" & reply == 1 & intention == 1), mean(days_reply))
+ctrl_negative <- with(subset(use$cs, treat == "A" & reply == 1 & intention == 0), mean(days_reply))
+ctrl_max <- with(subset(use$cs, treat == "A" & reply == 1), max(days_reply))
+ctrl_7days <- with(subset(use$flow, treat == "A" & within == 7 & outcome == "Reply"), mean(value))
+ctrl_positive_7days <- with(subset(use$flow, treat == "A" & within == 7 & outcome == "Positive intention"), mean(value))
 ```
 
 コントロール群では、返信者の平均的な返信日数は`r round(ctrl)`日である。また、正もしくは負の意向を伴う返信の平均返信日数はそれぞれ`r round(ctrl_positive)`日・`r round(ctrl_negative)`日である。最長の返信日数は`r ctrl_max`日である。加えて、適合通知に目安として記載されている7日以内の返信は`r round(ctrl_7days*100)`%であり、正の意向を伴う7日以内の返信は`r round(ctrl_positive_7days*100)`%である（未返信者を含む）。
 
 ```{r est-subsample-flow, include=FALSE}
-est_flow_sub <- flow %>%
+est_flow_sub <- use$flow %>%
   mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
   group_by(outcome, within, male, age_less30) %>%
   nest() %>%
@@ -793,31 +747,8 @@ wrap_plots(plot_list_young_female, ncol = 2) +
 
 ## Effects on the Coordination Process {#process}
 
-```{r coordination-data, include=FALSE}
-exclude <- use %>%
-  select(id, starts_with("exg_stop")) %>%
-  pivot_longer(
-    -id,
-    names_to = "outcome", values_to = "exclude",
-    names_prefix = "exg_stop_"
-  )
-
-coordination <- use %>%
-  select(test, candidate, consent, donate, everything()) %>%
-  pivot_longer(test:donate, names_to = "outcome") %>%
-  dplyr::left_join(exclude, by = c("id", "outcome")) %>%
-  mutate(
-    age_demean = age - mean(rawdt$age),
-    outcome = factor(
-      outcome,
-      levels = unlist(names(outcome_label)[4:7]),
-      labels = unlist(outcome_label[4:7])
-    )
-  )
-```
-
 ```{r est-full-coordination, tab.cap = 'Linear Probability Model of Coordination Process'}
-est_coordination <- coordination %>%
+est_coordination <- use$coordination %>%
   group_by(outcome) %>%
   nest() %>%
   mutate(
@@ -899,7 +830,7 @@ tbl_est_coordination %>%
 ```
 
 ```{r reg-subsample-coordination, include=FALSE}
-est_coordination_sub <- coordination %>%
+est_coordination_sub <- use$coordination %>%
   mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
   group_by(outcome, male, age_less30) %>%
   nest() %>%
@@ -991,7 +922,7 @@ wrap_plots(plot_list, ncol = 2) +
 <!-- //NOTE ロジット推定 -->
 
 ```{r logit-stock, tab.cap = 'Logit Model of Reply and Intention'}
-est_stock_logit <- stock %>%
+est_stock_logit <- use$stock %>%
   group_by(outcome) %>%
   nest() %>%
   mutate(
@@ -1001,7 +932,7 @@ est_stock_logit <- stock %>%
     ),
     fit2 = map(
       data,
-      ~ glm( mod$ctrl, data = ., family = binomial())
+      ~ glm(mod$ctrl, data = ., family = binomial())
     )
   ) %>%
   pivot_longer(
@@ -1059,7 +990,7 @@ tbl_stock_logit %>%
 ```
 
 ```{r logit-coordination, tab.cap = 'Logit Model of Coordination'}
-est_coordination_logit <- coordination %>%
+est_coordination_logit <- use$coordination %>%
   group_by(outcome) %>%
   nest() %>%
   mutate(
@@ -1125,7 +1056,7 @@ tbl_coordination_logit %>%
 <!-- //NOTE Wild bootstrap p-value for robust inference -->
 
 ```{r wildbs-young-male-stock, eval = FALSE, tab.cap = 'Linear Probability Model of Reply and Intentions for Males Less Then 30 Years'}
-est_stock_youngmen <- stock %>%
+est_stock_youngmen <- use$stock %>%
   dplyr::filter(male == 1 & age < 30) %>%
   group_by(outcome) %>%
   nest() %>%
@@ -1156,7 +1087,7 @@ est_stock_youngmen <- stock %>%
     values_to = "fit"
   )
 
-ate_bs <- stock %>%
+ate_bs <- use$stock %>%
   dplyr::filter(male == 1 & age < 30) %>%
   group_by(outcome) %>%
   nest() %>%
@@ -1196,7 +1127,7 @@ ate_bs <- stock %>%
     names_to = c(".value", "model")
   )
 
-ctrl_avg <- stock %>%
+ctrl_avg <- use$stock %>%
   dplyr::filter(male == 1 & age < 30) %>%
   group_by(outcome) %>%
   summarize(mean = mean(value))
@@ -1254,7 +1185,7 @@ tbl_stock_sub %>%
 ```
 
 ```{r wildbs-young-male-coordination, eval = FALSE, tbl.cap = 'Linear Probability Model of Coordination among Males'}
-ate_bs_coordination <- coordination %>%
+ate_bs_coordination <- use$coordination %>%
   dplyr::filter(male == 1) %>%
   dplyr::filter(exclude == 0) %>%
   mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
@@ -1270,7 +1201,7 @@ ate_bs_coordination <- coordination %>%
     ))
   )
 
-ctrl_avg <- coordination %>%
+ctrl_avg <- use$coordination %>%
   dplyr::filter(male == 1) %>%
   dplyr::filter(exclude == 0) %>%
   mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
