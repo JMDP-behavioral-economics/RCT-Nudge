@@ -84,14 +84,14 @@ lm_all_stock <- function(data,
   return(tbl_est_stock)
 }
 
-lm_subset_stock <- function(data,
+lm_subset_stock <- function(dt,
                             cluster = params$is_cluster,
                             se_type = params$se_type,
                             fe = params$is_fe)
 {
   mod <- estimation_model(fe)
   
-  est_stock_sub <- use$stock %>%
+  est_stock_sub <- dt %>%
     group_by(outcome, male, age_less30) %>%
     nest() %>%
     mutate(est = map(data, ~ lm_robust(
@@ -138,4 +138,42 @@ lm_subset_stock <- function(data,
   )
   class(res) <- append(class(res), "lm_subset_stock")
   res
-}                                
+}
+
+lm_subset_flow <- function( dt,
+                            cluster = params$is_cluster,
+                            se_type = params$se_type,
+                            fe = params$is_fe)
+{
+  mod <- estimation_model(fe)
+  
+  est_flow_sub <- dt %>%
+    group_by(outcome, within, male, age_less30) %>%
+    nest() %>%
+    mutate(
+      fit = map(data, ~ lm_robust(
+        update(mod$ctrl, . ~ . - male - age_demean),
+        cluster = if (cluster) .$RCTweek,
+        se_type = se_type,
+        data = .x
+      )),
+      avg = map_chr(data, ~ sprintf(
+        "%1d\n(%1.3f)", within, with(subset(.x, treat == "A"), mean(value))
+      ))
+    ) %>%
+    mutate(
+      tidy = map(fit, tidy),
+      tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+      tidy = map(tidy, ~ dplyr::select(.x, -outcome))
+    ) %>%
+    dplyr::select(-data, -fit) %>%
+    unnest(cols = tidy) %>%
+    mutate(
+      term = str_replace(term, "treat", ""),
+      term = factor(term, LETTERS[2:4])
+    )
+  
+  res <- list(plotdt = est_flow_sub)
+  class(res) <- append(class(res), "lm_subset_flow")
+  res
+}

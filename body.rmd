@@ -299,106 +299,19 @@ ctrl_positive_7days <- with(subset(use$flow, treat == "A" & within == 7 & outcom
 コントロール群では、返信者の平均的な返信日数は`r round(ctrl)`日である。また、正もしくは負の意向を伴う返信の平均返信日数はそれぞれ`r round(ctrl_positive)`日・`r round(ctrl_negative)`日である。最長の返信日数は`r ctrl_max`日である。加えて、適合通知に目安として記載されている7日以内の返信は`r round(ctrl_7days*100)`%であり、正の意向を伴う7日以内の返信は`r round(ctrl_positive_7days*100)`%である（未返信者を含む）。
 
 ```{r est-subsample-flow, include=FALSE}
-est_flow_sub <- use$flow %>%
-  mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
-  group_by(outcome, within, male, age_less30) %>%
-  nest() %>%
-  mutate(
-    fit = map(data, ~ lm_robust(
-      update(mod$ctrl, . ~ . - male - age_demean),
-      cluster = if(FALSE) .$RCTweek,
-      se_type = "HC0",
-      data = .x
-    )),
-    avg = map_chr(data, ~ sprintf(
-      "%1d\n(%1.3f)", within, with(subset(.x, treat == "A"), mean(value))
-    ))
-  ) %>%
-  mutate(
-    tidy = map(fit, tidy),
-    tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
-    tidy = map(tidy, ~ dplyr::select(.x, -outcome))
-  ) %>%
-  dplyr::select(-data, -fit) %>%
-  unnest(cols = tidy) %>%
-  mutate(
-    term = str_replace(term, "treat", ""),
-    term = factor(term, LETTERS[2:4])
-  )
-
-est_flow_sub
+est_sub_flow <- lm_subset_flow(use$flow, FALSE, "HC1", TRUE)
 ```
 
 ```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-plot_list_young_male <- unique(est_flow_sub$outcome) %>%
-  purrr::map(function(x) {
-    subset(est_flow_sub, male == 1 & age_less30 == 1 & outcome == x) %>%
-      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
-      geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_point(size = 3, position = position_dodge(2)) +
-      geom_errorbar(
-        aes(ymin = conf.low, ymax = conf.high),
-        position = position_dodge(2),
-        width = 0
-      ) +
-      scale_x_continuous(
-        breaks = subset(est_flow_sub, male == 1 & age_less30 == 1 & outcome == x)$within,
-        labels = subset(est_flow_sub, male == 1 & age_less30 == 1 & outcome == x)$avg
-      ) +
-      scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
-      ) +
-      labs(
-        title = paste("Outcome:", x),
-        x = "Days after sending notification\n(Control average)",
-        y = "Estimated Effects (95%CI)",
-        color = "Treatment", shape = "Treatment"
-      ) +
-      simplegg()
-  })
-
-wrap_plots(plot_list_young_male, ncol = 2) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
+coefplot(est_sub_flow, male == 1 & age_less30 == 1)
 ```
 
 先の小節で見たように返信や意向への効果は異質的であるので、この小節は性・年代でサブサンプルに分割して、返信日数への効果の異質性に注目する。図\@ref(fig:young-male-flow)は30歳未満の男性の結果である。このサブグループでは、我々は確率メッセージのみを加えた実験群Bが提供意向を伴う全体の返信率を10ポイント程度高めていたことをすでに明らかにしている。図\@ref(fig:young-male-flow)はその効果が14日以内の返信から生じていることを示唆している。実験群Bは提供意向を伴う10日以内の返信を（統計的に有意ではないが）5ポイント程度高めており、14日以内の返信を10ポイント程度高めている。すなわち、実験群Bは提供意向を伴う10日以内の返信を5ポイント、提供意向を伴う10--14日以内の返信を5ポイント高め、これらが全体の返信率を10ポイント高めていることにつながっている。また、このグループでは、早期返信を促している可能性のある実験群C（Early Coordinationメッセージ）が短期間の返信を高めているということはなかった。
 
 ```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-plot_list_young_female <- unique(est_flow_sub$outcome) %>%
-  purrr::map(function(x) {
-    subset(est_flow_sub, male == 0 & age_less30 == 1 & outcome == x) %>%
-      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
-      geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_point(size = 3, position = position_dodge(2)) +
-      geom_errorbar(
-        aes(ymin = conf.low, ymax = conf.high),
-        position = position_dodge(2),
-        width = 0
-      ) +
-      scale_x_continuous(
-        breaks = subset(est_flow_sub, male == 0 & age_less30 == 1 & outcome == x)$within,
-        labels = subset(est_flow_sub, male == 0 & age_less30 == 1 & outcome == x)$avg
-      ) +
-      scale_y_continuous(
-        breaks = seq(-0.3, 0.3, by = 0.05),
-        labels = sprintf("%1.2f", seq(-0.3, 0.3, by = 0.05)),
-        limits = c(-0.25, 0.2)
-      ) +
-      labs(
-        title = paste("Outcome:", x),
-        x = "Days after sending notification\n(Control average)",
-        y = "Estimated Effects (95%CI)",
-        color = "Treatment", shape = "Treatment"
-      ) +
-      simplegg()
-  })
-
-wrap_plots(plot_list_young_female, ncol = 2) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
+coefplot(est_sub_flow, male == 0 & age_less30 == 1)
 ```
 
 しかしながら、実験群Cは30歳未満の女性の早期返信を促している可能性がある。図\@ref(fig:young-male-flow)は30歳未満の女性の結果である。図\@ref(fig:coefplot-reg-stock-subset)より実験群Cは全体の返信率に統計的に有意な影響を与えていない。一方で、この実験群は4日以内の返信率を6ポイント程度高めており、これは5%水準で有意である。
@@ -921,70 +834,12 @@ tbl_coordination_sub %>%
 
 ```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-plot_list_old_male <- unique(est_flow_sub$outcome) %>%
-  purrr::map(function(x) {
-    subset(est_flow_sub, male == 1 & age_less30 == 0 & outcome == x) %>%
-      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
-      geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_point(size = 3, position = position_dodge(2)) +
-      geom_errorbar(
-        aes(ymin = conf.low, ymax = conf.high),
-        position = position_dodge(2),
-        width = 0
-      ) +
-      scale_x_continuous(
-        breaks = subset(est_flow_sub, male == 1 & age_less30 == 0 & outcome == x)$within,
-        labels = subset(est_flow_sub, male == 1 & age_less30 == 0 & outcome == x)$avg
-      ) +
-      scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
-      ) +
-      labs(
-        title = paste("Outcome:", x),
-        x = "Days after sending notification\n(Control average)",
-        y = "Estimated Effects (95%CI)",
-        color = "Treatment", shape = "Treatment"
-      ) +
-      simplegg()
-  })
-
-wrap_plots(plot_list_old_male, ncol = 2) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
+coefplot(est_sub_flow, male == 1 & age_less30 == 0)
 ```
 
 ```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-plot_list_old_female <- unique(est_flow_sub$outcome) %>%
-  purrr::map(function(x) {
-    subset(est_flow_sub, male == 0 & age_less30 == 0 & outcome == x) %>%
-      ggplot(aes(x = within, y = estimate, color = term, shape = term)) +
-      geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_point(size = 3, position = position_dodge(2)) +
-      geom_errorbar(
-        aes(ymin = conf.low, ymax = conf.high),
-        position = position_dodge(2),
-        width = 0
-      ) +
-      scale_x_continuous(
-        breaks = subset(est_flow_sub, male == 0 & age_less30 == 0 & outcome == x)$within,
-        labels = subset(est_flow_sub, male == 0 & age_less30 == 0 & outcome == x)$avg
-      ) +
-      scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
-      ) +
-      labs(
-        title = paste("Outcome:", x),
-        x = "Days after sending notification\n(Control average)",
-        y = "Estimated Effects (95%CI)",
-        color = "Treatment", shape = "Treatment"
-      ) +
-      simplegg()
-  })
-
-wrap_plots(plot_list_old_female, ncol = 2) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
+coefplot(est_sub_flow, male == 0 & age_less30 == 0)
 ```
 
 <!-- //NOTE RCF -->
