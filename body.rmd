@@ -162,7 +162,7 @@ ongoing_f <- lm_robust(
 
 ```{r summary, tab.cap = 'Overview of Field Experiment'}
 summary_experiment(use$cs, FALSE, "HC1") %>%
-  tbl_summary_experiment()
+  tbl()
 ```
 
 表 \@ref(tab:summary) はフィールド実験の概要である。パネルAは各実験群の介入を示しており、パネルBは各実験群のサンプルサイズを示している。パネルCはランダム化が成功しているかどうかを検証するバランステストである。多くの変数が実験群間で平均的にバランスしているので、実験群の割り当てはおおよそランダムである。<!-- //TODO 年齢違いを入れるか -->
@@ -205,185 +205,16 @@ exogenous_f <- lm_robust(
 潜在ドナーが返信する前に、患者側の都合でコーディネーションが中断してしまう可能性がある。これは潜在ドナーの意向と独立に生じるので、我々は各実験群でそのようなケースに該当する$0.5$--$0.7$%を分析サンプルから除外している。ただし、このケースは実験群間でバランスしている（`r exogenous_f`）。
 
 ```{r reg-stock, tab.cap = 'Linear Probability Model of Reply and Intention'}
-mod <- list(
-  unctrl = value ~ treat,
-  ctrl = value ~ treat + age_demean + I(age_demean^2) + male + coordinate +
-    hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week)
-)
-
-est_stock <- use$stock %>%
-  group_by(outcome) %>%
-  nest() %>%
-  mutate(
-    fit1 = map(
-      data,
-      ~ lm_robust(
-        mod$unctrl,
-        data = .,
-        cluster = if(FALSE) .$RCTweek,
-        se_type = "HC0"
-      )
-    ),
-    fit2 = map(
-      data,
-      ~ lm_robust(
-        mod$ctrl,
-        data = .,
-        cluster = if(FALSE) .$RCTweek,
-        se_type = "HC0"
-      )
-    )
-  ) %>%
-  pivot_longer(
-    fit1:fit2,
-    names_prefix = "fit",
-    names_to = "model",
-    values_to = "fit"
-  )
-
-ctrl_avg <- use$stock %>%
-  dplyr::filter(treat == "A") %>%
-  group_by(outcome) %>%
-  summarize(mean = sprintf("%1.4f", mean(value)))
-
-add_table <- tibble::tribble(
-  ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-  "Control average", ctrl_avg$mean[1], ctrl_avg$mean[1],
-  ctrl_avg$mean[2], ctrl_avg$mean[2],
-  ctrl_avg$mean[3], ctrl_avg$mean[3],
-  "Covariates", "", "X", "", "X", "", "X"
-)
-
-attr(add_table, "position") <- 7:8
-
-tbl_est_stock <- est_stock %>%
-  pull(fit) %>%
-  setNames(paste0("(", seq_len(length(.)), ")")) %>%
-  modelsummary(
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    fmt = 4,
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = add_table,
-  )
-
-tbl_est_stock %>%
-  add_header_row(
-    values = c("", "Reply", "Positive", "Negative"),
-    colwidths = c(1, 2, 2, 2)
-  ) %>%
-  add_header_row(
-    values = c("", "Intention"),
-    colwidths = c(3, 4)
-  ) %>%
-  align(j = -1, align = "center", part = "all") %>%
-  add_footer_lines(paste(
-    "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
-    "The clustered standard errors with the CR2 adjustment",
-    "are reported in parenetheses (cluster unit is an experimental week).",
-    "Covariates are gender, squared polynomial of (demeaned) age,",
-    "number of past coordinations,",
-    "number of hospitals per 10 square kilometers,",
-    "number of hospitals with PBSC collection per 10 square kilometers,",
-    "number of hospitals with BM collection per 10 square kilometers,",
-    "month dummies, and week dummies."
-  )) %>%
-  width(j = 1, 1) %>%
-  fontsize(size = 9, part = "all") %>%
-  ft_theme()
+lm_all_stock(use$stock, FALSE, "HC1", TRUE) %>%
+  tbl()
 ```
 
 表 \@ref(tab:reg-stock) は線形確率モデルの推定結果である。奇数列は実験群ダミーだけを説明変数に入れており、単純な平均値の差に対応している。偶数列は実験群ダミーに加えて、個人属性・月および週の固定効果をコントロールしている。推定結果はすべての実験群は、共変量の有無に関わらず、返信や意向に対して統計的に有意な効果を持っていない。我々は代替手法としてロジットモデルを推定（表 \@ref(tab:logit-stock) ）し、同様の結果を得ている（オッズ比の95%信頼区間が1を含んでいる）。
 
-```{r reg-stock-subset, include=FALSE}
-est_stock_sub <- use$stock %>%
-  mutate(age_less30 = if_else(age < 30, 1, 0)) %>%
-  group_by(outcome, male, age_less30) %>%
-  nest() %>%
-  mutate(est = map(data, ~ lm_robust(
-    update(mod$ctrl, . ~ . - male - age_demean),
-    cluster = if(FALSE) .$RCTweek,
-    se_type = "HC0",
-    data = .x
-  )))
-
-plotdt_stock_sub <- est_stock_sub %>%
-  mutate(
-    fit = map(est, tidy),
-    fit = map(fit, ~ subset(.x, str_detect(term, "treat"))),
-    fit = map(fit, ~ dplyr::select(.x, -outcome)),
-    N = map_chr(est, ~ paste("N =", nobs(.x))),
-    mean = map_dbl(data, ~ with(subset(., treat == "A"), mean(value))),
-    mean = sprintf("Control avg = %1.3f", mean)
-  ) %>%
-  select(-data, -est) %>%
-  unnest(cols = fit) %>%
-  mutate(
-    pos = paste0(male, age_less30),
-    pos = factor(
-      pos,
-      levels = c("01", "00", "11", "10"),
-      labels = c(
-        "Female\u00d7\nAge<30",
-        "Female\u00d7\n30\u2264Age",
-        "Male\u00d7\nAge<30",
-        "Male\u00d7\n30\u2264Age"
-      )
-    ),
-    term = str_replace(term, "treat", ""),
-    term = factor(term, LETTERS[2:4])
-  )
-
-text <- plotdt_stock_sub %>%
-  select(male, age_less30, pos, N, mean) %>%
-  distinct()
-```
-
 ```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-plot_list <- unique(plotdt_stock_sub$outcome) %>%
-  purrr::map(function(x) {
-    subset(plotdt_stock_sub, outcome == x) %>%
-      ggplot(aes(x = pos, y = estimate)) +
-      geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_point(
-        aes(color = term, shape = term),
-        size = 3, position = position_dodge(0.5)
-      ) +
-      geom_errorbar(
-        aes(ymin = conf.low, ymax = conf.high, color = term),
-        position = position_dodge(0.5),
-        width = 0
-      ) +
-      geom_text(
-        aes(y = -0.15, label = N),
-        data = subset(text, outcome == x),
-        color = "black"
-      ) +
-      geom_text(
-        aes(y = -0.175, label = mean),
-        data = subset(text, outcome == x),
-        color = "black"
-      ) +
-      scale_y_continuous(
-        breaks = seq(-0.2, 0.2, by = 0.05), limits = c(-0.2, 0.2)
-      ) +
-      labs(
-        title = paste("Outcome:", x),
-        x = "Subset",
-        y = "Estimated Effects (95%CI)",
-        color = "Treatment", shape = "Treatment"
-      ) +
-      simplegg()
-  })
-
-wrap_plots(plot_list, ncol = 2) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
+lm_subset_stock(use$stock, FALSE, "HC1", TRUE) %>%
+  coefplot()
 ```
 
 メッセージ効果の異質性を検証するために、我々はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定する。図 \@ref(fig:coefplot-reg-stock-subset) は係数プロットである。結果として、若い男性グループで、確率メッセージのみを加えた実験群Bが正の意向を伴う返信を約10ポイント（コントロール平均が$38.6$%なので、$25.91$%増加）増やしており、これは統計的に有意である。実験群Bはこのグループにおける提供意向を伴わない返信率を下げているので、全体の返信率に対する効果は6ポイントであり、正の意向を伴う返信に対する効果よりも小さい。<!--//TODO Wild bootstrapを入れるならその議論を追記 -->他の性・年代と比較して、移植成績が良いにも関わらず若い男性の提供意欲は低いことを考慮すれば、確率メッセージはコーディネーションの効率性を改善しているといえる。ただし、他の性・年代グループで、我々の介入は返信や意向に対して統計的に有意な効果をもたない。
