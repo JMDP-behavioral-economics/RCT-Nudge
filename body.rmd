@@ -70,8 +70,6 @@ options(
   modelsummary_factory_latex = "kableExtra",
   modelsummary_factory_word = "flextable"
 )
-
-tidy_custom.lm_robust <- function(x, ...) broom::tidy(x)
 ```
 
 ## Background: Coordination Process of JMDP {#background}
@@ -1019,18 +1017,6 @@ add_tables <- tibble::tribble(
 )
 
 attr(add_tables, "position") <- 7
-
-
-tidy_custom.glm <- function(x, ...) {
-  tbl <- tidy(x) %>%
-    mutate(
-      or = exp(estimate),
-      lower.or = exp(estimate - 1.96 * std.error),
-      upper.or = exp(estimate + 1.96 * std.error)
-    )
-
-  tbl
-}
 
 tbl_stock_logit <- est_stock_logit %>%
   pull(fit) %>%
