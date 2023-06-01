@@ -334,135 +334,13 @@ lm_subset_coordination(use$coordination, FALSE, "HC1", TRUE) %>%
 <!-- //NOTE ロジット推定 -->
 
 ```{r logit-stock, tab.cap = 'Logit Model of Reply and Intention'}
-est_stock_logit <- use$stock %>%
-  group_by(outcome) %>%
-  nest() %>%
-  mutate(
-    fit1 = map(
-      data,
-      ~ glm(mod$unctrl, data = ., family = binomial())
-    ),
-    fit2 = map(
-      data,
-      ~ glm(mod$ctrl, data = ., family = binomial())
-    )
-  ) %>%
-  pivot_longer(
-    fit1:fit2,
-    names_prefix = "fit",
-    names_to = "model",
-    values_to = "fit"
-  )
-
-add_tables <- tibble::tribble(
-  ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-  "Covariates", "", "X", "", "X", "", "X"
-)
-
-attr(add_tables, "position") <- 7
-
-tbl_stock_logit <- est_stock_logit %>%
-  pull(fit) %>%
-  setNames(paste0("(", seq_len(length(.)), ")")) %>%
-  modelsummary(
-    estimate = "{or}",
-    statistic = "[{lower.or}, {upper.or}]",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    add_rows = add_tables,
-    gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
-    fmt = fmt_sprintf("%.3f")
-  )
-
-tbl_stock_logit %>%
-  flextable::add_header_row(
-    values = c("", "Reply", "Positive", "Negative"),
-    colwidths = c(1, 2, 2, 2)
-  ) %>%
-  flextable::add_header_row(
-    values = c("", "Intention"),
-    colwidths = c(3, 4)
-  ) %>%
-  add_footer_lines(paste(
-    "Notes: We show odds ratios and associated 95 percent confidential intervals.",
-    "Covariates are gender, squared polynomial of (demeaned) age,",
-    "number of past coordinations,",
-    "number of hospitals per 10 square kilometers,",
-    "number of hospitals with PBSC collection per 10 square kilometers,",
-    "number of hospitals with BM collection per 10 square kilometers,",
-    "month dummies, and week dummies."
-  )) %>%
-  align(j = -1, align = "center", part = "all") %>%
-  width(j = 1, 1) %>%
-  fontsize(size = 9, part = "all") %>%
-  ft_theme()
+logit_all_stock(use$stock, TRUE) %>%
+  tbl()
 ```
 
 ```{r logit-coordination, tab.cap = 'Logit Model of Coordination'}
-est_coordination_logit <- use$coordination %>%
-  group_by(outcome) %>%
-  nest() %>%
-  mutate(
-    fit1 = map(
-      data,
-      ~ glm(mod$unctrl, data = subset(., exclude == 0), family = binomial())
-    ),
-    fit2 = map(
-      data,
-      ~ glm(mod$ctrl, data = subset(., exclude == 0), family = binomial())
-    )
-  ) %>%
-  pivot_longer(
-    fit1:fit2,
-    names_prefix = "fit",
-    names_to = "model",
-    values_to = "fit"
-  )
-
-add_tables <- tibble::tribble(
-  ~term, ~mod1, ~mod2, ~mod3, ~mod4, ~mod5, ~mod6, ~mod7, ~mod8,
-  "Covariates", "", "X", "", "X", "", "X", "", "X"
-)
-
-attr(add_tables, "position") <- 7
-
-tbl_coordination_logit <- est_coordination_logit %>%
-  pull(fit) %>%
-  setNames(paste0("(", seq_len(length(.)), ")")) %>%
-  modelsummary(
-    estimate = "{or}",
-    statistic = "[{lower.or}, {upper.or}]",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    add_rows = add_tables,
-    gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
-    fmt = fmt_sprintf("%.3f")
-  )
-
-tbl_coordination_logit %>%
-  flextable::add_header_row(
-    values = c("", "CT", "Candidate", "Consent", "Donation"),
-    colwidths = c(1, 2, 2, 2, 2)
-  ) %>%
-  align(j = -1, align = "center", part = "all") %>%
-  width(j = 1, 1) %>%
-  add_footer_lines(paste(
-    "Notes: We show odds ratios and associated 95 percent confidential intervals.",
-    "Covariates are gender, squared polynomial of (demeaned) age,",
-    "number of past coordinations,",
-    "number of hospitals per 10 square kilometers,",
-    "number of hospitals with PBSC collection per 10 square kilometers,",
-    "number of hospitals with BM collection per 10 square kilometers,",
-    "month dummies, and week dummies."
-  )) %>%
-  fontsize(size = 9, part = "all") %>%
-  ft_theme()
+logit_all_coordination(use$coordination, TRUE) %>%
+  tbl()
 ```
 
 <!-- //NOTE Wild bootstrap p-value for robust inference -->

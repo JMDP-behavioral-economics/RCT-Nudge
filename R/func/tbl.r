@@ -140,3 +140,49 @@ tbl.cf_corr_effect <- function(x) {
     fontsize(size = 9, part = "all") %>%
     ft_theme()
 }
+
+tbl.logit_all_stock <- function(obj) {
+  obj %>%
+    flextable::add_header_row(
+      values = c("", "Reply", "Positive", "Negative"),
+      colwidths = c(1, 2, 2, 2)
+    ) %>%
+    flextable::add_header_row(
+      values = c("", "Intention"),
+      colwidths = c(3, 4)
+    ) %>%
+    add_footer_lines(paste(
+      "Notes: We show odds ratios and associated 95 percent confidential intervals.",
+      "Covariates are gender, squared polynomial of (demeaned) age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    )) %>%
+    align(j = -1, align = "center", part = "all") %>%
+    width(j = 1, 1) %>%
+    fontsize(size = 9, part = "all") %>%
+    ft_theme()
+}
+
+tbl.logit_all_coordination <- function(obj) {
+  obj %>%
+    flextable::add_header_row(
+      values = c("", "CT", "Candidate", "Consent", "Donation"),
+      colwidths = c(1, 2, 2, 2, 2)
+    ) %>%
+    align(j = -1, align = "center", part = "all") %>%
+    width(j = 1, 1) %>%
+    add_footer_lines(paste(
+      "Notes: We show odds ratios and associated 95 percent confidential intervals.",
+      "Covariates are gender, squared polynomial of (demeaned) age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    )) %>%
+    fontsize(size = 9, part = "all") %>%
+    ft_theme()
+}

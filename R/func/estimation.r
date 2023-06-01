@@ -257,3 +257,110 @@ lm_subset_coordination <- function( data,
   class(res) <- c("list", "lm_subset_coordination")
   res
 }
+
+logit_all_stock <- function(data,
+                            fe = params$is_fe)
+{
+  mod <- estimation_model(fe)
+  
+  est_stock_logit <- data %>%
+    group_by(outcome) %>%
+    nest() %>%
+    mutate(
+      fit1 = map(
+        data,
+        ~ glm(mod$unctrl, data = ., family = binomial())
+      ),
+      fit2 = map(
+        data,
+        ~ glm(mod$ctrl, data = ., family = binomial())
+      )
+    ) %>%
+    pivot_longer(
+      fit1:fit2,
+      names_prefix = "fit",
+      names_to = "model",
+      values_to = "fit"
+    )
+
+  add_tables <- tibble::tribble(
+    ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
+    "Covariates", "", "X", "", "X", "", "X"
+  )
+
+  attr(add_tables, "position") <- 7
+
+  tbl_stock_logit <- est_stock_logit %>%
+    pull(fit) %>%
+    setNames(paste0("(", seq_len(length(.)), ")")) %>%
+    modelsummary(
+      estimate = "{or}",
+      statistic = "[{lower.or}, {upper.or}]",
+      coef_map = c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D"
+      ),
+      add_rows = add_tables,
+      gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
+      fmt = fmt_sprintf("%.3f")
+    )
+  
+  class(tbl_stock_logit) <- append(class(tbl_stock_logit), "logit_all_stock")
+  tbl_stock_logit
+}
+
+logit_all_coordination <- function( data,
+                                    fe = params$is_fe)
+{
+  mod <- estimation_model(fe)
+
+  est_coordination_logit <- data %>%
+    group_by(outcome) %>%
+    nest() %>%
+    mutate(
+      fit1 = map(
+        data,
+        ~ glm(mod$unctrl, data = subset(., exclude == 0), family = binomial())
+      ),
+      fit2 = map(
+        data,
+        ~ glm(mod$ctrl, data = subset(., exclude == 0), family = binomial())
+      )
+    ) %>%
+    pivot_longer(
+      fit1:fit2,
+      names_prefix = "fit",
+      names_to = "model",
+      values_to = "fit"
+    )
+
+  add_tables <- tibble::tribble(
+    ~term, ~mod1, ~mod2, ~mod3, ~mod4, ~mod5, ~mod6, ~mod7, ~mod8,
+    "Covariates", "", "X", "", "X", "", "X", "", "X"
+  )
+
+  attr(add_tables, "position") <- 7
+
+  tbl_coordination_logit <- est_coordination_logit %>%
+    pull(fit) %>%
+    setNames(paste0("(", seq_len(length(.)), ")")) %>%
+    modelsummary(
+      estimate = "{or}",
+      statistic = "[{lower.or}, {upper.or}]",
+      coef_map = c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D"
+      ),
+      add_rows = add_tables,
+      gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
+      fmt = fmt_sprintf("%.3f")
+    )
+  
+  class(tbl_coordination_logit) <- append(
+    class(tbl_coordination_logit),
+    "logit_all_coordination"
+  )
+  tbl_coordination_logit
+}
