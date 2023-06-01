@@ -42,6 +42,8 @@ coefplot.lm_subset_stock <- function(obj) {
     theme(legend.position = "bottom")
 }
 
+coefplot.lm_subset_coordination <- coefplot.lm_subset_stock
+
 coefplot.lm_subset_flow <- function(obj, cond) {
   cond <- rlang::enquo(cond)
   cond_eval <- rlang::eval_tidy(cond, obj$plotdt)

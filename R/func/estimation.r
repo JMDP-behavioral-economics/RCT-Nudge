@@ -177,3 +177,83 @@ lm_subset_flow <- function( dt,
   class(res) <- append(class(res), "lm_subset_flow")
   res
 }
+
+lm_all_coordination <- function(data,
+                                cluster = params$is_cluster,
+                                se_type = params$se_type,
+                                fe = params$is_fe)
+{
+  mod <- estimation_model(fe)
+
+  est_coordination <- data %>%
+    group_by(outcome) %>%
+    nest() %>%
+    mutate(
+      fit1 = map(
+        data,
+        ~ lm_robust(
+          mod$unctrl,
+          data = subset(., exclude == 0),
+          cluster = if(cluster) .$RCTweek,
+          se_type = se_type
+        )
+      ),
+      fit2 = map(
+        data,
+        ~ lm_robust(
+          mod$ctrl,
+          data = subset(., exclude == 0),
+          cluster = if(cluster) .$RCTweek,
+          se_type = se_type
+        )
+      ),
+      avg = map_chr(
+        data,
+        ~ with(
+          subset(., exclude == 0 & treat == "A"),
+          sprintf("%.4f", mean(value))
+        )
+      )
+    ) %>%
+    pivot_longer(
+      fit1:fit2,
+      names_prefix = "fit",
+      names_to = "model",
+      values_to = "fit"
+    ) %>%
+    select(-data)
+
+  add_table <- c("Control average", est_coordination$avg) %>%
+    rbind(c("Covariates", "", "X", "", "X", "", "X", "", "X")) %>%
+    data.frame()
+
+  attr(add_table, "position") <- c(9, 10)
+
+  tbl_est_coordination <- est_coordination %>%
+    pull(fit) %>%
+    modelsummary(
+      coef_map = c(
+        "(Intercept)" = "Constant",
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D"
+      ),
+      stars = c("***" = .01, "**" = .05, "*" = .1),
+      fmt = 4,
+      gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+      add_rows = add_table
+    )
+  
+  class(tbl_est_coordination) <- append(class(tbl_est_coordination), "lm_all_coordination")
+  tbl_est_coordination
+}
+
+lm_subset_coordination <- function( data,
+                                    cluster = params$is_cluster,
+                                    se_type = params$se_type,
+                                    fe = params$is_fe)
+{
+  res <- lm_subset_stock(data, cluster, se_type, fe)
+  class(res) <- c("list", "lm_subset_coordination")
+  res
+}

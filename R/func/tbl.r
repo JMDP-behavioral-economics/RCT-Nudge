@@ -49,6 +49,29 @@ tbl.lm_all_stock <- function(x) {
     ft_theme()
 }
 
+tbl.lm_all_coordination <- function(x) {
+  x %>%
+    add_header_row(
+      values = c("", "CT", "Candidate", "Consent", "Donation"),
+      colwidths = c(1, 2, 2, 2, 2)
+    ) %>%
+    align(j = -1, align = "center", part = "all") %>%
+    add_footer_lines(paste(
+      "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+      "The clustered standard errors with the CR2 adjustment",
+      "are reported in parenetheses (cluster unit is experimental weeks).",
+      "Covariates are gender, squared polynomial of (demeaned) age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    )) %>%
+    width(j = 1, 1) %>%
+    fontsize(size = 9, part = "all") %>%
+    ft_theme()
+}
+
 tbl.cf_cate <- function(x) {
   x %>%
     as_grouped_data("age") %>%
