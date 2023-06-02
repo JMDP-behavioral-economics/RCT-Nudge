@@ -18,7 +18,7 @@ params:
   is_fe: TRUE
   is_cluster: FALSE
   main_se_type: "stata"
-  cluster_se_type: "CR2"
+  cluster_se_type: "stata"
 ---
 
 ```{r include=FALSE}
@@ -107,27 +107,7 @@ knitr::include_graphics("image/intervention.png")
 
 我々は二つの介入メッセージの効果を推定するために四つの実験群を設けた。実験群Aは介入メッセージなしの標準的な適合通知を送付した（コントロール群）。実験群BとCはそれぞれ確率メッセージとEarly Coordinationメッセージを追加した適合通知を送付した。実験群Dは二つの介入メッセージを同時に加えた適合通知を送付した。この実験群は情報過多による認知負荷の負の影響を検証する目的で設けた。
 
-```{r schedule-data, include=FALSE}
-schedule <- read_csv(here(data_root, "RCT-schedule.csv")) %>%
-  mutate(
-    my = paste0(month, "/", year - 2000),
-    my = factor(
-      my,
-      levels = c("9/21", "10/21", "11/21", "12/21", "1/22", "2/22"),
-      labels = c("Sep 21", "Oct 21", "Nov 21", "Dec 21", "Jan 22", "Feb 22")
-    ),
-    week = factor(week, levels = 1:4, labels = paste("Week", 1:4))
-  ) %>%
-  dplyr::select(week, my, treat) %>%
-  pivot_wider(values_from = treat, names_from = my)
-```
-
-```{r assignment, tab.cap = "Assignment Schedule"}
-flextable(schedule) %>%
-  align(j = -1, align = "center", part = "all") %>%
-  padding(j=1:7, padding.top = 5, padding.bottom = 5, part="all") %>%
-  fontsize(size = 9, part = "all")  %>%
-  ft_theme()
+```{r assignment, file = "R/schedule_data.r", tab.cap = "Assignment Schedule"}
 ```
 
 実験参加者は2021年9月から2022年2月の間に適合通知を受け取った11,154名の潜在ドナーである。JMDP事務局に無理のない範囲でランダムネスを保つために、我々は実験群を週単位のクラスターランダム化で割り当てた。このとき、可能な限り週と月で実験群がバランスするように設計している。表 \@ref(tab:assignment) に割り当てスケジュールをまとめている。
@@ -239,14 +219,7 @@ rcf <- causal_forest(use$cs)
 
 ```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Gender and Age. Notes: Blue fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.'}
 
-rcf$pred %>%
-  ggplot(aes(x = age, y = effect)) +
-  geom_hline(aes(yintercept = 0), linetype = 2) +
-  geom_boxplot(aes(group = age)) +
-  stat_smooth(se = FALSE, color = "blue") +
-  facet_grid(treat ~ male) +
-  labs(x = "Age", y = "Predicted treatment effect") +
-  simplegg()
+boxplot_effect(rcf)
 ```
 
 ```{r include=FALSE}
@@ -352,8 +325,8 @@ wildbs_subset_stock(use$stock, male == 1 & age < 30, "CR2", TRUE, treat = c("B",
   tbl()
 ```
 
-```{r wildbs-young-male-coordination, tbl.cap = 'Linear Probability Model of Coordination among Males'}
-wildbs_subset_coordination(use$coordination, male == 1 & age < 30, "CR2", "TRUE", "B") %>%
+```{r wildbs-young-male-coordination, tab.cap = 'Linear Probability Model of Coordination among Males'}
+wildbs_subset_coordination(use$coordination, male == 1 & age < 30, "CR2", TRUE, "B") %>%
   tbl()
 ```
 
