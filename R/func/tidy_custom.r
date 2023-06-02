@@ -1,4 +1,5 @@
 tidy_custom.lm_robust <- function(x, ...) broom::tidy(x)
+glance_custom.lm_robust <- function(x, ...) broom::glance(x)
 
 
 tidy_custom.glm <- function(x, ...) {

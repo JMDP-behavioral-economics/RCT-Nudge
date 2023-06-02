@@ -14,6 +14,33 @@ estimation_model <- function(is_fe = params$is_fe){
   mod
 }
 
+map_lm_robust <- function(dat_list,
+                          model,
+                          cluster,
+                          se_type)
+{
+  if (cluster) {
+    map(
+      dat_list,
+      ~ lm_robust(
+        model,
+        data = .,
+        clusters = RCTweek,
+        se_type = se_type
+      )
+    )
+  } else {
+    map(
+      dat_list,
+      ~ lm_robust(
+        model,
+        data = .,
+        se_type = se_type
+      )
+    )
+  }
+}
+
 lm_all_stock <- function(data,
                           cluster = params$is_cluster,
                           se_type = params$main_se_type,
@@ -25,24 +52,8 @@ lm_all_stock <- function(data,
     group_by(outcome) %>%
     nest() %>%
     mutate(
-      fit1 = map(
-        data,
-        ~ lm_robust(
-          mod$unctrl,
-          data = .,
-          cluster = if (cluster) .$RCTweek,
-          se_type = se_type
-        )
-      ),
-      fit2 = map(
-        data,
-        ~ lm_robust(
-          mod$ctrl,
-          data = .,
-          cluster = if (cluster) .$RCTweek,
-          se_type = se_type
-        )
-      )
+      fit1 = map_lm_robust(data, mod$unctrl, cluster, se_type),
+      fit2 = map_lm_robust(data, mod$ctrl, cluster, se_type)
     ) %>%
     pivot_longer(
       fit1:fit2,
@@ -78,7 +89,7 @@ lm_all_stock <- function(data,
       stars = c("***" = .01, "**" = .05, "*" = .1),
       fmt = 4,
       gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-      add_rows = add_table,
+      add_rows = add_table
     )
   
   class(tbl_est_stock) <- append(class(tbl_est_stock), "lm_all_stock")
@@ -96,12 +107,12 @@ lm_subset_stock <- function(dt,
   est_stock_sub <- dt %>%
     group_by(outcome, male, age_less30) %>%
     nest() %>%
-    mutate(est = map(data, ~ lm_robust(
+    mutate(est = map_lm_robust(
+      data,
       update(mod$ctrl, . ~ . - male - age_demean),
-      cluster = if (cluster) .$RCTweek,
-      se_type = se_type,
-      data = .x
-    )))
+      cluster,
+      se_type
+    ))
 
   plotdt_stock_sub <- est_stock_sub %>%
     mutate(
@@ -153,12 +164,12 @@ lm_subset_flow <- function( dt,
     group_by(outcome, within, male, age_less30) %>%
     nest() %>%
     mutate(
-      fit = map(data, ~ lm_robust(
+      fit = map_lm_robust(
+        data,
         update(mod$ctrl, . ~ . - male - age_demean),
-        cluster = if (cluster) .$RCTweek,
-        se_type = se_type,
-        data = .x
-      )),
+        cluster,
+        se_type
+      ),
       avg = map_chr(data, ~ sprintf(
         "%1d\n(%1.3f)", within, with(subset(.x, treat == "A"), mean(value))
       ))
@@ -188,27 +199,12 @@ lm_all_coordination <- function(data,
   mod <- estimation_model(fe)
 
   est_coordination <- data %>%
+    dplyr::filter(exclude == 0) %>%
     group_by(outcome) %>%
     nest() %>%
     mutate(
-      fit1 = map(
-        data,
-        ~ lm_robust(
-          mod$unctrl,
-          data = subset(., exclude == 0),
-          cluster = if(cluster) .$RCTweek,
-          se_type = se_type
-        )
-      ),
-      fit2 = map(
-        data,
-        ~ lm_robust(
-          mod$ctrl,
-          data = subset(., exclude == 0),
-          cluster = if(cluster) .$RCTweek,
-          se_type = se_type
-        )
-      ),
+      fit1 = map_lm_robust(data, mod$unctrl, cluster, se_type),
+      fit2 = map_lm_robust(data, mod$ctrl, cluster, se_type),
       avg = map_chr(
         data,
         ~ with(

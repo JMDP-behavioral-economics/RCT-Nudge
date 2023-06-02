@@ -16,9 +16,9 @@ output:
     toc: false
 params:
   is_fe: TRUE
-  is_cluster: FALSE
-  main_se_type: "stata"
-  cluster_se_type: "stata"
+  is_cluster: TRUE
+  main_se_type: stata
+  cluster_se_type: stata
 ---
 
 ```{r include=FALSE}
@@ -73,7 +73,8 @@ options(
   modelsummary_factory_default = "flextable",
   modelsummary_factory_html = "kableExtra",
   modelsummary_factory_latex = "kableExtra",
-  modelsummary_factory_word = "flextable"
+  modelsummary_factory_word = "flextable",
+  modelsummary_get = "broom"
 )
 
 data_root <- "D:/JMDPフィールド実験"
@@ -143,7 +144,7 @@ ongoing_f <- lm_robust(
 追加的なデータとして、我々はJMDPがウェブ上で公開している医療機関リストを用いる。このリストは完全な住所・骨髄採取（BM collection）が可能かどうか・末梢血幹細胞採取（PBSC collection）が可能かどうかを含んでいる。我々はこのリストを都道府県レベルで集約し、10平方キロメートルあたりの病院数を計算し、それをコーディネーションデータと都道府県をマージキーにして突合した。我々はこの変数をコーディネーションや提供のトラベルコストとして考慮する。
 
 ```{r summary, tab.cap = 'Overview of Field Experiment'}
-summary_experiment(use$cs, FALSE, "HC1") %>%
+summary_experiment(use$cs) %>%
   tbl()
 ```
 
@@ -187,7 +188,7 @@ exogenous_f <- lm_robust(
 潜在ドナーが返信する前に、患者側の都合でコーディネーションが中断してしまう可能性がある。これは潜在ドナーの意向と独立に生じるので、我々は各実験群でそのようなケースに該当する$0.5$--$0.7$%を分析サンプルから除外している。ただし、このケースは実験群間でバランスしている（`r exogenous_f`）。
 
 ```{r reg-stock, tab.cap = 'Linear Probability Model of Reply and Intention'}
-lm_all_stock(use$stock, FALSE, "HC1", TRUE) %>%
+lm_all_stock(use$stock) %>%
   tbl()
 ```
 
@@ -195,7 +196,7 @@ lm_all_stock(use$stock, FALSE, "HC1", TRUE) %>%
 
 ```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-lm_subset_stock(use$stock, FALSE, "HC1", TRUE) %>%
+lm_subset_stock(use$stock) %>%
   coefplot()
 ```
 
@@ -204,7 +205,7 @@ lm_subset_stock(use$stock, FALSE, "HC1", TRUE) %>%
 ## Random Causal Forest {#rcf}
 
 ```{r rcf-int, include=FALSE}
-rcf <- causal_forest(use$cs)
+rcf <- random_causal_forest(use$cs)
 ```
 
 介入効果の異質性を深堀りするために、我々は完全にノンパラメトリックに介入効果の異質性を検証できるrandom causal forest (RCF)を用いる[@Athey2016; @Wager2018]。この手法は回帰木アルゴリズムに基づいており、観察可能な特徴で条件づけた平均トリートメント効果を推定する。この手法は労働[@Davis2017]・教育[@Carlana2022]・節電[@Murakami2022]などの広い文脈で用いられている。
@@ -274,7 +275,7 @@ ctrl_positive_7days <- with(subset(use$flow, treat == "A" & within == 7 & outcom
 コントロール群では、返信者の平均的な返信日数は`r round(ctrl)`日である。また、正もしくは負の意向を伴う返信の平均返信日数はそれぞれ`r round(ctrl_positive)`日・`r round(ctrl_negative)`日である。最長の返信日数は`r ctrl_max`日である。加えて、適合通知に目安として記載されている7日以内の返信は`r round(ctrl_7days*100)`%であり、正の意向を伴う7日以内の返信は`r round(ctrl_positive_7days*100)`%である（未返信者を含む）。
 
 ```{r est-subsample-flow, include=FALSE}
-est_sub_flow <- lm_subset_flow(use$flow, FALSE, "HC1", TRUE)
+est_sub_flow <- lm_subset_flow(use$flow)
 ```
 
 ```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
@@ -294,13 +295,13 @@ coefplot(est_sub_flow, male == 0 & age_less30 == 1)
 ## Effects on the Coordination Process {#process}
 
 ```{r est-full-coordination, tab.cap = 'Linear Probability Model of Coordination Process'}
-lm_all_coordination(use$coordination, FALSE, "HC1", TRUE) %>%
+lm_all_coordination(use$coordination) %>%
   tbl()
 ```
 
 ```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-lm_subset_coordination(use$coordination, FALSE, "HC1", TRUE) %>%
+lm_subset_coordination(use$coordination) %>%
   coefplot()
 ```
 
@@ -321,12 +322,12 @@ logit_all_coordination(use$coordination, TRUE) %>%
 <!-- //NOTE Wild bootstrap p-value for robust inference -->
 
 ```{r wildbs-young-male-stock, tab.cap = 'Linear Probability Model of Reply and Intentions for Males Less Then 30 Years'}
-wildbs_subset_stock(use$stock, male == 1 & age < 30, "CR2", TRUE, treat = c("B", "D")) %>%
+wildbs_subset_stock(use$stock, male == 1 & age < 30, treat = c("B", "D")) %>%
   tbl()
 ```
 
 ```{r wildbs-young-male-coordination, tab.cap = 'Linear Probability Model of Coordination among Males'}
-wildbs_subset_coordination(use$coordination, male == 1 & age < 30, "CR2", TRUE, "B") %>%
+wildbs_subset_coordination(use$coordination, male == 1 & age < 30, treat = "B") %>%
   tbl()
 ```
 

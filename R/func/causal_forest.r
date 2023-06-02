@@ -1,4 +1,4 @@
-causal_forest <- function(data) {
+random_causal_forest <- function(data) {
   covariate <- ~ 0 + male + age + coordinate +
     hospital_per_area + PB_per_area + BM_per_area
   
