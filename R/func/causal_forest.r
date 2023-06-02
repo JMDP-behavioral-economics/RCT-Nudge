@@ -67,6 +67,17 @@ causal_forest <- function(data) {
   res
 }
 
+boxplot_effect <- function(rcf) {
+  rcf$pred %>%
+    ggplot(aes(x = age, y = effect)) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_boxplot(aes(group = age)) +
+    stat_smooth(se = FALSE, color = "blue") +
+    facet_grid(treat ~ male) +
+    labs(x = "Age", y = "Predicted treatment effect") +
+    simplegg()
+}
+
 cf_corr_effect <- function(rcf) {
   est <- rcf$pred %>%
     mutate(
