@@ -17,8 +17,7 @@ output:
 params:
   is_fe: TRUE
   is_cluster: TRUE
-  main_se_type: stata
-  cluster_se_type: stata
+  se_type: stata
 ---
 
 ```{r include=FALSE}

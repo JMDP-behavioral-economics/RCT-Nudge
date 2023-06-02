@@ -43,7 +43,7 @@ map_lm_robust <- function(dat_list,
 
 lm_all_stock <- function(data,
                           cluster = params$is_cluster,
-                          se_type = params$main_se_type,
+                          se_type = params$se_type,
                           fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -99,7 +99,7 @@ lm_all_stock <- function(data,
 
 lm_subset_stock <- function(dt,
                             cluster = params$is_cluster,
-                            se_type = params$main_se_type,
+                            se_type = params$se_type,
                             fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -155,7 +155,7 @@ lm_subset_stock <- function(dt,
 
 lm_subset_flow <- function( dt,
                             cluster = params$is_cluster,
-                            se_type = params$main_se_type,
+                            se_type = params$se_type,
                             fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -193,7 +193,7 @@ lm_subset_flow <- function( dt,
 
 lm_all_coordination <- function(data,
                                 cluster = params$is_cluster,
-                                se_type = params$main_se_type,
+                                se_type = params$se_type,
                                 fe = params$is_fe)
 {
   mod <- estimation_model(fe)
@@ -208,7 +208,7 @@ lm_all_coordination <- function(data,
       avg = map_chr(
         data,
         ~ with(
-          subset(., exclude == 0 & treat == "A"),
+          subset(., treat == "A"),
           sprintf("%.4f", mean(value))
         )
       )
@@ -248,10 +248,10 @@ lm_all_coordination <- function(data,
 
 lm_subset_coordination <- function( data,
                                     cluster = params$is_cluster,
-                                    se_type = params$main_se_type,
+                                    se_type = params$se_type,
                                     fe = params$is_fe)
 {
-  res <- lm_subset_stock(data, cluster, se_type, fe)
+  res <- lm_subset_stock(subset(data, exclude == 0), cluster, se_type, fe)
   class(res) <- c("list", "lm_subset_coordination")
   res
 }
@@ -365,9 +365,10 @@ logit_all_coordination <- function( data,
 
 wildbs_subset_stock <- function(data,
                                 subset,
-                                se_type = params$cluster_se_type,
-                                fe = params$is_fe,
                                 treat,
+                                cluster = params$is_cluster,
+                                se_type = params$se_type,
+                                fe = params$is_fe,
                                 B = 1000)
 {
   subset <- enquo(subset)
@@ -381,24 +382,8 @@ wildbs_subset_stock <- function(data,
     group_by(outcome) %>%
     nest() %>%
     mutate(
-      fit1 = map(
-        data,
-        ~ lm_robust(
-          mod$unctrl,
-          data = .,
-          cluster = RCTweek,
-          se_type = se_type
-        )
-      ),
-      fit2 = map(
-        data,
-        ~ lm_robust(
-          mod$ctrl,
-          data = .,
-          cluster = RCTweek,
-          se_type = se_type
-        )
-      )
+      fit1 = map_lm_robust(data, mod$unctrl, cluster, se_type),
+      fit2 = map_lm_robust(data, mod$ctrl, cluster, se_type)
     ) %>%
     pivot_longer(
       fit1:fit2,
@@ -536,18 +521,19 @@ wildbs_subset_stock <- function(data,
 
 wildbs_subset_coordination <- function( data,
                                         subset,
-                                        se_type = params$cluster_se_type,
-                                        fe = params$is_fe,
                                         treat,
+                                        cluster = params$is_cluster,
+                                        se_type = params$se_type,
+                                        fe = params$is_fe,
                                         B = 1000)
 {
   subset <- enquo(subset)
-  
-  res <- wildbs_subset_stock( data,
+  res <- wildbs_subset_stock( subset(data, exclude == 0),
                               !!subset,
+                              treat,
+                              cluster,
                               se_type,
                               fe,
-                              treat,
                               B)
   class(res) <- c("list", "wildbs_subset_coordination")
   res
