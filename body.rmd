@@ -285,14 +285,18 @@ est_sub_flow <- lm_subset_flow(use$flow)
 coefplot(est_sub_flow, male == 1 & age_less30 == 1)
 ```
 
-先の小節で見たように返信や意向への効果は異質的であるので、この小節は性・年代でサブサンプルに分割して、返信日数への効果の異質性に注目する。図\@ref(fig:young-male-flow)は30歳未満の男性の結果である。このサブグループでは、我々は確率メッセージのみを加えた実験群Bが提供意向を伴う全体の返信率を10ポイント程度高めていたことをすでに明らかにしている。図\@ref(fig:young-male-flow)はその効果が14日以内の返信から生じていることを示唆している。実験群Bは提供意向を伴う10日以内の返信を（統計的に有意ではないが）5ポイント程度高めており、14日以内の返信を10ポイント程度高めている。すなわち、実験群Bは提供意向を伴う10日以内の返信を5ポイント、提供意向を伴う10--14日以内の返信を5ポイント高め、これらが全体の返信率を10ポイント高めていることにつながっている。また、このグループでは、早期返信を促している可能性のある実験群C（Early Coordinationメッセージ）が短期間の返信を高めているということはなかった。
+先の小節で見たように返信や意向への効果は異質的であるので、この小節は性・年代でサブサンプルに分割して、返信日数への効果の異質性に注目する[^speed-older]。図\@ref(fig:young-male-flow)は30歳未満の男性の結果である。このサブグループでは、我々は確率メッセージのみを加えた実験群Bが提供意向を伴う全体の返信率を10ポイント程度高めていたことをすでに明らかにしている。図\@ref(fig:young-male-flow)はその効果が14日以内の返信から生じていることを示唆している。実験群Bは提供意向を伴う10日以内の返信を（統計的に有意ではないが）5ポイント程度高めており、14日以内の返信を10ポイント程度高めている。すなわち、実験群Bは提供意向を伴う10日以内の返信を5ポイント、提供意向を伴う10--14日以内の返信を5ポイント高め、これらが全体の返信率を10ポイント高めていることにつながっている。また、このグループでは、早期返信を促している可能性のある実験群C（Early Coordinationメッセージ）が短期間の返信を高めているということはなかった。
+
+[^speed-older]: 30歳以上の男女については補論の図\@ref(fig:old-male-flow)と図\@ref(fig:old-female-flow)に示す。これらのグループでは特徴的な結果がない。
 
 ```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 coefplot(est_sub_flow, male == 0 & age_less30 == 1)
 ```
 
-しかしながら、実験群Cは30歳未満の女性の早期返信を促している可能性がある。図\@ref(fig:young-male-flow)は30歳未満の女性の結果である。図\@ref(fig:coefplot-reg-stock-subset)より実験群Cは全体の返信率に統計的に有意な影響を与えていない。一方で、この実験群は4日以内の返信率を6ポイント程度高めており、これは5%水準で有意である。
+しかしながら、実験群Cは30歳未満の女性の早期返信を促している可能性がある。図\@ref(fig:young-male-flow)は30歳未満の女性の結果である。図\@ref(fig:coefplot-reg-stock-subset)より実験群Cは全体の返信率に統計的に有意な影響を与えていない。一方で、この実験群は4日以内の返信率を6ポイント程度高めており、これは5%水準で有意である。この効果は28日以内の返信率でも維持している。すなわち、4--28日の返信率の変動はコントロール群と比較して同じである。そして、実験群Cの全体の返信率に対する点推定は3ポイントなので、この実験群は28日以降の返信率を3ポイント下げている。したがって、実験群Cは4日以内の返信率を高め、それ以降の返信率を若干減らしていることを示唆している。言い換えれば、Early Coordinationメッセージは30歳未満の女性の早期返信を促している。4日以内の返信の増加は正の意向を伴う返信と負の意向を伴う返信を同程度高めていることから生じている。
+
+また、Early Coordinationメッセージを含む実験群Dの返信への効果も実験群Cと同様の傾向である。また、実験群Cの結果と異なり、4日以内の返信の増加は正の意向を伴う返信のみの増加から生じている。
 
 ## Effects on the Coordination Process {#process}
 
