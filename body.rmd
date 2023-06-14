@@ -76,7 +76,7 @@ options(
   modelsummary_get = "broom"
 )
 
-data_root <- "D:/JMDPフィールド実験"
+data_root <- "E:/JMDPフィールド実験"
 ```
 
 ## Background: Coordination Process of JMDP {#background}
@@ -200,7 +200,7 @@ lm_subset_stock(use$stock) %>%
   coefplot()
 ```
 
-次に、メッセージ効果の異質性を検証するために、我々はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定する。図 \@ref(fig:coefplot-reg-stock-subset) は係数プロットである。結果として、若い男性グループで、確率メッセージを含む実験群BとDが返信率を約6ポイント（コントロール平均が$74.4$%なので、$8.06$%増加）高めており、これは統計的に5%水準で有意である。特に、確率メッセージのみを加えた実験群Bが正の意向を伴う返信を約10ポイント（コントロール平均が$38.6$%なので、$25.91$%増加）増やしており、これも統計的に1%水準で有意である。ただし、他の性・年代グループで、我々の介入は返信や意向に対して統計的に有意な効果をもたない。
+次に、メッセージ効果の異質性を検証するために、我々はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定する。図 \@ref(fig:coefplot-reg-stock-subset) は係数プロットである。結果として、若い男性グループで、確率メッセージを含む実験群BとDが返信率を約6ポイント（コントロール平均が$74.4$%なので、$8.06$%増加）高めており、これは統計的に5%水準で有意である。特に、確率メッセージのみを加えた実験群Bが正の意向を伴う返信を約10ポイント（コントロール平均が$38.6$%なので、$25.91$%増加）増やしており、これも統計的に1%水準で有意である（表\@ref(tab:reg-young-male-stock)）。ただし、他の性・年代グループで、我々の介入は返信や意向に対して統計的に有意な効果をもたない。
 
 コントロール群において、適合通知に返信した若い男性の約50%が提供に積極的であり、これは他の性・年代グループの返信者の意向比率（60%）よりも低い。実験群B（確率メッセージ）は30歳未満の男性の返信者の意向比率を50%から60%に引き上げている。さらに、若い男性の移植成績は他の性・年代よりも良い。これらを総合すると、ドナーとして望ましい人の行動変容（コーディネーションの開始）を促しているという意味で、確率メッセージはコーディネーションの効率性を改善しているといえるだろう。
 
@@ -300,16 +300,25 @@ coefplot(est_sub_flow, male == 0 & age_less30 == 1)
 
 ## Effects on the Coordination Process {#process}
 
+最後に、我々は適合通知への返信以降のコーディネーション過程の各工程への影響を検証する。第\@ref(background)節で説明したように、コーディネーション過程は確認検査・候補者選定・最終同意・提供の4つのステージからなる。我々は潜在ドナーが各ステージに到達したならば1を取るダミー変数をアウトカム変数として用いる。第\@ref(intention)節の分析と同様に、我々は潜在ドナーの意思とは無関係にコーディネーションが中断したと思われるサンプルを除く。確認検査への効果を推定するとき、我々は患者側の理由で中断した事例を除外する。患者の意思は候補者選定時に最も健康なな潜在ドナーを選ぶ可能性が高いので、候補者選定以降でドナーの健康理由で中断した事例はドナーの意思と無関係に生じていると考えられる。よって、候補者選定・最終同意・提供に対する効果を推定するとき、我々は患者側の理由で中断したサンプルと候補者選定以降にドナーの健康理由で中断したサンプルを除く。ただし、サンプルの除外だけでは医者の意思決定を完全に取り除けないかもしれないので、解釈には注意を要する。コントロール群では、潜在ドナーの24%が確認検査を受けて、8%が候補者になり、6%が最終的に提供した。
+
 ```{r est-full-coordination, tab.cap = 'Linear Probability Model of Coordination Process'}
+
 lm_all_coordination(use$coordination) %>%
   tbl()
 ```
+
+表\@ref(tab:est-full-coordination)はフルサンプルの推定結果を示している。その結果、確率メッセージを含む実験群BとDは確認検査の実施率を約3ポイント高めており、これは統計的に有意な効果である。この効果は実験群BとDの返信への効果よりも大きい。これは実験群BとDでは、健康理由を含むドナー側の都合でコーディネーションが中断する可能性がコントロール群と比較して小さいからである。したがって、実験群BとDは提供に積極的な人を増やしていないが、提供の意向を強固にしており、コーディネートの継続性に貢献していると考えられる。
+
+実験群BとDの候補者選定以降のステージに対する効果は1ポイント以下であり、統計的に非有意である。これは解釈に注意が必要である。我々の介入は需要（患者数）に影響を与えていないので、我々の介入によって確認検査に到達する人が増えたならば、その分だけ外生的な理由で候補者に選定されなかった人を増やしているはずである。実験群Bとコントロール群で、確認検査を実施した潜在ドナーはそれぞれ774人と564人である。すなわち、実験群Bは確認検査実施数を210件増やしたことになる。また、患者理由もしくはドナーの健康理由で候補者に選定されなかった人は実験群Bとコントロール群でそれぞれ556人と385人である。すなわち、実験群Bは外生的な理由で候補者に選定されなかった人を171人増やしている。したがって、推定値は我々の介入効果だけでなく幹細胞移植の需要の影響を含んでいる。
 
 ```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 lm_subset_coordination(use$coordination) %>%
   coefplot()
 ```
+
+図\@ref(fig:coefplot-reg-subsample-coordination)はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定している。その結果、実験群Bは30歳未満の男性の確認検査到達比率を8ポイント程度高めており、統計的に有意である。したがって、実験群Bは30歳未満の男性の提供意向を高めるだけでなく、それを強固にしている可能性がある。また、実験群Bは30歳未満の男性の候補者選定・最終同意に統計的に有意な影響を与えていない。ただし、提供への効果は統計的に10%水準で有意である（表\@ref(tab:reg-young-male-coordination)）。先に述べたように、この効果は我々の介入効果だけでなく、幹細胞移植の需要を反映していると考えられる。若い男性ほど移植成績が良いならば、この世代の幹細胞移植の需要は他の性・年代よりも高いかもしれない。提供への効果はこの影響を含んでいるかもしれない。
 
 # Appendix {-}
 
@@ -325,20 +334,20 @@ logit_all_coordination(use$coordination, TRUE) %>%
   tbl()
 ```
 
-<!-- //NOTE Wild bootstrap p-value for robust inference -->
+<!-- //NOTE 30歳未満の男性の回帰分析 -->
 
-```{r wildbs-young-male-stock, tab.cap = 'Linear Probability Model of Reply and Intentions for Males Less Then 30 Years'}
+```{r reg-young-male-stock, tab.cap = 'Linear Probability Model of Reply and Intentions for Males Less Then 30 Years'}
 stock_young_male <- use$stock$male == 1 & use$stock$age < 30
-lm_all_stock(use$stock[stock_young_male,], FALSE, "stata", TRUE) %>%
+lm_all_stock(use$stock[stock_young_male,]) %>%
   tbl()
 
 # wildbs_subset_stock(use$stock, male == 1 & age < 30, treat = c("B", "D")) %>%
 #   tbl()
 ```
 
-```{r wildbs-young-male-coordination, tab.cap = 'Linear Probability Model of Coordination among Males'}
+```{r reg-young-male-coordination, tab.cap = 'Linear Probability Model of Coordination among Males'}
 coord_young_male <- use$coordination$male == 1 & use$coordination$age < 30
-lm_all_coordination(use$coordination[coord_young_male, ], FALSE, "stata", TRUE) %>%
+lm_all_coordination(use$coordination[coord_young_male, ]) %>%
   tbl()
 
 # wildbs_subset_coordination(use$coordination, male == 1 & age < 30, treat = "B") %>%
