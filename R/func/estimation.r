@@ -231,7 +231,7 @@ lm_all_coordination <- function(data,
     pull(fit) %>%
     modelsummary(
       coef_map = c(
-        "(Intercept)" = "Constant",
+        # "(Intercept)" = "Constant",
         "treatB" = "Treatment B",
         "treatC" = "Treatment C",
         "treatD" = "Treatment D"
