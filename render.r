@@ -24,9 +24,9 @@ render_inference_opt <- function( fe = TRUE,
   )
 }
 
-render_inference_opt(TRUE, FALSE, "stata")
+render_inference_opt(TRUE, FALSE, "stata") #main
 render_inference_opt(FALSE, FALSE, "stata")
-render_inference_opt(TRUE, TRUE, "stata")
+render_inference_opt(TRUE, TRUE, "stata") #robustness
 render_inference_opt(FALSE, TRUE, "stata")
 render_inference_opt()
 render_inference_opt(FALSE)

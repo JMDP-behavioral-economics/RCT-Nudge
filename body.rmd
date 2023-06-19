@@ -88,7 +88,7 @@ options(
   modelsummary_get = "broom"
 )
 
-data_root <- "E:/JMDPフィールド実験"
+data_root <- "D:/JMDPフィールド実験"
 ```
 
 ## Background: Coordination Process of JMDP {#background}
@@ -206,7 +206,7 @@ lm_all_stock(use$stock) %>%
 
 表 \@ref(tab:reg-stock) は線形確率モデルの推定結果である。奇数列は実験群ダミーだけを説明変数に入れており、単純な平均値の差に対応している。偶数列は実験群ダミーに加えて、個人属性・月および週の固定効果をコントロールしている。推定結果はすべての実験群は、共変量の有無に関わらず、返信や意向に対して統計的に有意な効果を持っていない。我々は代替手法としてロジットモデルを推定（表 \@ref(tab:logit-stock) ）し、同様の結果を得ている（オッズ比の95%信頼区間が1を含んでいる）。
 
-```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 lm_subset_stock(use$stock) %>%
   coefplot()
@@ -292,7 +292,7 @@ ctrl_positive_7days <- with(subset(use$flow, treat == "A" & within == 7 & outcom
 est_sub_flow <- lm_subset_flow(use$flow)
 ```
 
-```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 coefplot(est_sub_flow, male == 1 & age_less30 == 1)
 ```
@@ -301,7 +301,7 @@ coefplot(est_sub_flow, male == 1 & age_less30 == 1)
 
 [^speed-older]: 30歳以上の男女については補論の図\@ref(fig:old-male-flow)と図\@ref(fig:old-female-flow)に示す。これらのグループでは特徴的な結果がない。
 
-```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 coefplot(est_sub_flow, male == 0 & age_less30 == 1)
 ```
@@ -324,7 +324,7 @@ lm_all_coordination(use$coordination) %>%
 
 実験群BとDの候補者選定以降のステージに対する効果は1ポイント以下であり、統計的に非有意である。これは解釈に注意が必要である。我々の介入は需要（患者数）に影響を与えていないので、我々の介入によって確認検査に到達する人が増えたならば、その分だけ外生的な理由で候補者に選定されなかった人を増やしているはずである。実験群Bとコントロール群で、確認検査を実施した潜在ドナーはそれぞれ774人と564人である。すなわち、実験群Bは確認検査実施数を210件増やしたことになる。また、患者理由もしくはドナーの健康理由で候補者に選定されなかった人は実験群Bとコントロール群でそれぞれ556人と385人である。すなわち、実験群Bは外生的な理由で候補者に選定されなかった人を171人増やしている。したがって、推定値は我々の介入効果だけでなく幹細胞移植の需要の影響を含んでいる。
 
-```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 lm_subset_coordination(use$coordination) %>%
   coefplot()
@@ -368,12 +368,12 @@ lm_all_coordination(use$coordination[coord_young_male, ]) %>%
 
 <!-- //NOTE Additional analysis of flow data -->
 
-```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 coefplot(est_sub_flow, male == 1 & age_less30 == 0)
 ```
 
-```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use clustered standard errors with the CR2 adjustment (cluster unit is experimental week). We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 coefplot(est_sub_flow, male == 0 & age_less30 == 0)
 ```
