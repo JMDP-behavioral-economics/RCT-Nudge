@@ -2,6 +2,8 @@
 title: |
   Only You:
   A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program
+abstract: |
+  日本骨髄バンクを介した同種造血幹細胞移植は移植に至るまで長時間を要し、登録患者の約半数しか移植を受けられない。これは移植コーディネーションの多くは登録ドナーが提供に消極的であることによって移植実施前に中断してしまうからである。本研究は日本骨髄バンクの協力のもと、登録ドナーの提供意向を高めるような情報を提供する介入をフィールド実験にて検証する。我々は11,049名の適合ドナーのコーディネーションデータを用いて、情報提供の効果を推定した。我々は患者一人あたりにマッチする潜在ドナーの数が少ないという情報が20代男性の提供意向を25%高めることを明らかにした。また、早いコーディネーションが患者の移植率を高めるという情報が20代女性の早期返信を促していることも明らかにした。これらの結果は情報提供が特定の性・年代にのみ影響を与えており、特に、移植成績の良い若年ドナーの行動変容を促していることを示唆している。
 author:
   - Hiroki Kato (Hitostubashi Institute for Advanced Study, Hitotsubashi University, Tokyo, Japan)
   - Fumio Ohtake (Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan)
