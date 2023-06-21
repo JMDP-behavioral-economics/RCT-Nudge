@@ -89,7 +89,7 @@ lm_subset_stock <- function(dt,
                             se_type = params$se_type,
                             fe = params$is_fe)
 {
-  mod <- estimation_model(fe)
+  mod <- estimation_model(is_fe = fe)
   
   est_stock_sub <- dt %>%
     group_by(outcome, male, age_less30) %>%
@@ -145,7 +145,7 @@ lm_subset_flow <- function( dt,
                             se_type = params$se_type,
                             fe = params$is_fe)
 {
-  mod <- estimation_model(fe)
+  mod <- estimation_model(is_fe = fe)
   
   est_flow_sub <- dt %>%
     group_by(outcome, within, male, age_less30) %>%
