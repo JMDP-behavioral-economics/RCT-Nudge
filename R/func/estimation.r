@@ -1,27 +1,33 @@
 library(rlang)
 
-estimation_model <- function(is_fe = params$is_fe){
-  mod <- list(
-    unctrl = value ~ treat,
-    ctrl = value ~ treat + age_demean + I(age_demean^2) + male + coordinate +
-      hospital_per_area + PB_per_area + BM_per_area
+estimation_model <- function( response = value,
+                              is_fe = params$is_fe)
+{
+  response <- enquo(response)
+  lhs <- get_expr(response)
+  
+  rhs <- list(
+    unctrl = c("treat"),
+    ctrl = c(
+      "treat", "age_demean", "I(age_demean^2)", "male", "coordinate",
+      "hospital_per_area", "PB_per_area", "BM_per_area"
+    )
   )
 
-  if (is_fe) {
-    mod$ctrl <- update(mod$ctrl, . ~ . + factor(month) + factor(week))
-  }
+  if (is_fe) rhs$ctrl <- append(rhs$ctrl, c("factor(month)", "factor(week)"))
 
+  mod <- lapply(rhs, function(m) reformulate(m, lhs))
   mod
 }
 
-map_lm_robust <- function(dat_list,
+map_lm_robust <- function(data,
                           model,
                           cluster,
                           se_type)
 {
   if (cluster) {
     map(
-      dat_list,
+      data,
       ~ lm_robust(
         model,
         data = .,
@@ -31,7 +37,7 @@ map_lm_robust <- function(dat_list,
     )
   } else {
     map(
-      dat_list,
+      data,
       ~ lm_robust(
         model,
         data = .,
@@ -41,60 +47,41 @@ map_lm_robust <- function(dat_list,
   }
 }
 
-lm_all_stock <- function(data,
+lm_all_stock <- function( data,
                           cluster = params$is_cluster,
                           se_type = params$se_type,
                           fe = params$is_fe)
 {
-  mod <- estimation_model(fe)
+  mod <- estimation_model(is_fe = fe)
 
   est_stock <- data %>%
     group_by(outcome) %>%
     nest() %>%
     mutate(
       fit1 = map_lm_robust(data, mod$unctrl, cluster, se_type),
-      fit2 = map_lm_robust(data, mod$ctrl, cluster, se_type)
+      fit2 = map_lm_robust(data, mod$ctrl, cluster, se_type),
+      avg = map_chr(data, ~ with(subset(., treat == "A"), sprintf("%.4f", mean(value)))
+      )
     ) %>%
     pivot_longer(
       fit1:fit2,
       names_prefix = "fit",
       names_to = "model",
       values_to = "fit"
-    )
-
-  ctrl_avg <- data %>%
-    dplyr::filter(treat == "A") %>%
-    group_by(outcome) %>%
-    summarize(mean = sprintf("%1.4f", mean(value)))
-
-  add_table <- tibble::tribble(
-    ~term, ~"(1)", ~"(2)", ~"(3)", ~"(4)", ~"(5)", ~"(6)",
-    "Control average", ctrl_avg$mean[1], ctrl_avg$mean[1],
-    ctrl_avg$mean[2], ctrl_avg$mean[2],
-    ctrl_avg$mean[3], ctrl_avg$mean[3],
-    "Covariates", "", "X", "", "X", "", "X"
+    ) %>%
+    select(-data)
+  
+  reg_list <- est_stock %>%
+    pull(fit) %>%
+    setNames(paste0("(", seq_len(length(.)), ")"))
+  
+  out <- list(
+    reg = reg_list,
+    ctrl_avg = est_stock$avg
   )
 
-  attr(add_table, "position") <- 7:8
-
-  tbl_est_stock <- est_stock %>%
-    pull(fit) %>%
-    setNames(paste0("(", seq_len(length(.)), ")")) %>%
-    modelsummary(
-      coef_map = c(
-        "treatB" = "Treatment B",
-        "treatC" = "Treatment C",
-        "treatD" = "Treatment D"
-      ),
-      stars = c("***" = .01, "**" = .05, "*" = .1),
-      fmt = 4,
-      gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-      add_rows = add_table
-    )
-  
-  class(tbl_est_stock) <- append(class(tbl_est_stock), "lm_all_stock")
-  
-  return(tbl_est_stock)
+  class(out) <- append(class(out), "lm_all_stock")
+  out
 }
 
 lm_subset_stock <- function(dt,

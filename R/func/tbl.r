@@ -22,7 +22,27 @@ tbl.summary_experiment <- function(x) {
 }
 
 tbl.lm_all_stock <- function(x) {
-  x %>%
+
+  add_table <- c("Control average", x$ctrl_avg) %>%
+    rbind(c("Covariates", "", "X", "", "X", "", "X")) %>%
+    data.frame()
+
+  attr(add_table, "position") <- 7:8
+
+  tbl <- x$reg %>%
+    modelsummary(
+      coef_map = c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D"
+      ),
+      stars = c("***" = .01, "**" = .05, "*" = .1),
+      fmt = 4,
+      gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+      add_rows = add_table
+    )
+
+  tbl %>%
     add_header_row(
       values = c("", "Reply", "Positive", "Negative"),
       colwidths = c(1, 2, 2, 2)
