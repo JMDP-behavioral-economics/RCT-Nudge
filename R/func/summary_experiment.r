@@ -65,7 +65,7 @@ summary_experiment <- function( data,
         ~vars, ~A, ~B, ~C, ~D, ~p, ~type,
         "Standard notification", "X", "X", "X", "X", "", "A. Interventions",
         "Probability message", "", "X", "", "X", "", "A. Interventions",
-        "Patients message", "", "", "X", "X", "", "A. Interventions",
+        "Early Coordination message", "", "", "X", "X", "", "A. Interventions",
         "N", .[1], .[2], .[3], .[4], "", "B. Sample Size"
       )
     }

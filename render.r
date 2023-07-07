@@ -3,14 +3,19 @@ library(rmarkdown)
 
 render_inference_opt <- function( fe = TRUE,
                                   cluster = TRUE,
-                                  se_type = "CR2")
+                                  se_type = "CR2",
+                                  output = NULL)
 {
-  out <- paste0(
-    "body_fe-", fe,
-    "_cluster-", cluster,
-    "_se-", se_type,
-    ".docx"
-  )
+  out <- output
+  
+  if (is.null(out)) {
+    out <- paste0(
+      "body_fe-", fe,
+      "_cluster-", cluster,
+      "_se-", se_type,
+      ".docx"
+    )
+  }
   
   render(
     here("body.rmd"),
@@ -24,9 +29,9 @@ render_inference_opt <- function( fe = TRUE,
   )
 }
 
-render_inference_opt(TRUE, FALSE, "stata")
-render_inference_opt(FALSE, FALSE, "stata")
-render_inference_opt(TRUE, TRUE, "stata")
-render_inference_opt(FALSE, TRUE, "stata")
-render_inference_opt()
-render_inference_opt(FALSE)
+render_inference_opt(TRUE, FALSE, "stata", "body-ja.docx") #main
+render_inference_opt(TRUE, TRUE, "stata", "robustness-body-ja.docx") # robustness
+# render_inference_opt(FALSE, FALSE, "stata")
+# render_inference_opt(FALSE, TRUE, "stata")
+# render_inference_opt()
+# render_inference_opt(FALSE)
