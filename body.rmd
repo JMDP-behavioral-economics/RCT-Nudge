@@ -105,15 +105,15 @@ data_root <- "D:/JMDPフィールド実験"
 
 ## Background: Coordination Process of JMDP {#background}
 
-フィールド実験の介入のタイミングの理解を促すために、JMDPに登録した潜在ドナーによる幹細胞の提供までのコーディネーション過程を概観しておく。はじめに、潜在ドナーがJMDPに登録した患者とマッチすると、JMDP事務局は彼らに幹細胞提供を依頼する適合通知（compatibility notice）を送付する[^SNS]。適合ドナーは問診票を記入し、提供意思の有無を示して、適合通知に返信する。
+For a better understanding of the timing of our interventions, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the compatibility notice requesting a stem cell donation.[^SNS] The matched donor fills out a questionnaire and responds to the compatibility notice, indicating his or her willingness to donate.
 
-[^SNS]: JMDPは同時に潜在ドナーにJMDPが適合通知を送付したことを知らせるSNSメッセージを送付する。
+[^SNS]: At the same time, the JMDP office sends a social networking message to the matched donors informing them that JMDP has sent the compatibility notice.
 
-その後、移植に向けたコーディネーションが始まる。適合ドナーはおよそ1カ月以内に確認検査（confirmatory typing）を受ける。この段階では、コーディネーターは提供手順の詳細（骨髄採取もしくは末梢血幹細胞採取）を説明し、適合ドナーとその家族に提供の意向を調査する。潜在ドナーは二つの採取方法を選べる。加えて、コーディネーター医師が問診、検診、感染症の有無と血液型を調べる採血をする。これらのテストは適合ドナーがJMDPの定める基準に満たしているかどうかを検査する。
+Coordination for the transplant then begins. The matched donor undergoes confirmatory typing within approximately one month. At this time, the coordinator explains the details of the donation process (bone marrow or peripheral blood stem cell collection) and asks the matched donors and their families about their willingness to donate. Matched donors can choose between two collection methods. In addition, the coordinating physician conducts an interview, medical examination and blood draw to test for infection and blood type. These tests are performed to determine if the matched donor meets the criteria established by the JMDP.
 
-患者は同時に最大10人の適合ドナーとのコーディネーションを受けられる。患者の医師は確認検査を受けた適合ドナーから最も適切な候補者を選ぶ。重要なこととして、適合ドナーはマッチしている患者の情報（他の適合ドナーと何人マッチしているかなど）を一切知ることができない。また、適合ドナーがコーディネーターやコーディネーター医師からそのような情報を得ることもできない。
+Patients can be matched with up to 10 compatible donors at one time. The patient's physician selects the most appropriate candidate from the matched donors who have undergone verification testing. Importantly, the matched donor does not have access to any information about the matched patient (e.g., how many other matched donors are available). Nor can the matched donor obtain this information from the coordinator or coordinating physician.
 
-最も適切な候補者として選ばれた適合ドナーはコーディネーターやコーディネーター医師からの説明を受けた後に、最終同意をする必要がある。同時に、ドナーの家族の代表者も採取に同意しなければならない。ただし、これ以降、選定ドナーは意向を変えられない。最終同意後、選定ドナーは術前検査や採取の準備を受けるために1週間程度の入院をする。この後、ドナーは幹細胞採取の手術を受ける。確認検査から採取までの期間はおよそ3--4カ月である。
+The matched donor who is selected as the best match must give final consent after being informed by the coordinator and coordinating physician. At the same time, a representative of the donor's family must also consent to the donation. After this, the selected donor cannot change his or her mind. After the final consent is given, the selected donor admits him/herself to hospital for approximately one week to undergo pre-operative examinations and preparation for the donation. The donor then undergoes a surgical procedure to collect the stem cells. The time from the confirmatory test to the collection is approximately 3-4 months.
 
 ## Experimental Design {#design}
 
