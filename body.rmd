@@ -121,22 +121,24 @@ The matched donor who is selected as the best match must give final consent afte
 knitr::include_graphics("image/intervention.png")
 ```
 
-我々の実験はJMDPが適合ドナーに幹細胞提供を依頼する適合通知の内容に介入を施す。図 \@ref(fig:message) は我々の介入を示す。適合通知は提供ドナーが7日以内に返信するべきことを注記している。また、JMDPは適合通知と一緒に前小節で概観したコーディネーション過程を記述したハンドブックを同封している。
+Our experiment intervenes in the content of the compatibility notice in which JMDP requests a stem cell donation from a matched donor. Figure \@ref(fig:message) illustrates our intervention. Note that the standard compatibility notice should be responded to by the donor within 7 days. JMDP also encloses a handbook with the notice that describes the coordination process outlined in the previous subsection.
 
-我々はコーディネーションを促進するために適合通知に二つのメッセージを加えた[^pressure]。Probability messageは登録患者一人あたりの適合ドナーの数が少ないことを強調している。第\@ref(intro)節で述べたように、同じHLA型を持つ他の潜在ドナーがプールに存在すれば、自身の提供はその適合ドナーと代替可能なので、移植は公共財の性質を有している。したがって、ボランティアのジレンマの予測通り、一般的なHLAの型を持っている人ほど提供に消極的となるだろう。
+We have added two messages to the compatibility notice to facilitate coordination.[^pressure] The Probability message emphasizes the low number of matched donors per registered patient. As discussed in Section \@ref(intro), transplantation is a public good in the sense that if there are other potential donors with the same HLA type in the pool, one's own donation can be substituted for that compatible donor. Thus, as predicted by the volunteer dilemma, the more common the HLA type, the more reluctant the donor will be to donate [@Diekmann1985; @Bergstrom2009].
 
-[^pressure]: 介入メッセージを作成したとき、我々は潜在ドナーに対して過度な心理的プレッシャーを与えないように配慮している。具体的には、第一に、嘆願調のような表現を避けている。第二に、JMDPが公開している情報のみを用いている。また、移植リスクは通常通り説明している。
+[^pressure]: In designing our intervention messages, we have been careful to avoid putting undue psychological pressure on potential donors. Specifically, first, we avoid language that sounds like an appeal. Second, we only use information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual way. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics, Osaka University and the JMDP.
 
-しかしながら、幹細胞移植の文脈では、適合ドナーがグループサイズを正確に知ることができないので、グループサイズの期待値が意思決定に影響を与える。すなわち、同じHLA型を持つ適合ドナーの数が多いと予測しているほど、そのドナーは提供に消極的となるだろう。もし、あるドナーの信念が過度に高いならば、Probability messageは信念の下方修正を通じて、フリーライド行動を抑制し、提供意向を高めるだろう。ただし、逆の効果も考えられる。あるドナーの信念が真のグループサイズよりも過小ならば、Probability messageは信念の上方修正を通じて、フリーライド行動を誘発し、提供意向を下げる恐れがある。
+In the context of stem cell transplantation, however, the expectation of the size of the group influences the decision, because a matched donor cannot know the exact size of the group. Therefore, the higher a donor's expectation of the number of potential donors with the same HLA type, the more reluctant he or she will be to donate. If a donor's beliefs are too high, the Probability message would discourage free-riding and increase willingness to donate by adjusting beliefs downward. The opposite effect is also possible. If the donor's beliefs are underestimated, the Probability message may induce free-riding and reduce donation intentions by adjusting beliefs upward.
 
+<!-- //TODO 日本語の改定待ち -->
 Early Coordinationメッセージは早いコーディネーションが患者の移植率を高めることを提示している。適合通知への返信が遅れることによってコーディネーション期間が長くなると、患者の移植率が減少してしまう。したがって、このメッセージは患者への移植によって得られる効用が経時的に減衰していくことを暗に意味している。第\@ref(intro)節で述べたように、適合通知への返信は行動経済学における先延ばし行動が障害となりうる。もしあるドナーが患者への移植によって得られる効用水準が時間に対して一定であると信じているならば、今コストを支払ってコーディネーションを受けるよりも将来コストを支払ってコーディネーションを受けようと考えるはずである。そして、同じ意思決定が将来でも生じ、適合通知への返信が遅れてしまう可能性がある。このメッセージはこの先延ばし行動を抑制することを目的としている。仮にこのメッセージが全体の適合通知への返信率を高めなくても、早期返信を促進しているだろう。
+<!--  -->
 
-我々は二つの介入メッセージの効果を推定するために四つの実験群を設けた。実験群Aは介入メッセージなしの標準的な適合通知を送付した（コントロール群）。実験群BとCはそれぞれ確率メッセージとEarly Coordinationメッセージを追加した適合通知を送付した。実験群Dは二つの介入メッセージを同時に加えた適合通知を送付した。この実験群は情報過多による認知負荷の負の影響を検証する目的で設けた。
+We set up four experimental groups to estimate the effects of the two intervention messages. Experimental group A received a standard compatibility message with no intervention messages (control group). Experimental groups B and C received the notice with the probability message and the early coordination message, respectively. Experimental group D received the notice with two intervention messages added at the same time. This experimental group was designed to test the negative effects of cognitive load caused by information overload.
 
 ```{r assignment, file = "R/schedule_data.r", tab.cap = "Assignment Schedule"}
 ```
 
-実験参加者は2021年9月から2022年2月の間に適合通知を受け取った11,154名の適合ドナーである。JMDP事務局に無理のない範囲でランダムネスを保つために、我々は実験群を週単位のクラスターランダム化で割り当てた。このとき、可能な限り週と月で実験群がバランスするように設計している。表 \@ref(tab:assignment) に割り当てスケジュールをまとめている。本実験の実施にあたって、我々はメッセージの内容を含めて大阪大学経済学研究科とJMDPの倫理審査の承認を得ている。
+Participants in the experiment were 11,154 matched donors who received the compatibility notice between September 2021 and February 2022. To maintain randomness to the best of the JMDP office's ability, we assigned experimental groups by cluster randomization on a weekly basis. We designed the experimental groups to be balanced across weeks and months whenever possible. Table \@ref(tab:assignment) summarizes the assignment schedule. In conducting the experiment, we obtained approval from the Graduate School of Economics, Osaka University, and the JMDP.
 
 ## Data and Empirical Strategy
 
@@ -145,7 +147,7 @@ rawdt <- read_csv(here(data_root, "shaped.csv"), locale = locale(encoding = "cp9
 use <- dataset(rawdt)
 ```
 
-我々はJMDPの協力のもと、コーディネーションデータを2022年6月末に受け取った。観測単位は実験参加者である。個人属性として、データは性別・年齢・コーディネーション経験回数・都道府県レベルの在住地区を記録している。コーディネーション過程として、データは各段階（適合通知への返信・確認検査・候補者選定・最終同意・採取）に到達したかどうかを記録している。我々はこれらの変数をアウトカム変数として用いる。加えて、適合通知への返信について、データは返信日数と提供意向を記録している。さらに、コーディネーションが中断したならば、データは中断理由を三つのカテゴリ（患者側の理由・健康以外のドナー理由・ドナーの健康理由）で記録している。分析では、日本在住かつコーディネーションが（中断を含めて）終了している11,049名の適合ドナーを用いる[^exclude]。
+We received the coordination data at the end of June 2022 with the help of JMDP. The unit of observation is the experimental participant. As individual characteristics, the data record gender, age, number of coordination experiences, and prefecture-level residence area. As the coordination process, the data record whether each stage (response to compatibility notice, confirmatory typing, candidate selection, final consent, and collection) was reached. We use these variables as outcome variables. In addition, for responses to the notice, the data record the number of days to respond and the willingness to donate. If coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis uses 11,049 matched donors living in Japan whose coordination (including interruptions) was completed.[^exclude]
 
 ```{r ongoing-balance, include=FALSE}
 ongoing_f <- lm_robust(
@@ -164,9 +166,9 @@ ongoing_f <- lm_robust(
 }
 ```
 
-[^exclude]: 一人が海外に在住していた。また、データ提供時点でコーディネーションが進行中であった潜在ドナーは104名いた。コーディネーションが進行中の潜在ドナーの比率は実験群間でバランスしている（`r ongoing_f`）。
+[^exclude]: One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data provision. The proportion of matched donors with ongoing matching is balanced across the experimental groups (`r ongoing_f`).
 
-追加的なデータとして、我々はJMDPがウェブ上で公開している医療機関リストを用いる[^ref]。このリストは完全な住所・骨髄採取（BM collection）が可能かどうか・末梢血幹細胞採取（PBSC collection）が可能かどうかを含んでいる。我々はこのリストを都道府県レベルで集約し、10平方キロメートルあたりの病院数を計算し、それをコーディネーションデータと都道府県をマージキーにして突合した。我々はこの変数をコーディネーションや提供のトラベルコストとして考慮する。
+As additional data, we use the list of medical institutions published on the Internet by the JMDP.[^ref] This list includes complete addresses, availability of bone marrow collection (BM collection), and availability of peripheral blood stem cell collection (PBSC collection). We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged it with the coordination data using the prefecture as the merging key. We consider this variable as the travel cost of coordination and donation.
 
 [^ref]: <https://www.jmdp.or.jp/hospitals/view2/> (access date: August 4, 2022)
 
@@ -175,9 +177,9 @@ summary_experiment(use$cs) %>%
   tbl()
 ```
 
-表 \@ref(tab:summary) はフィールド実験の概要である。パネルAは各実験群の介入を示しており、パネルBは各実験群のサンプルサイズを示している。パネルCはランダム化が成功しているかどうかを検証するバランステストである。年齢を除く変数について実験群間で平均的に差がないので、実験群の割り当てはおおよそランダムである。ただし、年齢は群間でばらつきがある。実験群Cの平均年齢はコントロール群と比較して1歳程度若い。
+Table \@ref(tab:summary) provides a summary of the field experiments. Panel A shows the intervention for each experimental group, and Panel B shows the sample size for each experimental group. Panel C is a balanced test of whether randomization was successful. The assignment of experimental groups is approximately random, since there is no average difference between experimental groups for any variable except age. However, age does vary across groups. The average age of experimental arm C is about one year younger than that of the control group.
 
-我々はどのような情報を潜在ドナー全員に与えるべきかに関心があるので、母集団全体の平均処置効果を識別したい。先決変数で条件づけたとき、実験群の割り当ては潜在成果変数（ある実験群が割り当てられたときに観察されるであろう成果変数）と独立であるはずなので、先決変数で条件づけた実験群間の平均値の差で平均処置効果を識別できる。したがって、我々は$m$月の$w$週に適合通知を受け取った個人$i$についての以下の線形確率モデルを推定する。
+Since we are interested in what information should be given to all potential donors, we want to identify the average treatment effect. Since the assignment of experimental groups should be independent of the potential outcomes (the outcome variable that would be observed if an experimental group is assigned) conditioned on a predetermined variable, we can identify the average treatment effect by the difference in means across experimental groups conditioned on the predetermined variable. Thus, we estimate the following linear probability model for individual $i$ who received the compatibility notice in week $w$ of month $m$:
 
 $$
   Y_{imw} =
@@ -185,9 +187,9 @@ $$
   + X'_i \gamma + \lambda_m + \theta_w + u_{imw},
 $$
 
-ここで$X_i$は個人属性ベクトルである。ある時期の共通のショックをコントロールするために、月および週のダミー変数$\lambda_m$と$\theta_w$を加える。我々の関心のあるパラメータは$(\beta_1, \beta_2, \beta_3)$である。固定効果を加えたとき、観察不可能な要素$u_{imw}$のクラスター（実験週）内の相関を生み出す原因はないと思われる。したがって、我々は推定値の統計的推論の際に頑健標準誤差を用いる[^LZ]。
+where $X_i$ is the individual attribute vector. We add month and week dummy variables $\lambda_m$ and $\theta_w$ to control for common shocks at a given time period. Our parameters of interest are $(\beta_1, \beta_2, \beta_3)$. When fixed effects are added, there seems to be no cause to generate correlations within clusters (experimental weeks) of unobservable elements $u_{imw}$. Thus, we use robust standard errors for statistical inference.[^LZ]
 
-[^LZ]: クラスター標準誤差を用いた回帰分析を頑健性の確認として実施し、本論で示す主要な結果に変化がないことを確認している。
+[^LZ]: We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.
 
 # Experimental Results {#result}
 ## Effects on Reply and Intention {#intention}
