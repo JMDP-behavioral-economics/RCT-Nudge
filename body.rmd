@@ -194,9 +194,9 @@ where $X_i$ is the individual attribute vector. We add month and week dummy vari
 # Experimental Results {#result}
 ## Effects on Reply and Intention {#intention}
 
-初めに、適合ドナーの意向を最も反映していると考えられる返信への介入効果を推定する。返信のアウトカム変数は提供の意向に関わらず適合通知に返信したならば1を取るダミー変数である。コントロール群（実験群A）の返信率は$88.35$%である。
+First, we estimate the intervention effect on responses that are most likely to reflect the donor's intention to donate. The outcome variable for responses is a dummy variable taking one if the donor responded to the compatibility notice regardless of the donor's intention to donate. The response rate for the control group (experimental group A) is $88.35$%.
 
-我々は返信へのメッセージ効果を二つに分解する。第一に、提供意向を伴った返信への効果である。アウトカム変数は潜在ドナーが適合通知に返信し、かつ提供意思を示したならば1を取るダミー変数である。第二に、提供意向を伴わない返信に対する効果である。アウトカム変数は潜在ドナーが適合通知に返信し、かつ提供意思を示していないならば1を取るダミー変数である。ただし、これらの効果を推定するとき、我々は未返信者のアウトカム変数を0とコーディングして、サンプルに含める。したがって、二つのアウトカム変数の和は必ず返信のダミー変数となるので、正の意向と負の意向に対する効果の和は返信に対する効果となる。コントロール群では、正の意向を伴う返信率は$55.33$%である一方で、負の意向を伴う返信率は$33.03$%であった。したがって、返信者の$62.63(=55.33/88.35)$%は提供に積極的である。
+We decompose the message effect on responses into two effects. The first is the effect on responses associated with the intention to donate. The outcome variable is a dummy variable that takes one if the matched donor responds to the compatibility message and indicates a willingness to donate. The second is the effect on responses without intent to donate. The outcome variable is a dummy variable that takes one if the matched donor responded to the compatibility notice and did not indicate an intention to donate. In estimating these effects, we code the outcome variable for non-responders as zero and include them in the analysis sample. Thus, the sum of the two outcome variables is always equal to a dummy variable for response, so that the sum of the effects on positive and negative intentions is the effect on response. In the control group, the response rate with positive intentions is $55.33$%, while the response rate with negative intentions is $33.03$%. Thus, $62.63(=55.33/88.35)$% of respondents are positive in their offer.
 
 ```{r exogenous-balance, include=FALSE}
 exogenous_f <- lm_robust(
@@ -215,14 +215,14 @@ exogenous_f <- lm_robust(
 }
 ```
 
-適合ドナーが返信する前に、患者側の都合でコーディネーションが中断してしまう可能性がある。これは潜在ドナーの意向と独立に生じるので、我々は各実験群でそのようなケースに該当する$0.5$--$0.7$%を分析サンプルから除外している。ただし、このケースは実験群間でバランスしている（`r exogenous_f`）。
+It is possible that coordination is interrupted for patient reasons before a matched donor responds. Since this happens independently of the matched donor's intentions, we exclude from our analysis sample the $0.5$--$0.7$% that fall into such a case in each experimental group. This case is balanced across experimental groups (`r exogenous_f`).
 
 ```{r reg-stock, tab.cap = 'Linear Probability Model of Reply and Intention'}
 lm_all_stock(use$stock) %>%
   tbl()
 ```
 
-表 \@ref(tab:reg-stock) は線形確率モデルの推定結果である。奇数列は実験群ダミーだけを説明変数に入れており、単純な平均値の差に対応している。偶数列は実験群ダミーに加えて、個人属性・月および週の固定効果をコントロールしている。推定結果はすべての実験群が、共変量の有無に関わらず、返信や意向に対して統計的に有意な効果を持っていない。我々は代替手法としてロジットモデルを推定（表 \@ref(tab:logit-stock) ）し、同様の結果を得ている（オッズ比の95%信頼区間が1を含んでいる）。
+Table \@ref(tab:reg-stock) presents the estimation results of the linear probability model. The odd columns include only the experimental group dummy as an explanatory variable, corresponding to a simple difference in means. The even columns control for individual attribute, month, and week fixed effects in addition to the experimental group dummies. The estimated results show that all experimental groups, with and without covariates, have no statistically significant effects on responses or intentions. As an alternative method, we estimate a logit model (Table \@ref(tab:logit-stock)) and obtain similar results (95% confidence intervals for odds ratios include 1).
 
 ```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
@@ -230,11 +230,11 @@ lm_subset_stock(use$stock) %>%
   coefplot()
 ```
 
-次に、メッセージ効果の異質性を検証するために、我々はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定する。図 \@ref(fig:coefplot-reg-stock-subset) は係数プロットである。結果として、確率メッセージを含む実験群BとDが20代男性の返信率を約6ポイント（コントロール平均が$74.4$%なので、$8.06$%増加）高めており、これは統計的に5%水準で有意である。特に、確率メッセージのみを加えた実験群Bが正の意向を伴う返信を約10ポイント（コントロール平均が$38.6$%なので、$25.91$%増加）増やしており、これも統計的に1%水準で有意である（表\@ref(tab:reg-young-male-stock)）。ただし、他の性・年代グループで、我々の介入は返信や意向に対して統計的に有意な効果をもたない。
+Next, to test for heterogeneity in the message effect, we divide the sample into four subsets by gender and age group (under 30 or not) and estimate the message effect in each subset. Figure \@ref(fig:coefplot-reg-stock-subset) shows the coefficient plots. The results show that experimental groups B and D, which include the Probability message, increase the response rate of men in their 20s by about 6 points ($8.06$% increase, since the control mean is $74.4$%), which is statistically significant at the 5% level. In particular, experimental group B, to which only the Probability message was added, increases responses with positive intentions by about 10 points ($25.91$% increase, since the control mean is $38.6$%), which is also statistically significant at the 1% level (Table \@ref(tab:reg-young-male-stock)). However, for the other gender and age groups, our intervention has no statistically significant effect on responses or intentions.
 
-コントロール群において、適合通知に返信した20代男性の約$50(=38.6/74.4)$%が提供に積極的であり、これは他の性・年代グループの返信者の意向比率（60%）よりも低い[^cal]。実験群B（確率メッセージ）は20代男性の返信者の意向比率を50%から$60(=(38.6 + 10)/(74.4 + 6))$%に引き上げている。さらに、若い男性の移植成績は他の性・年代よりも良いとされている。これらを総合すると、ドナーとして望ましい人の行動変容（コーディネーションの開始）を促しているという意味で、確率メッセージはコーディネーションの効率性を改善しているといえよう。
+In the control group, about 50(=38.6/74.4)$% of males in their 20s who responded to the compatibility notice were willing to donate, which is lower than the willingness rate of respondents in the other gender and age groups (60%).[^cal] Experimental group B (Probability message) raises the intention ratio of male repliers in their 20s from 50% to 60% $(=(38.6 + 10)/(74.4 + 6))$. In addition, young men are reported to have better transplant outcomes than other genders and ages. Taken together, we can say that the Probability message improves the efficiency of coordination in the sense that it encourages behavioral change (initiation of coordination) in desirable donors.
 
-[^cal]: 20代女性について、$59(=51.6/87.4)$%。30歳以上の男性について、$66(=59.0/89.1)$%。30歳以上の女性について、$62(=58.8/94.6)$%。
+[^cal]: For women in their 20s, $59 (=51.6/87.4)$%; for men over 30, $66 (=59.0/89.1)$%; for women over 30, $62 (=58.8/94.6)$%.
 
 ## Random Causal Forest {#rcf}
 
