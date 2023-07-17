@@ -278,20 +278,20 @@ rcf$pred %>%
   summarize_at(vars(effect), list(~var(.)))
 ```
 
-図\@ref(fig:boxplot-rcf-int)は意向を伴う返信に対する各実験群の予測トリートメント効果の分布を年齢別にプロットしている。注目するべきこととして、25歳以下の男性のすべてに対して、実験群Bの効果は正である。結果として、RCFは20代男性における実験群Bの平均効果は12.1ポイントであり、図\@ref(fig:coefplot-reg-stock-subset)で示した線形確率モデルのサブサンプル分析の結果と近い値である（表\@ref(tab:rcf-int-cate)参照）。また、30--40代男性の一部に対して、実験群Bの効果は10ポイント以上である。そのような男性は相対的に病院の数が多い地域に住んでおり、コーディネーションや提供のトラベリングコストが低い。
+Figure \@ref(fig:boxplot-rcf-int) plots the distribution of predicted treatment effects for each experimental group for responses with intentions by age. Notably, the effect of experimental group B is positive for all males under the age of 25. As a result, the RCF shows that the average effect of experimental group B for men in their 20s is 12.1 points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \@ref(fig:coefplot-reg-stock-subset) (see Table \@ref(tab:rcf-int-cate)). For some men in their 30s and 40s, the effect of experimental group B is more than 10 points. These men live in areas with a relatively large number of hospitals and have lower coordination and donation travelling costs.
 
-Early Coordinationメッセージのみを加えた実験群Cの効果は大きく異質的である。30代前半の女性に対して、ほとんどのトリートメント効果は負である。40代後半以上の男女に対して、処置効果の中央値は正であるが広く分布している。驚くべきことに、この年齢層の男女において、実験群Cが正の効果を持つ人は相対的に病院の数が少ない（トラベリングコストが高い）地域に住んでいる。
+The effects of experimental group C, with only the Early Coordination message added, are largely heterogeneous. For women in their early 30s, most treatment effects are negative. For men and women in their late 40s and older, the median treatment effect is positive but widely distributed. Surprisingly, among men and women in this age group, those with positive experimental group C effects live in areas with relatively few hospitals (high travelling costs).
 
 ```{r rcf-int-corr, tab.cap='Correlation of Predicted Treatment Effects'}
 cf_corr_effect(rcf) %>%
   tbl()
 ```
 
-実験群Dは確率メッセージ（実験群B）とEarly Coordinationメッセージ（実験群C）の両方を加えている。したがって、もし適合ドナーが実験群Dの情報を完全に理解しているならば、実験群Dの効果は実験群BとCの効果の合計となるはずである。この点を検証するために、表\@ref(tab:rcf-int-corr)の列(1)--(4)は実験群Dの予測処置効果を実験群BとCの予測効果の合計で回帰している。どの性・年代でも実験群BとCの効果の合計が1ポイント増えると、実験群Dの効果は0.3--0.4ポイント増加する。95%信頼区間は1を含まないので、この増分は1ポイントより統計的に有意に低い。この結果は適合ドナーが実験群Dの情報を完全に理解しておらず、情報過多による認知負荷になっていること示唆している。
+Experiment group D adds both the Probability message (experimental group B) and the Early Coordination message (experimental group C). Thus, if the matched donor fully understands the information in experimental group D, the effect of experimental group D should be the sum of the effects of experimental groups B and C. To test this point, columns (1)--(4) of Table \@ref(tab:rcf-int-corr) regress the predicted treatment effect of experimental group D on the sum of the predicted effects of experimental groups B and C. For each sex and age group, a 1-point increase in the sum of the effects of experimental groups B and C increases the effect of experimental group D by 0.3--0.4 points. Since the 95% confidence interval does not include 1, this increase is statistically significantly less than 1 point. This result suggests that matched donors do not fully understand the information in experimental group D, resulting in cognitive load due to information overload.
 
-完全に情報を受け取っていない適合ドナーは確率メッセージもしくはEarly Coordinationメッセージのどちらかを重視するか、二つの情報を同程度割り引いて評価しているだろう。この点を検証するために、表\@ref(tab:rcf-int-corr)の列(4)--(8)は実験群Dの予測処置効果を実験群Bの予測効果と実験群Cの予測効果で回帰している。その結果、20代男女では、実験群CとDの偏相関は実験群BとDの偏相関よりも強い。すなわち、彼らは確率メッセージよりもEarly Coordinationメッセージを重視している。したがって、確率メッセージを提供しているにも関わらず、実験群Dは20代男性に効果がないのである。
+A matched donor who does not receive complete information would either value either the Probability message or the Early Coordination message, or would discount the two pieces of information equally. To test this point, columns (4)--(8) of Table \@ref(tab:rcf-int-corr) regress the predicted treatment effects for experimental group D on the predicted effects for experimental group B and for experimental group C. The results show that for men and women in their 20s, the partial correlations between experimental groups C and D are stronger than those between experimental groups B and D, suggesting that they value the Early Coordination message more than the Probability message. Thus, despite the Probability message, experimental group D is ineffective for men in their 20s.
 
-興味深いことに、30歳以上の男女では、実験群CとDの偏相関は実験群BとDの偏相関よりも弱い。すなわち、彼らはEarly Coordinationメッセージよりも確率メッセージを重視している。したがって、40代後半以上の男女における実験群Cの効果の中央値が8ポイント程度であるにも関わらず、実験群Dの処置効果の中央値はほとんどゼロである。
+Interestingly, for men and women over 30, the partial correlations between experimental groups C and D are weaker than those between experimental groups B and D. In other words, they value the probability message more than the Early Coordination message. Thus, while the median effect of experimental group C for men and women in their late 40s and older is about 8 points, the median treatment effect of experimental group D is almost zero.
 
 ## Response Speed to Notification {#reply-speed}
 
