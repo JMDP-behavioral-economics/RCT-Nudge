@@ -1,7 +1,9 @@
+library(here)
 library(R6)
 library(tidyverse)
 library(rlang)
 library(estimatr)
+source(here("R/R6_RCT.r"))
 
 RawData <- R6::R6Class("RawData",
   public = list(
@@ -56,6 +58,22 @@ RawData <- R6::R6Class("RawData",
       
       names(ftest) <- private$filter_cond
       ftest
+    },
+    RCT = function() {
+      use <- self$data
+      cond <- private$filter_cond
+
+      if (length(cond) > 0) {
+        for (i in 1:length(cond)) {
+          boolean <- eval_tidy(parse_expr(cond[[i]]), use)
+          use <- use[boolean, , drop = FALSE]
+        }
+      }
+
+      use <- use %>%
+        rename(treat = private$treat)
+
+      RCT$new(use)
     }
   ),
   private = list(
