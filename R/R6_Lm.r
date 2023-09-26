@@ -3,6 +3,7 @@ library(R6)
 library(tidyverse)
 library(estimatr)
 library(modelsummary)
+library(kableExtra)
 source(here("R/misc.r"))
 
 Lm <- R6::R6Class("Lm",
@@ -101,29 +102,21 @@ LmAll <- R6::R6Class("LmAll",
           stars = c("***" = .01, "**" = .05, "*" = .1),
           fmt = 4,
           gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+          align = paste(c("l", rep("c", nrow(private$est))), collapse = ""),
           add_rows = add_tab
         )
       
       invisible(self)
     },
     flextable = function(notes = "", font_size = 9) {
-      label <- c("", as.character(private$est$outcome))
-      intention_label <- str_detect(label, "intention")
-
-      if (any(intention_label)) {
-        label2 <- ifelse(intention_label, "Intention", "")
-        rle2 <- rle(label2)
-      } else {
-        label2 <- NULL
-      }
-
-      label1 <- str_remove(label, " intention")
-      rle1 <- rle(label1)
+      label <- private$label_structure(private$est)
+      rle1 <- label$rle1
+      rle2 <- label$rle2
 
       flex <- private$reg_tab %>%
         add_header_row(values = rle1$values, colwidths = rle1$lengths)
       
-      if (!is.null(label2)) {
+      if (!is.null(rle2)) {
         flex <- flex %>%
           add_header_row(values = rle2$values, colwidths = rle2$lengths)
       }
@@ -138,10 +131,58 @@ LmAll <- R6::R6Class("LmAll",
         width(j = 1, 1) %>%
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
+    },
+    kable = function(notes = "", font_size = 9) {
+      label <- private$label_structure(private$est)
+
+      rle1 <- label$rle1
+      lab1 <- rle1$lengths
+      names(lab1) <- rle1$values
+
+      tbl <- private$reg_tab %>%
+        kableExtra::kable_styling(font_size = font_size) %>%
+        kableExtra::add_header_above(lab1)
+      
+      if (!is.null(label$rle2)) {
+        rle2 <- label$rle2
+        lab2 <- rle2$lengths
+        names(lab2) <- rle2$values
+
+        tbl <- tbl %>%
+          kableExtra::add_header_above(lab2)
+      }
+
+      tbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
     }
   ),
   private = list(
     est = NULL,
-    reg_tab = NULL
+    reg_tab = NULL,
+    label_structure = function(est) {
+      label <- c(" ", as.character(est$outcome))
+      intention_label <- str_detect(label, "intention")
+
+      if (any(intention_label)) {
+        label2 <- ifelse(intention_label, "Intention", " ")
+        rle2 <- rle(label2)
+      } else {
+        label2 <- rle2 <- NULL
+      }
+
+      label1 <- str_remove(label, " intention")
+      rle1 <- rle(label1)
+
+      return(list(rle1 = rle1, rle2 = rle2))
+    }
   )
 )
