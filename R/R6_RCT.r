@@ -83,6 +83,7 @@ RCT <- R6Class("RCT",
         ) %>%
         pivot_longer(reply:donate, names_to = "outcome") %>%
         dplyr::left_join(exclude, by = c("id", "outcome")) %>%
+        dplyr::filter(exclude == 0) %>%
         mutate(outcome = factor(
           outcome,
           levels = names(private$outcome),
