@@ -11,7 +11,9 @@ RawData <- R6::R6Class("RawData",
     initialize = function(path, treat_vars, treat_levels, treat_labels = NULL) {
       use <- read_csv(here(data_root, "shaped.csv"), locale = locale(encoding = "cp932"))
       use <- use %>%
+        rename(positive = intention) %>%
         mutate(
+          negative = reply * (1 - positive),
           age_less30 = if_else(age < 30, 1, 0),
           age_demean = age - mean(use$age)
         )
