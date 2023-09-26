@@ -54,6 +54,47 @@ RCT <- R6Class("RCT",
         se,
         cluster
       )
+    },
+    lm = function(outcome_id, se) {
+      if (missing(se)) se <- private$se_type
+      if (se == "") stop("Specify se_type by set_default_se()")
+
+      exclude <- self$data %>%
+        select(id, starts_with("exg_stop")) %>%
+        rename(exg_stop_positive = exg_stop_intention) %>%
+        mutate(exg_stop_negative = exg_stop_positive) %>%
+        pivot_longer(
+          -id,
+          names_to = "outcome", values_to = "exclude",
+          names_prefix = "exg_stop_"
+        )
+      
+      use <- self$data %>%
+        select(
+          reply,
+          positive,
+          negative,
+          test,
+          candidate,
+          consent,
+          donate,
+          everything(),
+          -starts_with("exg_stop")
+        ) %>%
+        pivot_longer(reply:donate, names_to = "outcome") %>%
+        dplyr::left_join(exclude, by = c("id", "outcome")) %>%
+        mutate(outcome = factor(
+          outcome,
+          levels = names(private$outcome),
+          labels = unname(unlist(private$outcome))
+        ))
+      
+      if (!missing(outcome_id)) {
+        keep <- unname(unlist(private$outcome))[outcome_id]
+        use <- subset(use, outcome %in% keep)
+      }
+
+      Lm$new(use, private$covariate, se, private$fe)
     }
   ),
   private = list(
