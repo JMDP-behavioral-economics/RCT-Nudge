@@ -29,12 +29,14 @@ Lm <- R6::R6Class("Lm",
       self$data <- data
       private$se_type <- se
 
+      cat("\n")
       cat("Options for linear regression\n")
       cat("- Control arm:", private$ctrl_arm, "\n")
       cat("- Clustered standard error: FALSE\n")
       cat("  - Standard error type:", private$se_type, "\n")
       cat("Regression models\n")
       for (i in 1:length(private$model)) print(private$model[[i]])
+      cat("\n")
     },
     fit_all = function() {
       est <- self$data %>%
@@ -63,6 +65,18 @@ Lm <- R6::R6Class("Lm",
         mutate(covs = if_else(covs == "2", "X", ""))
 
       LmAll$new(est)
+    },
+    fit_sub = function() {
+      est <- self$data %>%
+        group_by(outcome, male, age_less30) %>%
+        nest() %>%
+        mutate(fit = private$call_lm(
+          data,
+          update(private$model$ctrl, . ~ . - male - age - I(age^2)),
+          private$se_type
+        ))
+      
+      LmSubset$new(est)
     }
   ),
   private = list(
@@ -184,5 +198,15 @@ LmAll <- R6::R6Class("LmAll",
 
       return(list(rle1 = rle1, rle2 = rle2))
     }
+  )
+)
+
+LmSubset <- R6::R6Class("LmSubset",
+  public = list(
+    initialize = function(est) private$est <- est,
+    get_est = function() private$est
+  ),
+  private = list(
+    est = NULL
   )
 )
