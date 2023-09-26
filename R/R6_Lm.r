@@ -4,6 +4,7 @@ library(tidyverse)
 library(estimatr)
 library(modelsummary)
 library(kableExtra)
+library(patchwork)
 source(here("R/misc.r"))
 
 Lm <- R6::R6Class("Lm",
@@ -70,11 +71,21 @@ Lm <- R6::R6Class("Lm",
       est <- self$data %>%
         group_by(outcome, male, age_less30) %>%
         nest() %>%
-        mutate(fit = private$call_lm(
-          data,
-          update(private$model$ctrl, . ~ . - male - age - I(age^2)),
-          private$se_type
-        ))
+        mutate(
+          fit = private$call_lm(
+            data,
+            update(private$model$ctrl, . ~ . - male - age - I(age^2)),
+            private$se_type
+          ),
+          avg = map_chr(
+            data,
+            ~ with(
+              subset(., treat == private$ctrl_arm),
+              sprintf("Ctrl Avg = %1.1f%%", mean(value) * 100)
+            )
+          )
+        ) %>%
+        select(-data)
       
       LmSubset$new(est)
     }
@@ -204,7 +215,81 @@ LmAll <- R6::R6Class("LmAll",
 LmSubset <- R6::R6Class("LmSubset",
   public = list(
     initialize = function(est) private$est <- est,
-    get_est = function() private$est
+    get_est = function() private$est,
+    coefplot = function(label_N_y_pos = -0.15,
+                        label_mean_y_pos = label_N_y_pos - 0.025,
+                        axis_y = list(
+                          breaks = seq(-0.2, 0.2, by = 0.05),
+                          limits = c(-0.2, 0.2)
+                        )
+    ) 
+    {
+      plotdt <- private$est %>%
+        mutate(
+          tidy = map(fit, tidy),
+          tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+          tidy = map(tidy, ~ dplyr::select(.x, -outcome)),
+          N = map_chr(fit, ~ paste("N =", nobs(.x)))
+        ) %>%
+        select(-fit) %>%
+        unnest(cols = tidy) %>%
+        mutate(
+          pos = paste0(male, age_less30),
+          pos = factor(
+            pos,
+            levels = c("01", "00", "11", "10"),
+            labels = c(
+              "Female\u00d7\nAge<30",
+              "Female\u00d7\n30\u2264Age",
+              "Male\u00d7\nAge<30",
+              "Male\u00d7\n30\u2264Age"
+            )
+          ),
+          term = str_remove(term, "treat")
+        )
+      
+      text <- plotdt %>%
+        select(male, age_less30, pos, N, avg) %>%
+        distinct()
+      
+      plot_list <- unique(plotdt$outcome) %>%
+        purrr::map(function(x) {
+          subset(plotdt, outcome == x) %>%
+            ggplot(aes(x = pos, y = estimate)) +
+            geom_hline(aes(yintercept = 0), linetype = 2) +
+            geom_point(
+              aes(color = term, shape = term),
+              size = 3, position = position_dodge(0.5)
+            ) +
+            geom_errorbar(
+              aes(ymin = conf.low, ymax = conf.high, color = term),
+              position = position_dodge(0.5),
+              width = 0
+            ) +
+            geom_text(
+              aes(y = label_N_y_pos, label = N),
+              data = subset(text, outcome == x),
+              color = "black"
+            ) +
+            geom_text(
+              aes(y = label_mean_y_pos, label = avg),
+              data = subset(text, outcome == x),
+              color = "black"
+            ) +
+            scale_y_continuous(breaks = axis_y$breaks, limits = axis_y$limits) +
+            labs(
+              title = paste("Outcome:", x),
+              x = "Subset",
+              y = "Estimated Effects (95%CI)",
+              color = "Treatment", shape = "Treatment"
+            ) +
+            my_theme_classic()
+        })
+
+      wrap_plots(plot_list, ncol = 2) +
+        plot_layout(guides = "collect") &
+        theme(legend.position = "bottom")
+    }
   ),
   private = list(
     est = NULL
