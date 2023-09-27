@@ -100,6 +100,11 @@ Lm <- R6::R6Class("Lm",
   )
 )
 
+LmCluster <- R6::R6Class("LmCluster",
+  public = list(),
+  private = list()
+)
+
 LmAll <- R6::R6Class("LmAll",
   public = list(
     initialize = function(est) private$est <- est,
