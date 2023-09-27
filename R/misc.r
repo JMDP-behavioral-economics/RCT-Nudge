@@ -20,3 +20,15 @@ my_theme_classic <- function(size = 15) {
       strip.text = element_text(size = size + 1, hjust = 0)
     )
 }
+
+# //NOTE Tidy custom for glm class
+tidy_custom.glm <- function(x, ...) {
+  tbl <- tidy(x) %>%
+    mutate(
+      or = exp(estimate),
+      lower.or = exp(estimate - 1.96 * std.error),
+      upper.or = exp(estimate + 1.96 * std.error)
+    )
+
+  tbl
+}
