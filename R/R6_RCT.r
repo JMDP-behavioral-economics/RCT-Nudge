@@ -3,6 +3,7 @@ library(R6)
 library(tidyverse)
 source(here("R/R6_BalanceTest.r"))
 source(here("R/R6_Lm.r"))
+source(here("R/R6_Logit.r"))
 
 RCT <- R6Class("RCT", 
   public = list(
@@ -59,6 +60,30 @@ RCT <- R6Class("RCT",
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
 
+      use <- private$create_analysis_data()
+      if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
+
+      if (missing(cluster)) cluster <- private$cluster
+      if (is.null(cluster)) {
+        Lm$new(use, private$covariate, se, private$fe)
+      } else {
+        LmCluster$new(use, private$covariate, se, cluster, private$fe)
+      }
+    },
+    logit = function(outcome_id) {
+      use <- private$create_analysis_data()
+      if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
+      Logit$new(use, private$covariate, private$fe)
+    }
+  ),
+  private = list(
+    intervention = list(),
+    covariate = c(),
+    fe = NULL,
+    outcome = list(),
+    se_type = "",
+    cluster = NULL,
+    create_analysis_data = function() {
       exclude <- self$data %>%
         select(id, starts_with("exg_stop")) %>%
         rename(exg_stop_positive = exg_stop_intention) %>%
@@ -68,8 +93,8 @@ RCT <- R6Class("RCT",
           names_to = "outcome", values_to = "exclude",
           names_prefix = "exg_stop_"
         )
-      
-      use <- self$data %>%
+
+      self$data %>%
         select(
           reply,
           positive,
@@ -89,26 +114,10 @@ RCT <- R6Class("RCT",
           levels = names(private$outcome),
           labels = unname(unlist(private$outcome))
         ))
-      
-      if (!missing(outcome_id)) {
-        keep <- unname(unlist(private$outcome))[outcome_id]
-        use <- subset(use, outcome %in% keep)
-      }
-
-      if (missing(cluster)) cluster <- private$cluster
-      if (is.null(cluster)) {
-        Lm$new(use, private$covariate, se, private$fe)
-      } else {
-        LmCluster$new(use, private$covariate, se, cluster, private$fe)
-      }
+    },
+    subset_by_outcome = function(data, outcome_id) {
+      keep <- unname(unlist(private$outcome))[outcome_id]
+      subset(data, outcome %in% keep)
     }
-  ),
-  private = list(
-    intervention = list(),
-    covariate = c(),
-    fe = NULL,
-    outcome = list(),
-    se_type = "",
-    cluster = NULL
   )
 )
