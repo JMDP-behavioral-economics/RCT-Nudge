@@ -13,11 +13,11 @@ ft_theme <- function(ft) {
 # //NOTE template of ggplot2
 library(tidyverse)
 
-my_theme_classic <- function(size = 15) {
+my_theme_classic <- function(size = 15, strip_hjust = 0) {
     theme_classic(base_size = size) +
     theme(
       strip.background = element_blank(),
-      strip.text = element_text(size = size + 1, hjust = 0)
+      strip.text = element_text(size = size + 1, hjust = strip_hjust)
     )
 }
 
