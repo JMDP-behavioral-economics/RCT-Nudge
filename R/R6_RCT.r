@@ -4,6 +4,7 @@ library(tidyverse)
 source(here("R/R6_BalanceTest.r"))
 source(here("R/R6_Lm.r"))
 source(here("R/R6_Logit.r"))
+source(here("R/R6_RCF.r"))
 
 RCT <- R6Class("RCT", 
   public = list(
@@ -74,6 +75,22 @@ RCT <- R6Class("RCT",
       use <- private$create_analysis_data()
       if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
       Logit$new(use, private$covariate, private$fe)
+    },
+    rcf = function(outcome_id) {
+      if (length(private$covariate) == 0) stop("Specify covariate by add_covariate()")
+      if (length(outcome_id) > 1) stop("Specify only one outcome")
+
+      model <- reformulate(
+        c("treat", private$covariate),
+        names(private$outcome)[outcome_id]
+      )
+      mat <- model.frame(model, data = self$data)
+
+      Y <- mat[, 1, drop = TRUE]
+      D <- mat[, 2, drop = TRUE]
+      X <- as.matrix(mat[, covs])
+
+      RCF$new(Y, D, X)
     }
   ),
   private = list(
