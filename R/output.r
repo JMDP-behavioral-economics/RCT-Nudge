@@ -8,7 +8,7 @@ options(
   knitr.table.format = "latex",
   knitr.table.NA = "",
   modelsummary_stars_note = FALSE,
-  modelsummary_factory_default = "kableExtra",
+  modelsummary_factory_default = "flextable",
   modelsummary_factory_latex = "kableExtra",
   modelsummary_factory_word = "flextable"
 )
@@ -66,7 +66,7 @@ rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
 rct$add_covariate(covs)
 rct$add_fixed_effect(c("month", "week"))
-rct$set_default_se("stata")
+rct$set_default_se_type("stata")
 
 # //NOTE Balance test
 rct$
@@ -84,7 +84,7 @@ rct$
 rct$add_covariate(c("Squared age" = "I(age^2)"))
 stock <- rct$lm(1:3)
 
-# full sample analysis
+# full sample analysis: linear regression
 stock_all <- stock$fit_all()
 
 stock_all$
@@ -113,9 +113,43 @@ stock_all$
     )
   )
 
+# full sample analysis: logit regression
+stock_logit <- rct$logit(1:3)$fit_all()
+
+stock_logit$
+  msummary(title = "Logit Model of Reply and Intention")$
+  flextable(notes = paste(
+    "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies."
+  ))
+
+stock_logit$
+  msummary(title = "Logit Model of Reply and Intention")$
+  kable(notes = paste(
+    "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+    "number of hospitals per 10 square kilometers,",
+    "number of hospitals with PBSC collection per 10 square kilometers,",
+    "number of hospitals with BM collection per 10 square kilometers,",
+    "month dummies, and week dummies."
+  ))
+
 # subsample analysis
 stock_sub <- stock$fit_sub()
 stock_sub$coefplot()
+
+# cluster se
+stock_g <- rct$lm(1:3, cluster = "RCTweek")
+stock_g$
+  fit_all()$
+  msummary()$
+  print_msummary()
+
+stock_g$
+  fit_sub()$
+  coefplot()
 
 # //NOTE Coordination data analysis
 coordinate <- rct$lm(4:7)
