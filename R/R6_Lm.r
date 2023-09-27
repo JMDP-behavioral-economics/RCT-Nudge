@@ -10,7 +10,7 @@ source(here("R/misc.r"))
 Lm <- R6::R6Class("Lm",
   public = list(
     data = NULL,
-    initialize = function(data, covariate, se, fe = NULL) {
+    initialize = function(data, covariate, se, fe) {
       ctrl <- levels(data$treat)[1]
 
       rhs <- list(
@@ -111,7 +111,7 @@ LmCluster <- R6::R6Class("LmCluster",
         ctrl = c("treat", covariate)
       )
 
-      if (!missing(fe)) {
+      if (!is.null(fe)) {
         rhs$ctrl <- append(
           rhs$ctrl,
           sapply(fe, function(x) paste0("factor(", x, ")"))
@@ -194,12 +194,15 @@ LmCluster <- R6::R6Class("LmCluster",
     call_lm = function(data, model, se, cluster) {
       map(
         data,
-        ~ lm_robust(
-          model,
-          data = .,
-          se_type = se,
-          cluster = .[, cluster, drop = TRUE]
-        )
+        function(d) {
+          g <- d[, cluster, drop = TRUE]
+          lm_robust(
+            model,
+            data = d,
+            clusters = g,
+            se_type = se
+          )
+        }
       )
     }
   )

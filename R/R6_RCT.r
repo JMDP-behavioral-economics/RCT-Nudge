@@ -27,11 +27,11 @@ RCT <- R6Class("RCT",
       private$outcome <- append(private$endpoint, add) #add = list(colname = label)
       print(private$outcome)
     },
-    se_cluster = function(g) {
+    set_default_cluster = function(g) {
       private$cluster <- g
       print(g)
     },
-    set_default_se = function(se) {
+    set_default_se_type = function(se) {
       private$se_type <- se
       print(private$se_type)
     },
@@ -45,7 +45,7 @@ RCT <- R6Class("RCT",
     summary_experiment = function(cluster, se) {
       if (missing(cluster)) cluster <- private$cluster
       if (missing(se)) se <- private$se_type
-      if (se == "") stop("Specify se_type by set_default_se()")
+      if (se == "") stop("Specify se_type by set_default_se_type()")
 
       BalanceTest$new(
         self$data,
@@ -55,9 +55,9 @@ RCT <- R6Class("RCT",
         cluster
       )
     },
-    lm = function(outcome_id, se) {
+    lm = function(outcome_id, se, cluster) {
       if (missing(se)) se <- private$se_type
-      if (se == "") stop("Specify se_type by set_default_se()")
+      if (se == "") stop("Specify se_type by set_default_se_type()")
 
       exclude <- self$data %>%
         select(id, starts_with("exg_stop")) %>%
@@ -95,13 +95,18 @@ RCT <- R6Class("RCT",
         use <- subset(use, outcome %in% keep)
       }
 
-      Lm$new(use, private$covariate, se, private$fe)
+      if (missing(cluster)) cluster <- private$cluster
+      if (is.null(cluster)) {
+        Lm$new(use, private$covariate, se, private$fe)
+      } else {
+        LmCluster$new(use, private$covariate, se, cluster, private$fe)
+      }
     }
   ),
   private = list(
     intervention = list(),
     covariate = c(),
-    fe = c(),
+    fe = NULL,
     outcome = list(),
     se_type = "",
     cluster = NULL
