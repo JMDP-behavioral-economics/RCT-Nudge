@@ -88,6 +88,62 @@ LogitAll <- R6::R6Class("LogitAll",
         )
       
       invisible(self)
+    },
+    flextable = function(notes = "", font_size = 9) {
+      label <- private$label_structure(private$est)
+      rle1 <- label$rle1
+      rle2 <- label$rle2
+
+      flex <- private$reg_tab %>%
+        add_header_row(values = rle1$values, colwidths = rle1$lengths)
+
+      if (!is.null(rle2)) {
+        flex <- flex %>%
+          add_header_row(values = rle2$values, colwidths = rle2$lengths)
+      }
+
+      flex %>%
+        align(j = -1, align = "center", part = "all") %>%
+        add_footer_lines(paste(
+          "Notes: We show odds ratios and associated 95 percent confidential intervals",
+          "in square brackets.",
+          notes
+        )) %>%
+        width(j = 1, 1) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+    },
+    kable = function(notes = "", font_size = 9) {
+      label <- private$label_structure(private$est)
+
+      rle1 <- label$rle1
+      lab1 <- rle1$lengths
+      names(lab1) <- rle1$values
+
+      tbl <- private$reg_tab %>%
+        kableExtra::kable_styling(font_size = font_size) %>%
+        kableExtra::add_header_above(lab1)
+
+      if (!is.null(label$rle2)) {
+        rle2 <- label$rle2
+        lab2 <- rle2$lengths
+        names(lab2) <- rle2$values
+
+        tbl <- tbl %>%
+          kableExtra::add_header_above(lab2)
+      }
+
+      tbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "Notes: We show odds ratios and associated 95 percent confidential intervals",
+            "in square brackets.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
     }
   ),
   private = list(
