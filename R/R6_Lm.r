@@ -101,8 +101,108 @@ Lm <- R6::R6Class("Lm",
 )
 
 LmCluster <- R6::R6Class("LmCluster",
-  public = list(),
-  private = list()
+  public = list(
+    data = NULL,
+    initialize = function(data, covariate, se, cluster, fe) {
+      ctrl <- levels(data$treat)[1]
+
+      rhs <- list(
+        unctrl = "treat",
+        ctrl = c("treat", covariate)
+      )
+
+      if (!missing(fe)) {
+        rhs$ctrl <- append(
+          rhs$ctrl,
+          sapply(fe, function(x) paste0("factor(", x, ")"))
+        )
+      }
+
+      private$model <- lapply(rhs, function(m) reformulate(m, "value"))
+      private$ctrl_arm <- levels(data$treat)[1]
+      self$data <- data
+      private$se_type <- se
+      private$cluster <- cluster
+
+      cat("\n")
+      cat("Options for linear regression\n")
+      cat("- Control arm:", private$ctrl_arm, "\n")
+      cat("- Clustered standard error: TRUE\n")
+      cat("  - Cluster:", private$cluster, "\n")
+      cat("  - Standard error type:", private$se_type, "\n")
+      cat("Regression models\n")
+      for (i in 1:length(private$model)) print(private$model[[i]])
+      cat("\n")
+    },
+    fit_all = function() {
+      est <- self$data %>%
+        group_by(outcome) %>%
+        nest() %>%
+        mutate(
+          fit1 = private$call_lm(data, private$model$unctrl, private$se_type, private$cluster),
+          fit2 = private$call_lm(data, private$model$ctrl, private$se_type, private$cluster),
+          avg = map_chr(
+            data,
+            ~ with(
+              subset(., treat == private$ctrl_arm),
+              sprintf("%1.4f", mean(value))
+            )
+          )
+        ) %>%
+        ungroup() %>%
+        pivot_longer(
+          fit1:fit2,
+          names_prefix = "fit",
+          names_to = "model",
+          values_to = "fit"
+        ) %>%
+        select(-data) %>%
+        rename(covs = model) %>%
+        mutate(covs = if_else(covs == "2", "X", ""))
+
+      LmAll$new(est)
+    },
+    fit_sub = function() {
+      est <- self$data %>%
+        group_by(outcome, male, age_less30) %>%
+        nest() %>%
+        mutate(
+          fit = private$call_lm(
+            data,
+            update(private$model$ctrl, . ~ . - male - age - I(age^2)),
+            private$se_type,
+            private$cluster
+          ),
+          avg = map_chr(
+            data,
+            ~ with(
+              subset(., treat == private$ctrl_arm),
+              sprintf("Ctrl Avg = %1.1f%%", mean(value) * 100)
+            )
+          )
+        ) %>%
+        select(-data)
+      
+      LmSubset$new(est)
+    }
+  ),
+  private = list(
+    ctrl_arm = "",
+    model = list(),
+    se_type = "",
+    cluster = NULL,
+    call_lm = function(data, model, se, cluster) {
+      map(
+        data,
+        ~ lm_robust(
+          model,
+          data = .,
+          se_type = se,
+          cluster = .[, cluster, drop = TRUE]
+        )
+      )
+    }
+  )
 )
 
 LmAll <- R6::R6Class("LmAll",
