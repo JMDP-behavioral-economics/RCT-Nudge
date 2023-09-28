@@ -1,6 +1,7 @@
 library(here)
 library(R6)
 library(tidyverse)
+source(here("R/misc.r"))
 
 Logit <- R6::R6Class("Logit",
   public = list(

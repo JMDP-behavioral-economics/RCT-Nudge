@@ -23,7 +23,7 @@ my_theme_classic <- function(size = 15, strip_hjust = 0) {
 
 # //NOTE Tidy custom for glm class
 tidy_custom.glm <- function(x, ...) {
-  tbl <- tidy(x) %>%
+  tbl <- broom::tidy(x) %>%
     mutate(
       or = exp(estimate),
       lower.or = exp(estimate - 1.96 * std.error),
