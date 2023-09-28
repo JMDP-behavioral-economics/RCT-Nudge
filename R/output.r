@@ -5,10 +5,10 @@ source("R/R6_Schedule.r")
 data_root <- "D:/JMDPフィールド実験"
 
 options(
-  knitr.table.format = "latex",
+  knitr.table.format = "html",
   knitr.table.NA = "",
   modelsummary_stars_note = FALSE,
-  modelsummary_factory_default = "flextable",
+  modelsummary_factory_default = "kableExtra",
   modelsummary_factory_latex = "kableExtra",
   modelsummary_factory_word = "flextable"
 )
@@ -53,7 +53,6 @@ endpoint <- list(
 
 covs <- c(
   "Male (= 1)" = "male",
-  "Male (= 1)" = "male",
   "Age" = "age",
   "Number of past coordinations" = "coordinate",
   "Number of listed hospitals" = "hospital_per_area",
@@ -81,15 +80,16 @@ rct$
   )
 
 # //NOTE Stock data analysis
-rct$add_covariate(c("Squared age" = "I(age^2)"))
-stock <- rct$lm(1:3)
+stock <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(1:3)
 
 # full sample analysis: linear regression
 stock_all <- stock$fit_all()
 
 stock_all$
-  msummary(title = "Linear Probability Model of Reply and Intention")$
   flextable(
+    title = "Linear Probability Model of Reply and Intention",
     notes = paste(
       "Covariates are gender, squared polynomial of age,",
       "number of past coordinations,",
@@ -101,8 +101,8 @@ stock_all$
   )
 
 stock_all$
-  msummary(title = "Linear Probability Model of Reply and Intention")$
   kable(
+    title = "Linear Probability Model of Reply and Intention",
     notes = paste(
       "Covariates are gender, squared polynomial of age,",
       "number of past coordinations,",
@@ -110,56 +110,69 @@ stock_all$
       "number of hospitals with PBSC collection per 10 square kilometers,",
       "number of hospitals with BM collection per 10 square kilometers,",
       "month dummies, and week dummies."
-    )
+    ),
+    font_size = 15
   )
 
 # full sample analysis: logit regression
-stock_logit <- rct$logit(1:3)$fit_all()
+stock_logit <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(1:3)$
+  fit_all()
 
 stock_logit$
-  msummary(title = "Logit Model of Reply and Intention")$
-  flextable(notes = paste(
-    "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
-    "number of hospitals per 10 square kilometers,",
-    "number of hospitals with PBSC collection per 10 square kilometers,",
-    "number of hospitals with BM collection per 10 square kilometers,",
-    "month dummies, and week dummies."
-  ))
+  flextable(
+    title = "Logit Model of Reply and Intention",
+    notes = paste(
+      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    )
+  )
 
 stock_logit$
-  msummary(title = "Logit Model of Reply and Intention")$
-  kable(notes = paste(
-    "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
-    "number of hospitals per 10 square kilometers,",
-    "number of hospitals with PBSC collection per 10 square kilometers,",
-    "number of hospitals with BM collection per 10 square kilometers,",
-    "month dummies, and week dummies."
-  ))
+  kable(
+    title = "Logit Model of Reply and Intention",
+    notes = paste(
+      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 15
+  )
 
 # subsample analysis
 stock_sub <- stock$fit_sub()
 stock_sub$coefplot()
 
 # cluster se
-stock_g <- rct$lm(1:3, cluster = "RCTweek")
+stock_g <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(1:3, cluster = "RCTweek")
+
 stock_g$
   fit_all()$
-  msummary()$
-  print_msummary()
+  kable(font_size = 15)
 
 stock_g$
   fit_sub()$
   coefplot()
 
 # //NOTE Coordination data analysis
-coordinate <- rct$lm(4:7)
+coordinate <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(4:7)
 
 # full sample analysis
 coordinate_all <- coordinate$fit_all()
 
 coordinate_all$
-  msummary(title = "Linear Probability Model of Coordination")$
   flextable(
+    title = "Linear Probability Model of Coordination",
     notes = paste(
       "Covariates are gender, squared polynomial of age,",
       "number of past coordinations,",
@@ -171,8 +184,8 @@ coordinate_all$
   )
 
 coordinate_all$
-  msummary(title = "Linear Probability Model of Coordination")$
   kable(
+    title = "Linear Probability Model of Coordination",
     notes = paste(
       "Covariates are gender, squared polynomial of age,",
       "number of past coordinations,",
@@ -180,9 +193,62 @@ coordinate_all$
       "number of hospitals with PBSC collection per 10 square kilometers,",
       "number of hospitals with BM collection per 10 square kilometers,",
       "month dummies, and week dummies."
-    )
+    ),
+    font_size = 15
   )
 
 # subsample analysis
 coordinate_sub <- coordinate$fit_sub()
 coordinate_sub$coefplot()
+
+# //NOTE Random causal forest
+rcf <- rct$rcf(2)
+
+# boxplot
+rcf$subset_boxplot()
+
+# CATE
+cate <- rcf$cate(age < 30, male == 0)
+
+cate$
+  flextable(
+    label = list(
+      c("30 < Age", "Age < 30"),
+      c("Male", "Female")
+    ),
+    title = "Conditional Average Treatment Effect Estimated by RCF"
+  )
+
+cate$
+  kable(
+    label = list(
+      c("30 < Age", "Age < 30"),
+      c("Male", "Female")
+    ),
+    title = "Conditional Average Treatment Effect Estimated by RCF"
+  )
+
+# decompose effect
+mechanism <- rcf$decompose_effect(
+  "D",
+  c("B", "C"),
+  male == 0,
+  age < 30
+)
+
+mechanism$kable(
+  title = "Correlation of Predicted Treatment Effects",
+  subset_label = list(
+    c("Male", "Female"),
+    c("30 < Age", "Age < 30")
+  ),
+  font_size = 15
+)
+
+mechanism$flextable(
+  title = "Correlation of Predicted Treatment Effects",
+  subset_label = list(
+    c("Male", "Female"),
+    c("30 < Age", "Age < 30")
+  )
+)
