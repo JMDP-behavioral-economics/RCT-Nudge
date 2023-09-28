@@ -71,6 +71,67 @@ RCF <- R6::R6Class("RCF",
         select(i, starts_with("cond"), treat, everything())
       
       RCFCate$new(cate, pattern)
+    },
+    decompose_effect = function(multi_intervention_arm,
+                                one_intervention_arm,
+                                ...
+    ) {
+      lhs <- multi_intervention_arm
+      rhs <- one_intervention_arm
+      sum_rhs <- paste0("I(", paste(rhs, collapse = " + "), ")")
+      model <- list(
+        reformulate(sum_rhs, lhs),
+        reformulate(rhs, lhs)
+      )
+
+      lh1 <- paste(sum_rhs, "- 1")
+      combn_rhs <- combn(rhs, 2)
+      lh2 <- sapply(
+        seq(ncol(combn_rhs)),
+        function(i) paste(combn_rhs[1, i], "-", combn_rhs[2, i])
+      )
+
+      tau <- private$tau
+      colnames(tau) <- str_remove(colnames(tau), paste(" -", private$ctrl_arm))
+      dt <- data.frame(tau)
+      
+      cond <- list_subset(...)
+      for (i in seq(length(cond))) {
+        label <- paste0("cond", i)
+        dt[, label] <- cond[[i]]
+      }
+
+      est <- dt %>%
+        group_by(across(starts_with("cond"))) %>%
+        nest() %>%
+        mutate(
+          fit1 = map(data, ~ lh_robust(
+            model[[1]],
+            data = .,
+            se_type = "stata",
+            linear_hypothesis = lh1
+          )),
+          fit2 = map(data, ~ lh_robust(
+            model[[2]],
+            data = .,
+            se_type = "stata",
+            linear_hypothesis = lh2
+          ))
+        ) %>%
+        select(-data) %>%
+        ungroup() %>%
+        pivot_longer(
+          fit1:fit2,
+          names_prefix = "fit",
+          names_to = "model",
+          values_to = "fit"
+        ) %>%
+        arrange(desc(across(starts_with("cond")))) %>%
+        arrange(model)
+
+      vars <- c(sum_rhs, rhs, lh1, lh2)
+
+      DecomposeEffect$new(est, vars)
     }
   ),
   private = list(
@@ -228,5 +289,19 @@ RCFCate <- R6::R6Class("RCFCate",
         mutate(treat = if_else(stats == "std.err", "", treat)) %>%
         select(-stats)
     }
+  )
+)
+
+DecomposeEffect <- R6::R6Class("DecomposeEffect",
+  public = list(
+    initialize = function(est, vars) {
+      private$est <- est
+      private$vars <- vars
+    },
+    get_est = function() private$est
+  ),
+  private = list(
+    est = NULL,
+    vars = NULL
   )
 )
