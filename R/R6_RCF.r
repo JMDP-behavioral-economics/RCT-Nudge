@@ -92,7 +92,7 @@ RCF <- R6::R6Class("RCF",
       )
 
       tau <- private$tau
-      colnames(tau) <- str_remove(colnames(tau), paste(" -", private$ctrl_arm))
+      colnames(tau) <- str_remove(colnames(tau), "effect_")
       dt <- data.frame(tau)
       
       cond <- list_subset(...)
@@ -129,9 +129,12 @@ RCF <- R6::R6Class("RCF",
         arrange(desc(across(starts_with("cond")))) %>%
         arrange(model)
 
-      vars <- c(sum_rhs, rhs, lh1, lh2)
-
-      DecomposeEffect$new(est, vars)
+      DecomposeEffect$new(
+        est,
+        lhs,
+        c(sum_rhs, rhs),
+        c(lh1, lh2)
+      )
     }
   ),
   private = list(
@@ -294,14 +297,99 @@ RCFCate <- R6::R6Class("RCFCate",
 
 DecomposeEffect <- R6::R6Class("DecomposeEffect",
   public = list(
-    initialize = function(est, vars) {
+    initialize = function(est, response, vars, lh) {
       private$est <- est
       private$vars <- vars
+      private$lh <- lh
+      private$response <- response
     },
-    get_est = function() private$est
+    get_est = function() private$est,
+    print_msummary = function() private$reg_tab,
+    kable = function( subset_label,
+                      title = "",
+                      notes = "",
+                      font_size = 9,
+                      ...) {
+      private$msummary(
+        "kableExtra",
+        title = title,
+        escape = FALSE,
+        align = paste(c("l", rep("c", nrow(private$est))), collapse = "")
+      )
+
+      kbl <- private$reg_tab %>%
+        kableExtra::kable_styling(font_size = font_size)
+      
+      est <- private$est
+      names(subset_label) <- paste0("cond", seq(length(subset_label)))
+      for (i in names(label)) {
+        est[, i] <- factor(est[, i, drop = TRUE], labels = label[[i]])
+      }
+
+      label_col <- est %>%
+        select(starts_with("cond")) %>%
+        with(rev(colnames(.)))
+
+      for (i in label_col) {
+        new_header <- c(" ", as.character(est[, i, drop = TRUE]))
+        rle1 <- rle(new_header)
+        reduce_new_header <- rle1$lengths
+        names(reduce_new_header) <- rle1$values
+        kbl <- kbl %>%
+          add_header_above(reduce_new_header)
+      }
+
+      num_vars_line <- (1 + length(private$vars)) * 2
+      num_lh_line <- length(private$lh) * 2
+      pos_lh <- c(num_vars_line + 1, num_vars_line + num_lh_line)
+
+      kbl %>%
+        kableExtra::group_rows(
+          "Linear combination test (F-test)",
+          pos_lh[1], pos_lh[2],
+          bold = FALSE, italic = TRUE
+        ) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
   ),
   private = list(
     est = NULL,
-    vars = NULL
+    reg_tab = NULL,
+    vars = NULL,
+    lh = NULL,
+    response = NULL,
+    msummary = function(output, ...) {
+      fit <- private$est %>% pull(fit)
+      stars <- c("***" = 0.01, "**" = 0.05, "*" = 0.1)
+      gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
+
+      label <- c(
+        str_remove(private$vars, "I"),
+        str_remove(private$lh, "I")
+      )
+      label <- c("(Intercept)", label)
+      names(label) <- c("(Intercept)", private$vars, private$lh)
+
+      args <- list(
+        models = fit,
+        coef_map = label,
+        output = output,
+        stars = stars,
+        gof_omit = gof_omit
+      )
+
+      if(!missing(...)) args <- append(args, list(...))
+      private$reg_tab <- do.call("modelsummary", args)
+      invisible(self)
+    }
   )
 )
