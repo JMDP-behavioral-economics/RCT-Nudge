@@ -65,32 +65,9 @@ LogitAll <- R6::R6Class("LogitAll",
     initialize = function(est) private$est <- est,
     get_est = function() private$est,
     print_msummary = function() private$reg_tab,
-    msummary = function(title = "") {
-      add_tab <- data.frame(rbind(c("Covariates", private$est$covs)))
+    flextable = function(title = "", notes = "", font_size = 9, ...) {
+      private$msummary("flextable", title = title, ...)
 
-      attr(add_tab, "position") <- 7
-
-      private$reg_tab <- private$est %>%
-        pull(fit) %>%
-        modelsummary(
-          title = title,
-          estimate = "{or}",
-          statistic = "[{lower.or}, {upper.or}]",
-          coef_map = c(
-            "treatB" = "Treatment B",
-            "treatC" = "Treatment C",
-            "treatD" = "Treatment D"
-          ),
-          stars = c("***" = .01, "**" = .05, "*" = .1),
-          gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
-          align = paste(c("l", rep("c", nrow(private$est))), collapse = ""),
-          add_rows = add_tab,
-          fmt = fmt_sprintf("%.3f")
-        )
-      
-      invisible(self)
-    },
-    flextable = function(notes = "", font_size = 9) {
       label <- private$label_structure(private$est)
       rle1 <- label$rle1
       rle2 <- label$rle2
@@ -114,7 +91,9 @@ LogitAll <- R6::R6Class("LogitAll",
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
     },
-    kable = function(notes = "", font_size = 9) {
+    kable = function(title = "", notes = "", font_size = 9, ...) {
+      private$msummary("kableExtra", title = title, ...)
+
       label <- private$label_structure(private$est)
 
       rle1 <- label$rle1
@@ -165,6 +144,40 @@ LogitAll <- R6::R6Class("LogitAll",
       rle1 <- rle(label1)
 
       return(list(rle1 = rle1, rle2 = rle2))
+    },
+    msummary = function(output, ...) {
+      fit <- private$est %>% pull(fit)
+      estimate <- "{or}"
+      statistic <- "[{lower.or}, {upper.or}]"
+      coef_map <- c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D"
+      )
+      stars <- c("***" = .01, "**" = .05, "*" = .1)
+      gof_omit <- "R2|AIC|BIC|RMSE|Std|FE|se_type"
+      align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
+      fmt <- fmt_sprintf("%.3f")
+      add_tab <- data.frame(rbind(c("Covariates", private$est$covs)))
+      attr(add_tab, "position") <- 7
+
+      args <- list(
+        models = fit,
+        output = output,
+        estimate = estimate,
+        statistic = statistic,
+        coef_map = coef_map,
+        stars = stars,
+        gof_omit = gof_omit,
+        fmt = fmt,
+        add_rows = add_tab,
+        align = align
+      )
+
+      if (!missing(...)) args <- append(args, list(...))
+      private$reg_tab <- do.call("modelsummary", args)
+
+      invisible(self)
     }
   )
 )
