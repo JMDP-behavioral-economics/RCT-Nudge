@@ -2,6 +2,7 @@ library(here)
 library(R6)
 library(grf)
 library(rlang)
+library(kableExtra)
 source(here("R/misc.r"))
 
 RCF <- R6::R6Class("RCF",
@@ -156,6 +157,52 @@ RCFCate <- R6::R6Class("RCFCate",
         width(j = 1, 1) %>%
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
+    },
+    kable = function(label, title = "", notes = "", font_size = 9) {
+      tbl <- private$table()
+
+      header <- as.list(c("", paste0("(", seq(ncol(tbl) - 1), ")")))
+
+      kbl <- tbl %>%
+        knitr::kable(
+          col.names = header,
+          align = paste(c("l", rep("c", ncol(tbl) - 1)), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
+        ) %>%
+        kableExtra::kable_styling(font_size = font_size)
+      
+      if (!missing(label)) {
+        names(label) <- paste0("cond", seq(length(label)))
+        for (i in names(label)) {
+          label[[i]] <- factor(private$pattern[, i, drop = TRUE], labels = label[[i]])
+          label[[i]] <- c(as.character(label[[i]]))
+        }
+        for (i in label) {
+          rle1 <- rle(i)
+          new_header <- c(1, rle1$lengths)
+          names(new_header) <- c(" ", rle1$values)
+          kbl <- kbl %>%
+            kableExtra::add_header_above(new_header)
+        }
+      }
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+            "Standard errors are in parentheses.",
+            "See Athey and Wager (2019) for estimation method",
+            "of conditional average treatment effect (CATE).",
+            "Since these estimates are asymptotically normal,",
+            "we calculate z-score under the null hypothesis that CATE is zero,",
+            "and obtain p-value.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
     }
   ),
   private = list(
