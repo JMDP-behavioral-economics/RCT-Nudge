@@ -297,7 +297,7 @@ RCFCate <- R6::R6Class("RCFCate",
 
 DecomposeEffect <- R6::R6Class("DecomposeEffect",
   public = list(
-    initialize = function(est, response, vars, lh) {
+    initialize = function(est, response, vars, lh, ctrl_arm) {
       private$est <- est
       private$vars <- vars
       private$lh <- lh
@@ -305,6 +305,70 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
     },
     get_est = function() private$est,
     print_msummary = function() private$reg_tab,
+    flextable = function( subset_label,
+                          title = "",
+                          notes = "",
+                          font_size = 9
+                          ) {
+      private$msummary("data.frame")
+      tbl <- private$reg_tab %>%
+        mutate(
+          part = if_else(
+            term %in% str_remove(private$lh, "I"),
+            "Linear combination test (F-test)",
+            ""
+          ),
+          term = if_else(statistic == "std.error", "", term)
+        ) %>%
+        select(-statistic)
+      
+      flex <- tbl %>%
+        as_grouped_data("part") %>%
+        as_flextable(hide_grouplabel = TRUE) %>%
+        set_caption(title)
+      
+      est <- private$est
+      names(subset_label) <- paste0("cond", seq(length(subset_label)))
+      for (i in names(label)) {
+        est[, i] <- factor(est[, i, drop = TRUE], labels = label[[i]])
+      }
+
+      label_col <- est %>%
+        select(starts_with("cond")) %>%
+        with(rev(colnames(.)))
+
+      for (i in label_col) {
+        new_header <- c(" ", as.character(est[, i, drop = TRUE]))
+        rle1 <- rle(new_header)
+        flex <- flex %>%
+          add_header_row(values = rle1$values, colwidths = rle1$lengths)
+      }
+
+      flex <- flex %>%
+        add_header_row(
+          values = c("", paste("Treatment effect of", private$response)),
+          colwidths = c(1, nrow(est))
+        ) %>%
+        align(j = -1, align = "center", part = "all") %>%
+        add_footer_lines(paste(
+          "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+          "The robust standard errors are in parentheses.",
+          notes
+        )) %>%
+        width(j = 1, 1) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+      
+      num_vars_line <- (1 + length(private$vars)) * 2
+      num_lh_line <- length(private$lh) * 2
+      pos_lh <- c(num_vars_line + 2, num_vars_line + num_lh_line + 1)
+
+      flex <- flex %>%
+        hline(num_vars_line + num_lh_line + 2, border = fp_border()) %>%
+        padding(pos_lh[1]:pos_lh[2], padding.left = 10)
+      
+      flex
+    },
     kable = function( subset_label,
                       title = "",
                       notes = "",
@@ -314,7 +378,8 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         "kableExtra",
         title = title,
         escape = FALSE,
-        align = paste(c("l", rep("c", nrow(private$est))), collapse = "")
+        align = paste(c("l", rep("c", nrow(private$est))), collapse = ""),
+        ...
       )
 
       kbl <- private$reg_tab %>%
@@ -336,8 +401,14 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         reduce_new_header <- rle1$lengths
         names(reduce_new_header) <- rle1$values
         kbl <- kbl %>%
-          add_header_above(reduce_new_header)
+          kableExtra::add_header_above(reduce_new_header)
       }
+
+      outcome_header <- c(1, nrow(est))
+      names(outcome_header) <- c(" ", paste("Treatment effect of", private$response))
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(outcome_header)
 
       num_vars_line <- (1 + length(private$vars)) * 2
       num_lh_line <- length(private$lh) * 2
