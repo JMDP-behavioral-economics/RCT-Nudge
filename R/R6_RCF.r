@@ -2,6 +2,7 @@ library(here)
 library(R6)
 library(grf)
 library(rlang)
+source(here("R/misc.r"))
 
 RCF <- R6::R6Class("RCF",
   public = list(
@@ -68,7 +69,7 @@ RCF <- R6::R6Class("RCF",
         reduce(bind_rows) %>%
         select(i, starts_with("cond"), treat, everything())
       
-      RCFCate$new(cate)
+      RCFCate$new(cate, pattern)
     }
   ),
   private = list(
@@ -110,9 +111,75 @@ RCF <- R6::R6Class("RCF",
 
 RCFCate <- R6::R6Class("RCFCate",
   public = list(
-    initialize = function(cate) private$cate <- cate
+    initialize = function(cate, pattern) {
+      private$cate <- cate
+      private$pattern <- pattern
+    },
+    get_est = function() private$cate,
+    flextable = function(label, title = "", notes = "", font_size = 9) {
+      tbl <- private$table()
+
+      header <- as.list(c("", paste0("(", seq(ncol(tbl) - 1), ")")))
+      names(header) <- colnames(tbl)
+
+      flex <- flextable(tbl) %>%
+        set_caption(title) %>%
+        set_header_labels(values = header)
+
+      if (!missing(label)) {
+        names(label) <- paste0("cond", seq(length(label)))
+        for (i in names(label)) {
+          label[[i]] <- factor(private$pattern[, i, drop = TRUE], labels = label[[i]])
+          label[[i]] <- as.character(label[[i]])
+        }
+        for (i in label) {
+          rle1 <- rle(i)
+          rle1$lengths <- c(1, rle1$lengths)
+          rle1$values <- c("", rle1$values)
+          flex <- flex %>%
+            add_header_row(values = rle1$values, colwidths = rle1$lengths)
+        }
+      }
+
+      flex %>%
+        align(j = -1, align = "center", part = "all") %>%
+        add_footer_lines(paste(
+          "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+          "Standard errors are in parentheses.",
+          "See Athey and Wager (2019) for estimation method",
+          "of conditional average treatment effect (CATE).",
+          "Since these estimates are asymptotically normal,",
+          "we calculate z-score under the null hypothesis that CATE is zero,",
+          "and obtain p-value.",
+          notes
+        )) %>%
+        width(j = 1, 1) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+    }
   ),
   private = list(
-    cate = NULL
+    cate = NULL,
+    pattern = NULL,
+    table = function() {
+      private$cate %>%
+        mutate(
+          estimate = case_when(
+            p < 0.01 ~ sprintf("%1.4f***", estimate),
+            p < 0.05 ~ sprintf("%1.4f**", estimate),
+            p < 0.1 ~ sprintf("%1.4f*", estimate),
+            TRUE ~ sprintf("%1.4f", estimate)
+          ),
+          std.err = sprintf("(%1.4f)", std.err)
+        ) %>%
+        select(-z, -p) %>%
+        pivot_longer(estimate:std.err, names_to = "stats") %>%
+        pivot_wider(
+          names_from = starts_with(c("i", "cond")),
+          values_from = value
+        ) %>%
+        mutate(treat = if_else(stats == "std.err", "", treat)) %>%
+        select(-stats)
+    }
   )
 )
