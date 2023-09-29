@@ -51,7 +51,7 @@ RCF <- R6::R6Class("RCF",
 
       cate <- seq(length(combine_cond)) %>%
         map(function(i) {
-          average_treatment_effect(a, subset = combine_cond[[i]]) %>%
+          average_treatment_effect(private$rcf, subset = combine_cond[[i]]) %>%
             mutate(
               i = i,
               z = abs(estimate / std.err),
@@ -95,7 +95,7 @@ RCF <- R6::R6Class("RCF",
       colnames(tau) <- str_remove(colnames(tau), "effect_")
       dt <- data.frame(tau)
       
-      cond <- list_subset(...)
+      cond <- private$list_subset(...)
       for (i in seq(length(cond))) {
         label <- paste0("cond", i)
         dt[, label] <- cond[[i]]
@@ -329,8 +329,8 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       
       est <- private$est
       names(subset_label) <- paste0("cond", seq(length(subset_label)))
-      for (i in names(label)) {
-        est[, i] <- factor(est[, i, drop = TRUE], labels = label[[i]])
+      for (i in names(subset_label)) {
+        est[, i] <- factor(est[, i, drop = TRUE], labels = subset_label[[i]])
       }
 
       label_col <- est %>%
@@ -387,8 +387,8 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       
       est <- private$est
       names(subset_label) <- paste0("cond", seq(length(subset_label)))
-      for (i in names(label)) {
-        est[, i] <- factor(est[, i, drop = TRUE], labels = label[[i]])
+      for (i in names(subset_label)) {
+        est[, i] <- factor(est[, i, drop = TRUE], labels = subset_label[[i]])
       }
 
       label_col <- est %>%
