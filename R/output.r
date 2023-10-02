@@ -7,10 +7,7 @@ data_root <- "D:/JMDPフィールド実験"
 options(
   knitr.table.format = "html",
   knitr.table.NA = "",
-  modelsummary_stars_note = FALSE,
-  modelsummary_factory_default = "kableExtra",
-  modelsummary_factory_latex = "kableExtra",
-  modelsummary_factory_word = "flextable"
+  modelsummary_stars_note = FALSE
 )
 
 # //NOTE Assignment schedule
@@ -252,3 +249,31 @@ mechanism$flextable(
     c("30 < Age", "Age < 30")
   )
 )
+
+# //NOTE Flow analysis
+flow <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  flow()
+
+# descriptive statistics
+flow$plot(
+  male == 1,
+  age >= 30,
+  label_list = list(
+    c("Female", "Male"),
+    c("Age < 30", "Age > 30")
+  )
+)
+
+# regression analysis
+flow_fit <- flow$fit(
+  1:40,
+  male = male == 1,
+  old = age >= 30
+)
+
+flow_fit$
+  plot(male = FALSE, old = FALSE)
+
+flow_fit$
+  plot(male = TRUE, old = FALSE)
