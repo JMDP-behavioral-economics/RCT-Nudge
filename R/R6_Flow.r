@@ -161,7 +161,31 @@ Flow <- R6::R6Class("Flow",
 FlowFit <- R6::R6Class("FlowFit",
   public = list(
     data = NULL,
-    initialize = function(data) self$data <- data
+    initialize = function(data) self$data <- data,
+    plot = function(...) {
+      dt <- self$data
+
+      if (!missing(...)) {
+        cond <- list(...)
+        for (i in seq(length(cond))) {
+          col_lab <- paste0("cond", i)
+          dt <- dt[dt[, col_lab] == cond[[i]], ]
+        }
+      }
+
+      ggplot(dt, aes(x = day, y = estimate, ymin = conf.low, ymax = conf.high)) +
+        geom_hline(aes(yintercept = 0), linetype = 2) +
+        geom_point(size = 3) +
+        geom_line(linewidth = 1) +
+        geom_ribbon(alpha = 0.2) +
+        scale_x_continuous(breaks = c(1, seq(5, 80, by = 5))) +
+        facet_wrap(~term, ncol = 2, scales = "free_x") +
+        labs(
+          x = "Days after sending notification",
+          y = "Estimated Effects (95%CI)"
+        ) +
+        my_theme_classic()
+    }
   ),
   private = list()
 )
