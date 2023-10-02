@@ -5,7 +5,22 @@ source(here("R/misc.r"))
 Flow <- R6::R6Class("Flow",
   public = list(
     data = NULL,
-    initialize = function(reply_data) self$data <- reply_data,
+    initialize = function(reply_data,
+                          covariate,
+                          se,
+                          cluster,
+                          fe) {
+      self$data <- reply_data
+      rhs <- c("treat", covariate)
+
+      if (!missing(fe)) {
+        rhs <- append(rhs, sapply(fe, function(x) paste0("factor(", x, ")")))
+      }
+
+      private$model <- reformulate(rhs, "value")
+      private$rhs <- rhs
+      private$se_type <- se
+    },
     plot = function(...,
                     label_list,
                     xlim = c(0, 40)) {
@@ -69,7 +84,84 @@ Flow <- R6::R6Class("Flow",
           legend.key.size = grid::unit(1.5, "cm"),
           legend.position = "bottom"
         )
+    },
+    fit = function(days, ...) {
+      dt <- self$data
+      model <- private$model
+
+      if (!missing(...)) {
+        cond <- enquos(...)
+        
+        pat_sep <- c()
+        for (i in seq(length(cond))) {
+          col_label <- paste0("cond", i)
+          dt[, col_label] <- eval_tidy(cond[[i]], dt)
+          pat_sep <- append(pat_sep, all.vars(cond[[i]]))
+        }
+        
+        pat <- paste(pat_sep, collapse = "|")
+        remove_vars <- private$rhs[str_detect(private$rhs, pat)]
+        remove_formula <- paste0(". ~ . -", paste(remove_vars, collapse = "-"))
+        model <- update(model, as.formula(remove_formula))
+      }
+
+      cat("\n")
+      cat("We will estimate following model:\n")
+      print(model)
+      cat("\n")
+
+      est <- days %>%
+        map(function(x) {
+          dt %>%
+            mutate(value = case_when(
+              value == 0 ~ 0,
+              days_reply > x ~ 0,
+              TRUE ~ 1
+            )) %>%
+            group_by(across(starts_with("cond"))) %>%
+            nest() %>%
+            mutate(
+              day = x,
+              fit = map(data, ~ private$call_lm(., model))
+            )
+        }) %>%
+        reduce(bind_rows)
+      
+      plotdt <- est %>%
+        mutate(
+          tidy = map(fit, tidy),
+          tidy = map(tidy, ~ subset(.x, str_detect(term, "treat"))),
+          tidy = map(tidy, ~ dplyr::select(.x, -outcome))
+        ) %>%
+        dplyr::select(-data, -fit) %>%
+        unnest(cols = tidy) %>%
+        mutate(
+          term = str_replace(term, "treat", "Experimental Arm ")
+        )
+      
+      FlowFit$new(plotdt)
     }
+  ),
+  private = list(
+    model = NULL,
+    rhs = NULL,
+    se_type = NULL,
+    cluster = NULL,
+    call_lm = function(data, model) {
+      if (is.null(private$cluster)) {
+        lm_robust(model, data, se_type = private$se_type)
+      } else {
+        g <- data[, cluster, drop = TRUE]
+        lm_robust(model, data, clusters = g, se_type = private$se_type)
+      }
+    }
+  )
+)
+
+FlowFit <- R6::R6Class("FlowFit",
+  public = list(
+    data = NULL,
+    initialize = function(data) self$data <- data
   ),
   private = list()
 )

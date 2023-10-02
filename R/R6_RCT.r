@@ -100,11 +100,16 @@ RCT <- R6Class("RCT",
 
       RCF$new(Y, D, X)
     },
-    flow = function() {
+    flow = function(se, cluster) {
+      if (missing(se)) se <- private$se_type
+      if (se == "") stop("Specify se_type by set_default_se_type()")
+
       dt <- private$create_analysis_data()
       outcome_id <- which(names(private$outcome) == "reply")
       use <- private$subset_by_outcome(dt, outcome_id)
-      Flow$new(use)
+
+      if (missing(cluster)) cluster <- private$cluster
+      Flow$new(use, private$covariate, se, cluster, private$fe)
     }
   ),
   private = list(
