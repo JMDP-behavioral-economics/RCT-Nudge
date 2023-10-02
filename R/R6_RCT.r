@@ -5,6 +5,7 @@ source(here("R/R6_BalanceTest.r"))
 source(here("R/R6_Lm.r"))
 source(here("R/R6_Logit.r"))
 source(here("R/R6_RCF.r"))
+source(here("R/R6_Flow.r"))
 
 RCT <- R6Class("RCT", 
   public = list(
@@ -98,6 +99,12 @@ RCT <- R6Class("RCT",
       X <- as.matrix(mat[, covs])
 
       RCF$new(Y, D, X)
+    },
+    flow = function() {
+      dt <- private$create_analysis_data()
+      outcome_id <- which(names(private$outcome) == "reply")
+      use <- private$subset_by_outcome(dt, outcome_id)
+      Flow$new(use)
     }
   ),
   private = list(
