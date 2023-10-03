@@ -98,7 +98,7 @@ RCT <- R6Class("RCT",
       D <- mat[, 2, drop = TRUE]
       X <- as.matrix(mat[, covs])
 
-      RCF$new(Y, D, X)
+      RCF$new(Y, D, X, private$covariate)
     },
     flow = function(se, cluster) {
       if (missing(se)) se <- private$se_type

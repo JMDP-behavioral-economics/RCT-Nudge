@@ -7,7 +7,7 @@ source(here("R/misc.r"))
 
 RCF <- R6::R6Class("RCF",
   public = list(
-    initialize = function(Y, D, X) {
+    initialize = function(Y, D, X, X_label) {
       rcf <- multi_arm_causal_forest(X, Y, D)
       tau <- predict(rcf, X)$predictions[, , 1]
 
@@ -20,8 +20,11 @@ RCF <- R6::R6Class("RCF",
       private$tau <- tau
       private$rcf <- rcf
       private$ctrl_arm <- ctrl
+      private$X_label <- X_label
     },
     get_rcf = function() private$rcf,
+    get_X = function() private$X,
+    get_tau = function() private$tau,
     subset_boxplot = function() {
       dt <- cbind(private$tau, private$X) %>%
         data.frame() %>%
@@ -135,6 +138,56 @@ RCF <- R6::R6Class("RCF",
         c(sum_rhs, rhs),
         c(lh1, lh2)
       )
+    },
+    effect_characteristics = function(target, ...) {
+      X <- private$X
+      Y <- private$tau
+      bool <- rep(TRUE, nrow(X))
+
+      if (!missing(...)) {
+        cond <- enquos(...)
+        for (x in cond) {
+          add_bool <- eval_tidy(x, data.frame(X))
+          bool <- as.logical(bool * add_bool)
+        }
+      }
+
+      dt <- data.frame(X[bool, ])
+      bool_useX <- apply(dt, 2, var) != 0
+      dt <- dt[, bool_useX]
+      useX <- colnames(dt)
+
+      label_target <- paste0("effect_", target)
+      tau_target <- Y[, label_target, drop = TRUE]
+      positive_effect <- ifelse(tau_target > 0, TRUE, FALSE)
+      dt[, "positive_effect"] <- positive_effect[bool]
+
+      stats <- dt %>%
+        group_by(positive_effect) %>%
+        summarize_all(mean) %>%
+        pivot_longer(-positive_effect, names_to = "var") %>%
+        pivot_wider(values_from = value, names_from = positive_effect)
+      
+      args <- list(data = dt, se_type = "stata")
+
+      p <- sapply(useX, function(y) {
+        mod <- reformulate("positive_effect", y)
+        args <- append(args, list(formula = mod))
+        est <- do.call(lm_robust, args)
+        p <- tidy(est)[2, "p.value"]
+      })
+
+      cov_label <- data.frame(
+        var = private$X_label,
+        label = names(private$X_label)
+      )
+
+      tbl <- bind_cols(stats, p.value = p) %>%
+        dplyr::left_join(cov_label, by = "var") %>%
+        select(label, everything()) %>%
+        select(-var)
+      
+      EffectCharacteristics$new(tbl)
     }
   ),
   private = list(
@@ -142,6 +195,7 @@ RCF <- R6::R6Class("RCF",
     tau = NULL,
     rcf = NULL,
     ctrl_arm = NULL,
+    X_label = NULL,
     list_subset = function(...) {
       cond <- enquos(...)
       sub <- list()
@@ -463,4 +517,12 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       invisible(self)
     }
   )
+)
+
+EffectCharacteristics <- R6::R6Class("EffectCharacteristics",
+  public = list(
+    table = NULL,
+    initialize = function(table) self$table <- table
+  ),
+  private = list()
 )
