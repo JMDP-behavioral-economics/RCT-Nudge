@@ -139,7 +139,7 @@ RCF <- R6::R6Class("RCF",
         c(lh1, lh2)
       )
     },
-    effect_characteristics = function(target, ...) {
+    effect_characteristics = function(target, effect = 0, ...) {
       X <- private$X
       Y <- private$tau
       bool <- rep(TRUE, nrow(X))
@@ -159,14 +159,15 @@ RCF <- R6::R6Class("RCF",
 
       label_target <- paste0("effect_", target)
       tau_target <- Y[, label_target, drop = TRUE]
-      positive_effect <- ifelse(tau_target > 0, TRUE, FALSE)
+      positive_effect <- ifelse(tau_target > effect, TRUE, FALSE)
       dt[, "positive_effect"] <- positive_effect[bool]
 
       stats <- dt %>%
         group_by(positive_effect) %>%
         summarize_all(mean) %>%
         pivot_longer(-positive_effect, names_to = "var") %>%
-        pivot_wider(values_from = value, names_from = positive_effect)
+        pivot_wider(values_from = value, names_from = positive_effect) %>%
+        mutate_at(vars(`FALSE`, `TRUE`), list(~sprintf("%1.3f", .)))
       
       args <- list(data = dt, se_type = "stata")
 
@@ -174,15 +175,23 @@ RCF <- R6::R6Class("RCF",
         mod <- reformulate("positive_effect", y)
         args <- append(args, list(formula = mod))
         est <- do.call(lm_robust, args)
-        p <- tidy(est)[2, "p.value"]
+        p <- sprintf("%1.3f", tidy(est)[2, "p.value"])
+        p <- ifelse(p == "0.000", "< 0.001", p)
       })
 
-      cov_label <- data.frame(
-        var = private$X_label,
-        label = names(private$X_label)
+      p_table <- data.frame(
+        p.value = p,
+        var = names(p)
       )
 
-      tbl <- bind_cols(stats, p.value = p) %>%
+      cov_label <- data.frame(
+        var = c(private$X_label, "N"),
+        label = c(names(private$X_label), "N")
+      )
+
+      tbl <- stats %>%
+        bind_rows(c(var = "N", "FALSE" = sum(!bool), "TRUE" = sum(bool))) %>%
+        dplyr::left_join(p_table, by = "var") %>%
         dplyr::left_join(cov_label, by = "var") %>%
         select(label, everything()) %>%
         select(-var)
@@ -522,7 +531,60 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
 EffectCharacteristics <- R6::R6Class("EffectCharacteristics",
   public = list(
     table = NULL,
-    initialize = function(table) self$table <- table
+    initialize = function(table) self$table <- table,
+    flextable = function( title = "",
+                          notes = "", 
+                          font_size = 9,
+                          group_label = c("Non-positive", "Positive")) {
+      self$table %>%
+        flextable() %>%
+        set_caption(title) %>%
+        set_header_labels(label = "", `FALSE` = "(1)", `TRUE` = "(2)", p.value = "(3)") %>%
+        add_header_row(
+          values = c("", group_label, "P-value"),
+          colwidths = rep(1, 4)
+        ) %>%
+        add_header_row(
+          values = c("", "Predicted treatment effect", ""),
+          colwidths = c(1, 2, 1)
+        ) %>%
+        align(j = -1, align = "center", part = "all") %>%
+        width(j = 1, 2) %>%
+        add_footer_lines(paste(
+          "Notes: Column (1) and (2) show average sample characteristics.",
+          "Column (3) shows p-values of difference-in-means test.",
+          notes
+        )) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+    },
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      group_label = c("Non-positive", "Positive"),
+                      escape = TRUE) {
+      self$table %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", paste0("(", 1:3, ")")),
+          align = "lcccc",
+          booktabs = TRUE,
+          linesep = ""
+        ) %>%
+        kable_styling(font_size = font_size) %>%
+        add_header_above(c(" ", group_label, "P-value"), escape = escape) %>%
+        add_header_above(c(" ", "Predicted treatment effect" = 2, " ")) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "Notes: Column (1) and (2) show average sample characteristics.",
+            "Column (3) shows p-values of difference-in-means test.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
   ),
   private = list()
 )
