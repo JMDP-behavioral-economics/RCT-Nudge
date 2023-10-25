@@ -70,7 +70,7 @@
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 \usepackage[]{natbib}
-\bibliographystyle{plainnat}
+\bibliographystyle{agsm}
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
@@ -92,7 +92,55 @@
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
+\hypertarget{economic-models-for-predictions}{%
+\section{Economic Models for Predictions}\label{economic-models-for-predictions}}
 
+We present a simple inter-temporal economic model to make predictions of message effects. Consider three periods (\(t = 1, 2, 3\)). A potential donor responds in either the first (\(t = 1\)) or second period (\(t = 2\)). Alternatively, the potential donor can choose not to respond. If the donor responds at \(t = 1\), then the donor pays the response cost, \(c_1\), at \(t = 1\) and receives the donation utility, \(b_1\), at \(t = 2\). If the donor responds at \(t = 2\), then the donor pays the response cost, \(c_2\), at \(t = 2\) and receives the donation utility, \(b_2\), at \(t = 3\). Assume that \(c_1 = c_2 = c\).
+
+We assume that the donor has the present bias. According to \citet{Laibson1997}, the utility of present-biased donor is \(U_t = u_t + \beta \sum_{\tau = t + 1}^{3} \delta^{\tau - t} u_{\tau}\) where \(\beta \in (0, 1]\) is the degree of present bias and \(\delta \in (0, 1]\) is standard time discount factor. Moreover, at period \(t\), the donor expect that s/he makes decisions after \(t + 1\) based on \(\hat{\beta} \in [\beta, 1]\). If \(\beta < \hat{\beta}\), the donor falsely believes that the present bias of their future self is not as strong. We will solve an interpersonal game \citep{ODonoghue2001} to obtain optimal response timing.
+
+We employ a backward induction to solve the interpersonal game. Consider \(t = 2\). The donor receives \(U_2 = -c + \beta \delta b_2\) if s/he responses. Thus, the donor responses at \(t = 2\) if and only if \(b_2 \ge c/\beta\delta\). Consider \(t = 1\). First, we analyze how the donor expect their behavior at \(t = 2\). The donor believes that future selve's present bias is \(\hat{\beta}\). Thus, at \(t = 1\), the donor expect that s/he will respond at \(t = 2\) if and only if \(b_2 \ge c/\hat{\beta}\delta\). Due to \(\beta \le \hat{\beta}\), \(c/\hat{\beta}\delta \le c/\beta\delta\).
+
+Consider \(b_2 < c / \hat{\beta}\delta\). Then, at \(t = 1\), the donor expects that to give up responding, and actually does so. Thus, the donor at \(t = 1\) responds if and only if \(U_1 = -c + \beta\delta b_1 \ge 0\) or \(b_1 \ge c/\beta\delta\). Otherwise, the donor gives up responding.
+
+Consider \(c / \hat{\beta}\delta \le b_2 < c/\beta\delta\). Then, at \(t = 1\), the donor expects to respond at \(t = 2\), but will not actually take that action. Due to this false prediction, the donor at \(t = 1\) responds if and only if \(U_1 \ge \beta(-\delta c + \delta^2 b_2)\) or
+\begin{equation}
+  b_1 \ge \delta b_2 + c \frac{1 - \beta\delta}{\beta\delta}. \label{eq:cond}
+\end{equation}
+Otherwise, the donor eventually stops responding.
+
+Consider \(c/\beta\delta \le b_2\). Then, at \(t = 1\), the donor expects to respond at \(t = 2\), and actually does so. Thus, the donor responds at \(t = 1\) if and only if equation (\ref{eq:cond}) holds.
+
+As a basic result, we show optimal timing assuming correct belief in \(\beta\) (\(\hat{\beta} = \beta\)) and constant utility of donation (\(b_1 = b_2\)). The second assumption implies that the donor believes that he can help the recipients at any time by transplantion. In addition to the assumption of \(c_1 = c_2 = c\), we obtain the following optimal respond timing.
+\begin{equation}
+  \begin{cases}
+    t = 1 &\text{if}\quad c \frac{1 - \beta\delta}{(1-\delta)\beta\delta} \le b_1 \\
+    t = 2 &\text{if}\quad c \frac{1}{\beta\delta} \le b_1  < c \frac{1 - \beta\delta}{(1-\delta)\beta\delta}\\
+    \text{give up} &\text{if}\quad b_1 < c \frac{1}{\beta\delta}
+  \end{cases}
+\end{equation}
+
+Suppose that a policy intervention (Early Coordination message) reduces the utility of donation at \(t = 3\), \(b_2\), by \(d > 0\). That is, \(b_2 = b_1 - d\). If \(b_1 < c/\beta\delta\), then \(b_2 < c /\beta\delta\) due to \(b_2 < b_1\). Thus, the optimal timing is unchaneged, that is, the donor stops responding. If \(c/\beta\delta \le b_1 < c/\beta\delta + d\), then \(b_2 < c/\beta\delta\) still holds. Thus, the optimal timing is \(t = 1\) because of \(c/\beta\delta \le b_1\).
+
+Consider the case of \(c/\beta\delta + d \le b_1\). Then, \(c/\beta\delta \le b_2\) holds. We can reformulate the equation (\ref{eq:cond}) as follows:
+\begin{equation}
+  b_1 \ge c \frac{1 - \beta\delta}{(1-\delta)\beta\delta} - d \frac{\delta}{1 - \delta}. \label{eq:t1cond-2}
+\end{equation}
+Thus, the optimal timing is \(t = 2\) holds only if
+\begin{equation}
+  \begin{split}
+    c\frac{1}{\beta\delta} + d &\le c \frac{1 - \beta\delta}{(1-\delta)\beta\delta} - d \frac{\delta}{1 - \delta} \\
+    d \frac{1}{1-\delta} &\le c\left[\frac{1 - \beta\delta}{(1-\delta)\beta\delta} - \frac{1}{\beta\delta} \right] \\
+    d \frac{1}{1-\delta} &\le c \frac{1-\beta}{(1-\delta)\beta} \\
+    d &\le c \frac{1-\beta}{\beta}.
+  \end{split}
+\end{equation}
+If \(d > c (1-\beta)/\beta\), then the optimal timing is \(t = 1\).
+
+In summary, we can theoretically predict the message effect as follows:
+
+\noindent
+\textbf{Prediction.} (i) Suppose that \(d \le c(1-\beta)/\beta\). Then, the optimal timing changes from \(t = 2\) to \(t = 1\) if \(c/\beta\delta \le b_1 < c/\beta\delta + d\) or \(c(1-\beta\delta)/(1-\delta)\beta\delta - d\delta/(1-\delta) \le b_1 < c(1-\beta\delta)/(1-\delta)\beta\delta\). (ii) Suppose that \(c(1-\beta)/\beta < d\). Then, the optimal timing changes from \(t=2\) to \(t=1\) if \(c/\beta\delta \le b_1 < c(1-\beta\delta)/(1-\delta)\beta\delta\). For any case, those whose have other preferences are not affected by the message.
 
   \bibliography{biblio.bib}
 
