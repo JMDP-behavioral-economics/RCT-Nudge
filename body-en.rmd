@@ -210,7 +210,7 @@ rct$set_default_se_type(params$se_type)
 ```{r summary}
 rct$
   summary_experiment()$
-  flextable(
+  kable(
   title = "Summary of Field Experiment",
   notes = paste(
     "Notes: For balance test, we regress a covariate on treatment dummies",
@@ -429,64 +429,131 @@ Experimental group B has no statistically significant effect on candidate select
 
 # Discussion and Conclusions {#conclusion}
 
-This study examined the effect of providing information to increase willingness to donate among potential donors enrolled in the JMDP. The results showed that information about the low number of HLA-matched donors per patient (Probability message) increased the willingness to donate among men in their 20s by about 10 points and also increased the rate of achieving confirmatory typing by about 8 points. In terms of numbers, this information increased the number of people willing to donate from 600 to 756, and the number of people who reached confirmatory typing from 346 to 462. In addition, this information may increase the transplant rate by 5 percentage points. In terms of numbers, the Probability message increased from 71 to 121. However, when we simultaneously provide the information that early coordination increases a patient's transplant rate (Early Coordination message), the positive effect of the Probability message disappears because they give more weight to the Early Coordination message in their decision making. These results suggest that men in their 20s overestimate the number of HLA-matched donors and engage in free-riding behavior.
+This study examined the effect of providing information to increase willingness to donate among potential donors enrolled in the JMDP. The results showed that information about the low number of HLA-matched donors per patient (Probability message) increased the willingness to donate among men in their 20s by about 10 percentage points and also increased the rate of achieving confirmatory typing by about 8 percentage points. In addition, this information may increase the transplant rate by 5 percentage points. In terms of numbers, the Probability message increased the number of transplanted donors from 71 to 121. 
 
-There are two possible reasons for the statistically insignificant effect of the Probability message for the other genders and ages. First, compared to men in their 20s, others may correctly estimate the number of HLA-matched donors. In this case, the probability message should have no effect on the decision of potential donors. The second possibility is that the altruistic preferences of men in their 20s differ from those of other genders and age groups. In the study of altruistic behavior in economics, there are two main types of motives for altruistic behavior: warm glow, in which one derives utility from one's own altruistic behavior, and pure altruism, in which one derives utility from the results of altruistic behavior, such as the production of public goods [@Andreoni1990]. Those with relatively stronger warm glow are less likely to engage in free-riding behavior because they are less concerned about the actions of others. Thus, compared to men in their 20s, others may have the warm glow preference as the main driver of altruistic behavior. In short, the heterogeneity in the Probability message could be explained by differences in beliefs or motivations.
+However, when we simultaneously provide the information that early coordination increases a patient's transplant rate (Early Coordination message), the positive effect of the Probability message disappears because they give more weight to the Early Coordination message in their decision making. 
 
-また、Early Coordination messageは20代女性の全体の返信率に影響を与えていないが、短期間の返信（4日以内）に正の影響を与えている。これは返信行動そのものを促進しているよりむしろ、返信日数を短くしていることを示唆している。我々のデータ制約上、このメッセージが患者の移植までの期間を短くしているかどうかを検証できないが、この情報が少なくともコーディネーション期間の短縮に貢献している。他の性・年代で効果がなかったのは、他の人がこの情報をもともと持っている可能性が考えられる。
+These results suggest that men in their 20s overestimate the number of HLA-matched donors and engage in free-riding behavior. There are two possible reasons for the statistically insignificant effect of the Probability message for the other genders and ages. First, compared to men in their 20s, others may correctly estimate the number of HLA-matched donors. In this case, the Probability message should have no effect on the decision of potential donors.
 
-本研究はフィールド実験によって情報提供の因果効果をクリアに識別できるが、先に述べたメカニズムを識別できるようなデータ・実験設計ではないことに限界がある。しかしながら、本研究は実務的な含蓄がある。第\@ref(intro)節で述べたように、造血幹細胞移植は提供の意向を示す時点と実際の提供の時点が異なるので、潜在ドナーの意向を維持することが骨髄ドナープログラムの課題となっている。特に、移植成績の良い若年ドナーが意向を維持できず、脱落しやすい。本研究は患者とマッチしたときに、骨髄ドナープログラムの事務局が与える情報によって若年潜在ドナーの行動変容を促せる可能性を提示しており、この課題を解決するための施策の一つとなるだろう。とくに、他者のHLA適合情報は、移植成績の良いドナーがコーディネーションに進みやすくなるという意味で、コーディネーションの効率性を高めるだろう。しかしながら、情報提供が効果をないことを示す研究[e.g. @Switzer2018]もあるので、他国の骨髄ドナープログラムでの情報提供の効果検証が期待される。
+The second possibility is that the altruistic preferences of men in their 20s differ from those of other genders and age groups. Economic studies suggest that there are two main types of motives for altruistic behavior: warm glow, in which one gain utility from one's own altruistic behavior, and pure altruism, in which one gain utility from the results of altruistic behavior, such as the production of public goods [@Andreoni1990]. Those with relatively stronger warm glow are less likely to engage in free-riding behavior because they are less concerned about the actions of others. Thus, compared to men in their 20s, others may have the warm glow preference as the main driver of altruistic behavior. In short, the heterogeneity in the Probability message could be explained by differences in beliefs or motivations.
+
+The Early Coordination message had no effect on the overall response rate among women in their 20s, but had a positive effect on shorter responses (4 days or less). This suggests that it shortens the timing of replies rather than encouraging the response behavior itself. Due to our data limitations, we cannot test whether this message shortens the time to transplant for patients, but it is possible that this information at least contributes to a shorter coordination period.
+
+The lack of effect for other genders and ages may be due to the possibility that others already have this information. Alternatively, women in their 20s may have a stronger degree of present bias and a greater tendency toward delayed behavior than other generations. The heterogeneity of this message effect could be explained by differences in information possession or time preference.
+
+While this study is able to clearly identify the causal effects of information provision through field experiments, it is limited by the fact that the data and experimental design do not allow for the identification of the mechanisms described above, which may be an issue for future work. Nevertheless, this study has practical implications. As discussed in section \@ref(intro), maintaining the intention of potential donors is a challenge for bone marrow donor programs due to the time lag between intention and behavior. In particular, young donors with good transplant outcomes are likely to fail to maintain their intentions and drop out of the program. This study suggests that information provided by the bone marrow donor program office at the time of matching with a patient may promote behavioral change in young potential donors and may be one of the measures to address this problem. In particular, information about the HLA matching of others would increase the efficiency of coordination in the sense that donors with a good transplant performance would be more likely to proceed to coordination. However, some studies [e.g. @Switzer2018] have shown that information provision is ineffective, so it is expected that the effectiveness of information provision will be tested in bone marrow donor programs in other countries.
 
 # Appendix {-}
 
 <!-- //NOTE ロジット推定 -->
 
-```{r logit-stock, tab.cap = 'Logit Model of Reply and Intention'}
-logit_all_stock(use$stock, TRUE) %>%
-  tbl()
+```{r setup-logit, include=FALSE}
+logit_stock <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(id)$
+  fit_all()
+
+logit_coordinate <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(id3)$
+  fit_all()
 ```
 
-```{r logit-coordination, tab.cap = 'Logit Model of Coordination'}
-logit_all_coordination(use$coordination, TRUE) %>%
-  tbl()
+
+```{r logit-stock}
+logit_stock$
+  kable(
+    title = "Logit Model of Reply and Intention",
+    notes = paste(
+      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    )
+  )
 ```
 
-<!-- //NOTE 30歳未満の男性の回帰分析 -->
-
-```{r reg-young-male-stock, tab.cap = 'Linear Probability Model of Reply and Intentions for Males Less Then 30 Years'}
-stock_young_male <- use$stock$male == 1 & use$stock$age < 30
-lm_all_stock(use$stock[stock_young_male,]) %>%
-  tbl()
-
-# wildbs_subset_stock(use$stock, male == 1 & age < 30, treat = c("B", "D")) %>%
-#   tbl()
-```
-
-```{r reg-young-male-coordination, tab.cap = 'Linear Probability Model of Coordination among Males'}
-coord_young_male <- use$coordination$male == 1 & use$coordination$age < 30
-lm_all_coordination(use$coordination[coord_young_male, ]) %>%
-  tbl()
-
-# wildbs_subset_coordination(use$coordination, male == 1 & age < 30, treat = "B") %>%
-#   tbl()
+```{r logit-coordination}
+logit_coordinate$
+  kable(
+    title = "Logit Model of Coordination",
+    notes = paste(
+      "Covariates are gender, squared polynomial of age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    )
+  )
 ```
 
 <!-- //NOTE Additional analysis of flow data -->
 
-```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-coefplot(est_sub_flow, male == 1 & age_less30 == 0)
+flow_fit$plot(male = TRUE, old = TRUE)
 ```
 
-```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
-coefplot(est_sub_flow, male == 0 & age_less30 == 0)
+flow_fit$plot(male = FALSE, old = TRUE)
 ```
 
 <!-- //NOTE RCF -->
 
-```{r rcf-int-cate, tab.cap = 'Conditional Average Treatment Effect Estimated by RCF'}
-tbl(rcf$cate)
+```{r rcf-int-cate}
+rcf$
+  cate(age < 30, male == 0)$
+  kable(
+    label = list(
+      c("30 < Age", "Age < 30"),
+      c("Male", "Female")
+    ),
+    title = "Conditional Average Treatment Effect Estimated by RCF"
+  )
+```
+
+```{r rcf-middle-male}
+rcf$
+  effect_characteristics(
+    target = "B",
+    effect = 0.1,
+    male = male == 1,
+    age = 30 < age & age <= 40
+  )$
+  kable(
+    title = "Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)",
+    group_label = c("Effect < 0.1", "0.1 < Effect"),
+    notes = "We use males with 30-39 age."
+  )
+```
+
+```{r rcf-older-male}
+rcf$
+  effect_characteristics(
+    target = "C",
+    male = male == 1,
+    age = 45 < age
+  )$
+  kable(
+    title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Males)",
+    notes = "We use males with over 45 age."
+  )
+```
+
+```{r rcf-older-female}
+rcf$
+  effect_characteristics(
+    target = "C",
+    male = male == 0,
+    age = 45 < age
+  )$
+  kable(
+    title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Females)",
+    notes = "We use females with over 45 age."
+  )
 ```
 
 # References {-}
