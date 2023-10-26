@@ -5,11 +5,11 @@ title: |
 abstract: |
   Allogeneic hematopoietic stem cell transplants through the Japan Marrow Donor Program take a long time to become available, and only about half of registered patients receive a transplant. This is because much of the transplant coordination is interrupted before the transplant takes place due to the reluctance of registered donors to donate. In collaboration with the Japan Marrow Donor Program, we conduct a field experiment to test an information provision intervention to increase registered donors' willingness to donate. We estimate the effect of information provision using coordination data for 11,049 matched donors. We find that information about the low number of potential donor matches per patient increases willingness to donate by 25% among men in their 20s. We also find that information that early coordination increases a patient's transplant rate encourages early responses from women in their 20s. These results suggest that providing information affects only certain genders and ages, and in particular encourages behavioral change among younger donors with better transplant outcomes.
 author:
-  - Hiroki Kato (Hitostubashi Institute for Advanced Study, Hitotsubashi University, Tokyo, Japan)
-  - Fumio Ohtake (Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan)
-  - Saiko Kurosawa (Department of Oncology, Ina Central Hospital, Nagano, Japan)
-  - Kazuhiro Yoshiuchi (Graduate School of Medicine, Tokyo University, Tokyo, Japan)
-  - Takahiro Fukuda (Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan)
+  - Hiroki Kato^[Hitostubashi Institute for Advanced Study, Hitotsubashi University, Tokyo, Japan.]
+  - Fumio Ohtake^[Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan.]
+  - Saiko Kurosawa^[Department of Oncology, Ina Central Hospital, Nagano, Japan.]
+  - Kazuhiro Yoshiuchi^[Graduate School of Medicine, Tokyo University, Tokyo, Japan.]
+  - Takahiro Fukuda^[Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan.]
 date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
 bibliography: biblio.bib
 biblio-style: agsm
@@ -17,12 +17,13 @@ output:
   bookdown::pdf_document2:
     latex_engine: lualatex
     keep_tex: true
-    toc: true
+    toc: false
     number_sections: true
     citation_package: natbib
 header-includes:
   - \usepackage{setspace}
   - \renewcommand{\baselinestretch}{1.5}
+  - \usepackage{threeparttable}
 params:
   is_fe: TRUE
   is_cluster: FALSE
@@ -37,7 +38,9 @@ knitr::opts_chunk$set(
   message = FALSE,
   dev = "pdf",
   fig.width = 15,
-  fig.height = 10
+  fig.height = 8,
+  fig.pos = "t",
+  out.extra = ""
 )
 ```
 
@@ -87,7 +90,7 @@ source(here("R/R6_RawData.r"))
 source(here("R/R6_Schedule.r"))
 
 options(
-  knitr.table.NA = "",
+  knitr.kable.NA = "",
   modelsummary_stars_note = FALSE
 )
 
@@ -270,8 +273,7 @@ stock$
 
 Table \@ref(tab:reg-stock) presents the estimation results of the linear probability model. The odd columns include only the experimental group dummy as an explanatory variable, corresponding to a simple difference in means. The even columns control for individual attribute, month and week fixed effects in addition to the experimental arm dummies. The estimated results show that all experimental groups, with and without covariates, have no statistically significant effects on responses and intentions. As an alternative method, we estimate a logit model (Table \@ref(tab:logit-stock)) and obtain similar results (95% confidence intervals for odds ratios include 1).
 
-```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month and week dummies.'}
-
+```{r coefplot-reg-stock-subset, fig.cap = "Effect on Reply and Intentions by Gender and Age Group. Notes: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month and week dummies."}
 stock$
   fit_sub()$
   coefplot()
@@ -363,7 +365,7 @@ flow$plot(
 
 The Early Coordination message provides the fact that early coordination increases a patient's transplant rate. Therefore, this message may encourage early responses to the compatibility notice. Figure \@ref(fig:cumulative-response-rate) shows the cumulative response rate for each day of the 40 days after the match notification was sent. Since the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age here and focus on the heterogeneity of the effect on quick responses.
 
-```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = TRUE, old = FALSE)
 ```
@@ -374,7 +376,7 @@ While there are no significant differences in the pattern of cumulative response
 
 [^flow-analysis]: In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within $d$ days as the outcome variable. If the potential donor responded after $d$ days or did not respond, the outcome variable is 0.
 
-```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = FALSE, old = FALSE)
 ```
@@ -416,7 +418,7 @@ The effect of experimental groups B and D on the stage after candidate selection
 
 In experimental group B and control group, the number of potential donors who reached confirmatory typing was 774 and 564, respectively. Therefore, experimental group B would have increased the number of confirmatory typings by 210. The number of potential donors who were not selected as candidates due to patient or donor health reasons was 556 in the experimental group B and 385 in the control group. This means that experimental group B has 171 more people who were not selected as candidates for exogenous reasons. Thus, the estimates include not only the effect of our intervention, but also the effect of the demand for stem cell transplants.
 
-```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 coordinate$
   fit_sub()$
@@ -425,7 +427,7 @@ coordinate$
 
 Figure \@ref(fig:coefplot-reg-subsample-coordination) divides the sample into four subsets by gender and age group (under 30 or not) and estimates the message effect in each subset. The results show that experimental group B increases the proportion of men in their 20s who reach confirmatory typing by about 8 percentage points, which is statistically significant. Thus, it is possible that experimental group B not only increases the willingness of men in their 20s to donate, but also maintains it.
 
-Experimental group B has no statistically significant effect on candidate selection and final agreement among men in their 20s. However, the effect on donation is about 4 percentage points and is statistically significant at the 10% level (Table \@ref(tab:reg-young-male-coordination)). As noted earlier, this effect may reflect not only the effect of our intervention, but also the demand for stem cell transplants. If younger males have better transplant outcomes, then the demand for stem cell transplants may be higher in this generation than in other genders and ages. The effect on donation may include this effect. In addition, experimental arm C, which encourages early responses from women in their 20s, has a statistically significant effect on the coordination of this generation.
+Experimental group B has no statistically significant effect on candidate selection and final agreement among men in their 20s. However, the effect on donation is about 4 percentage points and is statistically significant at the 10% level. As noted earlier, this effect may reflect not only the effect of our intervention, but also the demand for stem cell transplants. If younger males have better transplant outcomes, then the demand for stem cell transplants may be higher in this generation than in other genders and ages. The effect on donation may include this effect. In addition, experimental arm C, which encourages early responses from women in their 20s, has a statistically significant effect on the coordination of this generation.
 
 # Discussion and Conclusions {#conclusion}
 
@@ -443,7 +445,11 @@ The lack of effect for other genders and ages may be due to the possibility that
 
 While this study is able to clearly identify the causal effects of information provision through field experiments, it is limited by the fact that the data and experimental design do not allow for the identification of the mechanisms described above, which may be an issue for future work. Nevertheless, this study has practical implications. As discussed in section \@ref(intro), maintaining the intention of potential donors is a challenge for bone marrow donor programs due to the time lag between intention and behavior. In particular, young donors with good transplant outcomes are likely to fail to maintain their intentions and drop out of the program. This study suggests that information provided by the bone marrow donor program office at the time of matching with a patient may promote behavioral change in young potential donors and may be one of the measures to address this problem. In particular, information about the HLA matching of others would increase the efficiency of coordination in the sense that donors with a good transplant performance would be more likely to proceed to coordination. However, some studies [e.g. @Switzer2018] have shown that information provision is ineffective, so it is expected that the effectiveness of information provision will be tested in bone marrow donor programs in other countries.
 
+\clearpage
+
 # Appendix {-}
+
+\clearpage
 
 <!-- //NOTE ロジット推定 -->
 
@@ -458,7 +464,6 @@ logit_coordinate <- rct$
   logit(id3)$
   fit_all()
 ```
-
 
 ```{r logit-stock}
 logit_stock$
@@ -491,12 +496,12 @@ logit_coordinate$
 
 <!-- //NOTE Additional analysis of flow data -->
 
-```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = TRUE, old = TRUE)
 ```
 
-```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = FALSE, old = TRUE)
 ```
@@ -555,5 +560,7 @@ rcf$
     notes = "We use females with over 45 age."
   )
 ```
+
+\clearpage
 
 # References {-}
