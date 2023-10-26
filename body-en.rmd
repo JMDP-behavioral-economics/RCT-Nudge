@@ -83,28 +83,12 @@ This paper is organized as follows. Section \@ref(experiment) provides an overvi
 
 ```{r library, include=FALSE}
 library(here)
-library(tidyverse)
-library(lubridate)
-library(estimatr)
-library(fixest)
-library(grf)
-library(modelsummary)
-library(kableExtra)
-library(flextable)
-library(officer)
-library(RCTtoolbox)
-library(patchwork)
-lapply(list.files(here("R/func"), "r", full.names = TRUE), source)
+source(here("R/R6_RawData.r"))
+source(here("R/R6_Schedule.r"))
 
 options(
-  knitr.table.format = "markdown",
-  kableExtra.auto_format = FALSE,
-  modelsummary_stars_note = FALSE,
-  modelsummary_factory_default = "flextable",
-  modelsummary_factory_html = "kableExtra",
-  modelsummary_factory_latex = "kableExtra",
-  modelsummary_factory_word = "flextable",
-  modelsummary_get = "broom"
+  knitr.table.NA = "",
+  modelsummary_stars_note = FALSE
 )
 
 data_root <- "D:/JMDPフィールド実験"
@@ -112,77 +96,131 @@ data_root <- "D:/JMDPフィールド実験"
 
 ## Background: Coordination Process of JMDP {#background}
 
-For a better understanding of the timing of our interventions, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the compatibility notice requesting a stem cell donation.[^SNS] The matched donor fills out a questionnaire and responds to the compatibility notice, indicating his or her willingness to donate.
+For a better understanding of the timing of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the compatibility notice requesting a stem cell donation.[^SNS] The matched donor fills out a questionnaire and responds to the compatibility notice, indicating his or her willingness to donate.
 
 [^SNS]: At the same time, the JMDP office sends a social networking message to the matched donors informing them that JMDP has sent the compatibility notice.
 
-Coordination for the transplant then begins. The matched donor undergoes confirmatory typing within approximately one month. At this time, the coordinator explains the details of the donation process (bone marrow or peripheral blood stem cell collection) and asks the matched donors and their families about their willingness to donate. Matched donors can choose between two collection methods. In addition, the coordinating physician conducts an interview, medical examination and blood draw to test for infection and blood type. These tests are performed to determine if the matched donor meets the criteria established by the JMDP.
+Coordination for the transplant then begins. The matched donor undergoes confirmatory typing within approximately one month. At this time, the coordinator explains the details of the donation process and asks the matched donors and their families about their willingness to donate. Matched donors can choose between two collection methods (bone marrow or peripheral blood stem cell collection). In addition, the coordinating physician conducts an interview, medical examination and blood draw to test for infection and blood type. These tests are performed to determine if the matched donor meets the criteria established by the JMDP.
 
-Patients can be matched with up to 10 compatible donors at one time. The patient's physician selects the most appropriate candidate from the matched donors who have undergone verification testing. Importantly, the matched donor does not have access to any information about the matched patient (e.g., how many other matched donors are available). Nor can the matched donor obtain this information from the coordinator or coordinating physician.
+Patients can be matched with up to 10 compatible donors at one time. The patient's physician selects the most appropriate candidate from the matched donors who have undergone the confirmatory typing. Importantly, the matched donor does not have access to any information about the matched patient (e.g., how many other matched donors are available). Nor can the matched donor obtain this information from the coordinator or coordinating physician.
 
-The matched donor who is selected as the best match must give final consent after being informed by the coordinator and coordinating physician. At the same time, a representative of the donor's family must also consent to the donation. After this, the selected donor cannot change his or her mind. After the final consent is given, the selected donor admits him/herself to hospital for approximately one week to undergo pre-operative examinations and preparation for the donation. The donor then undergoes a surgical procedure to collect the stem cells. The time from the confirmatory test to the collection is approximately 3-4 months.
+The matched donor who is selected as the best donor must give final consent after being informed by the coordinator and coordinating physician. At the same time, a representative of the donor's family must also consent to the donation. After this, the selected donor cannot change his or her mind. After the final consent is given, the selected donor admits him/herself to hospital for approximately one week to undergo pre-operative examinations and preparation for the donation. The donor then undergoes a surgical procedure to collect the stem cells. The time from the confirmatory test to the collection is approximately 3--4 months.
 
 ## Experimental Design {#design}
 
-```{r message, fig.cap="Intervention Messages"}
+```{r message, fig.cap="Intervention Messages", eval=FALSE}
 knitr::include_graphics("image/intervention.png")
 ```
 
-Our experiment intervenes in the content of the compatibility notice in which JMDP requests a stem cell donation from a matched donor. Figure \@ref(fig:message) illustrates our intervention. Note that the standard compatibility notice should be responded to by the donor within 7 days. JMDP also encloses a handbook with the notice that describes the coordination process outlined in the previous subsection.
+Our experiment intervenes in the content of the compatibility notice in which JMDP requests a stem cell donation from a matched donor. The standard compatibility notice is as follows.
 
-We have added two messages to the compatibility notice to facilitate coordination.[^pressure] The Probability message emphasizes the low number of matched donors per registered patient. As discussed in Section \@ref(intro), transplantation is a public good in the sense that if there are other potential donors with the same HLA type in the pool, one's own donation can be substituted for that compatible donor. Thus, as predicted by the volunteer dilemma, the more common the HLA type, the more reluctant the donor will be to donate [@Diekmann1985; @Bergstrom2009].
+> We inform you that your HLA type (white blood cell type) matches that of a patient on our registry and you have been selected as one of our potential donors. We are contacting you to ask if you would like to undergo further testing and interviews in preparation for donation. Please read the enclosed materials carefully, consider whether coordination is possible, and return the form *within 7 days* of receiving this information. [Insert intervention messages here] If we proceed with the coordination after receiving your return, a coordinator will contact you by phone to discuss the details of your request.
+
+The standard compatibility notice should be responded to by the donor within 7 days. JMDP also encloses a handbook that describes the coordination process outlined in the previous subsection, as well as the medical questionnaire and donor consent form.
+
+We have added two messages (Probability message and Early Coordination message) to the compatibility notice to facilitate coordination.[^pressure] The Probability message is as follows.
 
 [^pressure]: In designing our intervention messages, we have been careful to avoid putting undue psychological pressure on potential donors. Specifically, first, we avoid language that sounds like an appeal. Second, we only use information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual way. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics, Osaka University and the JMDP.
 
+> The number of registered donors whose HLA type matches that of a single registered patient is one in hundreds to tens of thousands. We hope you understand that while we may find more than one potential donor, it is not a large number.
+
+This message emphasizes the low number of matched donors per registered patient. Transplantation is a public good in the sense that if there are other potential donors with the same HLA type in the pool, one's own donation can be substituted for that compatible donor. Thus, as predicted by the volunteer dilemma, the more common the HLA type, the more reluctant the donor will be to donate.
+
 In the context of stem cell transplantation, however, the expectation of the size of the group influences the decision, because a matched donor cannot know the exact size of the group. Therefore, the higher a donor's expectation of the number of potential donors with the same HLA type, the more reluctant he or she will be to donate. If a donor's beliefs are too high, the Probability message would discourage free-riding and increase willingness to donate by adjusting beliefs downward. The opposite effect is also possible. If the donor's beliefs are underestimated, the Probability message may induce free-riding and reduce donation intentions by adjusting beliefs upward.
 
-Early Coordinationメッセージは早いコーディネーションが患者の移植率を高めることを提示している。適合通知への返信が遅れることによってコーディネーション期間が長くなると、患者の移植率が減少してしまう。したがって、このメッセージは患者への移植によって得られる効用が経時的に減衰していくことを示している。第\@ref(intro)節で述べたように、将来でも患者を助けられると考えている適合ドナーは適合通知への返信期間を長くする可能性がある。これは時間に関する限界効用の低下が小さいと信じていることで生じる。このメッセージを読んだ適合ドナーは限界効用の低下の程度が予想よりも大きいということを学習して、最適な返信期間を短くするだろう。したがって、仮にこのメッセージが適合通知への返信率を高めるほど提供の効用水準を高めていなくても、返信者の返信期間の分布が左にシフトしている可能性がる。
+The Early Coordination message is as follows.
 
-We set up four experimental groups to estimate the effects of the two intervention messages. Experimental group A received a standard compatibility message with no intervention messages (control group). Experimental groups B and C received the notice with the probability message and the early coordination message, respectively. Experimental group D received the notice with two intervention messages added at the same time. This experimental group was designed to test the negative effects of cognitive load caused by information overload.
+> About 60% of patients are able to receive a transplant through the Japan Marrow Donor Program. The earlier a donor can be found to donate bone marrow, the higher that percentage can be.
 
-```{r assignment, file = "R/schedule_data.r", tab.cap = "Assignment Schedule"}
+This message is expected to work with time-inconsistent matched donors. Time-inconsistent donors may think it is optimal to respond immediately in advance, but actually delay their response. This message suggests that early coordination increases the rate of transplantation for the patient, and that the utility of transplantation decays over time (regardless of the individual's time preference). Time-inconsistent donors who read this message may recognize that delaying a response does not increase utility and may change their decision to respond immediately. Thus, this message is expected to increase the response rate over a short period of time.
+
+We set up four experimental groups to estimate the effects of the two intervention messages. Experimental arm A received a standard compatibility notice with no intervention messages (control group). Experimental arms B and C received the notice with the Probability message and the Early Coordination message, respectively. Experimental arm D received the notice with two intervention messages added at the same time. This experimental arm was designed to test the negative effects of cognitive load caused by information overload.
+
+```{r assignment}
+schedule <- Schedule$new(here(data_root, "RCT-schedule.csv"))
+schedule$kable(
+  title = "Assignment Schedule",
+  notes = paste(
+    "Notes: See Table \\@ref(tab:summary) for detail intervention of each experimental arm.",
+    "Control group is experimental arm A."
+  )
+)
 ```
 
-Participants in the experiment were 11,154 matched donors who received the compatibility notice between September 2021 and February 2022. To maintain randomness to the best of the JMDP office's ability, we assigned experimental groups by cluster randomization on a weekly basis. We designed the experimental groups to be balanced across weeks and months whenever possible. Table \@ref(tab:assignment) summarizes the assignment schedule. In conducting the experiment, we obtained approval from the Graduate School of Economics, Osaka University, and the JMDP.
+Participants in the experiment were 11,154 matched donors who received the compatibility notice between September 2021 and February 2022. To maintain randomness to the best of the JMDP office's ability, we assigned experimental groups by cluster randomization on a weekly basis. We designed the experimental groups to be balanced across weeks and months as much as possible. Table \@ref(tab:assignment) summarizes the assignment schedule. In conducting the experiment, we obtained approval from the Graduate School of Economics, Osaka University, and the JMDP.
 
 ## Data and Empirical Strategy
 
 ```{r experiment-data, include=FALSE}
-rawdt <- read_csv(here(data_root, "shaped.csv"), locale = locale(encoding = "cp932"))
-use <- dataset(rawdt)
+rawdt <- RawData$new(
+  here(data_root, "shape.csv"),
+  treat_vars = "treat",
+  treat_levels = LETTERS[1:4]
+)
 ```
 
-We received the coordination data at the end of June 2022 with the help of JMDP. The unit of observation is the experimental participant. As individual characteristics, the data record gender, age, number of coordination experiences, and prefecture-level residence area. As the coordination process, the data record whether each stage (response to compatibility notice, confirmatory typing, candidate selection, final consent, and collection) was reached. We use these variables as outcome variables. In addition, for responses to the notice, the data record the number of days to respond and the willingness to donate. If coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis uses 11,049 matched donors living in Japan whose coordination (including interruptions) was completed.[^exclude]
+JMDP provided the coordination data at the end of June 2022. The unit of observation is the experimental participant. As individual characteristics, the data record gender, age, number of coordination experiences, and prefecture-level residence area. As the coordination process, the data record whether each stage (response to compatibility notice, confirmatory typing, candidate selection, final consent, and collection) was reached. We use these variables as outcome variables. In addition, for responses to the notice, the data record the number of days to respond and the willingness to donate. If coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis uses 11,049 matched donors living in Japan whose coordination (including interruptions) was completed.[^exclude]
 
 ```{r ongoing-balance, include=FALSE}
-ongoing_f <- lm_robust(
-  ongoing ~ treat,
-  data = rawdt,
-  cluster = if(FALSE) .$RCTweek,
-  se_type = "HC1"
-) %>%
-{
-  f <- summary(.)$fstatistic[1]
-  numdf <- summary(.)$fstatistic[2]
-  dendf <- summary(.)$fstatistic[3]
-  p <- pf(f, numdf, dendf, lower.tail = FALSE)
-
-  sprintf("F-test, p-value = $%1.3f$", p)
-}
+rawdt$add_cond_study_sample("ongoing == 0")
+ongoing_f <- rawdt$balance_attrition()
 ```
 
-[^exclude]: One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data provision. The proportion of matched donors with ongoing matching is balanced across the experimental groups (`r ongoing_f`).
+[^exclude]: One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data provision. The proportion of matched donors with ongoing matching is balanced across the experimental arms (`r ongoing_f`).
 
-As additional data, we use the list of medical institutions published on the Internet by the JMDP.[^ref] This list includes complete addresses, availability of bone marrow collection (BM collection), and availability of peripheral blood stem cell collection (PBSC collection). We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged it with the coordination data using the prefecture as the merging key. We consider this variable as the travel cost of coordination and donation.
+As additional data, we use the list of medical institutions published on the Internet by the JMDP.[^ref] This list includes complete addresses, availability of bone marrow collection (BM collection), and availability of peripheral blood stem cell collection (PBSC collection). We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged it with the coordination data using the prefecture as the merge key. We consider this variable as the travel cost of coordination and donation.
 
 [^ref]: <https://www.jmdp.or.jp/hospitals/view2/> (access date: August 4, 2022)
 
-```{r summary, tab.cap = 'Overview of Field Experiment'}
-summary_experiment(use$cs) %>%
-  tbl()
+```{r rct-setup, include=FALSE}
+intervention <- list(
+  "Standard notification" = c(A = "X", B = "X", C = "X", D = "X"),
+  "Probability message" = c(A = "", B = "X", C = "", D = "X"),
+  "Early Coordination message" = c(A = "", B = "", C = "X", D = "X")
+)
+
+endpoint <- list(
+  reply = "Reply",
+  positive = "Positive intention",
+  negative = "Negative intention",
+  test = "CT",
+  candidate = "Candidate",
+  consent = "Consent",
+  donate = "Donation"
+)
+
+covs <- c(
+  "Male (= 1)" = "male",
+  "Age" = "age",
+  "Number of past coordinations" = "coordinate",
+  "Number of listed hospitals" = "hospital_per_area",
+  "Number of hospitals listed with PBSC collection" = "PB_per_area",
+  "Number of hospitals listed with BM collection" = "BM_per_area"
+)
+
+rct <- rawdt$RCT()
+rct$add_intervention(intervention)
+rct$add_outcome(endpoint)
+rct$add_covariate(covs)
+if (params$is_fe) rct$add_fixed_effect(c("month", "week"))
+if (params$is_cluster) rct$set_default_cluster("RCTweek")
+rct$set_default_se_type(params$se_type)
 ```
 
-Table \@ref(tab:summary) provides a summary of the field experiments. Panel A shows the intervention for each experimental group, and Panel B shows the sample size for each experimental group. Panel C is a balanced test of whether randomization was successful. The assignment of experimental groups is approximately random, since there is no average difference between experimental groups for any variable except age. However, age does vary across groups. The average age of experimental arm C is about one year younger than that of the control group.
+```{r summary}
+rct$
+  summary_experiment()$
+  flextable(
+  title = "Summary of Field Experiment",
+  notes = paste(
+    "Notes: For balance test, we regress a covariate on treatment dummies",
+    "and test a null hypothesis that all coefficients are zero.",
+    "We use the robust standard errors for statistical inference."
+  )
+)
+```
+
+Table \@ref(tab:summary) provides a summary of the field experiment. Panel A shows the intervention for each experimental arm, and Panel B shows the sample size for each experimental arm. Panel C is a balanced test of whether randomization was successful. The assignment of experimental arms is approximately random, since there is no average difference between experimental arms for any variable except age. However, age may vary across groups. The average age of experimental arm C is about one year younger than that of the control group.
 
 Since we are interested in what information should be given to all potential donors, we want to identify the average treatment effect. Since the assignment of experimental groups should be independent of the potential outcomes (the outcome variable that would be observed if an experimental group is assigned) conditioned on a predetermined variable, we can identify the average treatment effect by the difference in means across experimental groups conditioned on the predetermined variable. Thus, we estimate the following linear probability model for individual $i$ who received the compatibility notice in week $w$ of month $m$:
 
@@ -192,7 +230,7 @@ $$
   + X'_i \gamma + \lambda_m + \theta_w + u_{imw},
 $$
 
-where $X_i$ is the individual attribute vector. We add month and week dummy variables $\lambda_m$ and $\theta_w$ to control for common shocks at a given time period. Our parameters of interest are $(\beta_1, \beta_2, \beta_3)$. When fixed effects are added, there seems to be no cause to generate correlations within clusters (experimental weeks) of unobservable elements $u_{imw}$. Thus, we use robust standard errors for statistical inference.[^LZ]
+where $X_i$ is a vector of individual characteristics. We add month and week dummy variables $\lambda_m$ and $\theta_w$ to control for common shocks at a given time period. Our parameters of interest are $(\beta_1, \beta_2, \beta_3)$. When fixed effects are added, there seems to be no cause to generate correlations within clusters (experimental weeks) of unobservable elements $u_{imw}$. Thus, we use robust standard errors for statistical inference.[^LZ]
 
 [^LZ]: We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.
 
