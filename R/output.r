@@ -1,12 +1,12 @@
 library(here)
-source("R/R6_RawData.r")
-source("R/R6_Schedule.r")
+source(here("R/R6_RawData.r"))
+source(here("R/R6_Schedule.r"))
 
 data_root <- "D:/JMDPフィールド実験"
 
 options(
   knitr.table.format = "html",
-  knitr.table.NA = "",
+  knitr.kable.NA = "",
   modelsummary_stars_note = FALSE
 )
 
@@ -249,6 +249,38 @@ mechanism$flextable(
     c("30 < Age", "Age < 30")
   )
 )
+
+# sample characteristics
+middle_male <- rcf$effect_characteristics(
+  target = "B",
+  effect = 0.1,
+  male = male == 1,
+  age = 30 < age & age <= 40
+)
+
+middle_male$
+  kable(
+    group_label = c("Effect < 0.1", "0.1 < Effect"),
+    font_size = 15
+  )
+
+older_male <- rcf$effect_characteristics(
+  target = "C",
+  male = male == 1,
+  age = 45 < age
+)
+
+older_male$
+  kable(font_size = 15)
+
+older_female <- rcf$effect_characteristics(
+  target = "C",
+  male = male == 0,
+  age = 45 < age
+)
+
+older_female$
+  kable(font_size = 15)
 
 # //NOTE Flow analysis
 flow <- rct$
