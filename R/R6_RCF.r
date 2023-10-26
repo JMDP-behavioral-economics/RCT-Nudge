@@ -292,6 +292,7 @@ RCFCate <- R6::R6Class("RCFCate",
 
       kbl <- tbl %>%
         knitr::kable(
+          caption = title,
           col.names = header,
           align = paste(c("l", rep("c", ncol(tbl) - 1)), collapse = ""),
           booktabs = TRUE,

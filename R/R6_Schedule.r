@@ -33,7 +33,7 @@ Schedule <- R6::R6Class("Schedule",
         knitr::kable(
           caption = title,
           align = "lcccccc",
-          bookstab = TRUE,
+          booktabs = TRUE,
           linesep = ""
         ) %>%
         kableExtra::kable_styling(font_size = font_size) %>%

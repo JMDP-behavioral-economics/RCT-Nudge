@@ -169,7 +169,7 @@ LogitAll <- R6::R6Class("LogitAll",
         coef_map = coef_map,
         stars = stars,
         gof_omit = gof_omit,
-        fmt = fmt,
+        fmt = 2,
         add_rows = add_tab,
         align = align
       )
