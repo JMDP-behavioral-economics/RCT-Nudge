@@ -12,10 +12,17 @@ author:
   - Takahiro Fukuda (Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan)
 date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
 bibliography: biblio.bib
+biblio-style: agsm
 output:
-  bookdown::word_document2:
-    numnber-sections: true
-    toc: false
+  bookdown::pdf_document2:
+    latex_engine: lualatex
+    keep_tex: true
+    toc: true
+    number_sections: true
+    citation_package: natbib
+header-includes:
+  - \usepackage{setspace}
+  - \renewcommand{\baselinestretch}{1.5}
 params:
   is_fe: TRUE
   is_cluster: FALSE
@@ -28,7 +35,7 @@ knitr::opts_chunk$set(
   warning = FALSE,
   error = FALSE,
   message = FALSE,
-  dev = "ragg_png",
+  dev = "pdf",
   fig.width = 15,
   fig.height = 10
 )
@@ -36,39 +43,41 @@ knitr::opts_chunk$set(
 
 # Introduction {#intro}
 
-同種造血幹細胞移植（骨髄移植）は白血病などの血液病に対する最も再発率の低い治療法の一つである。この治療法では、(1)抗がん剤や放射線によって異常な細胞と健康な造血幹細胞を同時に殺し、(2)他者から提供された健康な造血幹細胞を移植する。移植にはドナーのHLAと呼ばれる白血球の型が患者のHLAと一致していることが条件である[^hapro]。ランダムに選ばれた二人のマッチング確率は1%未満である一方で、兄弟姉妹間で一致する可能性が最も高く、その確率は30%程度である。ただし、親子間のマッチング確率はかなり低い。親族の中に適合するドナーがいなければ、患者は近親者以外からドナーを探さなければならない。日本において、患者は一般的に日本骨髄バンク（JMDP）を介して非近親者のドナーを探すことになる。しかしながら、JMDPによるコーディネーションは移植に至るまで長時間を要し、登録患者の60%しか移植を受けられない [@Hirakawa2018]。したがって、移植までの期間を短くし、登録患者の移植到達率を高めることが重要である。
+Allogeneic hematopoietic stem cell transplantation is one of the treatments with the lowest relapse rate for leukemia and other blood diseases. In this treatment, (1) anti-cancer drugs and radiation simultaneously kill tumor cells and healthy hematopoietic stem cells, and (2) healthy hematopoietic stem cells donated by others are transplanted. Transplantation requires that the donor's white blood cell type, called HLA, match the patient's HLA.[^hapro] While the probability of a match between two randomly selected individuals is less than 1%, the probability of a match between siblings is the highest at approximately 30%. The probability of a match between parents and children is also quite low. If there is no match among relatives, patients must seek a donor outside the immediate family. In Japan, patients usually seek a non-relative donor through the Japan Marrow Donor Program (JMDP). However, coordination through the JMDP takes a long time, and only 60% of registered patients receive a transplant [@Hirakawa2018]. Therefore, it is important to shorten the time to transplantation and increase the transplantation rate of registered patients.
 
-[^hapro]: 近年、ハプロ移植と呼ばれる、半合致したHLAを持つ近親者間での移植が広がりつつある。加えて、母子をつなぐさい帯や胎盤に含まれる血液細胞の移植（さい帯血移植）も同様に増えている。骨髄移植と異なり、さい帯血移植はHLAが完全に合致していなくても実施できる。日本において、本研究で焦点を当てる非血縁者間の骨髄移植（もしくは末梢血移植）は2021年度実施件数の20%を占める[@JapaneseDataCenterf2022]。
+[^hapro]: In recent years, transplantation between close relatives with semi-matched HLA, known as haploidentical stem cell transplantation, has become more common. In addition, transplantation of blood cells from the umbilical cord or placenta that connects mother and child (cord blood transplantation) has also increased. Unlike bone marrow transplantation, cord blood transplantation can be performed even if the HLA is not a perfect match. In Japan, bone marrow (or peripheral blood) transplants between unrelated individuals, the focus of this study, will account for 20% of all transplants performed in FY2021 [@JapaneseDataCenterf2022].
 
-移植率を高めるためのドナープールへの介入策は二種類ある。第一に、潜在ドナーの人数を増やして、マッチング確率を高めるような政策である。4人未満のドナーと合致する患者と比較して、200人以上のドナーと合致する患者の移植率は45%から74%に上昇する[@Hirakawa2018]。しかしながら、@Takanashi2016 によると、2000年から2015年にかけて潜在的なドナーの数は約二倍に増えたにもかかわらず、初回マッチング確率は5%程度しか増えていない。潜在ドナーを増やすことの限界便益は小さい[^reason]。
+There are two types of donor pool policies that increase transplantation rates. The first are policies that increase the number of potential donors to increase the probability of a match. Compared to patients matched with fewer than four donors, the transplantation rate increases from 45% to 74% for patients matched with more than 200 donors [@Hirakawa2018]. However, according to @Takanashi2016, the number of potential donors nearly doubled from 2000 to 2015, but the probability of a first-time match increased by only about 5%.[^reason] The marginal benefit of increasing the number of potential donors is small.
 
-[^reason]: これは珍しいHLAの型を持つ新しいドナーの確率が低いからである。
+[^reason]: This is because the probability of a new donor with a rare HLA type is low.
 
-第二の政策は提供に積極的な潜在ドナーの比率を高め、ドナープールの質を高める。@Hirakawa2018 はコーディネーションの多く（2004--2013年で実施されたコーディネーションの73%）はその第一過程である確認検査の前に中断しており、その多くは（不健康を含む）ドナー側の理由であることを明らかにしている。特に、若年ドナーほど健康理由でコーディネーションを中断する可能性が低く、それ以外の自身の理由でコーディネーションを中断する可能性が高い[^detail_result]。これはJMDPだけでなく他国の骨髄ドナープログラムでも問題となっている[e.g., @Haylock2022]。不健康以外のドナー理由が本人の意向と相関しているのであれば、強い提供意向がある潜在ドナーを増やすことは移植到達率を高め、その限界便益は潜在ドナーを増やすことの限界便益よりも大きいだろう。
+The second intervention increases the proportion of potential donors willing to donate and improves the quality of the donor pool. @Hirakawa2018 found that many coordinations (73% of those conducted in 2004-2013) were interrupted before the first process of coordination, confirmatory typing, for donor-related reasons (including poor health). In particular, younger donors are less likely to interrupt coordination for health reasons and more likely to interrupt coordination for other personal reasons.[^detail-result] This is an issue not only in the JMDP, but also in marrow donor programs in other countries [@Haylock2022]. If donor reasons other than health are correlated with own intentions, then increasing the number of potential donors with strong donor intentions would increase transplantation rates, and the marginal benefit would be greater than the marginal benefit of increasing the number of potential donors.
 
-[^detail_result]: 20代男性のコーディネーションの15%がドナーの不健康（既往歴・腰痛・治療中など）で中断している一方で、41%が不健康以外のドナー理由（連絡が取れない・都合がつかないなど）で中断している。さらに、20代男性のコーディネーションの6%が移植実施の要件である家族同意を得られていないことを理由に中断している。
+[^detail-result]: While 15% of males in their 20s were suspended due to donor health (history, back pain, undergoing treatment, etc.), 41% were suspended for reasons other than donor health (inability to contact, unavailability, etc.). In addition, 6% were interrupted due to lack of family consent, a prerequisite for transplantation.
 
-そこで、本研究はドナープールの質を高める施策の一つとして、提供意向を高めるような情報提供の効果を検証する。JMDPに登録した人がある患者とマッチングすると、適合ドナーはJMDPから適合通知を受け取る。そして、提供意思を示して適合通知に返信する潜在ドナーは移植のためのコーディネーションを受ける。我々はJMDPによって公開されている情報に基づいて適合通知に二つの新規のメッセージを加え、追加メッセージの効果を検証するフィールド実験をJMDPと協働で実施した。
+Therefore, this study examines the effect of providing information that increases the willingness to donate as one of the measures to improve the quality of the donor pool. When a potential donor registered with the JMDP is matched with a specific patient, the matched donor receives a compatibility notice from the JMDP. Matched donors who respond to the notice by indicating their willingness to donate are then coordinated for transplantation. We added two new messages to the compatibility notice based on information published by the JMDP and conducted a field experiment in collaboration with the JMDP to test the effect of the additional messages.
 
-第一の新規メッセージは患者一人あたりのHLA適合ドナーの数が少ないという情報を提示した。同じHLA型を持つ他の潜在ドナーがプールに存在すれば、自身の提供はその適合ドナーと代替可能である。また、一人の患者に対して、複数のドナー（最大10人）がコーディネーションを同時に受ける。したがって、JMDPを介した移植は公共財の性質を有しており、患者の生存で効用を得るドナーでも、HLAが一般的であるほど、提供に消極的となるだろう。すなわち、JMDPを介した移植は標準的なフリーライド問題に直面している[@Bergstrom2009]。
+The first message indicates that the number of HLA compatible donors per patient is low. If there are other potential donors with the same HLA type in the pool, one's own donation can be substituted for that compatible donor. In addition, multiple donors (up to 10) can be coordinated for a single patient at the same time. Thus, transplantation through the JMDP is in the nature of a public good. Donors who gain utility from the patient's survival will be more reluctant to donate the more common the HLA. In other words, JMDP-mediated transplantation faces the standard "free-ride" problem [@Bergstrom2009].
 
-この問題は1人だけの協力行動で公共財が生産される状況を想定するボランティアのジレンマと本質的に同じである。ボランティアのジレンマでは、1人でも協力行動を取る確率がグループサイズによって減少することが理論的に予測され、その仮説は実験室実験でも確認されている[@Diekmann1985; @Diekmann1986; @Franzen1999; @Davis2017]。また、JMDPのコーディネーションを経験した人に対するインタビュー研究[@Kurosawa2022]によると、提供意向の低い人は「何人かいるドナーの1人」という意識を持っており、自身の提供が他者によって代替可能であることが提供意向の阻害要因であることを示唆している。ボランティアのジレンマとの重要な違いはJMDPの潜在ドナーは自身のHLA型や同時にコーディネーションを受けている人の数について知ることができないので、グループサイズを正確に把握できないことにある。したがって、潜在ドナーは代替可能な他のドナーの数を過度に多く見積もり、提供に消極的になる可能性がある。一つ目のメッセージはこの誤解から生じる行動を修正することを目的としている。
+This problem is essentially the same as the volunteer dilemma, a situation in which public goods are produced by the cooperative behavior of only one person. In the volunteer dilemma, theory predicts that the probability of cooperative behavior by even one person decreases with group size, and this hypothesis has been confirmed in laboratory experiments [@Diekmann1985; @Diekmann1986; @Franzen1999; @Davis2017]. In addition, an interview study of previously matched donors [@Kurosawa2022] found that those with low donation intentions felt that they were "one of several donors," implying that the fact that their donation could be substituted by others discouraged them from donating. An important difference from the volunteer dilemma is that potential donors in the JMDP cannot know their own HLA type or the number of matched donors at the same time, so they cannot accurately guess the size of the group. As a result, potential donors may overestimate the number of other possible substitutes and be reluctant to donate. The first message aims to correct the behavior resulting from this misperception.
 
-第二のメッセージは、適合通知への早期返信を通じてコーディネーション期間を短くするために、早いコーディネーションが患者の移植到達率を高めるという情報を提示した。このメッセージは時間非整合的なドナーの遅延行動を防げると予想される。時間非整合性は、行動経済学の重要な知見の一つである、現在バイアスによって生じる[@Laibson1997; @ODonoghue2001]。同じタイムラグでも、近い将来と遠い将来の比較よりも、現在と将来の比較時に将来の効用が過度に割り引かれる。このため、時間非整合的なドナーは事前にすぐに返信するべきであると考えていても、実際には返信を遅らせてしまう。二つ目のメッセージは移植効用が（個人の時間選好とは無関係に）経時的に減少することを提示し、時間非整合的なドナーの行動を修正することを目的としている。
+The second message presents the information that early coordination would increase the patient's transplant rate. This message is expected to prevent time-inconsistent donor delaying behavior. Time inconsistency is caused by present bias, one of the key findings of behavioral economics [@Laibson1997; @ODonoghue2001]. Future utility is over-discounted when comparing the present to the future, rather than the near and distant future, even with the same time lag. Thus, time-inconsistent donors actually delay responding even though they believe in advance that they should respond immediately. The second message shows that the utility of transplantation decreases over time (regardless of the individual's time preference) and aims to change the behavior of the time-inconsistent donor.
 
-我々は以上のメッセージの効果を検証するために、四つの実験群を設けた。一つ目の実験群は上記の二つのメッセージを追加していない標準的な適合通知を送付する（コントロール群）。第二・三の実験群はそれぞれ上記のメッセージを一つ追加した適合通知を送付する。第四の実験群は二つのメッセージを同時に追記した適合通知を送付する[^arm-aim]。我々は2021年9月から2022年2月の間に適合通知を受け取った11,154名の適合ドナーを対象にフィールド実験を実施し、実験群を週単位のクラスターランダム化で実験参加者に割り当てた。我々はJMDPの協力のもと、コーディネーションデータを2022年6月末に受け取り、メッセージの効果を検証した。
+We created four experimental arms to test the effects of the above messages. The first experimental arm sent the compatibility notice without the above two messages to matched donors (control group). The second and third experimental arms each added one of the above messages to the compatibility notice. The fourth experimental arm added both messages to the compatibility notice.[^arm-aim] We conducted a field experiment with 11,154 matched donors who received the compatibility notice between September 2021 and February 2022. We assigned participants to the experimental arms using weekly cluster randomization. We received coordination data at the end of June 2022, in collaboration with JMDP, to test the effects of the messages.
 
-[^arm-aim]: この実験群は二つの介入メッセージを同時に加えることで、適合ドナーが過大な情報を受け取り、認知負荷に陥る可能性があるという仮説を検証するために用意した。
+[^arm-aim]: This experimental arm is designed to test the hypothesis that the simultaneous addition of two intervention messages may cause the matched donor to receive excessive information and suffer from cognitive overload. 
 
-実験の結果、介入メッセージは特定の性・年代にのみ影響を与えていることを発見した。本研究の主要な結果は二つある。第一に、患者一人当たりのHLA適合ドナーが少ないという情報のみを提供することは20代男性の提供意向を高めたが、他の性・年代では提供意向に統計的に有意な影響を与えていない。第二に、ドナーが早く見つかるほど移植到達率を高められるという情報を与えることは20代女性の全体の返信率に影響を与えていないが、適合通知の送付から4日以内の返信を増やしている[^goal-day]。すなわち、この情報は返信行動そのものを促進しているよりむしろ、返信日数を短くしているといえる。このような効果は他の性・年代では確認されなかった。
+The experiment found that the intervention messages only affected certain genders and age groups. There are two main findings from this study. First, providing only the information that there are fewer HLA-matched donors per patient increases willingness to donate among men in their 20s, but has no statistically significant effect on willingness to donate among other genders or age groups. Second, providing information that the sooner a donor is found, the higher the transplant rate, does not affect the overall response rate for women in their 20s, but does increase responses within 4 days of sending the compatibility notice.[^goal-day] In other words, this information shortens the number of days to respond rather than encouraging response behavior itself. This effect is not observed for other genders or ages.
 
-[^goal-day]: JMDPは適合通知に7日以内の返信を推奨している。
+[^goal-day]: JMDP recommends a response to the compatibility notice within 7 days.
 
-本研究は情報提供によって骨髄バンクに登録した潜在ドナーの意向を高められることを示唆するものであり、これはJMDPを含めた世界中の骨髄ドナープログラムの実務的な洞察をもたらす。JMDPと同様に、ドイツを中心とする国際的な骨髄ドナープログラムであるDKMSやアメリカの骨髄ドナープログラムであるNMDPは順調に登録者を増やしている一方で、登録者のモチベーションが維持されずコーディネーションに至らないことが課題となっている[@Switzer1999; @Switzer2004; @Haylock2022]。これまでの研究は、ドナー休暇の法制化[@Lacetera2014]・ドナーのモチベーション維持に資するDKMS独自の施策[@Haylock2022]などの効果を検証してきた。@Switzer2018 はNMDPがマッチした潜在ドナーに提供を依頼するときに、NMDPが送るメッセージに介入を施した。彼らの介入は「あなたは患者のHLA型と完全に一致するという特別な状況にいる」というメッセージであり、これをHLAが完全一致した潜在ドナーに電話で伝えた。彼らの実験は完全なランダム比較試験ではないものの、この新規メッセージがコーディネーションの数を増やさないことを明らかにした。我々の介入はこの研究と非常に近いものである。本研究では、メッセージ効果はかなり異質的であり、特定の性・年代にのみ影響を与えていることを示す。
+This study suggests that information can increase the willingness of potential donors to donate, providing practical insights for marrow donor programs around the world, including the JMDP. Similar to the JMDP, the German-based international marrow donor program, DKMS, and the U.S. marrow donor program, NMDP, have steadily increased their enrollment, but have faced challenges in keeping enrollees motivated and achieving coordination [@Switzer1999; @Switzer2004; @Haylock2022]. Previous studies have examined the effectiveness of donor leave laws [@Lacetera2014] and DKMS's own efforts to maintain donor motivation [@Haylock2022].
 
-また、本研究は献血などの経済学研究に貢献するものである。造血幹細胞移植と献血は共通点があるものの、いくつかの違いがある。献血は提供の意向を示す時点と実際の提供の時点が同じであるが、造血幹細胞移植は二つの時点が異なっている。そのため、先に述べたように、潜在ドナーの意向を維持することが骨髄ドナープログラムの課題となっている。献血の文脈では、金銭的インセンティブやSymbolic rewardなどの非金銭的インセンティブ効果検証を通じて、献血の動機が検証されている[e.g., @Mellstrom2008; @Lacetera2010]。また、造血幹細胞移植と同じように、献血は公共財とみなせる。@Wildman2009 は献血者のみのデータを用いて、フリーライド行動が生じていないことを示している。これに対し、我々の研究は患者一人あたりのHLA適合ドナーの数が少ないという情報が20代男性の提供意向を高めていることを明らかにしており、これは彼らがHLA適合ドナーの数を過度に多く見積もり、フリーライド行動を取っていることを示唆するものである。
+@Switzer2018 applied an intervention to a message sent by the NMDP when they ask matched potential donors to donate. Their intervention was a message that said, "Based on the information we currently have, you are in the unique position of likely being a perfect match for this patient," which was delivered over the phone to the potential donor whose HLA was a perfect match. Their experiment was not a fully randomized controlled trial and showed that this novel message did not increase the number of coordinations. Although our intervention is very close to this study, we show that the message effect is quite heterogeneous, affecting only certain genders and ages.
 
-本論文の構成は以下の通りである。第\@ref(experiment)節では、JMDPにおけるコーディネーションの過程を概観し、フィールド実験の詳細を説明する。第\@ref(result)節で結果を示し、第\@ref(conclusion)節で議論と結論を述べる。
+In addition, this study contributes to the economic study of costly prosocial behavior such as blood donation. Although stem cell transplantation and blood donation have some similarities, there are also some differences. In the case of blood donation, the time of the intention to donate and the time of the actual donation are the same, whereas in the case of stem cell transplantation, the two time points are different. Therefore, as mentioned earlier, maintaining the willingness of potential donors is a challenge for marrow donor programs. In the context of blood donation, previous studies have examined monetary incentives and non-monetary incentives such as symbolic rewards [@Mellstrom2008; @Lacetera2010]. As with stem cell transplantation, blood donation can also be considered a public good. @Wildman2009 used data on blood donors only and showed that free riding does not occur. In contrast, our study shows that information about the low number of HLA-compatible donors per patient increases the willingness of men in their 20s to donate, suggesting that they overestimate the number of HLA-compatible donors and engage in free-riding.
+
+This paper is organized as follows. Section \@ref(experiment) provides an overview of the coordination process in the JMDP and details the field experiments; Section \@ref(result) presents the results; and Section \@ref(conclusion) provides discussion and conclusions.
 
 # Field Experiment {#experiment}
 
@@ -87,15 +96,15 @@ data_root <- "D:/JMDPフィールド実験"
 
 ## Background: Coordination Process of JMDP {#background}
 
-フィールド実験の介入のタイミングやデータセットの理解を助けるために、JMDPに登録した潜在ドナーによる幹細胞の提供までのコーディネーション過程を概観しておく。はじめに、潜在ドナーがJMDPに登録した患者とマッチすると、JMDP事務局は彼らに幹細胞提供を依頼する適合通知（compatibility notice）を送付する[^SNS]。適合ドナーは問診票を記入し、提供意思の有無を示して、適合通知に返信する。我々はこの適合通知に介入を施す。
+For a better understanding of the timing of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the compatibility notice requesting a stem cell donation.[^SNS] The matched donor fills out a questionnaire and responds to the compatibility notice, indicating his or her willingness to donate.
 
-[^SNS]: JMDPは同時に潜在ドナーにJMDPが適合通知を送付したことを知らせるSNSメッセージを送付する。
+[^SNS]: At the same time, the JMDP office sends a social networking message to the matched donors informing them that JMDP has sent the compatibility notice.
 
-その後、移植に向けたコーディネーションが始まる。適合ドナーはおよそ1カ月以内に確認検査（confirmatory typing）を受ける。この段階では、コーディネーターは提供手順の詳細を説明し、適合ドナーとその家族に提供の意向を調査する。潜在ドナーは二つの採取方法（骨髄採取もしくは末梢血幹細胞採取）を選べる。加えて、コーディネーター医師が問診・検診・感染症の有無と血液型を調べる採血をする。これらのテストは適合ドナーがJMDPの定める基準に満たしているかどうかを検査する。
+Coordination for the transplant then begins. The matched donor undergoes confirmatory typing within approximately one month. At this time, the coordinator explains the details of the donation process and asks the matched donors and their families about their willingness to donate. Matched donors can choose between two collection methods (bone marrow or peripheral blood stem cell collection). In addition, the coordinating physician conducts an interview, medical examination and blood draw to test for infection and blood type. These tests are performed to determine if the matched donor meets the criteria established by the JMDP.
 
-患者は同時に最大10人の適合ドナーとのコーディネーションを受けられる。患者の医師は確認検査を受けた適合ドナーから最も適切な候補者を選ぶ。重要なこととして、適合ドナーはマッチしている患者が置かれている状況（他の適合ドナーと何人マッチしているかなど）を一切知ることができない。また、適合ドナーがコーディネーターや医師からそのような情報を得ることもできない。
+Patients can be matched with up to 10 compatible donors at one time. The patient's physician selects the most appropriate candidate from the matched donors who have undergone the confirmatory typing. Importantly, the matched donor does not have access to any information about the matched patient (e.g., how many other matched donors are available). Nor can the matched donor obtain this information from the coordinator or coordinating physician.
 
-最も適切な候補者として選ばれた適合ドナーはコーディネーターやコーディネーター医師からの説明を受けた後に、最終同意をする必要がある。同時に、ドナーの家族の代表者も採取に同意しなければならない。これ以降、選定ドナーは意向を変えられない。最終同意後、選定ドナーは術前検査や採取の準備を受けるために1週間程度の入院をする。この後、ドナーは幹細胞採取の手術を受ける。確認検査から採取までの期間はおよそ3--4カ月である。
+The matched donor who is selected as the best donor must give final consent after being informed by the coordinator and coordinating physician. At the same time, a representative of the donor's family must also consent to the donation. After this, the selected donor cannot change his or her mind. After the final consent is given, the selected donor admits him/herself to hospital for approximately one week to undergo pre-operative examinations and preparation for the donation. The donor then undergoes a surgical procedure to collect the stem cells. The time from the confirmatory test to the collection is approximately 3--4 months.
 
 ## Experimental Design {#design}
 
@@ -103,45 +112,42 @@ data_root <- "D:/JMDPフィールド実験"
 knitr::include_graphics("image/intervention.png")
 ```
 
-我々の実験はJMDPが適合ドナーに幹細胞提供を依頼する適合通知の内容に介入を施す。従来の適合通知は以下のような内容である。
+Our experiment intervenes in the content of the compatibility notice in which JMDP requests a stem cell donation from a matched donor. The standard compatibility notice is as follows.
 
-> この度、あなたと骨髄バンクの登録患者さんのHLA型（白血球の型）が一致し、ドナー候補者のおひとりに選ばれました。今後、ご提供に向け詳しい検査や面談を希望されるかをお伺いしたく連絡させていただきました。同封の資料をよくお読みいただき、コーディネートが可能かどうか検討の上、この案内が届いてから*7日以内*に返信用紙ほかをご返送ください。 [介入メッセージをここに追加] 返送後、コーディネートを進めさせていただく場合は、担当者よりご相談のお電話を差し上げますのでよろしくお願い申し上げます。
+> We inform you that your HLA type (white blood cell type) matches that of a patient on our registry and you have been selected as one of our potential donors. We are contacting you to ask if you would like to undergo further testing and interviews in preparation for donation. Please read the enclosed materials carefully, consider whether coordination is possible, and return the form *within 7 days* of receiving this information. [Insert intervention messages here] If we proceed with the coordination after receiving your return, a coordinator will contact you by phone to discuss the details of your request.
 
-適合通知は提供ドナーが7日以内に返信するべきことを注記している。また、同封資料は問診票・提供意思の確認書に加えて、前小節で概観したコーディネーション過程を記述したハンドブックである。
+The standard compatibility notice should be responded to by the donor within 7 days. JMDP also encloses a handbook that describes the coordination process outlined in the previous subsection, as well as the medical questionnaire and donor consent form.
 
-我々はコーディネーションを促進するために適合通知に二つのメッセージ（Probability message・Early Coordination message）を加えた[^pressure]。Probability messageは以下のようなメッセージである。
+We have added two messages (Probability message and Early Coordination message) to the compatibility notice to facilitate coordination.[^pressure] The Probability message is as follows.
 
-[^pressure]: 介入メッセージを作成したとき、我々は潜在ドナーに対して過度な心理的プレッシャーを与えないように配慮している。具体的には、第一に、嘆願調のような表現を避けている。第二に、JMDPが公開している情報のみを用いている。また、移植リスクは通常通り説明している。
+[^pressure]: In designing our intervention messages, we have been careful to avoid putting undue psychological pressure on potential donors. Specifically, first, we avoid language that sounds like an appeal. Second, we only use information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual way. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics, Osaka University and the JMDP.
 
+> The number of registered donors whose HLA type matches that of a single registered patient is one in hundreds to tens of thousands. We hope you understand that while we may find more than one potential donor, it is not a large number.
 
-> 1人の登録患者さんとHLA型が一致するドナー登録者は数百〜数万人に1人です。ドナー候補者が複数みつかる場合もありますが、多くはないこともご理解頂ければ幸いです。
+This message emphasizes the low number of matched donors per registered patient. Transplantation is a public good in the sense that if there are other potential donors with the same HLA type in the pool, one's own donation can be substituted for that compatible donor. Thus, as predicted by the volunteer dilemma, the more common the HLA type, the more reluctant the donor will be to donate.
 
-このメッセージは登録患者一人あたりの適合ドナーの数が少ないことを強調している。同じHLA型を持つ他の潜在ドナーがプールに存在すれば、自身の提供はその適合ドナーと代替可能なので、移植は公共財の性質を有している。したがって、ボランティアのジレンマの理論的予測によれば、一般的なHLAの型を持っている人ほど提供に消極的となるだろう。
+In the context of stem cell transplantation, however, the expectation of the size of the group influences the decision, because a matched donor cannot know the exact size of the group. Therefore, the higher a donor's expectation of the number of potential donors with the same HLA type, the more reluctant he or she will be to donate. If a donor's beliefs are too high, the Probability message would discourage free-riding and increase willingness to donate by adjusting beliefs downward. The opposite effect is also possible. If the donor's beliefs are underestimated, the Probability message may induce free-riding and reduce donation intentions by adjusting beliefs upward.
 
-しかしながら、適合ドナーがグループサイズを正確に知ることができないので、グループサイズよりむしろその期待値が意思決定に影響を与える。すなわち、同じHLA型を持つ適合ドナーの数が多いと予測しているほど、そのドナーは提供に消極的となるだろう。もし、あるドナーの信念が過度に高いならば、Probability messageは信念の下方修正を通じて、フリーライド行動を抑制し、提供意向を高めるだろう。ただし、逆の効果も考えられる。あるドナーの信念が真のグループサイズよりも過小ならば、Probability messageは信念の上方修正を通じて、フリーライド行動を誘発し、提供意向を下げる恐れがある。
+The Early Coordination message is as follows.
 
-Early Coordinationメッセージは以下のようなメッセージである。
+> About 60% of patients are able to receive a transplant through the Japan Marrow Donor Program. The earlier a donor can be found to donate bone marrow, the higher that percentage can be.
 
-> 骨髄バンクを介して移植ができる患者さんは約6割です。骨髄等を提供するドナーが早く見つかれば、その比率を高めることができます。
+This message is expected to work with time-inconsistent matched donors. Time-inconsistent donors may think it is optimal to respond immediately in advance, but actually delay their response. This message suggests that early coordination increases the rate of transplantation for the patient, and that the utility of transplantation decays over time (regardless of the individual's time preference). Time-inconsistent donors who read this message may recognize that delaying a response does not increase utility and may change their decision to respond immediately. Thus, this message is expected to increase the response rate over a short period of time.
 
-このメッセージは、事前に早めに返信することが望ましいと思っていも、実際には返信を遅らせてしまう時間非整合的な潜在ドナーに働きかけることが期待される。時間非整合的なドナーは、事前にはすぐに返信することが最適であると考えていても、実際には返信を遅らせてしまう[^present-bias]。このメッセージは早いコーディネーションが患者の移植率を高めることを提示し、患者への移植によって得られる効用が（個人の時間選好とは無関係に）経時的に減衰していくことを示している。これを読んだ時間非整合的なドナーは返信を遅らせると効用を高められないと認識し、すぐに返信するように意思決定を変えると予想される。したがって、このメッセージは短期間での返信率を高めると予想される。
-
-[^present-bias]: これは行動経済学の重要な知見の一つである現在バイアスによって生じている。これは将来の価値を低く見積もり、現在の価値を高く見積もる現象である。よって、将来の移植便益が現在の返信コストを上回っていたとしても、将来に返信する方が純便益を高められる。
-
-我々は二つの介入メッセージの効果を推定するために四つの実験群を設けた。実験群Aは介入メッセージなしの標準的な適合通知を送付した（コントロール群）。実験群BとCはそれぞれ確率メッセージとEarly Coordinationメッセージを追加した適合通知を送付した。実験群Dは二つの介入メッセージを同時に加えた適合通知を送付した。この実験群は情報過多による認知負荷の負の影響を検証する目的で設けた。
+We set up four experimental groups to estimate the effects of the two intervention messages. Experimental arm A received a standard compatibility notice with no intervention messages (control group). Experimental arms B and C received the notice with the Probability message and the Early Coordination message, respectively. Experimental arm D received the notice with two intervention messages added at the same time. This experimental arm was designed to test the negative effects of cognitive load caused by information overload.
 
 ```{r assignment}
 schedule <- Schedule$new(here(data_root, "RCT-schedule.csv"))
-schedule$flextable(
+schedule$kable(
   title = "Assignment Schedule",
   notes = paste(
-    "Notes: See Table XX for detail intervention of each experimental arm.",
+    "Notes: See Table \\@ref(tab:summary) for detail intervention of each experimental arm.",
     "Control group is experimental arm A."
   )
 )
 ```
 
-実験参加者は2021年9月から2022年2月の間に適合通知を受け取った11,154名の適合ドナーである。JMDP事務局に無理のない範囲でランダムネスを保つために、我々は実験群を週単位のクラスターランダム化で割り当てた。このとき、可能な限り週と月で実験群がバランスするように設計している。表 \@ref(tab:assignment) に割り当てスケジュールをまとめている。本実験の実施にあたって、我々はメッセージの内容を含めて大阪大学経済学研究科とJMDPの倫理審査の承認を得ている。
+Participants in the experiment were 11,154 matched donors who received the compatibility notice between September 2021 and February 2022. To maintain randomness to the best of the JMDP office's ability, we assigned experimental groups by cluster randomization on a weekly basis. We designed the experimental groups to be balanced across weeks and months as much as possible. Table \@ref(tab:assignment) summarizes the assignment schedule. In conducting the experiment, we obtained approval from the Graduate School of Economics, Osaka University, and the JMDP.
 
 ## Data and Empirical Strategy
 
@@ -153,16 +159,16 @@ rawdt <- RawData$new(
 )
 ```
 
-我々はJMDPの協力のもと、コーディネーションデータを2022年6月末に受け取った。観測単位は実験参加者である。個人属性として、データは性別・年齢・コーディネーション経験回数・都道府県レベルの在住地区を記録している。コーディネーション過程について、データは各段階（適合通知への返信・確認検査・候補者選定・最終同意・採取）に到達したかどうかを記録している。我々はこれらの変数をアウトカム変数として用いる。加えて、適合通知への返信について、データは返信日数と提供意向を記録している。さらに、コーディネーションが中断したならば、データは中断理由を三つのカテゴリ（患者側の理由・健康以外のドナー理由・ドナーの健康理由）で記録している。分析では、日本在住かつコーディネーションが（中断を含めて）終了している11,049名の適合ドナーを用いる[^exclude]。
+JMDP provided the coordination data at the end of June 2022. The unit of observation is the experimental participant. As individual characteristics, the data record gender, age, number of coordination experiences, and prefecture-level residence area. As the coordination process, the data record whether each stage (response to compatibility notice, confirmatory typing, candidate selection, final consent, and collection) was reached. We use these variables as outcome variables. In addition, for responses to the notice, the data record the number of days to respond and the willingness to donate. If coordination was interrupted, the data record the reason for the interruption in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis uses 11,049 matched donors living in Japan whose coordination (including interruptions) was completed.[^exclude]
 
 ```{r ongoing-balance, include=FALSE}
 rawdt$add_cond_study_sample("ongoing == 0")
 ongoing_f <- rawdt$balance_attrition()
 ```
 
-[^exclude]: 一人が海外に在住していた。また、データ提供時点でコーディネーションが進行中であった潜在ドナーは104名いた。コーディネーションが進行中の潜在ドナーの比率は実験群間でバランスしている（`r ongoing_f`）。
+[^exclude]: One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data provision. The proportion of matched donors with ongoing matching is balanced across the experimental arms (`r ongoing_f`).
 
-追加的なデータとして、我々はJMDPがウェブ上で公開している医療機関リストを用いる[^ref]。このリストは完全な住所・骨髄採取（BM collection）が可能かどうか・末梢血幹細胞採取（PBSC collection）が可能かどうかを含んでいる。我々はこのリストを都道府県レベルで集約し、10平方キロメートルあたりの病院数を計算し、それをコーディネーションデータと都道府県をマージキーにして突合した。我々はこの変数をコーディネーションや提供のトラベルコストとして考慮する。
+As additional data, we use the list of medical institutions published on the Internet by the JMDP.[^ref] This list includes complete addresses, availability of bone marrow collection (BM collection), and availability of peripheral blood stem cell collection (PBSC collection). We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged it with the coordination data using the prefecture as the merge key. We consider this variable as the travel cost of coordination and donation.
 
 [^ref]: <https://www.jmdp.or.jp/hospitals/view2/> (access date: August 4, 2022)
 
@@ -204,7 +210,7 @@ rct$set_default_se_type(params$se_type)
 ```{r summary}
 rct$
   summary_experiment()$
-  flextable(
+  kable(
   title = "Summary of Field Experiment",
   notes = paste(
     "Notes: For balance test, we regress a covariate on treatment dummies",
@@ -214,9 +220,9 @@ rct$
 )
 ```
 
-表 \@ref(tab:summary) はフィールド実験の概要である。パネルAは各実験群の介入を示しており、パネルBは各実験群のサンプルサイズを示している。パネルCはランダム化が成功しているかどうかを検証するバランステストである。年齢を除く変数について実験群間で平均的に差がないので、実験群の割り当てはおおよそランダムである。ただし、年齢は群間でばらつきがある。実験群Cの平均年齢はコントロール群と比較して1歳程度若い。
+Table \@ref(tab:summary) provides a summary of the field experiment. Panel A shows the intervention for each experimental arm, and Panel B shows the sample size for each experimental arm. Panel C is a balanced test of whether randomization was successful. The assignment of experimental arms is approximately random, since there is no average difference between experimental arms for any variable except age. However, age may vary across groups. The average age of experimental arm C is about one year younger than that of the control group.
 
-我々はどのような情報を潜在ドナー全員に与えるべきかに関心があるので、母集団全体の平均処置効果を識別したい。先決変数で条件づけたとき、実験群の割り当ては潜在成果変数（ある実験群が割り当てられたときに観察されるであろう成果変数）と独立であるはずなので、先決変数で条件づけた実験群間の平均値の差で平均処置効果を識別できる。したがって、我々は$m$月の$w$週に適合通知を受け取った個人$i$についての以下の線形確率モデルを推定する。
+Since we are interested in what information should be given to all potential donors, we want to identify the average treatment effect. Since the assignment of experimental groups should be independent of the potential outcomes (the outcome variable that would be observed if an experimental group is assigned) conditioned on a predetermined variable, we can identify the average treatment effect by the difference in means across experimental groups conditioned on the predetermined variable. Thus, we estimate the following linear probability model for individual $i$ who received the compatibility notice in week $w$ of month $m$:
 
 $$
   Y_{imw} =
@@ -224,18 +230,20 @@ $$
   + X'_i \gamma + \lambda_m + \theta_w + u_{imw},
 $$
 
-ここで$X_i$は年齢を含んだ個人属性ベクトルである。ある時期の共通のショックをコントロールするために、月および週のダミー変数$\lambda_m$と$\theta_w$を加える。我々の関心のあるパラメータは$(\beta_1, \beta_2, \beta_3)$である。固定効果を加えたとき、観察不可能な要素$u_{imw}$のクラスター（実験週）内の相関を生み出す原因はないと思われる。したがって、我々は推定値の統計的推論の際に頑健標準誤差を用いる[^LZ]。
+where $X_i$ is a vector of individual characteristics. We add month and week dummy variables $\lambda_m$ and $\theta_w$ to control for common shocks at a given time period. Our parameters of interest are $(\beta_1, \beta_2, \beta_3)$. When fixed effects are added, there seems to be no cause to generate correlations within clusters (experimental weeks) of unobservable elements $u_{imw}$. Thus, we use robust standard errors for statistical inference.[^LZ]
 
-[^LZ]: クラスター標準誤差を用いた回帰分析を頑健性の確認として実施し、本論で示す主要な結果に変化がないことを確認している。
+[^LZ]: We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.
 
 # Experimental Results {#result}
 ## Effects on Reply and Intention {#intention}
 
-初めに、適合ドナーの意向を最も反映していると考えられる返信への介入効果を推定する。返信のアウトカム変数は提供の意向に関わらず適合通知に返信したならば1を取るダミー変数である。コントロール群（実験群A）の返信率は$88.35$%である。
+First, we estimate the message effect on responses that are most likely to reflect the donor's intention to donate. The outcome variable for responses is a dummy variable taking one if a donor responded to the compatibility notice regardless of the donor's intention to donate. The response rate for the control group (experimental group A) is $88.35$%.
 
-我々は返信へのメッセージ効果を提供意向の観点から二つに分解する。第一に、提供意向を伴った返信への効果である。アウトカム変数は潜在ドナーが適合通知に返信し、かつ提供意思を示したならば1を取るダミー変数である。第二に、提供意向を伴わない返信に対する効果である。アウトカム変数は潜在ドナーが適合通知に返信し、かつ提供意思を示していないならば1を取るダミー変数である。ただし、これらへの効果を推定するとき、我々は未返信者のアウトカム変数を0とコーディングして、サンプルに含める。したがって、二つのアウトカム変数の和は必ず返信のダミー変数となるので、正の意向と負の意向に対する効果の和は返信に対する効果となる。コントロール群では、正の意向を伴う返信率は$55.33$%である一方で、負の意向を伴う返信率は$33.03$%であった。したがって、返信者の$62.63(=55.33/88.35)$%は提供に積極的である。
+We decompose the message effect on responses into two effects. The first is the effect on responses associated with the intention to donate. The outcome variable is a dummy variable that takes one if a matched donor responded to the compatibility message and indicated a willingness to donate. The second is the effect on responses without intention. The outcome variable is a dummy variable that takes one if a matched donor responded to the compatibility notice and did not indicate an intention to donate.
 
-適合ドナーが返信する前に、患者側の都合でコーディネーションが中断してしまう可能性がある。これは潜在ドナーの意向と独立に生じるので、我々は各実験群でそのようなケースに該当する$0.5$--$0.7$%を分析サンプルから除外している。
+In estimating these effects, we code the outcome variable for non-responders as zero and include them in the analysis sample. Thus, the sum of the two outcome variables is always equal to a dummy variable for response, so that the sum of the effects on positive and negative intentions is the effect on response. In the control group, the response rate with positive intentions is $55.33$%, while the response rate with negative intentions is $33.03$%. Thus, $62.63(=55.33/88.35)$% of respondents have the intention to donate.
+
+It is possible that coordination is interrupted for patient reasons before a matched donor responds. Since this happens independently of the matched donor's intentions, we exclude from our analysis sample the $0.5$--$0.7$% that fall into such a case in each experimental group.
 
 ```{r setup-stock-analysis, include=FALSE}
 id <- which(names(endpoint) %in% c("reply", "positive", "negative"))
@@ -247,7 +255,7 @@ stock <- rct$
 ```{r reg-stock}
 stock$
   fit_all()$
-  flextable(
+  kable(
     title = "Linear Probability Model of Reply and Intention",
     notes = paste(
       "Covariates are gender, squared polynomial of age,",
@@ -260,20 +268,20 @@ stock$
   )
 ```
 
-表 \@ref(tab:reg-stock) は線形確率モデルの推定結果である。奇数列は実験群ダミーだけを説明変数に入れており、単純な平均値の差に対応している。偶数列は実験群ダミーに加えて、個人属性・月および週の固定効果をコントロールしている。推定結果はすべての実験群が、共変量の有無に関わらず、返信や意向に対して統計的に有意な効果を持っていない。我々は代替手法としてロジットモデルを推定（表 \@ref(tab:logit-stock) ）し、同様の結果を得ている（オッズ比の95%信頼区間が1を含んでいる）。
+Table \@ref(tab:reg-stock) presents the estimation results of the linear probability model. The odd columns include only the experimental group dummy as an explanatory variable, corresponding to a simple difference in means. The even columns control for individual attribute, month and week fixed effects in addition to the experimental arm dummies. The estimated results show that all experimental groups, with and without covariates, have no statistically significant effects on responses and intentions. As an alternative method, we estimate a logit model (Table \@ref(tab:logit-stock)) and obtain similar results (95% confidence intervals for odds ratios include 1).
 
-```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r coefplot-reg-stock-subset, fig.cap = 'Effect on Reply and Intentions by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month and week dummies.'}
 
 stock$
   fit_sub()$
   coefplot()
 ```
 
-次に、メッセージ効果の異質性を検証するために、我々はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定する。図 \@ref(fig:coefplot-reg-stock-subset) は係数プロットである。結果として、確率メッセージを含む実験群BとDが20代男性の返信率を約6ポイント（コントロール平均が$74.4$%なので、$8.06$%増加）高めており、これは統計的に5%水準で有意である。特に、確率メッセージのみを加えた実験群Bが正の意向を伴う返信を約10ポイント（コントロール平均が$38.6$%なので、$25.91$%増加）増やしており、統計的に有意である。ただし、他の性・年代グループで、我々の介入は返信や意向に対して統計的に有意な効果をもたない。
+Next, to test for heterogeneity in the message effects, we divide the sample into four subsets by gender and age group (under 30 or not) and estimate the message effects in each subset. Figure \@ref(fig:coefplot-reg-stock-subset) shows the coefficient plots. The results show that experimental groups B and D, which include the Probability message, increase the response rate of men in their 20s by about 6 percentage points ($8.06$% increase, since the control mean is $74.4$%), which is statistically significant at the 5% level. In particular, experimental group B, to which only the Probability message was added, increases responses with positive intentions by about 10 percentage points ($25.91$% increase, since the control mean is $38.6$%), which is also statistically significant. However, for the other gender and age groups, treatment messages have no statistically significant effect on responses and intentions.
 
-コントロール群において、適合通知に返信した20代男性の約$50(=38.6/74.4)$%が提供に積極的であり、これは他の性・年代グループの返信者の意向比率（60%）よりも低い[^cal]。実験群B（確率メッセージ）は20代男性の返信者の意向比率を50%から$60(=(38.6 + 10)/(74.4 + 6))$%に引き上げている。さらに、若年ドナーの移植成績は他のドナーよりも良いとされている[e.g., @Kollman2016]。これらを総合すると、ドナーとして望ましい人の行動変容（コーディネーションの開始）を促しているという意味で、確率メッセージはコーディネーションの効率性を改善しているといえよう。
+In the control group, approximately 50($=38.6/74.4$)% of males in their 20s who responded to the compatibility notice were willing to donate, which is lower than the willingness rate of respondents in the other gender and age groups (60%).[^cal] Experimental group B (Probability message) raises the intention rate of male respondents in their 20s from 50% to 60% ($=(38.6 + 10)/(74.4 + 6)$). In addition, young men are reported to have better transplant outcomes than other genders and ages [e.g., @Kollman2016]. Taken together, we can say that the Probability message improves the efficiency of coordination in the sense that it encourages behavioral change (initiation of coordination) in desirable donors.
 
-[^cal]: 20代女性について、$59(=51.6/87.4)$%。30歳以上の男性について、$66(=59.0/89.1)$%。30歳以上の女性について、$62(=58.8/94.6)$%。
+[^cal]: For women in their 20s, 59 ($=51.6/87.4$)%; for men over 30, 66 ($=59.0/89.1$)%; for women over 30, 62 ($=58.8/94.6$)%.
 
 ## Random Causal Forest {#rcf}
 
@@ -282,26 +290,26 @@ id2 <- which(names(endpoint) == "positive")
 rcf <- rct$rcf(id2)
 ```
 
-介入効果の異質性を深堀りするために、我々は完全にノンパラメトリックに介入効果の異質性を検証できるrandom causal forest (RCF)を用いる[@Athey2016; @Wager2018]。この手法は回帰木アルゴリズムに基づいており、観察可能な特徴で条件づけた平均処置効果を推定する。この手法は労働[@Davis2017]・教育[@Carlana2022]・節電[@Murakami2022]などの広い文脈で用いられている。
+To explore the heterogeneity of intervention effects further, we use random causal forests (RCF), which allow us to test the heterogeneity of treatment effects in a fully nonparametric way [@Athey2016; @Wager2018]. The method is based on a regression tree algorithm and estimates the average treatment effect conditional on observed characteristics. This method has been used in a variety of contexts, including labor [@Davis2017], education [@Carlana2022], and energy conservation [@Murakami2022].
 
-回帰木アルゴリズムは研究者によって与えられた共変量の一つ$X_j$を用いて、サンプルを二つのサブサンプル（リーフ）に分割する。具体的に、このアルゴリズムは$X_j \le x$であるサンプルと$X_j > x$であるサンプルに分割する。回帰木はアウトカム変数の平均二乗誤差（誤差はあるリーフに属するサンプルのアウトカムの平均値と観察されるアウトカムの差である）を最小にするように特定の閾値$x$を決める。RCFはあるリーフに属する平均処置効果（条件付き平均処置効果）を推定することが目的なので、予測処置効果の期待平均二乗誤差を最小にするように閾値$x$を決める。この最小化はリーフ間の条件付き平均効果の分散（異質性）を高めかつ、リーフ内の分散を抑えることで達成される。これを終端条件に達するまで各リーフで二つのリーフに分けるプロセスを繰り返す。RCFは終端のリーフにおける条件付き平均処置効果を予測する。
+The algorithm splits the sample into two subsamples (leaves) using one of the covariates $X_j$. Specifically, the algorithm divides the sample into a sample for which $X_j \le x$ and a sample for which $X_j > x$. The regression tree determines a specific threshold $x$ to minimize the mean squared error of the outcome variable. Since the RCF aims to estimate the average treatment effect of a leaf (conditional average treatment effect), the threshold $x$ is set to minimize the expected mean squared error of the predicted treatment effect. This minimization is achieved by increasing the variance of the conditional mean treatment effect across leaves (heterogeneity) and decreasing the variance within leaves. This splitting process is repeated for each leaf until the termination condition is reached. RCF predicts the conditional mean treatment effect at the terminal leafs.
 
-回帰木アルゴリズムの欠点は予測値の分散が大きく（過学習）なり、予測精度が落ちることである。これを防ぐために、RCFはアンサンブル法を導入している。これは全データから重複なしのサブサンプルを数千個作り、各サブサンプルで回帰木を育てる。最終的な結果は数千個の回帰木の予測値の平均とする[^tech-detail]。
+The disadvantage of the regression tree algorithm is that the variance of the predictions becomes large (overfitting), which reduces the accuracy of the predictions. To prevent this, RCF introduces an algorithm called the ensemble method. It creates thousands of subsamples and grows a tree with each subsample. The final result is the average of the predictions from thousands of trees.[^tech-detail]
 
-大雑把に言えば、RCFは観察される個人属性で介入の処置効果を予測する。すなわち、介入を受けていない人についても、その人の属性に基づいて処置効果を予測できる。ただし、この手法は処置の割り当てが潜在成果変数と条件つきにランダムであることを仮定しなければならない。実験群はおおよそランダムに割り当てられているので、我々はこの手法を用いることができる。この小節では、意向を伴う返信への効果に着目する。RCFに用いる共変量は性別・年齢・過去のコーディネーション経験・在住地域の病院の密度である。
+Roughly speaking, RCF predicts treatment effect from observed characteristics. In other words, it can predict treatment effects based on individual characteristics, even for individuals who did not receive the intervention. This method must assume that treatment assignment is conditionally independent of the potential outcome variable. Since the experimental group is approximately randomly assigned, we can use this method. In this subsection, we focus on the effect on responses with intentions. The covariates used in the RCF are gender, age, past coordination experience, and the density of hospitals in the area of residence.
 
-[^tech-detail]:技術的な詳細は @Athey2016 ・ @Wager2018 を参照せよ。また、本研究ではRCFを特殊ケースとして扱う一般化ランダムフォレストと呼ばれる手法を用いているが、直観は変わらない。一般化ランダムフォレストの詳細は @Athey2019 ・ @Athey2019a を参照せよ。
+[^tech-detail]: For technical details, see @Athey2016 and @Wager2018. This study also uses a technique called generalized random forests, which treats RCF as a special case, but the intuition remains the same. See @Athey2019 and @Athey2019a for details on generalized random forests.
 
 ```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Gender and Age. Notes: Blue fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.'}
 
 rcf$subset_boxplot()
 ```
 
-図\@ref(fig:boxplot-rcf-int)は意向を伴う返信に対する各実験群の予測トリートメント効果の分布を年齢別にプロットしている。注目するべきこととして、25歳以下の男性のすべてに対して、実験群Bの効果は正である。結果として、RCFは20代男性における実験群Bの平均効果が12.1ポイントであると推定し、図\@ref(fig:coefplot-reg-stock-subset)で示した線形確率モデルのサブサンプル分析の結果と近い値である（表\@ref(tab:rcf-int-cate)参照）。
+Figure \@ref(fig:boxplot-rcf-int) plots the distribution of predicted treatment effects for each experimental group by age. Notably, the effect of experimental group B is positive for all males under the age of 25. As a result, the RCF shows that the average effect of experimental group B for men in their 20s is $12.1$ points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \@ref(fig:coefplot-reg-stock-subset) (see Table \@ref(tab:rcf-int-cate)).
 
-他の性年代でもメッセージ効果は異質的である。たとえば、30--40代男性の一部に対して、実験群Bの効果は10ポイント以上である。そのような男性は相対的に病院の数が多い地域に住んでおり、コーディネーションや提供のトラベリングコストが低い（表\@ref(tab:rcf-middle-male)参照）。Early Coordinationメッセージのみを加えた実験群Cはほとんどの30代前半の女性に対して負の効果を与えている。40代後半以上の男女に対して、実験群Cの効果の中央値は正であるが広く分布している[^sample-character]。
+For other genders and ages, the message effects are heterogeneous. For example, for some men in their 30s and 40s, the effect of experimental group B is more than 10 percentage points. They live in areas with a relatively large number of hospitals and have lower travelling costs for coordination and donation (see Table \@ref(tab:rcf-middle-male)). Experimental group C, with only the Early Coordination message added, has a negative effect for most women in their early 30s. For men and women in their late 40s and older, the median effect of Experimental Group C is positive, but widely distributed.[^sample-character]
 
-[^sample-character]: 驚くべきことに、この年齢層の男女において、実験群Cが正の効果を持つ人は相対的に病院の数が少ない（トラベリングコストが高い）地域に住んでいる（表\@ref(tab:rcf-older-male)・\@ref(tab:rcf-older-female)参照）。
+[^sample-character]: Surprisingly, among men and women in this age group, those for whom experimental group C has a positive effect live in areas with relatively fewer hospitals (higher travelling costs) (see Tables \@ref(tab:rcf-older-male) and \@ref(tab:rcf-older-female)).
 
 ```{r rcf-int-corr}
 mechanism <- rcf$decompose_effect(
@@ -311,7 +319,7 @@ mechanism <- rcf$decompose_effect(
   age < 30
 )
 
-mechanism$flextable(
+mechanism$kable(
   title = "Correlation of Predicted Treatment Effects",
   subset_label = list(
     c("Male", "Female"),
@@ -320,11 +328,13 @@ mechanism$flextable(
 )
 ```
 
-異質性の検討に加えて、RCFで予測された処置効果を用いて、実験群Dのメカニズムを議論する。情報過多による認知負荷の影響を検証するために、実験群Dは確率メッセージ（実験群B）とEarly Coordinationメッセージ（実験群C）の両方を加えている。もし適合ドナーが実験群Dの情報を完全に理解しているならば、実験群Dの効果は実験群BとCの効果の合計となるはずである。この帰無仮説を検証するために、表\@ref(tab:rcf-int-corr)の列(1)--(4)は実験群Dの予測処置効果を実験群BとCの予測効果の合計で回帰している。どの性・年代でも実験群BとCの効果の合計が1ポイント増えると、実験群Dの効果は0.3--0.4ポイント増加する。しかしながら、実験群BとCの予測効果の合計にかかる係数が1である（その予測効果の合計が実験群Dの効果と一致する）という帰無仮説を棄却できるので、適合ドナーが実験群Dの情報を完全に理解しておらず、情報過多による認知負荷になっていること示唆している。
+In addition to examining heterogeneity, we discuss the mechanism of experimental arm D using the treatment effects predicted by the RCF. To test the effects of cognitive load due to information overload, experimental arm D adds both the Probability message (experimental arm B) and the Early Coordination message (experimental arm C).
 
-完全に情報を受け取っていない適合ドナーは確率メッセージもしくはEarly Coordinationメッセージのどちらかを重視するか、二つの情報を同程度割り引いて評価しているだろう。この点を検証するために、表\@ref(tab:rcf-int-corr)の列(4)--(8)は実験群Dの予測処置効果を実験群Bの予測効果と実験群Cの予測効果で回帰している。その結果、20代男女では、実験群CとDの偏相関は実験群BとDの偏相関よりも強く、F検定より二つの偏相関は統計的に有意な差である。したがって、彼らは確率メッセージよりもEarly Coordinationメッセージを重視している。20代男性で実験群Dが効果はないのはこのためである。
+If the matched donor fully understands the information in experimental arm D, the effect of experimental group D should be the sum of the effects of experimental arms B and C. To test this point, columns (1)--(4) of Table \@ref(tab:rcf-int-corr) regress the predicted treatment effect of experimental arm D on the sum of the predicted effects of experimental arms B and C. For each gender and age group, a 1-point increase in the sum of the effects of experimental arms B and C increases the effect of experimental group D by 0.3--0.4 points. Since we can reject the null hypothesis that the coefficient on the sum of the predicted effects of experimental arms B and C is 1 (that the sum of their predicted effects is equal to the effect of experimental arm D), this suggests that the matched donors do not fully understand the information in experimental arm D and are cognitively overloaded due to information overload.
 
-興味深いことに、30歳以上の男女では、実験群CとDの偏相関は実験群BとDの偏相関よりも弱く、F検定より二つの偏相関は統計的に有意な差である。したがって、彼らはEarly Coordinationメッセージよりも確率メッセージを重視している。その結果、40代後半以上の男女における実験群Cの効果の中央値が8ポイント程度であるにも関わらず、実験群Dの処置効果の中央値はほとんどゼロである。
+A matched donor who does not completely receive information would either value either the Probability message or the Early Coordination message, or would discount the two pieces of information equally. To test this point, columns (4)--(8) of Table \@ref(tab:rcf-int-corr) regress the predicted treatment effects of experimental arm D on the predicted effects of experimental arm B and of experimental arm C. The results show that for men and women in their 20s, the partial correlations between experimental arms C and D are stronger than those between experimental arms B and D, which is statistically significant different by F-test. This implies that they value the Early Coordination message more than the Probability message. Thus, experimental arm D is ineffective for men in their 20s.
+
+Interestingly, for men and women over 30, the partial correlations between experimental arms C and D are weaker than those between experimental arms B and D, which is statistically significant difference by F-test. In other words, they value the Probability message more than the Early Coordination message. Thus, while the median effect of experimental group C for men and women in their late 40s and older is about 8 points, the median treatment effect of experimental group D is almost zero.
 
 ## Response Speed to Notification {#reply-speed}
 
@@ -351,25 +361,25 @@ flow$plot(
 )
 ```
 
-Early Coordinationメッセージは早いコーディネーションが患者の移植率を高めるという事実を提供している。したがって、このメッセージは適合通知への早期返信を促している可能性がある。図\@ref(fig:cumulative-response-rate)は適合通知の送付後40日間の各日の累積返信比率を示している。これまでの結果で示されたように返信への効果は性・年代で異質的なので、ここでも同様に性・年代でサブサンプルに分割して、返信日数への効果の異質性に注目する。
+The Early Coordination message provides the fact that early coordination increases a patient's transplant rate. Therefore, this message may encourage early responses to the compatibility notice. Figure \@ref(fig:cumulative-response-rate) shows the cumulative response rate for each day of the 40 days after the match notification was sent. Since the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age here and focus on the heterogeneity of the effect on quick responses.
 
-```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = TRUE, old = FALSE)
 ```
 
-30歳以上の男女では累積返信率のパターンに特徴的な差はないが、30歳未満の男女では特筆すべき結果がいくつかある[^speed-older]。20代男性グループでは、適合通知の送付から15日後、実験群BとDの返信がコントロールと比較して、増え始めている。その結果、二つの実験群の累積返信比率はコントロールよりも統計的に有意な差である（図\@ref(fig:young-male-flow)）[^flow-analysis]。適合通知は7日以内の返信を推奨しているので、適合通知の送付から15日以降の返信は早期返信とは言い難い。したがって、実験群BとDは20代男性の最終的な返信率を高めているが、早期返信を促す効果はない。実験群BとDの介入であるProbability messageは早期返信を促すことを目的としていないので、この結果は自然である。また、Early Coordinationメッセージのみを加えた実験群Cのトレンドはコントロールとほとんど同じであり、このグループでEarly Coordinationメッセージは早期返信を促しているとはいえない。
+While there are no significant differences in the pattern of cumulative response rates for men and women over 30, there are some notable results for men and women under 30.[^speed-older] In the group of men in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D begin to increase relative to the controls. As a result, the cumulative response rate of the two experimental groups is statistically significantly higher than that of the control (Figure \@ref(fig:young-male-flow)).[^flow-analysis] Since the compatibility notice recommends a response within 7 days, a response after 15 days from the mailing of the compatibility notice cannot be considered an early response. Thus, although experimental arms B and D increase the ultimate response rate among men in their 20s, they have no effect on encouraging early responses. This result is natural because the Probability message, the intervention in Experimental Groups B and D, is not intended to encourage early responses. In addition, the trend in experimental arm C, where only Early Coordination messages are added, is almost the same as the control, so it cannot be said that Early Coordination messages encourage early responses in this group.
 
-[^speed-older]: 30歳以上の男女で、特定の時期を除いて、各日の累積返信率は実験群間でほとんど差がなく、統計的に有意でない。補論の図\@ref(fig:old-male-flow)と図\@ref(fig:old-female-flow)を参照せよ。
+[^speed-older]: For men and women over 30 years of age, the cumulative response rate for each day differs little between the experimental arms, except for certain periods, and is not statistically significant. See Figure \@ref(fig:old-male-flow) and \@ref(fig:old-female-flow) in Appendix.
 
-[^flow-analysis]: 回帰分析にあたり、アウトカム変数として潜在ドナーが$d$日以内に返信したならば1を取るダミー変数を作成した。$d$日以降に返信した・返信しなかった場合、アウトカム変数は0となる。
+[^flow-analysis]: In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within $d$ days as the outcome variable. If the potential donor responded after $d$ days or did not respond, the outcome variable is 0.
 
-```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r young-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = FALSE, old = FALSE)
 ```
 
-20代女性グループでは、適合通知の送付から4日以内の時期で、Early Coordinationメッセージを加えた実験群CとDの返信がコントロールと比較して、増えている。その結果、二つの実験群の累積返信比率はコントロールよりも統計的に有意な差である（図\@ref(fig:young-female-flow)）。また、適合通知の送付から10日後、実験群Cの返信がコントロールと比較して、一時的に増え始めるが、最終的にはコントロールの累積返信率と統計的に有意な差でなくなる。これらの結果はEarly Coordinationメッセージがこのグループの早期返信を促していることを示唆している。
+In the 20s female group, the responses of experimental arms C and D, with the addition of the Early Coordination message, increase compared to the control within four days of sending the compatibility message. As a result, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control (Figure \@ref(fig:young-female-flow)). In addition, 10 days after the compatibility notice is sent, the responses of experimental arm C begin to temporarily increase relative to the control, but eventually cease to be statistically significantly different from the cumulative response rate of the control. These results suggest that Early Coordination messages encourage females in their 20s to respond quickly.
 
 ## Effects on the Coordination Process {#process}
 
@@ -380,14 +390,14 @@ coordinate <- rct$
   lm(id3)
 ```
 
-最後に、我々は適合通知への返信以降のコーディネーション過程の各工程への影響を検証する。第\@ref(background)節で説明したように、コーディネーション過程は確認検査・候補者選定・最終同意・提供の4つのステージからなる。我々は適合ドナーが各ステージに到達したならば1を取るダミー変数をアウトカム変数として用いる。
+Finally, we examine the impact on each step of the coordination process after the response to the compatibility notice. As explained in Section \@ref(background), the coordination process consists of four stages: confirmatory typing, candidate selection, final consent, and collection. We use as outcome variable a dummy variable that takes 1 if a matched donor has reached each stage.
 
-第\@ref(intention)節の分析と同様に、我々は適合ドナーの意思とは無関係にコーディネーションが中断したと思われるサンプルを除く。確認検査への効果を推定するとき、我々は患者側の理由で中断した事例を除外する。患者の医師は候補者選定時に最も健康な適合ドナーを選ぶ可能性が高いので、候補者選定以降でドナーの健康理由で中断した事例はドナーの意思と無関係に生じていると考えられる。よって、候補者選定・最終同意・提供に対する効果を推定するとき、我々は患者側の理由で中断したサンプルと候補者選定以降にドナーの健康理由で中断したサンプルを除く。ただし、サンプルの除外だけでは医者の意思決定を完全に取り除けていないかもしれないので、解釈には注意を要する。コントロール群では、適合ドナーの24%が確認検査を受けて、8%が候補者になり、6%が最終的に提供した。
+As in the analysis in Section \@ref(intention), we exclude samples in which coordination appears to have been interrupted independently of matched donor willingness. When estimating the effect on confirmatory typing, we exclude cases of interruption for reasons related to the patient. Since the patient's physician is likely to select the healthiest matched donor at the time of candidate selection, cases of interruption for donor health reasons after candidate selection are considered to have occurred independently of the donor's willingness. Thus, when estimating the effects on candidate selection, final consent, and donation, we exclude samples interrupted for patient reasons and samples interrupted for donor health reasons after candidate selection. Note that we should be cautious in our interpretation because sample exclusion alone may not completely eliminate physician decision making. In the control group, 24% of eligible donors underwent confirmatory testing, 8% became candidates, and 6% ultimately donated.
 
 ```{r est-full-coordination}
 coordinate$
   fit_all()$
-  flextable(
+  kable(
     title = "Linear Probability Model of Coordination",
     notes = paste(
       "Covariates are gender, squared polynomial of age,",
@@ -400,30 +410,38 @@ coordinate$
   )
 ```
 
-表\@ref(tab:est-full-coordination)はフルサンプルの推定結果を示している。その結果、確率メッセージを含む実験群BとDは確認検査の実施率を約3ポイント高めており、これは統計的に有意な効果である。この効果は実験群BとDの返信への効果よりも大きい。これは実験群BとDでは、健康理由を含むドナー側の都合でコーディネーションが中断する可能性がコントロール群と比較して小さいからである。したがって、実験群BとDは全体的に提供に積極的な人を増やしていないが、提供の意向を強固にしており、コーディネートの継続性に貢献している。
+Table \@ref(tab:est-full-coordination) shows the full sample estimation results. The results show that experimental groups B and D, which include probability messages, increase the rate of confirmatory typing by about 3 percentage points, which is a statistically significant effect. This effect is larger than the effect on responses. This is because the likelihood of coordination being interrupted for donor reasons, including health reasons, is lower in experimental groups B and D than in the control group. Thus, although experimental groups B and D do not increase the overall number of people willing to donate, they do maintain the intention to donate, which contributes to the reduction in coordination dropouts.
 
-実験群BとDの候補者選定以降のステージに対する効果は1ポイント以下であり、統計的に非有意である。これは解釈に注意が必要である。我々の介入は需要（患者数）に影響を与えていないので、我々の介入によって確認検査に到達する人が増えたならば、その分だけ外生的な理由で候補者に選定されなかった人を増やしているはずである。実験群Bとコントロール群で、確認検査を実施した適合ドナーはそれぞれ774人と564人である。すなわち、実験群Bは確認検査実施数を210件増やしたことになる。また、患者理由もしくはドナーの健康理由で候補者に選定されなかった人は実験群Bとコントロール群でそれぞれ556人と385人である。すなわち、実験群Bは外生的な理由で候補者に選定されなかった人を171人増やしている。したがって、推定値は我々の介入効果だけでなく幹細胞移植の需要の影響を含んでいる。
+The effect of experimental groups B and D on the stage after candidate selection is less than 1 percentage point and not statistically significant. This should be interpreted with caution. Since our intervention did not affect demand (number of patients), if our intervention increased the number of people who reached confirmatory typing, it should have increased the number of people who were not selected as candidates for exogenous reasons.
 
-```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+In experimental group B and control group, the number of potential donors who reached confirmatory typing was 774 and 564, respectively. Therefore, experimental group B would have increased the number of confirmatory typings by 210. The number of potential donors who were not selected as candidates due to patient or donor health reasons was 556 in the experimental group B and 385 in the control group. This means that experimental group B has 171 more people who were not selected as candidates for exogenous reasons. Thus, the estimates include not only the effect of our intervention, but also the effect of the demand for stem cell transplants.
+
+```{r coefplot-reg-subsample-coordination, fig.cap='Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95% confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 coordinate$
   fit_sub()$
   coefplot()
 ```
 
-図\@ref(fig:coefplot-reg-subsample-coordination)はサンプルを性別と年齢層（30歳未満か否か）で4つのサブセットに分割し、各サブセットでメッセージ効果を推定している。その結果、実験群Bは20代男性の確認検査到達比率を8ポイント程度高めており、統計的に有意である。したがって、実験群Bは20代男性の提供意向を高めるだけでなく、それを強固にしている。また、実験群Bは20代男性の候補者選定・最終同意に統計的に有意な影響を与えていない。ただし、提供への効果は4ポイント程度であり、統計的に10%水準で有意である。先に述べたように、この効果は我々の介入効果だけでなく、幹細胞移植の需要を反映していると考えられる。若い男性ほど移植成績が良いならば、この世代の幹細胞移植の需要は他の性・年代よりも高いかもしれない。提供への効果はこの影響を含んでいるかもしれない。また、20代女性の早期返信を促していた実験群Cはその世代のコーディネーションに対して統計的に有意な効果を持っていない。
+Figure \@ref(fig:coefplot-reg-subsample-coordination) divides the sample into four subsets by gender and age group (under 30 or not) and estimates the message effect in each subset. The results show that experimental group B increases the proportion of men in their 20s who reach confirmatory typing by about 8 percentage points, which is statistically significant. Thus, it is possible that experimental group B not only increases the willingness of men in their 20s to donate, but also maintains it.
+
+Experimental group B has no statistically significant effect on candidate selection and final agreement among men in their 20s. However, the effect on donation is about 4 percentage points and is statistically significant at the 10% level (Table \@ref(tab:reg-young-male-coordination)). As noted earlier, this effect may reflect not only the effect of our intervention, but also the demand for stem cell transplants. If younger males have better transplant outcomes, then the demand for stem cell transplants may be higher in this generation than in other genders and ages. The effect on donation may include this effect. In addition, experimental arm C, which encourages early responses from women in their 20s, has a statistically significant effect on the coordination of this generation.
 
 # Discussion and Conclusions {#conclusion}
 
-本研究はJMDPに登録した潜在ドナーの提供意向を高めるための情報提供の効果を検証した。その結果、一人の患者あたりのHLA適合ドナーが少ないという情報（Probability message）は20代男性の提供意向を10ポイント程度高め、確認検査への到達率も8ポイント程度高めている。人数に換算すると、この情報提供は提供に積極的な人を600人から756人に増やし、確認検査への到達した人を346人から462人に増やしている。さらに、幹細胞移植の需要の影響を含んでいるが、この情報はドナーの移植率を5ポイント高めている。人数に換算すると、Probability messageは71人から121人に増やしている。ただし、早いコーディネーションが患者の移植率を高めるという情報（Early Coordination message）を同時に提供すると、彼らはこのメッセージに比重を置いて意思決定するので、Probability messageの正の効果は消えてしまう。
+This study examined the effect of providing information to increase willingness to donate among potential donors enrolled in the JMDP. The results showed that information about the low number of HLA-matched donors per patient (Probability message) increased the willingness to donate among men in their 20s by about 10 percentage points and also increased the rate of achieving confirmatory typing by about 8 percentage points. In addition, this information may increase the transplant rate by 5 percentage points. In terms of numbers, the Probability message increased the number of transplanted donors from 71 to 121. 
 
-これらの結果は20代男性がHLA適合ドナーの数について過度な期待を持っており、フリーライド行動を取っていることを示唆している。他の性・年代でProbability messageが統計的に有意な影響を与えていない原因は二つあると考えられる。第一に、20代男性と比較して、他の人はHLA適合ドナーの数を正しく見積もっているかもしれない。この場合、Probability messageは潜在ドナーの意思決定に全く影響を与えないはずである。
+However, when we simultaneously provide the information that early coordination increases a patient's transplant rate (Early Coordination message), the positive effect of the Probability message disappears because they give more weight to the Early Coordination message in their decision making. 
 
-第二に、20代男性と他の性・年代の利他的な選好が異なるという可能性である。経済学における利他行動の研究では、利他行動の動機が自身の利他行動そのもので効用を得るウォームグローと公共財の生産など利他行動の結果で効用を得る純粋利他性の二つに大別される[@Andreoni1990]。ウォームグローが相対的に強い人ほど、他者の行動に関心がないので、フリーライド行動を取る可能性が低くなる。したがって、20代男性と比較して、他の人はウォームグロー選好が利他行動の主動力となっているのかもしれない。要するに、Probability messageの異質性は信念の違いか動機の違いかで説明ができると考えられる。
+These results suggest that men in their 20s overestimate the number of HLA-matched donors and engage in free-riding behavior. There are two possible reasons for the statistically insignificant effect of the Probability message for the other genders and ages. First, compared to men in their 20s, others may correctly estimate the number of HLA-matched donors. In this case, the Probability message should have no effect on the decision of potential donors.
 
-また、Early Coordination messageは20代女性の全体の返信率に影響を与えていないが、短期間の返信（4日以内）に正の影響を与えている。これは返信行動そのものを促進しているよりむしろ、返信日数を短くしていることを示唆している。我々のデータ制約上、このメッセージが患者の移植までの期間を短くしているかどうかを検証できないが、この情報が少なくともコーディネーション期間の短縮に貢献している可能性がある。他の性・年代で効果がなかったのは、他の人がこの情報をもともと持っている可能性が考えられる。または20代女性は他の世代と比較して、現在バイアスの程度が強いのかもしれない。このメッセージの異質性は情報保有の有無か時間選好の違いかで説明できると考えられる。
+The second possibility is that the altruistic preferences of men in their 20s differ from those of other genders and age groups. Economic studies suggest that there are two main types of motives for altruistic behavior: warm glow, in which one gain utility from one's own altruistic behavior, and pure altruism, in which one gain utility from the results of altruistic behavior, such as the production of public goods [@Andreoni1990]. Those with relatively stronger warm glow are less likely to engage in free-riding behavior because they are less concerned about the actions of others. Thus, compared to men in their 20s, others may have the warm glow preference as the main driver of altruistic behavior. In short, the heterogeneity in the Probability message could be explained by differences in beliefs or motivations.
 
-本研究はフィールド実験によって情報提供の因果効果をクリアに識別できるが、先に述べたメカニズムを識別できるようなデータ・実験設計ではないことに限界があり、これは今後の課題となりうる。しかしながら、本研究は実務的な含蓄がある。第\@ref(intro)節で述べたように、造血幹細胞移植は提供の意向を示す時点と実際の提供の時点が異なるので、潜在ドナーの意向を維持することが骨髄ドナープログラムの課題となっている。特に、移植成績の良い若年ドナーが意向を維持できず、脱落しやすい。本研究は患者とマッチしたときに、骨髄ドナープログラムの事務局が与える情報によって若年潜在ドナーの行動変容を促せる可能性を提示しており、この課題を解決するための施策の一つとなるだろう。とくに、他者のHLA適合情報は、移植成績の良いドナーがコーディネーションに進みやすくなるという意味で、コーディネーションの効率性を高めるだろう。しかしながら、情報提供が効果をないことを示す研究[e.g. @Switzer2018]もあるので、他国の骨髄ドナープログラムでの情報提供の効果検証が期待される。
+The Early Coordination message had no effect on the overall response rate among women in their 20s, but had a positive effect on shorter responses (4 days or less). This suggests that it shortens the timing of replies rather than encouraging the response behavior itself. Due to our data limitations, we cannot test whether this message shortens the time to transplant for patients, but it is possible that this information at least contributes to a shorter coordination period.
+
+The lack of effect for other genders and ages may be due to the possibility that others already have this information. Alternatively, women in their 20s may have a stronger degree of present bias and a greater tendency toward delayed behavior than other generations. The heterogeneity of this message effect could be explained by differences in information possession or time preference.
+
+While this study is able to clearly identify the causal effects of information provision through field experiments, it is limited by the fact that the data and experimental design do not allow for the identification of the mechanisms described above, which may be an issue for future work. Nevertheless, this study has practical implications. As discussed in section \@ref(intro), maintaining the intention of potential donors is a challenge for bone marrow donor programs due to the time lag between intention and behavior. In particular, young donors with good transplant outcomes are likely to fail to maintain their intentions and drop out of the program. This study suggests that information provided by the bone marrow donor program office at the time of matching with a patient may promote behavioral change in young potential donors and may be one of the measures to address this problem. In particular, information about the HLA matching of others would increase the efficiency of coordination in the sense that donors with a good transplant performance would be more likely to proceed to coordination. However, some studies [e.g. @Switzer2018] have shown that information provision is ineffective, so it is expected that the effectiveness of information provision will be tested in bone marrow donor programs in other countries.
 
 # Appendix {-}
 
@@ -444,7 +462,7 @@ logit_coordinate <- rct$
 
 ```{r logit-stock}
 logit_stock$
-  flextable(
+  kable(
     title = "Logit Model of Reply and Intention",
     notes = paste(
       "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
@@ -458,7 +476,7 @@ logit_stock$
 
 ```{r logit-coordination}
 logit_coordinate$
-  flextable(
+  kable(
     title = "Logit Model of Coordination",
     notes = paste(
       "Covariates are gender, squared polynomial of age,",
@@ -473,12 +491,12 @@ logit_coordinate$
 
 <!-- //NOTE Additional analysis of flow data -->
 
-```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = TRUE, old = TRUE)
 ```
 
-```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on each outcome. We use robust standard errors We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
+```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95% confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = FALSE, old = TRUE)
 ```
@@ -488,7 +506,7 @@ flow_fit$plot(male = FALSE, old = TRUE)
 ```{r rcf-int-cate}
 rcf$
   cate(age < 30, male == 0)$
-  flextable(
+  kable(
     label = list(
       c("30 < Age", "Age < 30"),
       c("Male", "Female")
@@ -505,7 +523,7 @@ rcf$
     male = male == 1,
     age = 30 < age & age <= 40
   )$
-  flextable(
+  kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)",
     group_label = c("Effect < 0.1", "0.1 < Effect"),
     notes = "We use males with 30-39 age."
@@ -519,7 +537,7 @@ rcf$
     male = male == 1,
     age = 45 < age
   )$
-  flextable(
+  kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Males)",
     notes = "We use males with over 45 age."
   )
@@ -532,7 +550,7 @@ rcf$
     male = male == 0,
     age = 45 < age
   )$
-  flextable(
+  kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Females)",
     notes = "We use females with over 45 age."
   )
