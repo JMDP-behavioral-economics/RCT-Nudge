@@ -28,14 +28,24 @@ Schedule <- R6::R6Class("Schedule",
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
     },
-    kable = function(title = "", notes = "", font_size = 9) {
-      self$data %>%
+    kable = function(title = "", notes = "", font_size = 9, hold = FALSE) {
+      kbl <- self$data %>%
         knitr::kable(
           caption = title,
           align = "lcccccc",
           booktabs = TRUE,
           linesep = ""
-        ) %>%
+        )
+      
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")  
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      kbl %>%
         kableExtra::kable_styling(font_size = font_size) %>%
         kableExtra::footnote(
           general_title = "",

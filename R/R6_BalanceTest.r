@@ -79,7 +79,7 @@ BalanceTest <- R6::R6Class("BalanceTest",
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
     },
-    kable = function(title = "", notes = "", font_size = 9) {
+    kable = function(title = "", notes = "", font_size = 9, hold = FALSE) {
       tab <- private$table
 
       label <- colnames(tab)
@@ -90,7 +90,7 @@ BalanceTest <- R6::R6Class("BalanceTest",
       struct <- rle(tab$panel)
       struct$lengths <- cumsum(struct$lengths)
 
-      tab %>%
+      kbl <- tab %>%
         select(-panel) %>%
         knitr::kable(
           caption = title,
@@ -98,8 +98,15 @@ BalanceTest <- R6::R6Class("BalanceTest",
           align = paste(c("l", rep("c", length(label))), collapse = ""),
           booktabs = TRUE,
           linesep = ""
-        ) %>%
-        kable_styling(font_size = font_size) %>%
+        )
+      
+      if (hold) {
+        kbl <- kbl %>% kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>% kable_styling(font_size = font_size)
+      }
+
+      kbl %>%
         add_header_above(c(" " = 1, "Experimental Arms" = length(label) - 2, " " = 1)) %>%
         group_rows(struct$values[1], 1, struct$lengths[1]) %>%
         group_rows(struct$values[2], struct$lengths[1] + 1, struct$lengths[2]) %>%
