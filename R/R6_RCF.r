@@ -285,7 +285,7 @@ RCFCate <- R6::R6Class("RCFCate",
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
     },
-    kable = function(label, title = "", notes = "", font_size = 9) {
+    kable = function(label, title = "", notes = "", font_size = 9, hold = FALSE) {
       tbl <- private$table()
 
       header <- as.list(c("", paste0("(", seq(ncol(tbl) - 1), ")")))
@@ -297,8 +297,18 @@ RCFCate <- R6::R6Class("RCFCate",
           align = paste(c("l", rep("c", ncol(tbl) - 1)), collapse = ""),
           booktabs = TRUE,
           linesep = ""
-        ) %>%
-        kableExtra::kable_styling(font_size = font_size)
+        )
+      
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(
+            font_size = font_size,
+            latex_options = "HOLD_position"
+          )
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)        
+      }
       
       if (!missing(label)) {
         names(label) <- paste0("cond", seq(length(label)))
@@ -437,6 +447,7 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
                       title = "",
                       notes = "",
                       font_size = 9,
+                      hold = FALSE,
                       ...) {
       private$msummary(
         "kableExtra",
@@ -446,8 +457,15 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         ...
       )
 
-      kbl <- private$reg_tab %>%
-        kableExtra::kable_styling(font_size = font_size)
+      kbl <- private$reg_tab
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")        
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
       
       est <- private$est
       names(subset_label) <- paste0("cond", seq(length(subset_label)))
@@ -563,15 +581,26 @@ EffectCharacteristics <- R6::R6Class("EffectCharacteristics",
                       notes = "",
                       font_size = 9,
                       group_label = c("Non-positive", "Positive"),
-                      escape = TRUE) {
-      self$table %>%
+                      escape = TRUE,
+                      hold = FALSE) {
+      kbl <- self$table %>%
         knitr::kable(
           caption = title,
           col.names = c("", paste0("(", 1:3, ")")),
           align = "lcccc",
           booktabs = TRUE,
           linesep = ""
-        ) %>%
+        )
+      
+      if (hold) {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size)
+      }
+
+      kbl %>%
         kable_styling(font_size = font_size) %>%
         add_header_above(c(" ", group_label, "P-value"), escape = escape) %>%
         add_header_above(c(" ", "Predicted treatment effect" = 2, " ")) %>%

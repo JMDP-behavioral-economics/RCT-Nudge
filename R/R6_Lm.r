@@ -239,17 +239,23 @@ LmAll <- R6::R6Class("LmAll",
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
     },
-    kable = function(title = "", notes = "", font_size = 9, ...) {
+    kable = function(title = "", notes = "", font_size = 9, hold = FALSE, ...) {
       private$msummary("kableExtra", title = title, ...)
+
+      tbl <- private$reg_tab
+
+      if (hold) {
+        tbl <- tbl %>% kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        tbl <- tbl %>% kableExtra::kable_styling(font_size = font_size)
+      }
 
       label <- private$label_structure(private$est)
       rle1 <- label$rle1
       lab1 <- rle1$lengths
       names(lab1) <- rle1$values
 
-      tbl <- private$reg_tab %>%
-        kableExtra::kable_styling(font_size = font_size) %>%
-        kableExtra::add_header_above(lab1)
+      tbl <- tbl %>% kableExtra::add_header_above(lab1)
       
       if (!is.null(label$rle2)) {
         rle2 <- label$rle2
@@ -300,7 +306,6 @@ LmAll <- R6::R6Class("LmAll",
         "treatD" = "Treatment D"
       )
       stars <- c("***" = .01, "**" = .05, "*" = .1)
-      fmt <- 4
       gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
       align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
 
@@ -317,7 +322,6 @@ LmAll <- R6::R6Class("LmAll",
         output = output,
         coef_map = coef_map,
         stars = stars,
-        fmt = fmt,
         gof_omit = gof_omit,
         align = align,
         add_rows = add_tab
