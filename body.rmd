@@ -24,6 +24,7 @@ header-includes:
   - \usepackage{setspace}
   - \renewcommand{\baselinestretch}{1.5}
   - \usepackage{threeparttable}
+  - \usepackage{here}
 params:
   is_fe: TRUE
   is_cluster: FALSE
@@ -451,8 +452,6 @@ While this study is able to clearly identify the causal effects of information p
 
 # Appendix {-}
 
-\clearpage
-
 <!-- //NOTE ロジット推定 -->
 
 ```{r setup-logit, include=FALSE}
@@ -477,7 +476,9 @@ logit_stock$
       "number of hospitals with PBSC collection per 10 square kilometers,",
       "number of hospitals with BM collection per 10 square kilometers,",
       "month dummies, and week dummies."
-    )
+    ),
+    fmt = 2,
+    hold = TRUE
   )
 ```
 
@@ -492,7 +493,9 @@ logit_coordinate$
       "number of hospitals with PBSC collection per 10 square kilometers,",
       "number of hospitals with BM collection per 10 square kilometers,",
       "month dummies, and week dummies."
-    )
+    ),
+    fmt = 2,
+    hold = TRUE
   )
 ```
 
@@ -518,7 +521,8 @@ rcf$
       c("30 < Age", "Age < 30"),
       c("Male", "Female")
     ),
-    title = "Conditional Average Treatment Effect Estimated by RCF"
+    title = "Conditional Average Treatment Effect Estimated by RCF",
+    hold = TRUE
   )
 ```
 
@@ -533,7 +537,8 @@ rcf$
   kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)",
     group_label = c("Effect < 0.1", "0.1 < Effect"),
-    notes = "We use males with 30-39 age."
+    notes = "We use males with 30-39 age.",
+    hold = TRUE
   )
 ```
 
@@ -546,7 +551,8 @@ rcf$
   )$
   kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Males)",
-    notes = "We use males with over 45 age."
+    notes = "We use males with over 45 age.",
+    hold = TRUE
   )
 ```
 
@@ -559,7 +565,8 @@ rcf$
   )$
   kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Females)",
-    notes = "We use females with over 45 age."
+    notes = "We use females with over 45 age.",
+    hold = TRUE
   )
 ```
 
