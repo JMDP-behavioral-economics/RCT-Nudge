@@ -307,7 +307,7 @@ Roughly speaking, RCF predicts treatment effect from observed characteristics. I
 
 [^tech-detail]: For technical details, see @Athey2016 and @Wager2018. This study also uses a technique called generalized random forests, which treats RCF as a special case, but the intuition remains the same. See @Athey2019 and @Athey2019a for details on generalized random forests.
 
-```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.'}
+```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.'}
 
 rcf$subset_boxplot()
 ```
@@ -432,7 +432,7 @@ coordinate$
 
 Figure \@ref(fig:coefplot-reg-subsample-coordination) divides the sample into four subsets by gender and age group (under 30 or not) and estimates the message effect in each subset. The results show that experimental arm B increases the proportion of men in their 20s who reach confirmatory typing by about 8 percentage points, which is statistically significant. Thus, it is possible that experimental arm B not only increases the willingness of men in their 20s to donate, but also maintains it.
 
-Experimental arm B has no statistically significant effect on candidate selection and final consent among men in their 20s. However, the effect on donation is about 4 percentage points and is statistically significant at the 10% level. As noted earlier, this effect may reflect not only the effect of our intervention, but also the demand for stem cell transplants. If younger males have better transplant outcomes, then the demand for stem cell transplants may be higher in this generation than in other genders and ages. The effect on donation may include this demand effect. In addition, experimental arm C, which encourages early responses from women in their 20s, has a statistically significant effect on the coordination of this generation.
+Experimental arm B may increase donation among men in their 20s by 4 percentage points, which is statistically significant at 10% level. However, the effect on candidate selection and final consent is not statistically significant. As noted earlier, this effect may reflect not only the effect of our intervention, but also the demand for stem cell transplants. If younger males have better transplant outcomes, then the demand for stem cell transplants may be higher in this generation than in other genders and ages. The effect on donation may include this demand effect. In addition, experimental arm C, which encourages early responses from women in their 20s, has a statistically significant effect on the coordination of this generation.
 
 # Discussion and Conclusions {#conclusion}
 
