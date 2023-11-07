@@ -18,7 +18,7 @@ render_inference_opt <- function( fe = TRUE,
   }
   
   render(
-    here("body.rmd"),
+    here("JMDP RCT - Main Document.rmd"),
     output_file = out,
     params = list(
       is_fe = fe,
@@ -29,9 +29,15 @@ render_inference_opt <- function( fe = TRUE,
   )
 }
 
-render_inference_opt(TRUE, FALSE, "stata", "body.pdf") #main
-render_inference_opt(TRUE, TRUE, "stata", "robustness-body.pdf") # robustness
+render_inference_opt(TRUE, FALSE, "stata", "JMDP RCT - Main Document.pdf") #main
+render_inference_opt(TRUE, TRUE, "stata", "JMDP RCT - Main Document (Robust).pdf") # robustness
 # render_inference_opt(FALSE, FALSE, "stata")
 # render_inference_opt(FALSE, TRUE, "stata")
 # render_inference_opt()
 # render_inference_opt(FALSE)
+
+# //NOTE Appendix
+render(
+  here("JMDP RCT - Appendix.rmd"),
+  output_file = "JMDP RCT - Appendix.pdf"
+)
