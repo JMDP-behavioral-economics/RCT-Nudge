@@ -23,10 +23,11 @@ Flow <- R6::R6Class("Flow",
     },
     plot = function(...,
                     label_list,
-                    xlim = c(0, 40)) {
+                    xlim = c(0, 40),
+                    ylab = "Cumulative response rate (%)") {
       
       dt <- self$data %>%
-        select(treat, days_reply)
+        select(treat, days_reply, value)
       
       if (!missing(...)) {
         cond <- enquos(...)
@@ -44,7 +45,7 @@ Flow <- R6::R6Class("Flow",
       }
 
       plotdt <- dt %>%
-        mutate(days_reply = if_else(is.na(days_reply), 99999, days_reply)) %>%
+        mutate(days_reply = if_else(value == 0, 99999, days_reply)) %>%
         group_by(treat, days_reply, across(starts_with("cond"))) %>%
         summarize(n = n()) %>%
         group_by(treat, across(starts_with("cond"))) %>%
@@ -76,7 +77,7 @@ Flow <- R6::R6Class("Flow",
       out +
         labs(
           x = "Response speed (days)",
-          y = "Cumulative response rate (%)",
+          y = ylab,
           linetype = "Treatment"
         ) +
         my_theme_classic() +

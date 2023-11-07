@@ -285,7 +285,7 @@ older_female$
 # //NOTE Flow analysis
 flow <- rct$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  flow()
+  flow(outcome = "reply")
 
 # descriptive statistics
 flow$plot(
@@ -309,3 +309,31 @@ flow_fit$
 
 flow_fit$
   plot(male = TRUE, old = FALSE)
+
+# Flow: negative intention
+f_negative <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  flow(outcome = "negative")
+
+f_negative_fit <- f_negative$fit(
+  1:40,
+  male = male == 1,
+  old = age >= 30
+)
+
+f_negative_fit$
+  plot(male = FALSE, old = FALSE)
+
+# Flow: positive intention
+f_positive <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  flow(outcome = "positive")
+
+f_positive_fit <- f_positive$fit(
+  1:40,
+  male = male == 1,
+  old = age >= 30
+)
+
+f_positive_fit$
+  plot(male = FALSE, old = FALSE)
