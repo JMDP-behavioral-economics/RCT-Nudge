@@ -2,25 +2,18 @@
 title: |
   Online Appendix
   "Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program"
-author:
-  - Hiroki Kato
-  - Fumio Ohtake
-  - Saiko Kurosawa
-  - Kazuhiro Yoshiuchi
-  - Takahiro Fukuda
 date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
 bibliography: biblio.bib
 biblio-style: agsm
 output:
   bookdown::pdf_document2:
     latex_engine: lualatex
+    tempate: template/my-template.tex
     keep_tex: true
     toc: true
     number_sections: true
     citation_package: natbib
-header-includes:
-  - \usepackage{setspace}
-  - \renewcommand{\baselinestretch}{1.5}
+base-strech: 1.5
 ---
 
 # Economic Models for Predictions

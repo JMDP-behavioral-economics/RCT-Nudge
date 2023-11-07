@@ -1,53 +1,37 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode}{hyperref}
-\PassOptionsToPackage{hyphens}{url}
-%
 \documentclass[
+  lualatex,
+  11pt,
+  a4paper
 ]{article}
+
+% ------------------------------ font
+% \usepackage{times} pdflatex
+\usepackage{luatexja}
+\usepackage{luatexja-fontspec}
+
+\setmainfont{Times New Roman}
+\setmainjfont[BoldFont=IPAexGothic]{IPAexMincho}
+
+% ------------------------------ math
 \usepackage{amsmath,amssymb}
-\usepackage{iftex}
-\ifPDFTeX
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-  \usepackage{unicode-math} % this also loads fontspec
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
-\fi
-\usepackage{lmodern}
-\ifPDFTeX\else
-  % xetex/luatex font selection
-\fi
-% Use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
-  \usepackage[]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
-\makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-  \IfFileExists{parskip.sty}{%
-    \usepackage{parskip}
-  }{% else
-    \setlength{\parindent}{0pt}
-    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
-  \KOMAoptions{parskip=half}}
-\makeatother
-\usepackage{xcolor}
-\usepackage[margin=1in]{geometry}
-\usepackage{longtable,booktabs,array}
-\usepackage{calc} % for calculating minipage widths
-% Correct order of tables after \paragraph or \subparagraph
-\usepackage{etoolbox}
-\makeatletter
-\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-\makeatother
-% Allow footnotes in longtable head/foot
-\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-\makesavenoteenv{longtable}
-\usepackage{graphicx}
+\usepackage{siunitx}
+
+% ------------------------------ author & natbib
+\usepackage{authblk}
+\usepackage[semicolon]{natbib}
+\bibliographystyle{agsm}
+
+% ------------------------------ appendix
+\usepackage[title]{appendix}
+
+% ------------------------------ tables
+\usepackage{here}
+\usepackage{longtable, booktabs, array}
+\usepackage{threeparttable, threeparttablex, multirow}
+% \newcolumntype{d}{S[input-symbols = ()]}
+
+% ------------------------------- figures
+\usepackage{graphics, graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -56,32 +40,20 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-% Set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{5}
+
+% ------------------------------ page settings
+\usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry}
 \usepackage{setspace}
 \renewcommand{\baselinestretch}{1.5}
-\usepackage{threeparttable}
-\usepackage{here}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% ------------------------------ hyperlink
+\usepackage{hyperref}
+
+% ------------------------------ other packages
+\renewcommand\Affilfont{\itshape\small}
 \usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
-\usepackage{xcolor}
 \usepackage{siunitx}
 
   \newcolumntype{d}{S[
@@ -92,30 +64,45 @@
     table-align-text-post=false
   ]}
   
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
-\usepackage[]{natbib}
-\bibliographystyle{agsm}
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same}
-\hypersetup{
-  pdftitle={Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program},
-  pdfauthor={Hiroki Kato; Fumio Ohtake; Saiko Kurosawa; Kazuhiro Yoshiuchi; Takahiro Fukuda},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
 
+% ------------------------------ paper information
 \title{Only You:
 A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program\thanks{In conducting this study, we would like to thank the Japan Marrow Donor Program Office for managing of the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: XXXXXXXX) and the Japan Marrow Donor Program (approval number: XXXXXXXXX). This research is financially supported by the Japan Society for the Promotion of Science {[}grant number: 20H05632 (F., Ohtake and H., Kato){]}.}}
-\author{Hiroki Kato\footnote{Hitostubashi Institute for Advanced Study, Hitotsubashi University, Tokyo, Japan.} \and Fumio Ohtake\footnote{Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan.} \and Saiko Kurosawa\footnote{Department of Oncology, Ina Central Hospital, Nagano, Japan.} \and Kazuhiro Yoshiuchi\footnote{Graduate School of Medicine, Tokyo University, Tokyo, Japan.} \and Takahiro Fukuda\footnote{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan.}}
+\author[a]{%
+  Hiroki Kato\thanks{Present Address: 2-1 Naka, Kunitachi, Tokyo 186-8601, Japan (Hitotsubashi Institute for Advanced Study, Hitotsubashi University). E-mail address: \href{mailto:hkato.econ@r.hit-u.ac.jp}{\nolinkurl{hkato.econ@r.hit-u.ac.jp}}}
+}
+\author[b]{%
+  Fumio Ohtake
+}
+\author[c]{%
+  Saiko Kurosawa
+}
+\author[d]{%
+  Kazuhiro Yoshiuchi
+}
+\author[e]{%
+  Takahiro Fukuda
+}
+\affil[a]{Graduate School of Economics, Osaka University}
+\affil[b]{Center for Infectious Disease Education and Research (CiDER), Osaka University}
+\affil[c]{Department of Oncology, Ina Central Hospital}
+\affil[d]{Graduate School of Medicine, Tokyo University}
+\affil[e]{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital}
 \date{Last updated on November 07, 2023}
 
 \begin{document}
 \maketitle
 \begin{abstract}
-Allogeneic hematopoietic stem cell transplants through the Japan Marrow Donor Program take a long time to become available, and only about half of registered patients receive a transplant. This is because much of the transplant coordination is interrupted before the transplant takes place due to the reluctance of registered donors to donate. In collaboration with the Japan Marrow Donor Program, we conduct a field experiment to test an information provision intervention to increase registered donors' willingness to donate. We estimate the effect of information provision using coordination data for 11,049 matched donors. We find that information about the low number of potential donor matches per patient increases willingness to donate by 25\% among men in their 20s. We also find that information that early coordination increases a patient's transplant rate encourages early responses from women in their 20s. These results suggest that providing information affects only certain genders and ages, and in particular encourages behavioral change among younger donors with better transplant outcomes.
+Only half of patients registered with the Japan Marrow Donor Program receive the allogeneic hematopoietic stem cell transplantation because much of the transplant coordination is interrupted due to the reluctance of registered donors to donate. In collaboration with the Japan Marrow Donor Program, we conducted a field experiment to test an information provision intervention to increase registered donors' willingness to donate. We find that information about the low number of potential donor matches per patient increases willingness to donate by 25\% among men in their 20s. We also find that information that early coordination increases a patient's transplant rate encourages early responses from women in their 20s. These results suggest that providing information affects only certain genders and ages, and in particular encourages behavioral change among younger donors with better transplant outcomes.
+\vskip\baselineskip
+\noindent
+\textit{JEL classification}: D64, D90, H41, I11
+\vskip\baselineskip
+\noindent
+\textit{Keywords}: Japan Marrow Donor Program, field experiment, text message, information provision, free-riding, present bias
 \end{abstract}
+
+
 
 \hypertarget{intro}{%
 \section{Introduction}\label{intro}}
@@ -366,20 +353,20 @@ For other genders and ages, the message effects are heterogeneous. For example, 
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6} \cmidrule(l{3pt}r{3pt}){7-7} \cmidrule(l{3pt}r{3pt}){8-8} \cmidrule(l{3pt}r{3pt}){9-9}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\
 \midrule
-(Intercept) & \num{-0.040}*** & \num{0.007}*** & \num{-0.018}*** & \num{0.014}*** & \num{-0.037}*** & \num{0.007}*** & \num{0.002} & \num{0.010}***\\
+(Intercept) & \num{-0.036}*** & \num{0.007}*** & \num{-0.015}*** & \num{0.014}*** & \num{-0.033}*** & \num{0.007}*** & \num{0.007}*** & \num{0.009}***\\
  & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001})\\
-(B + C) & \num{0.367}*** & \num{0.360}*** & \num{0.389}*** & \num{0.403}*** &  &  &  & \\
- & (\num{0.020}) & (\num{0.008}) & (\num{0.020}) & (\num{0.007}) &  &  &  \vphantom{1} & \\
-B &  &  &  &  & \num{0.067}* & \num{0.391}*** & \num{-0.023} & \num{0.608}***\\
- &  &  &  &  & (\num{0.037}) & (\num{0.014}) & (\num{0.028}) & (\num{0.015})\\
-C &  &  &  &  & \num{0.716}*** & \num{0.331}*** & \num{0.925}*** & \num{0.271}***\\
- &  &  &  &  & (\num{0.036}) & (\num{0.013}) & (\num{0.031}) & (\num{0.011})\\
+(B + C) & \num{0.290}*** & \num{0.357}*** & \num{0.364}*** & \num{0.422}*** &  &  &  & \\
+ & (\num{0.021}) & (\num{0.007}) & (\num{0.018}) & (\num{0.007}) &  &  &  \vphantom{1} & \\
+B &  &  &  &  & \num{0.005} & \num{0.363}*** & \num{-0.087}*** & \num{0.637}***\\
+ &  &  &  &  & (\num{0.037}) & (\num{0.014}) & (\num{0.027}) & (\num{0.015})\\
+C &  &  &  &  & \num{0.651}*** & \num{0.351}*** & \num{0.974}*** & \num{0.281}***\\
+ &  &  &  &  & (\num{0.039}) & (\num{0.012}) & (\num{0.031}) & (\num{0.011})\\
 \addlinespace[0.3em]
 \multicolumn{9}{l}{\textit{Linear combination test (F-test)}}\\
-\hspace{1em}(B + C) - 1 & \num{-0.633}*** & \num{-0.640}*** & \num{-0.611}*** & \num{-0.597}*** &  &  &  & \\
-\hspace{1em} & (\num{0.020}) & (\num{0.008}) & (\num{0.020}) & (\num{0.007}) &  &  &  & \\
-\hspace{1em}B - C &  &  &  &  & \num{-0.649}*** & \num{0.060}*** & \num{-0.948}*** & \num{0.337}***\\
-\hspace{1em} &  &  &  &  & (\num{0.063}) & (\num{0.022}) & (\num{0.047}) & (\num{0.021})\\
+\hspace{1em}(B + C) - 1 & \num{-0.710}*** & \num{-0.643}*** & \num{-0.636}*** & \num{-0.578}*** &  &  &  & \\
+\hspace{1em} & (\num{0.021}) & (\num{0.007}) & (\num{0.018}) & (\num{0.007}) &  &  &  & \\
+\hspace{1em}B - C &  &  &  &  & \num{-0.646}*** & \num{0.012} & \num{-1.061}*** & \num{0.356}***\\
+\hspace{1em} &  &  &  &  & (\num{0.066}) & (\num{0.022}) & (\num{0.047}) & (\num{0.021})\\
 \midrule
 Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333} & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
 \bottomrule
@@ -575,12 +562,12 @@ Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439}
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
  & (1) & (2) & (3) & (4)\\
 \midrule
-B & -0.0071 & -0.0091 & 0.1277*** & 0.0220\\
- & (0.0476) & (0.0285) & (0.0396) & (0.0213)\\
-C & 0.0394 & -0.0137 & 0.0470 & -0.0100\\
- & (0.0479) & (0.0297) & (0.0408) & (0.0226)\\
-D & -0.0559 & 0.0096 & 0.0453 & 0.0242\\
- & (0.0480) & (0.0290) & (0.0400) & (0.0220)\\
+B & -0.0106 & -0.0109 & 0.1184*** & 0.0180\\
+ & (0.0473) & (0.0287) & (0.0401) & (0.0214)\\
+C & 0.0414 & -0.0143 & 0.0406 & -0.0109\\
+ & (0.0478) & (0.0298) & (0.0411) & (0.0226)\\
+D & -0.0614 & 0.0085 & 0.0397 & 0.0217\\
+ & (0.0478) & (0.0291) & (0.0397) & (0.0219)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -604,11 +591,11 @@ D & -0.0559 & 0.0096 & 0.0453 & 0.0242\\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 35.682 & 37.511 & < 0.001\\
-Number of past coordinations & 1.657 & 2.585 & < 0.001\\
-Number of listed hospitals & 0.397 & 1.422 & < 0.001\\
+Age & 35.683 & 37.489 & < 0.001\\
+Number of past coordinations & 1.659 & 2.553 & < 0.001\\
+Number of listed hospitals & 0.397 & 1.421 & < 0.001\\
 Number of hospitals listed with PBSC collection & 0.134 & 0.485 & < 0.001\\
-Number of hospitals listed with BM collection & 0.199 & 0.843 & < 0.001\\
+Number of hospitals listed with BM collection & 0.200 & 0.842 & < 0.001\\
 N & 9101 & 1948 & \\
 \bottomrule
 \end{tabular}
@@ -633,11 +620,11 @@ N & 9101 & 1948 & \\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 48.633 & 49.942 & < 0.001\\
-Number of past coordinations & 1.729 & 1.901 & 0.003\\
-Number of listed hospitals & 0.558 & 0.405 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.185 & 0.139 & < 0.001\\
-Number of hospitals listed with BM collection & 0.311 & 0.192 & < 0.001\\
+Age & 48.634 & 49.961 & < 0.001\\
+Number of past coordinations & 1.777 & 1.875 & 0.086\\
+Number of listed hospitals & 0.566 & 0.398 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.192 & 0.134 & < 0.001\\
+Number of hospitals listed with BM collection & 0.317 & 0.187 & < 0.001\\
 N & 9054 & 1995 & \\
 \bottomrule
 \end{tabular}
@@ -662,11 +649,11 @@ N & 9054 & 1995 & \\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 48.565 & 50.072 & < 0.001\\
-Number of past coordinations & 1.640 & 1.548 & 0.155\\
-Number of listed hospitals & 0.550 & 0.425 & 0.002\\
-Number of hospitals listed with PBSC collection & 0.164 & 0.160 & 0.772\\
-Number of hospitals listed with BM collection & 0.294 & 0.216 & 0.001\\
+Age & 48.554 & 50.055 & < 0.001\\
+Number of past coordinations & 1.644 & 1.548 & 0.140\\
+Number of listed hospitals & 0.563 & 0.419 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.168 & 0.157 & 0.462\\
+Number of hospitals listed with BM collection & 0.302 & 0.213 & < 0.001\\
 N & 9993 & 1056 & \\
 \bottomrule
 \end{tabular}
@@ -678,7 +665,10 @@ N & 9993 & 1056 & \\
 
 \clearpage
 
-\renewcommand\refname{References}
-  \bibliography{biblio.bib}
+\clearpage
+
+\bibliography{biblio.bib}
+
+
 
 \end{document}

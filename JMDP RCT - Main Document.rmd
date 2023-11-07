@@ -5,28 +5,50 @@ title: |
 thanks: |
   In conducting this study, we would like to thank the Japan Marrow Donor Program Office for managing of the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: XXXXXXXX) and the Japan Marrow Donor Program (approval number: XXXXXXXXX). This research is financially supported by the Japan Society for the Promotion of Science [grant number: 20H05632 (F., Ohtake and H., Kato)].
 abstract: |
-  Allogeneic hematopoietic stem cell transplants through the Japan Marrow Donor Program take a long time to become available, and only about half of registered patients receive a transplant. This is because much of the transplant coordination is interrupted before the transplant takes place due to the reluctance of registered donors to donate. In collaboration with the Japan Marrow Donor Program, we conduct a field experiment to test an information provision intervention to increase registered donors' willingness to donate. We estimate the effect of information provision using coordination data for 11,049 matched donors. We find that information about the low number of potential donor matches per patient increases willingness to donate by 25% among men in their 20s. We also find that information that early coordination increases a patient's transplant rate encourages early responses from women in their 20s. These results suggest that providing information affects only certain genders and ages, and in particular encourages behavioral change among younger donors with better transplant outcomes.
+  Only half of patients registered with the Japan Marrow Donor Program receive the allogeneic hematopoietic stem cell transplantation because much of the transplant coordination is interrupted due to the reluctance of registered donors to donate. In collaboration with the Japan Marrow Donor Program, we conducted a field experiment to test an information provision intervention to increase registered donors' willingness to donate. We find that information about the low number of potential donor matches per patient increases willingness to donate by 25% among men in their 20s. We also find that information that early coordination increases a patient's transplant rate encourages early responses from women in their 20s. These results suggest that providing information affects only certain genders and ages, and in particular encourages behavioral change among younger donors with better transplant outcomes.
+  \vskip\baselineskip
+  \noindent
+  \textit{JEL classification}: D64, D90, H41, I11 
+  \vskip\baselineskip
+  \noindent
+  \textit{Keywords}: Japan Marrow Donor Program, field experiment, text message, information provision, free-riding, present bias
 author:
-  - Hiroki Kato^[Hitostubashi Institute for Advanced Study, Hitotsubashi University, Tokyo, Japan.]
-  - Fumio Ohtake^[Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan.]
-  - Saiko Kurosawa^[Department of Oncology, Ina Central Hospital, Nagano, Japan.]
-  - Kazuhiro Yoshiuchi^[Graduate School of Medicine, Tokyo University, Tokyo, Japan.]
-  - Takahiro Fukuda^[Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan.]
+  - name: Hiroki Kato
+    affil-id: a
+    note: "Present Address: 2-1 Naka, Kunitachi, Tokyo 186-8601, Japan (Hitotsubashi Institute for Advanced Study, Hitotsubashi University). E-mail address: hkato.econ@r.hit-u.ac.jp"
+  - name: Fumio Ohtake
+    affil-id: b
+  - name: Saiko Kurosawa
+    affil-id: c
+  - name: Kazuhiro Yoshiuchi
+    affil-id: d
+  - name: Takahiro Fukuda
+    affil-id: e
+affiliations:
+  - id: a
+    name: Graduate School of Economics, Osaka University
+  - id: b
+    name: Center for Infectious Disease Education and Research (CiDER), Osaka University
+  - id: c
+    name: Department of Oncology, Ina Central Hospital
+  - id: d
+    name: Graduate School of Medicine, Tokyo University
+  - id: e
+    name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital
 date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
 bibliography: biblio.bib
 biblio-style: agsm
 output:
   bookdown::pdf_document2:
     latex_engine: lualatex
+    template: template/my-template.tex
     keep_tex: true
     toc: false
     number_sections: true
     citation_package: natbib
+base-strech: 1.5
 header-includes:
-  - \usepackage{setspace}
-  - \renewcommand{\baselinestretch}{1.5}
-  - \usepackage{threeparttable}
-  - \usepackage{here}
+  - \renewcommand\Affilfont{\itshape\small}
 params:
   is_fe: TRUE
   is_cluster: FALSE
