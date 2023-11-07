@@ -45,7 +45,8 @@ RCF <- R6::R6Class("RCF",
         stat_smooth(se = FALSE, color = "blue") +
         facet_grid(treat ~ male) +
         labs(x = "Age", y = "Predicted treatment effect") +
-        my_theme_classic(strip_hjust = 0.5)
+        my_theme_classic(strip_hjust = 0.5) +
+        theme(strip.text.y.right = element_text(angle = 0))
     },
     cate = function(...) {
       cond <- private$list_subset(...)
