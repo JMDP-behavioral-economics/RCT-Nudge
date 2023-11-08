@@ -66,7 +66,7 @@
 
 % ------------------------------ paper information
 \title{Only You:
-A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program\thanks{In conducting this study, we would like to thank the Japan Marrow Donor Program Office for managing of the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: XXXXXXXX) and the Japan Marrow Donor Program (approval number: XXXXXXXXX). This research is financially supported by the Japan Society for the Promotion of Science {[}grant number: 20H05632 (F., Ohtake and H., Kato){]}.}}
+A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program\thanks{In conducting this study, we would like to thank the Japan Marrow Donor Program Office for managing of the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: R030305) and the Japan Marrow Donor Program (approval number: JMDP2021-04). This research is financially supported by the Japan Society for the Promotion of Science {[}grant number: 20H05632 (F., Ohtake and H., Kato){]} and the Ministory of Health, Labour and Welfare {[}grant number: 19FF1001 (F. Ohtake, S., Kurosawa, and T.Fukuda){]}.}}
 \author[a]{%
   Hiroki Kato\thanks{Present Address: 2-1 Naka, Kunitachi, Tokyo 186-8601, Japan (Hitotsubashi Institute for Advanced Study, Hitotsubashi University). E-mail address: \href{mailto:hkato.econ@r.hit-u.ac.jp}{\nolinkurl{hkato.econ@r.hit-u.ac.jp}}}
 }
@@ -87,7 +87,7 @@ A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor 
 \affil[c]{Department of Oncology, Ina Central Hospital}
 \affil[d]{Graduate School of Medicine, Tokyo University}
 \affil[e]{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital}
-\date{Last updated on November 07, 2023}
+\date{Last updated on 11月 08, 2023}
 
 \begin{document}
 \maketitle
@@ -204,7 +204,7 @@ Week 4 & C & A & D & B & A & D\\
 \end{threeparttable}
 \end{table}
 
-Participants in the experiment were 11,154 matched donors who received the compatibility notice between September 2021 and February 2022. To maintain randomness to the best of the JMDP office's ability, we assigned experimental arms by cluster randomization on a weekly basis. We designed the experimental arms to be balanced across weeks and months as much as possible. Table \ref{tab:assignment} summarizes the assignment schedule. Before having conducted the experiment, we obtained approval from the institutional review board of the Graduate School of Economics, Osaka University (approval number: XXXXXXXX), and the JMDP (approval number: XXXXXXXX).
+Participants in the experiment were 11,154 matched donors who received the compatibility notice between September 2021 and February 2022. To maintain randomness to the best of the JMDP office's ability, we assigned experimental arms by cluster randomization on a weekly basis. We designed the experimental arms to be balanced across weeks and months as much as possible. Table \ref{tab:assignment} summarizes the assignment schedule. Before having conducted the experiment, we obtained approval from the institutional review board of the Graduate School of Economics, Osaka University (approval number: R030305) and the JMDP (approval number: JMDP2021-04).
 
 \hypertarget{data-and-empirical-strategy}{%
 \subsection{Data and Empirical Strategy}\label{data-and-empirical-strategy}}
@@ -310,7 +310,7 @@ Num.Obs. & \num{10985} & \num{10985} & \num{10985} & \num{10985} & \num{10985} &
 Table \ref{tab:reg-stock} presents the estimation results of the linear probability model. The odd columns include only the experimental arm dummy as an explanatory variable, corresponding to a simple difference in means. The even columns control for individual attribute, month and week fixed effects in addition to the experimental arm dummies. The estimated results show that all experimental arms, with and without covariates, have no statistically significant effects on responses and intentions. As an alternative method, we estimate a logit model (Table \ref{tab:logit-stock} in the Appendix) and obtain similar results (95\% confidence intervals for odds ratios include 1).
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/coefplot-reg-stock-subset-1} \caption{Effect on Reply and Intentions by Gender and Age Group. Notes: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month and week dummies.}\label{fig:coefplot-reg-stock-subset}
+\includegraphics{JMDPRC~1/figure-latex/coefplot-reg-stock-subset-1} \caption{Effect on Reply and Intentions by Gender and Age Group. Notes: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month and week dummies.}\label{fig:coefplot-reg-stock-subset}
 \end{figure}
 
 Next, to test for heterogeneity in the message effects, we divide the sample into four subsets by gender and age group (under 30 or not) and estimate the message effects in each subset. Figure \ref{fig:coefplot-reg-stock-subset} shows the coefficient plots. The results show that experimental arms B and D, which include the Probability message, increase the response rate of men in their 20s by about 6 percentage points (\(8.06\)\% increase, since the control mean is \(74.4\)\%), which is statistically significant at the 5\% level. In particular, experimental arm B, to which only the Probability message was added, increases responses with positive intentions by about 10 percentage points (\(25.91\)\% increase, since the control mean is \(38.6\)\%), which is also statistically significant. However, for the other gender and age groups, treatment messages have no statistically significant effect on responses and intentions.
@@ -329,7 +329,7 @@ The disadvantage of the regression tree algorithm is that the variance of the pr
 Roughly speaking, RCF predicts treatment effect from observed characteristics. In other words, it can predict treatment effects based on individual characteristics, even for individuals who did not receive the intervention. This method must assume that treatment assignment is conditionally independent of the potential outcome variable. Since the experimental arm is approximately randomly assigned, we can use this method. In this subsection, we focus on the effect on responses with intentions. The covariates used in the RCF are gender, age, past coordination experience, and the density of hospitals in the area of residence.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/boxplot-rcf-int-1} \caption{Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.}\label{fig:boxplot-rcf-int}
+\includegraphics{JMDPRC~1/figure-latex/boxplot-rcf-int-1} \caption{Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers and number of hospitals with BM collection per 10 square kilometers.}\label{fig:boxplot-rcf-int}
 \end{figure}
 
 Figure \ref{fig:boxplot-rcf-int} plots the distribution of predicted treatment effects for each experimental arm by age. Notably, the effect of experimental arm B is positive for all males under the age of 25. As a result, the RCF shows that the average effect of experimental arm B for men in their 20s is \(12.1\) percentage points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \ref{fig:coefplot-reg-stock-subset} (see Table \ref{tab:rcf-int-cate} in the Appendix).
@@ -352,20 +352,20 @@ For other genders and ages, the message effects are heterogeneous. For example, 
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6} \cmidrule(l{3pt}r{3pt}){7-7} \cmidrule(l{3pt}r{3pt}){8-8} \cmidrule(l{3pt}r{3pt}){9-9}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\
 \midrule
-(Intercept) & \num{-0.036}*** & \num{0.007}*** & \num{-0.017}*** & \num{0.013}*** & \num{-0.032}*** & \num{0.006}*** & \num{0.002} & \num{0.008}***\\
+(Intercept) & \num{-0.037}*** & \num{0.006}*** & \num{-0.017}*** & \num{0.013}*** & \num{-0.034}*** & \num{0.006}*** & \num{0.004}* & \num{0.008}***\\
  & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001})\\
-(B + C) & \num{0.337}*** & \num{0.354}*** & \num{0.376}*** & \num{0.410}*** &  &  &  & \\
- & (\num{0.022}) & (\num{0.008}) & (\num{0.019}) & (\num{0.007}) &  &  &  \vphantom{1} & \\
-B &  &  &  &  & \num{-0.029} & \num{0.397}*** & \num{-0.047}* & \num{0.616}***\\
- &  &  &  &  & (\num{0.039}) & (\num{0.014}) & (\num{0.028}) & (\num{0.016})\\
-C &  &  &  &  & \num{0.741}*** & \num{0.318}*** & \num{0.947}*** & \num{0.277}***\\
- &  &  &  &  & (\num{0.037}) & (\num{0.012}) & (\num{0.030}) & (\num{0.011})\\
+(B + C) & \num{0.290}*** & \num{0.364}*** & \num{0.355}*** & \num{0.425}*** &  &  &  & \\
+ & (\num{0.020}) & (\num{0.007}) & (\num{0.019}) & (\num{0.007}) &  &  &  \vphantom{1} & \\
+B &  &  &  &  & \num{-0.013} & \num{0.410}*** & \num{-0.070}** & \num{0.655}***\\
+ &  &  &  &  & (\num{0.034}) & (\num{0.014}) & (\num{0.028}) & (\num{0.015})\\
+C &  &  &  &  & \num{0.677}*** & \num{0.323}*** & \num{0.921}*** & \num{0.272}***\\
+ &  &  &  &  & (\num{0.038}) & (\num{0.013}) & (\num{0.033}) & (\num{0.011})\\
 \addlinespace[0.3em]
 \multicolumn{9}{l}{\textit{Linear combination test (F-test)}}\\
-\hspace{1em}(B + C) - 1 & \num{-0.663}*** & \num{-0.646}*** & \num{-0.624}*** & \num{-0.590}*** &  &  &  & \\
-\hspace{1em} & (\num{0.022}) & (\num{0.008}) & (\num{0.019}) & (\num{0.007}) &  &  &  & \\
-\hspace{1em}B - C &  &  &  &  & \num{-0.770}*** & \num{0.079}*** & \num{-0.994}*** & \num{0.339}***\\
-\hspace{1em} &  &  &  &  & (\num{0.066}) & (\num{0.022}) & (\num{0.047}) & (\num{0.022})\\
+\hspace{1em}(B + C) - 1 & \num{-0.710}*** & \num{-0.636}*** & \num{-0.645}*** & \num{-0.575}*** &  &  &  & \\
+\hspace{1em} & (\num{0.020}) & (\num{0.007}) & (\num{0.019}) & (\num{0.007}) &  &  &  & \\
+\hspace{1em}B - C &  &  &  &  & \num{-0.690}*** & \num{0.087}*** & \num{-0.991}*** & \num{0.383}***\\
+\hspace{1em} &  &  &  &  & (\num{0.062}) & (\num{0.022}) & (\num{0.050}) & (\num{0.022})\\
 \midrule
 Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333} & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
 \bottomrule
@@ -388,19 +388,19 @@ Interestingly, for men and women over 30, the partial correlations between exper
 \subsection{Response Speed to Notification}\label{reply-speed}}
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Gender and Age Group.}\label{fig:cumulative-response-rate}
+\includegraphics{JMDPRC~1/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Gender and Age Group.}\label{fig:cumulative-response-rate}
 \end{figure}
 
 The Early Coordination message provides the fact that early coordination increases a patient's transplant rate. Therefore, this message may encourage early responses to the compatibility notice. Figure \ref{fig:cumulative-response-rate} shows the cumulative response rate for each day of the 40 days after the compatibility notice was sent. Since the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age here and focus on the heterogeneity of the effect on quick responses.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
+\includegraphics{JMDPRC~1/figure-latex/young-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
 \end{figure}
 
 While there are no significant differences in the pattern of cumulative response rates for men and women over 30, there are some notable results for men and women under 30.\footnote{For men and women over 30 years of age, the cumulative response rate for each day differs little between the experimental arms, except for certain periods, and is not statistically significant. See Figure \ref{fig:old-male-flow} and \ref{fig:old-female-flow} in Appendix.} In the group of men in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D begin to increase relative to the controls. As a result, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control (Figure \ref{fig:young-male-flow}).\footnote{In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within \(d\) days as the outcome variable. If the potential donor responded after \(d\) days or did not respond, the outcome variable is 0.} Since the compatibility notice recommends a response within 7 days, a response after 15 days from the mailing of the compatibility notice cannot be considered an early response. Thus, although experimental arms B and D increase the ultimate response rate among men in their 20s, they have no effect on encouraging early responses. This result is natural because the Probability message, the intervention in experimental arms B and D, is not intended to encourage early responses. In addition, the trend in experimental arm C, where only Early Coordination messages are added, is almost the same as the control, so it cannot be said that Early Coordination messages encourage early responses in this group.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
+\includegraphics{JMDPRC~1/figure-latex/young-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at sepcific days. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
 \end{figure}
 
 In the 20s female group, the responses of experimental arms C and D, with the addition of the Early Coordination message, increase compared to the control within four days of sending the compatibility message. As a result, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control (Figure \ref{fig:young-female-flow}). In addition, 10 days after the compatibility notice is sent, the responses of experimental arm C begin to temporarily increase relative to the control, but eventually cease to be statistically significantly different from the cumulative response rate of the control. These results suggest that Early Coordination messages encourage females in their 20s to respond quickly.\footnote{We decompose the effect of message C on responses within four days (early responses) into two parts in terms of intentions and find that it increases positive and negative intentions to the same extent.}
@@ -449,7 +449,7 @@ The effect of experimental arms B and D on the stage after candidate selection i
 In experimental arm B and control group, the number of potential donors who reached confirmatory typing was 774 and 564, respectively. Therefore, experimental arm B would have increased the number of confirmatory typings by 210. The number of potential donors who were not selected as candidates due to patient or donor health reasons was 556 in the experimental arm B and 385 in the control group. This means that experimental arm B has 171 more people who were not selected as candidates for exogenous reasons. Thus, the estimates include not only the effect of our intervention, but also the effect of the demand for stem cell transplants.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/coefplot-reg-subsample-coordination-1} \caption{Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:coefplot-reg-subsample-coordination}
+\includegraphics{JMDPRC~1/figure-latex/coefplot-reg-subsample-coordination-1} \caption{Effect on Coordination by Gender and Age Group. Note: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:coefplot-reg-subsample-coordination}
 \end{figure}
 
 Figure \ref{fig:coefplot-reg-subsample-coordination} divides the sample into four subsets by gender and age group (under 30 or not) and estimates the message effect in each subset. The results show that experimental arm B increases the proportion of men in their 20s who reach confirmatory typing by about 8 percentage points, which is statistically significant. Thus, it is possible that experimental arm B not only increases the willingness of men in their 20s to donate, but also maintains it.
@@ -540,11 +540,11 @@ Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439}
 \end{table}
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/old-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
+\includegraphics{JMDPRC~1/figure-latex/old-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
 \end{figure}
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
+\includegraphics{JMDPRC~1/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses at specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
 \end{figure}
 
 \begin{table}[H]
@@ -561,12 +561,12 @@ Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439}
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
  & (1) & (2) & (3) & (4)\\
 \midrule
-B & -0.0072 & -0.0071 & 0.1206*** & 0.0217\\
- & (0.0471) & (0.0285) & (0.0401) & (0.0213)\\
-C & 0.0488 & -0.0154 & 0.0438 & -0.0082\\
- & (0.0478) & (0.0297) & (0.0409) & (0.0226)\\
-D & -0.0522 & 0.0101 & 0.0424 & 0.0237\\
- & (0.0475) & (0.0291) & (0.0401) & (0.0221)\\
+B & -0.0006 & -0.0090 & 0.1227*** & 0.0215\\
+ & (0.0480) & (0.0286) & (0.0400) & (0.0213)\\
+C & 0.0427 & -0.0148 & 0.0506 & -0.0094\\
+ & (0.0481) & (0.0295) & (0.0409) & (0.0226)\\
+D & -0.0548 & 0.0074 & 0.0498 & 0.0252\\
+ & (0.0483) & (0.0290) & (0.0402) & (0.0220)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -590,11 +590,11 @@ D & -0.0522 & 0.0101 & 0.0424 & 0.0237\\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 35.681 & 37.611 & < 0.001\\
-Number of past coordinations & 1.664 & 2.489 & < 0.001\\
-Number of listed hospitals & 0.400 & 1.395 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.136 & 0.458 & < 0.001\\
-Number of hospitals listed with BM collection & 0.202 & 0.821 & < 0.001\\
+Age & 35.685 & 37.609 & < 0.001\\
+Number of past coordinations & 1.664 & 2.529 & < 0.001\\
+Number of listed hospitals & 0.400 & 1.441 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.136 & 0.473 & < 0.001\\
+Number of hospitals listed with BM collection & 0.202 & 0.848 & < 0.001\\
 N & 9101 & 1948 & \\
 \bottomrule
 \end{tabular}
@@ -619,11 +619,11 @@ N & 9101 & 1948 & \\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 48.691 & 49.912 & < 0.001\\
-Number of past coordinations & 1.770 & 1.878 & 0.063\\
-Number of listed hospitals & 0.568 & 0.400 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.193 & 0.135 & < 0.001\\
-Number of hospitals listed with BM collection & 0.319 & 0.187 & < 0.001\\
+Age & 48.736 & 49.868 & < 0.001\\
+Number of past coordinations & 1.765 & 1.879 & 0.051\\
+Number of listed hospitals & 0.557 & 0.408 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.189 & 0.138 & < 0.001\\
+Number of hospitals listed with BM collection & 0.311 & 0.193 & < 0.001\\
 N & 9054 & 1995 & \\
 \bottomrule
 \end{tabular}
@@ -648,11 +648,11 @@ N & 9054 & 1995 & \\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 48.502 & 50.112 & < 0.001\\
-Number of past coordinations & 1.647 & 1.544 & 0.109\\
-Number of listed hospitals & 0.557 & 0.420 & 0.001\\
-Number of hospitals listed with PBSC collection & 0.166 & 0.158 & 0.571\\
-Number of hospitals listed with BM collection & 0.298 & 0.214 & < 0.001\\
+Age & 48.653 & 49.992 & < 0.001\\
+Number of past coordinations & 1.667 & 1.533 & 0.039\\
+Number of listed hospitals & 0.563 & 0.419 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.168 & 0.157 & 0.472\\
+Number of hospitals listed with BM collection & 0.302 & 0.213 & < 0.001\\
 N & 9993 & 1056 & \\
 \bottomrule
 \end{tabular}
