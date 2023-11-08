@@ -318,9 +318,12 @@ In the control group, approximately 50($=38.6/74.4$)% of males in their 20s who 
 
 ## Random Causal Forest {#rcf}
 
-```{r rcf-int, include=FALSE, cache=TRUE}
-id2 <- which(names(endpoint) == "positive")
-rcf <- rct$rcf(id2)
+```{r rcf-int, include=FALSE}
+library(xfun)
+rcf <- cache_rds({
+  id2 <- which(names(endpoint) == "positive")
+  rct$rcf(id2)
+})
 ```
 
 To explore the heterogeneity of message effects further, we use random causal forests (RCF), which allow us to test the heterogeneous treatment effects in a fully nonparametric way [@Athey2016; @Wager2018]. The method is based on a regression tree algorithm and estimates the average treatment effect conditional on observed characteristics. This method has been used in a variety of contexts, including labor [@Davis2017], education [@Carlana2022], and energy conservation [@Murakami2022].
