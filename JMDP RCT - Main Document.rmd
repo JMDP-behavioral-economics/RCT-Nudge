@@ -292,7 +292,7 @@ stock$
   kable(
     title = "Linear Probability Model of Reply and Intention",
     notes = paste(
-      "Covariates are gender, squared polynomial of age,",
+      "Covariates are gender, (demeaned) age, its squared term,",
       "number of past coordinations,",
       "number of hospitals per 10 square kilometers,",
       "number of hospitals with PBSC collection per 10 square kilometers,",
@@ -438,7 +438,7 @@ coordinate$
   kable(
     title = "Linear Probability Model of Coordination",
     notes = paste(
-      "Covariates are gender, squared polynomial of age,",
+      "Covariates are gender, (demeaned) age, its squared term,",
       "number of past coordinations,",
       "number of hospitals per 10 square kilometers,",
       "number of hospitals with PBSC collection per 10 square kilometers,",
@@ -502,7 +502,7 @@ logit_stock$
   kable(
     title = "Logit Model of Reply and Intention",
     notes = paste(
-      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "Covariates are gender, (demeaned) age, its squared term, number of past coordinations,",
       "number of hospitals per 10 square kilometers,",
       "number of hospitals with PBSC collection per 10 square kilometers,",
       "number of hospitals with BM collection per 10 square kilometers,",
@@ -518,7 +518,7 @@ logit_coordinate$
   kable(
     title = "Logit Model of Coordination",
     notes = paste(
-      "Covariates are gender, squared polynomial of age,",
+      "Covariates are gender, (demeaned) age, its squared term,",
       "number of past coordinations,",
       "number of hospitals per 10 square kilometers,",
       "number of hospitals with PBSC collection per 10 square kilometers,",
