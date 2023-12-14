@@ -85,3 +85,29 @@ rcf <- cache_rds({
 })
 ```
 
+## 一律介入と最適ターゲティングの効果
+
+アウトカム：返信時に提供意向を示したかどうか
+
+```{r}
+tau <- rcf$get_tau()
+tau <- cbind(tau, apply(tau, 1, max))
+colnames(tau) <- c(LETTERS[2:4], "Optimum")
+tau <- data.frame(tau)
+
+tau %>%
+  datasummary(
+    (`Treatment B (uniform)` = B) +
+      (`Treatment C (uniform)` = C) +
+      (`Treatment D (uniform)` = D) +
+      (`Optimum targeting` = Optimum) ~ Mean + SD,
+    data = .,
+    fmt = 4,
+    output = "flextable"
+  ) %>%
+  add_header_row(values = c("", "Predicted treatment effect"), colwidths = c(1, 2)) %>%
+  align(j = -1, align = "center", part = "all") %>%
+  width(j = 1, 2) %>%
+  width(j = -1, 1) %>%
+  ft_theme()
+```
