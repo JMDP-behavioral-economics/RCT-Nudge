@@ -1,0 +1,87 @@
+---
+title: |
+  骨髄バンクドナーコーディネート初期行程におけるコーディネート進行率増加を目指した介入研究
+author:
+  - 大竹文雄（大阪大学）
+  - 加藤大貴（大阪大学）
+  - 黒澤彩子（伊那中央病院）
+  - 吉内一浩（東京大学）
+  - 福田隆浩（国立がん研究センター中央病院）
+data: 2023年度第2回造血細胞移植合同班会議 令和6年1月7日(日)
+output: powerpoint_presentation
+---
+
+
+```{r include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  dev = "pdf",
+  fig.width = 15,
+  fig.height = 8,
+  fig.pos = "t",
+  out.extra = ""
+)
+```
+
+```{r library, include=FALSE}
+library(here)
+source(here("R/R6_RawData.r"))
+
+data_root <- "D:/JMDPフィールド実験"
+```
+
+```{r def-study-sample, include=FALSE}
+rawdt <- RawData$new(
+  here(data_root, "shape.csv"),
+  treat_vars = "treat",
+  treat_levels = LETTERS[1:4]
+)
+
+rawdt$add_cond_study_sample("ongoing == 0")
+```
+
+```{r rct-setup, include=FALSE}
+intervention <- list(
+  "Standard notification" = c(A = "X", B = "X", C = "X", D = "X"),
+  "Probability message" = c(A = "", B = "X", C = "", D = "X"),
+  "Early Coordination message" = c(A = "", B = "", C = "X", D = "X")
+)
+
+endpoint <- list(
+  reply = "Reply",
+  positive = "Positive intention",
+  negative = "Negative intention",
+  test = "CT",
+  candidate = "Candidate",
+  consent = "Consent",
+  donate = "Donation"
+)
+
+covs <- c(
+  "Male (= 1)" = "male",
+  "Age" = "age",
+  "Number of past coordinations" = "coordinate",
+  "Number of listed hospitals" = "hospital_per_area",
+  "Number of hospitals listed with PBSC collection" = "PB_per_area",
+  "Number of hospitals listed with BM collection" = "BM_per_area"
+)
+
+rct <- rawdt$RCT()
+rct$add_intervention(intervention)
+rct$add_outcome(endpoint)
+rct$add_covariate(covs)
+rct$add_fixed_effect(c("month", "week"))
+rct$set_default_se_type("stata")
+```
+
+```{r rcf-int, include=FALSE}
+library(xfun)
+rcf <- cache_rds({
+  id2 <- which(names(endpoint) == "positive")
+  rct$rcf(id2)
+})
+```
+
