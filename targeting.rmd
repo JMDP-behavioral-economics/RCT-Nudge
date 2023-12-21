@@ -112,6 +112,34 @@ tau %>%
   ft_theme()
 ```
 
+## 予測介入効果の分布
+
+```{r dist-targeting-effect}
+tau %>%
+  pivot_longer(everything(), names_to = "policy", values_to = "effect") %>%
+  mutate(
+    policy = factor(
+      policy,
+      levels = c("B", "C", "D", "Optimum"),
+      labels = c(
+        "Treatment B (uniform)",
+        "Treatment C (uniform)",
+        "Treatment D (uniform)",
+        "Optimum targeting"
+      )
+    ),
+    positive = if_else(effect > 0, 1, 0),
+    positive = factor(positive, labels = c("Non-positive effect", "Positive effect"))
+  ) %>%
+  ggplot(aes(x = effect, fill = positive)) +
+    geom_histogram(color = "black") +
+    scale_x_continuous(limits = c(-0.25, 0.25)) +
+    facet_wrap(~ policy, scales = "free_x") +
+    labs(x = "Predicted treatment effect", y = "Count", fill = "") +
+    my_theme_classic() +
+    theme(legend.position = "bottom")
+```
+
 ## 最適ターゲティング別の個人属性の比較
 
 ```{r chacteristics-targeting}
@@ -144,4 +172,29 @@ X %>%
   width(j = 1, 4) %>%
   width(j = -1, 1) %>%
   ft_theme()
+```
+
+## 個人属性の分布
+
+```{r chacteristics-targeting-dist}
+X %>%
+  select(-male) %>%
+  pivot_longer(-optim, names_to = "vars") %>%
+  mutate(vars = factor(
+    vars,
+    levels = c("age", "coordinate", "hospital_per_area", "PB_per_area", "BM_per_area"),
+    labels = c(
+      "Age",
+      "Number of past coordinations",
+      "Number of listed hospitals",
+      "Number of hospitals listed\nwith PBSC collection",
+      "Number of hospitals listed\nwith BM collection"
+    )
+  )) %>%
+  ggplot(aes(x = value, fill = optim)) +
+    geom_histogram() +
+    facet_wrap(~ vars, ncol = 3, scales = "free") +
+    labs(fill = "Optimal treatment") +
+    my_theme_classic() +
+    theme(legend.position = "bottom")
 ```
