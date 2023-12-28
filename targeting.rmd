@@ -91,21 +91,48 @@ rcf <- cache_rds({
 
 ```{r optimum-targeting-effect}
 tau <- rcf$get_tau()
-tau <- cbind(tau, apply(tau, 1, max))
-colnames(tau) <- c(LETTERS[2:4], "Optimum")
+positive_target <- apply(tau, 2, function(x) ifelse(x < 0, 0, x))
+optimum_target <- apply(tau, 1, max)
+tau <- cbind(tau, positive_target, optimum_target)
+colnames(tau) <- c(
+  paste0(LETTERS[2:4], "_Uniform"),
+  paste0(LETTERS[2:4], "_Target"),
+  "Optimum_Target"
+)
+
 tau <- data.frame(tau)
 
 tau %>%
+  pivot_longer(
+    everything(),
+    names_pattern = "(.*)_(.*)",
+    names_to = c("treat", "target")
+  ) %>%
+  mutate(
+    treat = factor(
+      treat,
+      levels = c(LETTERS[2:4], "Optimum"),
+      labels = c(
+        "Treatment B",
+        "Treatment C",
+        "Treatment D",
+        "Optimum targeting"
+      )
+    )
+  ) %>%
   datasummary(
-    (`Treatment B (uniform)` = B) +
-      (`Treatment C (uniform)` = C) +
-      (`Treatment D (uniform)` = D) +
-      (`Optimum targeting` = Optimum) ~ Mean + SD,
+    (` ` = treat) ~  value * target * (Mean + SD),
     data = .,
     fmt = 4,
     output = "flextable"
   ) %>%
-  add_header_row(values = c("", "Predicted treatment effect"), colwidths = c(1, 2)) %>%
+  set_header_labels(
+    "Target / Mean" = "Mean",
+    "Target / SD" = "SD",
+    "Uniform / Mean" = "Mean",
+    "Uniform / SD" = "SD"
+  ) %>%
+  add_header_row(values = c("", "Targeting", "Uniform"), colwidths = c(1, 2, 2)) %>%
   align(j = -1, align = "center", part = "all") %>%
   width(j = 1, 2) %>%
   width(j = -1, 1) %>%
@@ -116,11 +143,12 @@ tau %>%
 
 ```{r dist-targeting-effect}
 tau %>%
+  select(B_Uniform, C_Uniform, D_Uniform, Optimum_Target) %>%
   pivot_longer(everything(), names_to = "policy", values_to = "effect") %>%
   mutate(
     policy = factor(
       policy,
-      levels = c("B", "C", "D", "Optimum"),
+      levels = c("B_Uniform", "C_Uniform", "D_Uniform", "Optimum_Target"),
       labels = c(
         "Treatment B (uniform)",
         "Treatment C (uniform)",
