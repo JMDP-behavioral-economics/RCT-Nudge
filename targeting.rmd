@@ -226,3 +226,53 @@ X %>%
     my_theme_classic() +
     theme(legend.position = "bottom")
 ```
+
+## 単純な分割ルールによる政策効果（最大分割：２）
+
+```{r policy-tree, include=FALSE}
+library(policytree)
+library(DiagrammeRsvg)
+
+Gamma_mat <- double_robust_scores(rcf$get_rcf())
+tree <- cache_rds({
+  train <- sample(nrow(X), 8850)
+  tree <- policy_tree(rcf$get_X()[train, ], Gamma_mat[train, ], depth = 2)
+})
+tree_plot <- plot(tree)
+cat(DiagrammeRsvg::export_svg(tree_plot), file = "policy-tree.svg")
+```
+
+```{r policy-tree-effect}
+tree_optim <- predict(tree, rcf$get_X())
+tau_withA <- cbind(effect_A = 0, rcf$get_tau())
+tree_tau <- numeric(length(tree_optim))
+
+for (i in 1:length(tree_tau)) {
+  tree_tau[i] <- tau_withA[i, tree_optim[i]]
+}
+
+mean(tree_tau)
+```
+
+## 単純な分割ルールによる政策効果（最大分割：３）
+
+```{r hybrid-policy-tree, include=FALSE}
+tree <- cache_rds({
+  train <- sample(nrow(X), 8850)
+  tree <- hybrid_policy_tree(rcf$get_X()[train, ], Gamma_mat[train, ], depth = 3)
+})
+tree_plot <- plot(tree)
+cat(DiagrammeRsvg::export_svg(tree_plot), file = "hybrid-policy-tree.svg")
+```
+
+```{r hybrid-policy-tree-effect}
+tree_optim <- predict(tree, rcf$get_X())
+tau_withA <- cbind(effect_A = 0, rcf$get_tau())
+tree_tau <- numeric(length(tree_optim))
+
+for (i in 1:length(tree_tau)) {
+  tree_tau[i] <- tau_withA[i, tree_optim[i]]
+}
+
+mean(tree_tau)
+```
