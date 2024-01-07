@@ -5,3 +5,92 @@ title: |
 author: Hiroki Kato
 date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
 ---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  dev = "png",
+  fig.width = 15,
+  fig.height = 8,
+  fig.pos = "t",
+  out.extra = ""
+)
+```
+
+```{r library, include=FALSE}
+library(here)
+source(here("R/R6_RawData.r"))
+
+data_root <- "D:/JMDPフィールド実験"
+```
+
+```{r def-study-sample, include=FALSE}
+rawdt <- RawData$new(
+  here(data_root, "shape.csv"),
+  treat_vars = "treat",
+  treat_levels = LETTERS[1:4]
+)
+
+rawdt$add_cond_study_sample("ongoing == 0")
+```
+
+```{r rct-setup, include=FALSE}
+intervention <- list(
+  "Standard notification" = c(A = "X", B = "X", C = "X", D = "X"),
+  "Probability message" = c(A = "", B = "X", C = "", D = "X"),
+  "Early Coordination message" = c(A = "", B = "", C = "X", D = "X")
+)
+
+endpoint <- list(
+  reply = "Reply",
+  positive = "Positive intention",
+  negative = "Negative intention",
+  test = "CT",
+  candidate = "Candidate",
+  consent = "Consent",
+  donate = "Donation"
+)
+
+covs <- c(
+  "Male (= 1)" = "male",
+  "Age" = "age",
+  "Number of past coordinations" = "coordinate",
+  "Number of listed hospitals" = "hospital_per_area",
+  "Number of hospitals listed with PBSC collection" = "PB_per_area",
+  "Number of hospitals listed with BM collection" = "BM_per_area"
+)
+
+rct <- rawdt$RCT()
+rct$add_intervention(intervention)
+rct$add_outcome(endpoint)
+rct$add_covariate(covs)
+rct$add_fixed_effect(c("month", "week"))
+rct$set_default_se_type("stata")
+```
+
+```{r rcf-ct, include=FALSE}
+rcf <- rct$rcf("test")
+```
+
+## Boxplot
+
+```{r rcf-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age and Gender"}
+rcf$subset_boxplot()
+```
+
+## CATE
+
+```{r rcf-cate}
+rcf$
+  cate(age < 30, male == 0)$
+  kable(
+  label = list(
+    c("30 < Age", "Age < 30"),
+    c("Male", "Female")
+  ),
+  title = "Conditional Average Treatment Effect Estimated by RCF"
+)
+```
