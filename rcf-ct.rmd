@@ -1,0 +1,7 @@
+---
+title: |
+  Random causal forest:
+  Effect on Confirmatory Typing
+author: Hiroki Kato
+date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
+---
