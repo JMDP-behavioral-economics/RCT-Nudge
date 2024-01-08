@@ -32,3 +32,9 @@ tidy_custom.glm <- function(x, ...) {
 
   tbl
 }
+
+# * Standard errors
+se <- function(x, na.rm = FALSE) {
+  if (na.rm) x <- na.omit(x)
+  sqrt(var(x) / length(x))
+}
