@@ -198,6 +198,21 @@ RCF <- R6::R6Class("RCF",
         select(-var)
       
       EffectCharacteristics$new(tbl)
+    },
+    targeting = function() {
+      tau <- private$tau
+      positive_target <- apply(tau, 2, function(x) ifelse(x < 0, 0, x))
+      optimum_target <- apply(tau, 1, max)
+      cbind_tau <- cbind(tau, positive_target, optimum_target)
+
+      labels <- str_remove(colnames(tau), "effect_")
+      colnames(cbind_tau) <- c(
+        paste0(labels, "_Uniform"),
+        paste0(labels, "_Target"),
+        "Optimum_Target"
+      )
+
+      Targeting$new(data.frame(cbind_tau))
     }
   ),
   private = list(
@@ -618,4 +633,123 @@ EffectCharacteristics <- R6::R6Class("EffectCharacteristics",
     }
   ),
   private = list()
+)
+
+Targeting <- R6::R6Class("Targeting",
+  public = list(
+    initialize = function(data) {
+      private$data <- data
+
+      summarize_tau <- data %>%
+        pivot_longer(
+          everything(),
+          names_pattern = "(.*)_(.*)",
+          names_to = c("treat", "target")
+        ) %>%
+        group_by(treat, target) %>%
+        summarize(
+          mean = mean(value),
+          sd = sd(value)
+        ) %>%
+        ungroup() %>%
+        pivot_wider(
+          names_from = target,
+          names_glue = "{target}_{.value}",
+          values_from = c(mean, sd)
+        ) %>%
+        select(treat, starts_with("Uniform"), starts_with("Target"))
+
+      private$table <- summarize_tau
+    },
+    get_data = function() private$data,
+    get_table = function() private$table,
+    flextable = function( title = "",
+                          notes = "",
+                          font_size = 9) {
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      private$table %>%
+        flextable() %>%
+        set_caption(title) %>%
+        set_header_labels(
+          "Uniform_mean" = "Mean",
+          "Uniform_sd" = "S.D.",
+          "Target_mean" = "Mean",
+          "Target_sd" = "S.D."
+        ) %>%
+        add_header_row(values = c("", "Uniform", "Targeting"), colwidths = c(1, 2, 2)) %>%
+        colformat_double(digits = 4) %>%
+        align(j = -1, align = "center", part = "all") %>%
+        width(j = 1, 2) %>%
+        width(j = -1, 1) %>%
+        add_footer_lines(notes) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+    },
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      hold = FALSE) {
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      kbl <- private$table %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", rep(c("Mean", "S.D."), 2)),
+          align = "lcccc",
+          digits = 4,
+          booktabs = TRUE,
+          linesep = ""
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size)
+      }
+
+      kbl %>%
+        add_header_above(c(" ", "Uniform" = 2, "Targeting" = 2)) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = notes,
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    },
+    hist = function() {
+      dt <- private$data
+      dt2 <- dt[str_detect(colnames(dt), "Uniform|Optimum")]
+      labels <- sapply(colnames(dt2), function(x) {
+        ifelse(
+          str_detect(x, "Uniform"),
+          paste("Treatment", str_split_1(x, "_")[1], "(uniform)"),
+          "Optimum targeting"
+        )
+      })
+      levels <- names(labels)
+
+      dt2 %>%
+        pivot_longer(everything(), names_to = "policy", values_to = "effect") %>%
+        mutate(
+          policy = factor(policy, levels = levels, labels = labels),
+          positive = if_else(effect > 0, 1, 0),
+          positive = factor(positive, labels = c("Non-positive effect", "Positive effect"))
+        ) %>%
+        ggplot(aes(x = effect, fill = positive)) +
+          geom_histogram(color = "black") +
+          scale_x_continuous(limits = c(-0.25, 0.25)) +
+          scale_fill_manual(values = c("white", "grey80")) +
+          facet_wrap(~policy, scales = "free_x") +
+          labs(x = "Predicted treatment effect", y = "Count", fill = "") +
+          my_theme_classic() +
+          theme(legend.position = "bottom")
+    }
+  ),
+  private = list(
+    data = NULL,
+    table = NULL
+  )
 )
