@@ -84,19 +84,20 @@ RCT <- R6Class("RCT",
       if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
       Logit$new(use, private$covariate, private$fe)
     },
-    rcf = function(outcome_id) {
+    rcf = function(outcome) {
       if (length(private$covariate) == 0) stop("Specify covariate by add_covariate()")
-      if (length(outcome_id) > 1) stop("Specify only one outcome")
+      if (length(outcome) > 1) stop("Specify only one outcome")
 
-      model <- reformulate(
-        c("treat", private$covariate),
-        names(private$outcome)[outcome_id]
-      )
-      mat <- model.frame(model, data = self$data)
+      dt <- private$create_analysis_data()
+      outcome_id <- which(names(private$outcome) == outcome)
+      use <- private$subset_by_outcome(dt, outcome_id)
+
+      model <- reformulate(c("treat", private$covariate), "value")
+      mat <- model.frame(model, data = use)
 
       Y <- mat[, 1, drop = TRUE]
       D <- mat[, 2, drop = TRUE]
-      X <- as.matrix(mat[, covs])
+      X <- as.matrix(mat[, private$covariate])
 
       RCF$new(Y, D, X, private$covariate)
     },
