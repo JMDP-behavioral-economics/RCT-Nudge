@@ -196,7 +196,7 @@ RCF <- R6::R6Class("RCF",
         dplyr::left_join(cov_label, by = "var") %>%
         select(label, everything()) %>%
         select(-var)
-      
+
       EffectCharacteristics$new(tbl)
     },
     targeting = function() {
@@ -211,8 +211,13 @@ RCF <- R6::R6Class("RCF",
         paste0(labels, "_Target"),
         "Optimum_Target"
       )
+      cbind_tau <- data.frame(cbind_tau)
 
-      Targeting$new(data.frame(cbind_tau))
+      X <- data.frame(private$X)
+      optim_treat <- apply(tau, 1, which.max)
+      X$optim <- labels[optim_treat]
+
+      Targeting$new(cbind_tau, X, private$X_label)
     }
   ),
   private = list(
@@ -637,8 +642,10 @@ EffectCharacteristics <- R6::R6Class("EffectCharacteristics",
 
 Targeting <- R6::R6Class("Targeting",
   public = list(
-    initialize = function(data) {
-      private$data <- data
+    initialize = function(data, X, X_label) {
+      private$X <- X
+      private$X_label <- X_label
+      private$tau <- data
 
       summarize_tau <- data %>%
         pivot_longer(
@@ -661,7 +668,8 @@ Targeting <- R6::R6Class("Targeting",
 
       private$table <- summarize_tau
     },
-    get_data = function() private$data,
+    get_X = function() private$X,
+    get_tau = function() private$tau,
     get_table = function() private$table,
     flextable = function( title = "",
                           notes = "",
@@ -720,7 +728,7 @@ Targeting <- R6::R6Class("Targeting",
         )
     },
     hist = function() {
-      dt <- private$data
+      dt <- private$tau
       dt2 <- dt[str_detect(colnames(dt), "Uniform|Optimum")]
       labels <- sapply(colnames(dt2), function(x) {
         ifelse(
@@ -746,10 +754,100 @@ Targeting <- R6::R6Class("Targeting",
           labs(x = "Predicted treatment effect", y = "Count", fill = "") +
           my_theme_classic() +
           theme(legend.position = "bottom")
+    },
+    summarize_X = function() {
+      summarize_mean <- private$X %>%
+        group_by(optim) %>%
+        summarize_all(mean) %>%
+        pivot_longer(-optim, names_to = "vars") %>%
+        mutate(value = sprintf("%1.2f", value)) %>%
+        pivot_wider(names_from = optim) %>%
+        mutate(vars = factor(
+          vars,
+          levels = private$X_label,
+          labels = names(private$X_label)
+        ))
+
+      summarize_n <- table(private$X$optim) %>%
+        data.frame() %>%
+        mutate(Freq = sprintf("%1d", Freq)) %>%
+        pivot_wider(names_from = Var1, values_from = Freq)
+
+      summarize_tab <- summarize_mean %>%
+        bind_rows(bind_cols(vars = "N", summarize_n))
+
+      SummaryX$new(summarize_tab)
     }
   ),
   private = list(
-    data = NULL,
+    X = NULL,
+    tau = NULL,
+    table = NULL,
+    X_label = NULL
+  )
+)
+
+SummaryX <- R6::R6Class("SummaryX",
+  public = list(
+    initialize = function(table) private$table <- table,
+    get_table = function() private$table,
+    flextable = function( title = "",
+                          notes = "",
+                          font_size = 9) {
+      header <- as.list(c("", colnames(private$table)[-1]))
+      names(header) <- colnames(private$table)
+
+      n_treats <- ncol(private$table) - 1
+
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      private$table %>%
+        flextable() %>%
+        set_caption(title) %>%
+        set_header_labels(values = header) %>%
+        add_header_row(values = c("", "Optimal treatment"), colwidths = c(1, n_treats)) %>%
+        align(j = -1, align = "center", part = "all") %>%
+        width(j = 1, 4) %>%
+        width(j = -1, 1) %>%
+        add_footer_lines(notes) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+    },
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      hold = FALSE) {
+      n_treats <- ncol(private$table) - 1
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      kbl <- private$table %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", colnames(private$table)[-1]),
+          align = paste0(c("l", rep("c", n_treats)), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size)
+      }
+
+      kbl %>%
+        add_header_above(c(" ", "Optimal treatment" = n_treats)) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = notes,
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
+  ),
+  private = list(
     table = NULL
   )
 )
