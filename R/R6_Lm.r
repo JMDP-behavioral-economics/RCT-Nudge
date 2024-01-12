@@ -360,21 +360,22 @@ LmSubset <- R6::R6Class("LmSubset",
           pos = paste0(male, age_less30),
           pos = factor(
             pos,
-            levels = c("01", "00", "11", "10"),
-            labels = c(
-              "Female\u00d7\nAge<30",
-              "Female\u00d7\n30\u2264Age",
-              "Male\u00d7\nAge<30",
-              "Male\u00d7\n30\u2264Age"
-            )
+            levels = c("01", "00", "11", "10")
           ),
           term = str_remove(term, "treat")
         )
-      
+
       text <- plotdt %>%
         select(male, age_less30, pos, N, avg) %>%
         distinct()
-      
+
+      xlabels <- expression(
+        "Female" %*% "Age" < "30",
+        "Female" %*% "30" <= "Age",
+        "Male" %*% "Age" < "30",
+        "Male" %*% "30" <= "Age"
+      )
+
       plot_list <- unique(plotdt$outcome) %>%
         purrr::map(function(x) {
           subset(plotdt, outcome == x) %>%
@@ -399,6 +400,7 @@ LmSubset <- R6::R6Class("LmSubset",
               data = subset(text, outcome == x),
               color = "black"
             ) +
+            scale_x_discrete(breaks = c("01", "00", "11", "10"), labels = xlabels) +
             scale_y_continuous(breaks = axis_y$breaks, limits = axis_y$limits) +
             labs(
               title = paste("Outcome:", x),

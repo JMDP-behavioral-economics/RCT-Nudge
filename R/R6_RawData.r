@@ -3,6 +3,7 @@ library(R6)
 library(tidyverse)
 library(rlang)
 library(estimatr)
+library(car)
 source(here("R/R6_RCT.r"))
 
 RawData <- R6::R6Class("RawData",

@@ -145,7 +145,7 @@ RCF <- R6::R6Class("RCF",
         pivot_longer(-positive_effect, names_to = "var") %>%
         pivot_wider(values_from = value, names_from = positive_effect) %>%
         mutate_at(vars(`FALSE`, `TRUE`), list(~sprintf("%1.3f", .)))
-      
+
       args <- list(data = dt, se_type = "stata")
 
       p <- sapply(useX, function(y) {
@@ -295,7 +295,7 @@ RCFCate <- R6::R6Class("RCFCate",
           booktabs = TRUE,
           linesep = ""
         )
-      
+
       if (hold) {
         kbl <- kbl %>%
           kableExtra::kable_styling(
@@ -304,9 +304,9 @@ RCFCate <- R6::R6Class("RCFCate",
           )
       } else {
         kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size)        
+          kableExtra::kable_styling(font_size = font_size)
       }
-      
+
       if (!missing(label)) {
         names(label) <- paste0("cond", seq(length(label)))
         for (i in names(label)) {
@@ -318,7 +318,7 @@ RCFCate <- R6::R6Class("RCFCate",
           new_header <- c(1, rle1$lengths)
           names(new_header) <- c(" ", rle1$values)
           kbl <- kbl %>%
-            kableExtra::add_header_above(new_header)
+            kableExtra::add_header_above(new_header, escape = FALSE)
         }
       }
 
