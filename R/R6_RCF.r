@@ -82,23 +82,20 @@ RCF <- R6::R6Class("RCF",
     ) {
       lhs <- multi_intervention_arm
       rhs <- one_intervention_arm
-      sum_rhs <- paste0("I(", paste(rhs, collapse = " + "), ")")
-      model <- list(
-        reformulate(sum_rhs, lhs),
-        reformulate(rhs, lhs)
-      )
+      model <- reformulate(rhs, lhs)
 
-      lh1 <- paste(sum_rhs, "- 1")
+      h0_1 <- sapply(rhs, function(x) paste(x, "= 1"), USE.NAMES = FALSE)
+
       combn_rhs <- combn(rhs, 2)
-      lh2 <- sapply(
+      h0_2 <- sapply(
         seq(ncol(combn_rhs)),
-        function(i) paste(combn_rhs[1, i], "-", combn_rhs[2, i])
+        function(i) paste(combn_rhs[1, i], "=", combn_rhs[2, i])
       )
 
       tau <- private$tau
       colnames(tau) <- str_remove(colnames(tau), "effect_")
       dt <- data.frame(tau)
-      
+
       cond <- private$list_subset(...)
       for (i in seq(length(cond))) {
         label <- paste0("cond", i)
@@ -109,36 +106,15 @@ RCF <- R6::R6Class("RCF",
         group_by(across(starts_with("cond"))) %>%
         nest() %>%
         mutate(
-          fit1 = map(data, ~ lh_robust(
-            model[[1]],
-            data = .,
-            se_type = "stata",
-            linear_hypothesis = lh1
-          )),
-          fit2 = map(data, ~ lh_robust(
-            model[[2]],
-            data = .,
-            se_type = "stata",
-            linear_hypothesis = lh2
-          ))
+          fit = map(data, ~ lm_robust(model, data = ., se_type = "stata")),
+          lh1 = map_dbl(fit, ~ linearHypothesis(., h0_1, test = "F")$"Pr(>F)"[2]),
+          lh2 = map_dbl(fit, ~ linearHypothesis(., h0_2, test = "F")$"Pr(>F)"[2])
         ) %>%
         select(-data) %>%
         ungroup() %>%
-        pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
-          names_to = "model",
-          values_to = "fit"
-        ) %>%
-        arrange(desc(across(starts_with("cond")))) %>%
-        arrange(model)
+        arrange(desc(across(starts_with("cond"))))
 
-      DecomposeEffect$new(
-        est,
-        lhs,
-        c(sum_rhs, rhs),
-        c(lh1, lh2)
-      )
+      DecomposeEffect$new(est, lhs, rhs, list(h0_1, h0_2))
     },
     effect_characteristics = function(target, effect = 0, ...) {
       X <- private$X
@@ -392,7 +368,7 @@ RCFCate <- R6::R6Class("RCFCate",
 
 DecomposeEffect <- R6::R6Class("DecomposeEffect",
   public = list(
-    initialize = function(est, response, vars, lh, ctrl_arm) {
+    initialize = function(est, response, vars, lh) {
       private$est <- est
       private$vars <- vars
       private$lh <- lh
@@ -408,20 +384,21 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       private$msummary("data.frame")
       tbl <- private$reg_tab %>%
         mutate(
-          part = if_else(
-            term %in% str_remove(private$lh, "I"),
-            "Linear combination test (F-test)",
-            ""
+          part = dplyr::recode(
+            part,
+            manual = "Linear combination test (F-test, p-value)",
+            .default = ""
           ),
           term = if_else(statistic == "std.error", "", term)
         ) %>%
         select(-statistic)
-      
+
       flex <- tbl %>%
         as_grouped_data("part") %>%
         as_flextable(hide_grouplabel = TRUE) %>%
+        set_header_labels(term = "") %>%
         set_caption(title)
-      
+
       est <- private$est
       names(subset_label) <- paste0("cond", seq(length(subset_label)))
       for (i in names(subset_label)) {
@@ -453,15 +430,13 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         width(j = 1, 1) %>%
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
-      
-      num_vars_line <- (1 + length(private$vars)) * 2
-      num_lh_line <- length(private$lh) * 2
-      pos_lh <- c(num_vars_line + 2, num_vars_line + num_lh_line + 1)
+
+      start_pos <- (length(private$vars) + 1) * 2 + 1 + 2
+      end_pos <- start_pos + 1
 
       flex <- flex %>%
-        hline(num_vars_line + num_lh_line + 2, border = fp_border()) %>%
-        padding(pos_lh[1]:pos_lh[2], padding.left = 10)
-      
+        padding(start_pos:end_pos, padding.left = 10)
+
       flex
     },
     kable = function( subset_label,
@@ -482,12 +457,12 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
 
       if (hold) {
         kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")        
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
       } else {
         kbl <- kbl %>%
           kableExtra::kable_styling(font_size = font_size)
       }
-      
+
       est <- private$est
       names(subset_label) <- paste0("cond", seq(length(subset_label)))
       for (i in names(subset_label)) {
@@ -513,14 +488,13 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       kbl <- kbl %>%
         kableExtra::add_header_above(outcome_header)
 
-      num_vars_line <- (1 + length(private$vars)) * 2
-      num_lh_line <- length(private$lh) * 2
-      pos_lh <- c(num_vars_line + 1, num_vars_line + num_lh_line)
+      start_pos <- (length(private$vars) + 1) * 2 + 1
+      end_pos <- start_pos + 1
 
       kbl %>%
         kableExtra::group_rows(
           "Linear combination test (F-test)",
-          pos_lh[1], pos_lh[2],
+          start_pos, end_pos,
           bold = FALSE, italic = TRUE
         ) %>%
         kableExtra::footnote(
@@ -546,19 +520,39 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       stars <- c("***" = 0.01, "**" = 0.05, "*" = 0.1)
       gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
 
-      label <- c(
-        str_remove(private$vars, "I"),
-        str_remove(private$lh, "I")
-      )
+      label <- paste("Treatment", private$vars)
       label <- c("(Intercept)", label)
-      names(label) <- c("(Intercept)", private$vars, private$lh)
+      names(label) <- c("(Intercept)", private$vars)
+
+      ftest <- private$est %>%
+        select(starts_with("lh")) %>%
+        mutate(id = paste0("(", 1:n(), ")")) %>%
+        pivot_longer(-id, names_to = "term") %>%
+        mutate(
+          value = sprintf("%1.3f", value),
+          value = if_else(value == "0.000", "< 0.001", value)
+        ) %>%
+        pivot_wider(names_from = id) %>%
+        mutate(
+          term = dplyr::recode(
+            term,
+            lh1 = paste(private$lh[[1]], collapse = " & "),
+            lh2 = paste(private$lh[[2]], collapse = " & ")
+          ),
+          term = paste("H0:", term)
+        )
+
+      start_pos <- (length(private$vars) + 1) * 2 + 1
+      end_pos <- start_pos + 1
+      attr(ftest, "position") <- start_pos:end_pos
 
       args <- list(
         models = fit,
         coef_map = label,
         output = output,
         stars = stars,
-        gof_omit = gof_omit
+        gof_omit = gof_omit,
+        add_rows = ftest
       )
 
       if(!missing(...)) args <- append(args, list(...))
