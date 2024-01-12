@@ -350,17 +350,17 @@ For other genders and ages, the message effects are heterogeneous. For example, 
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-(Intercept) & \num{-0.040}*** & \num{0.006}*** & \num{0.006}*** & \num{0.008}***\\
+(Intercept) & \num{-0.031}*** & \num{0.007}*** & \num{0.005}** & \num{0.008}***\\
  & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001})\\
-Treatment B & \num{0.029} & \num{0.385}*** & \num{-0.151}*** & \num{0.625}***\\
- & (\num{0.040}) & (\num{0.014}) & (\num{0.026}) & (\num{0.016})\\
-Treatment C & \num{0.723}*** & \num{0.329}*** & \num{0.990}*** & \num{0.297}***\\
- & (\num{0.038}) & (\num{0.013}) & (\num{0.031}) & (\num{0.010})\\
+Treatment B & \num{-0.036} & \num{0.396}*** & \num{-0.061}** & \num{0.646}***\\
+ & (\num{0.036}) & (\num{0.014}) & (\num{0.026}) & (\num{0.016})\\
+Treatment C & \num{0.755}*** & \num{0.325}*** & \num{0.884}*** & \num{0.274}***\\
+ & (\num{0.034}) & (\num{0.013}) & (\num{0.030}) & (\num{0.011})\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textit{F-test, p-value}}\\
 \hspace{1em}H0: $B = 1$ \& $C = 1$ & $< 0.001$ & $< 0.001$ & $< 0.001$ & $< 0.001$\\
-\hspace{1em}H0: $B = C$ & $< 0.001$ & $0.012$ & $< 0.001$ & $< 0.001$\\
+\hspace{1em}H0: $B = C$ & $< 0.001$ & $0.001$ & $< 0.001$ & $< 0.001$\\
 Num.Obs. & \num{1127} & \num{3006} & \num{1556} & \num{5296}\\
 \bottomrule
 \end{tabular}
@@ -390,10 +390,10 @@ Interestingly, for men and women over 30 years, the partial correlations between
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
  & Mean & S.D. & Mean & S.D.\\
 \midrule
-B & 0.0200 & 0.0559 & 0.0327 & 0.0414\\
-C & -0.0033 & 0.0607 & 0.0227 & 0.0338\\
-D & 0.0071 & 0.0613 & 0.0277 & 0.0378\\
-Optimum &  &  & 0.0469 & 0.0518\\
+B & 0.0203 & 0.0565 & 0.0331 & 0.0416\\
+C & -0.0032 & 0.0597 & 0.0222 & 0.0331\\
+D & 0.0085 & 0.0613 & 0.0285 & 0.0389\\
+Optimum &  &  & 0.0518 & 0.0455\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -408,19 +408,19 @@ Optimum &  &  & 0.0469 & 0.0518\\
 \centering
 \fontsize{9}{11}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lccc}
+\begin{tabular}[t]{lcccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Optimal treatment} \\
-\cmidrule(l{3pt}r{3pt}){2-4}
- & B & C & D\\
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Optimal treatment} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+ & A & B & C & D\\
 \midrule
-Male (= 1) & 0.65 & 0.54 & 0.65\\
-Age & 34.88 & 41.84 & 39.44\\
-Number of past coordinations & 1.48 & 1.66 & 1.71\\
-Number of listed hospitals & 0.44 & 0.40 & 0.62\\
-Number of hospitals listed with PBSC collection & 0.15 & 0.14 & 0.21\\
-Number of hospitals listed with BM collection & 0.23 & 0.20 & 0.33\\
-N & 4913 & 2683 & 3389\\
+Male (= 1) & 0.55 & 0.65 & 0.59 & 0.67\\
+Age & 36.73 & 34.44 & 43.03 & 39.50\\
+Number of past coordinations & 1.45 & 1.53 & 1.68 & 1.71\\
+Number of listed hospitals & 0.47 & 0.44 & 0.39 & 0.62\\
+Number of hospitals listed with PBSC collection & 0.15 & 0.15 & 0.13 & 0.22\\
+Number of hospitals listed with BM collection & 0.24 & 0.23 & 0.20 & 0.33\\
+N & 1961 & 3806 & 2271 & 2947\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -606,12 +606,12 @@ Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439}
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
  & (1) & (2) & (3) & (4)\\
 \midrule
-B & -0.0125 & -0.0054 & 0.1280*** & 0.0177\\
- & (0.0479) & (0.0287) & (0.0395) & (0.0214)\\
-C & 0.0368 & -0.0152 & 0.0515 & -0.0115\\
- & (0.0487) & (0.0298) & (0.0408) & (0.0226)\\
-D & -0.0673 & 0.0098 & 0.0495 & 0.0204\\
- & (0.0490) & (0.0291) & (0.0396) & (0.0221)\\
+B & -0.0026 & -0.0048 & 0.1231*** & 0.0160\\
+ & (0.0476) & (0.0286) & (0.0405) & (0.0214)\\
+C & 0.0354 & -0.0125 & 0.0420 & -0.0146\\
+ & (0.0480) & (0.0296) & (0.0412) & (0.0225)\\
+D & -0.0608 & 0.0133 & 0.0446 & 0.0186\\
+ & (0.0482) & (0.0290) & (0.0405) & (0.0221)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -639,12 +639,12 @@ D & -0.0673 & 0.0098 & 0.0495 & 0.0204\\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 35.685 & 37.550 & < 0.001\\
-Number of past coordinations & 1.658 & 2.725 & < 0.001\\
-Number of listed hospitals & 0.397 & 1.584 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.134 & 0.536 & < 0.001\\
-Number of hospitals listed with BM collection & 0.200 & 0.937 & < 0.001\\
-N & 9052 & 1933 & \\
+Age & 35.676 & 37.516 & < 0.001\\
+Number of past coordinations & 1.648 & 2.813 & < 0.001\\
+Number of listed hospitals & 0.393 & 1.526 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.132 & 0.533 & < 0.001\\
+Number of hospitals listed with BM collection & 0.197 & 0.909 & < 0.001\\
+N & 1842 & 91 & \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}

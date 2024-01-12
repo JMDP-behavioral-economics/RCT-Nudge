@@ -371,7 +371,7 @@ A matched donor who does not completely receive information would value either t
 Interestingly, for men and women over 30 years, the partial correlations between experimental arms C and D are weaker than those between experimental arms B and D, which is a statistically significant difference according to the F-test. In other words, they value the probability message more than the early coordination message. Thus, while the median effect of experimental arm C for men and women in their late 40s and older is approximately 8 points, the median treatment effect of experimental arm D is almost zero.
 
 ```{r targeting-effect}
-targeting <- rcf$targeting()
+targeting <- rcf$targeting(include_ctrl = TRUE)
 
 targeting$kable(
   title = "Uniform Assignment Policy and Targeting Policy"
