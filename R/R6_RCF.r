@@ -386,7 +386,7 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         mutate(
           part = dplyr::recode(
             part,
-            manual = "Linear combination test (F-test, p-value)",
+            manual = "F-test, p-value",
             .default = ""
           ),
           term = if_else(statistic == "std.error", "", term)
@@ -479,7 +479,7 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         reduce_new_header <- rle1$lengths
         names(reduce_new_header) <- rle1$values
         kbl <- kbl %>%
-          kableExtra::add_header_above(reduce_new_header)
+          kableExtra::add_header_above(reduce_new_header, escape = FALSE)
       }
 
       outcome_header <- c(1, nrow(est))
@@ -493,7 +493,7 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
 
       kbl %>%
         kableExtra::group_rows(
-          "Linear combination test (F-test)",
+          "F-test, p-value",
           start_pos, end_pos,
           bold = FALSE, italic = TRUE
         ) %>%
@@ -524,6 +524,10 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       label <- c("(Intercept)", label)
       names(label) <- c("(Intercept)", private$vars)
 
+      collapse <- ifelse(output == "kableExtra", " \\& ", " & ")
+      lh <- private$lh
+      if (output == "kableExtra") lh <- lapply(lh, function(x) paste0("$", x, "$"))
+
       ftest <- private$est %>%
         select(starts_with("lh")) %>%
         mutate(id = paste0("(", 1:n(), ")")) %>%
@@ -531,13 +535,17 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         mutate(
           value = sprintf("%1.3f", value),
           value = if_else(value == "0.000", "< 0.001", value)
-        ) %>%
+        )
+
+      if (output == "kableExtra") ftest$value <- paste0("$", ftest$value, "$")
+
+      ftest <- ftest %>%
         pivot_wider(names_from = id) %>%
         mutate(
           term = dplyr::recode(
             term,
-            lh1 = paste(private$lh[[1]], collapse = " & "),
-            lh2 = paste(private$lh[[2]], collapse = " & ")
+            lh1 = paste(lh[[1]], collapse = collapse),
+            lh2 = paste(lh[[2]], collapse = collapse)
           ),
           term = paste("H0:", term)
         )
