@@ -136,20 +136,20 @@ RCF <- R6::R6Class("RCF",
 
       label_target <- paste0("effect_", target)
       tau_target <- Y[, label_target, drop = TRUE]
-      positive_effect <- ifelse(tau_target > effect, TRUE, FALSE)
-      dt[, "positive_effect"] <- positive_effect[bool]
+      above_effect <- ifelse(tau_target > effect, TRUE, FALSE)
+      dt[, "above_effect"] <- above_effect[bool]
 
       stats <- dt %>%
-        group_by(positive_effect) %>%
+        group_by(above_effect) %>%
         summarize_all(mean) %>%
-        pivot_longer(-positive_effect, names_to = "var") %>%
-        pivot_wider(values_from = value, names_from = positive_effect) %>%
+        pivot_longer(-above_effect, names_to = "var") %>%
+        pivot_wider(values_from = value, names_from = above_effect) %>%
         mutate_at(vars(`FALSE`, `TRUE`), list(~sprintf("%1.3f", .)))
 
       args <- list(data = dt, se_type = "stata")
 
       p <- sapply(useX, function(y) {
-        mod <- reformulate("positive_effect", y)
+        mod <- reformulate("above_effect", y)
         args <- append(args, list(formula = mod))
         est <- do.call(lm_robust, args)
         p <- sprintf("%1.3f", tidy(est)[2, "p.value"])
@@ -166,8 +166,11 @@ RCF <- R6::R6Class("RCF",
         label = c(names(private$X_label), "N")
       )
 
+      group_bool <- dt$above_effect
+      N <- c(var = "N", "FALSE" = sum(!group_bool), "TRUE" = sum(group_bool))
+
       tbl <- stats %>%
-        bind_rows(c(var = "N", "FALSE" = sum(!bool), "TRUE" = sum(bool))) %>%
+        bind_rows(N) %>%
         dplyr::left_join(p_table, by = "var") %>%
         dplyr::left_join(cov_label, by = "var") %>%
         select(label, everything()) %>%
