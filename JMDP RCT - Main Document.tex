@@ -87,7 +87,7 @@ A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor 
 \affil[c]{Department of Oncology, Ina Central Hospital}
 \affil[d]{Graduate School of Medicine, Tokyo University}
 \affil[e]{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital}
-\date{Last updated on December 15, 2023}
+\date{Last updated on January 12, 2024}
 
 \begin{document}
 \maketitle
@@ -330,7 +330,7 @@ RCF predicts the treatment effect from the observed characteristics. In other wo
 \includegraphics{JMDPRC~2/figure-latex/boxplot-rcf-int-1} \caption{Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, and number of hospitals with BM collection per 10 square kilometers.}\label{fig:boxplot-rcf-int}
 \end{figure}
 
-Figure \ref{fig:boxplot-rcf-int} shows the distribution of the predicted treatment effects for each experimental arm by age. Notably, the effect in experimental arm B is positive for all men under 25 years of age. As a result, the RCF shows that the average effect of experimental arm B for men in their 20s is \(12.1\) percentage points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \ref{fig:coefplot-reg-stock-subset} (see Table \ref{tab:rcf-int-cate} in the Appendix).
+Figure \ref{fig:boxplot-rcf-int} shows the distribution of the predicted treatment effects for each experimental arm by gender and age. Notably, the effect in experimental arm B is positive for all men under 25 years of age. As a result, the RCF shows that the average effect of experimental arm B for men in their 20s is \(12.1\) percentage points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \ref{fig:coefplot-reg-stock-subset} (see Table \ref{tab:rcf-int-cate} in the Appendix).
 
 For other genders and ages, the message effects are heterogeneous. For example, for some men in their 30s and 40s, the effect of experimental arm B is greater than 10 percentage points. They live in areas with a relatively large number of hospitals and have lower travel costs for coordination and donations (see Table \ref{tab:rcf-middle-male} in the Appendix). Experimental arm C, with only the Early Coordination message added, has a negative effect on most women in their early 30s. For men and women in their late 40s and older, the median effect of experimental arm C is positive, but widely distributed.\footnote{Surprisingly, among men and women in this age group, for whom experimental arm C has a positive effect, live in areas with relatively fewer hospitals (higher traveling costs). See Tables \ref{tab:rcf-older-male} and \ref{tab:rcf-older-female} in the Appendix.}
 
@@ -340,32 +340,28 @@ For other genders and ages, the message effects are heterogeneous. For example, 
 \centering
 \fontsize{9}{11}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccccccc}
+\begin{tabular}[t]{lcccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{8}{c}{Treatment effect of D} \\
-\cmidrule(l{3pt}r{3pt}){2-9}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Age < 30} & \multicolumn{1}{c}{30 < Age} & \multicolumn{1}{c}{Age < 30} & \multicolumn{1}{c}{30 < Age} & \multicolumn{1}{c}{Age < 30} & \multicolumn{1}{c}{30 < Age} & \multicolumn{1}{c}{Age < 30} & \multicolumn{1}{c}{30 < Age} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6} \cmidrule(l{3pt}r{3pt}){7-7} \cmidrule(l{3pt}r{3pt}){8-8} \cmidrule(l{3pt}r{3pt}){9-9}
-  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Treatment effect of D} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Age $<$ 30} & \multicolumn{1}{c}{30 $\le$ Age} & \multicolumn{1}{c}{Age $<$ 30} & \multicolumn{1}{c}{30 $\le$ Age} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
 \midrule
-(Intercept) & \num{-0.037}*** & \num{0.006}*** & \num{-0.017}*** & \num{0.013}*** & \num{-0.034}*** & \num{0.006}*** & \num{0.004}* & \num{0.008}***\\
- & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001})\\
-(B + C) & \num{0.290}*** & \num{0.364}*** & \num{0.355}*** & \num{0.425}*** &  &  &  & \\
- & (\num{0.020}) & (\num{0.007}) & (\num{0.019}) & (\num{0.007}) &  &  &  \vphantom{1} & \\
-B &  &  &  &  & \num{-0.013} & \num{0.410}*** & \num{-0.070}** & \num{0.655}***\\
- &  &  &  &  & (\num{0.034}) & (\num{0.014}) & (\num{0.028}) & (\num{0.015})\\
-C &  &  &  &  & \num{0.677}*** & \num{0.323}*** & \num{0.921}*** & \num{0.272}***\\
- &  &  &  &  & (\num{0.038}) & (\num{0.013}) & (\num{0.033}) & (\num{0.011})\\
+(Intercept) & \num{-0.040}*** & \num{0.006}*** & \num{0.006}*** & \num{0.008}***\\
+ & (\num{0.002}) & (\num{0.001}) & (\num{0.002}) & (\num{0.001})\\
+Treatment B & \num{0.029} & \num{0.385}*** & \num{-0.151}*** & \num{0.625}***\\
+ & (\num{0.040}) & (\num{0.014}) & (\num{0.026}) & (\num{0.016})\\
+Treatment C & \num{0.723}*** & \num{0.329}*** & \num{0.990}*** & \num{0.297}***\\
+ & (\num{0.038}) & (\num{0.013}) & (\num{0.031}) & (\num{0.010})\\
+\midrule
 \addlinespace[0.3em]
-\multicolumn{9}{l}{\textit{Linear combination test (F-test)}}\\
-\hspace{1em}(B + C) - 1 & \num{-0.710}*** & \num{-0.636}*** & \num{-0.645}*** & \num{-0.575}*** &  &  &  & \\
-\hspace{1em} & (\num{0.020}) & (\num{0.007}) & (\num{0.019}) & (\num{0.007}) &  &  &  & \\
-\hspace{1em}B - C &  &  &  &  & \num{-0.690}*** & \num{0.087}*** & \num{-0.991}*** & \num{0.383}***\\
-\hspace{1em} &  &  &  &  & (\num{0.062}) & (\num{0.022}) & (\num{0.050}) & (\num{0.022})\\
-\midrule
-Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333} & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
+\multicolumn{5}{l}{\textit{F-test, p-value}}\\
+\hspace{1em}H0: $B = 1$ \& $C = 1$ & $< 0.001$ & $< 0.001$ & $< 0.001$ & $< 0.001$\\
+\hspace{1em}H0: $B = C$ & $< 0.001$ & $0.012$ & $< 0.001$ & $< 0.001$\\
+Num.Obs. & \num{1127} & \num{3006} & \num{1556} & \num{5296}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -381,6 +377,57 @@ If the matched donor fully understands the information in experimental arm D, it
 A matched donor who does not completely receive information would value either the probability message or the early coordination message or would discount the two pieces of information equally. To test this point, columns (5)--(8) of Table \ref{tab:rcf-int-corr} regress the predicted treatment effects of experimental arm D on those of experimental arms B and C. The results show that for men and women in their 20s, the partial correlations between experimental arms C and D are stronger than those between experimental arms B and D, which is a statistically significant difference according to the F-test. This implies that they value the early coordination message more than the probability message. Thus, experimental arm D is ineffective for men in their 20s.
 
 Interestingly, for men and women over 30 years, the partial correlations between experimental arms C and D are weaker than those between experimental arms B and D, which is a statistically significant difference according to the F-test. In other words, they value the probability message more than the early coordination message. Thus, while the median effect of experimental arm C for men and women in their late 40s and older is approximately 8 points, the median treatment effect of experimental arm D is almost zero.
+
+\begin{table}
+
+\caption{\label{tab:targeting-effect}Uniform Assignment Policy and Targeting Policy}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Uniform} & \multicolumn{2}{c}{Targeting} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+ & Mean & S.D. & Mean & S.D.\\
+\midrule
+B & 0.0200 & 0.0559 & 0.0327 & 0.0414\\
+C & -0.0033 & 0.0607 & 0.0227 & 0.0338\\
+D & 0.0071 & 0.0613 & 0.0277 & 0.0378\\
+Optimum &  &  & 0.0469 & 0.0518\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item 
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:targeting-character}Average Characteristics of Optimal Treatment}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Optimal treatment} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+ & B & C & D\\
+\midrule
+Male (= 1) & 0.65 & 0.54 & 0.65\\
+Age & 34.88 & 41.84 & 39.44\\
+Number of past coordinations & 1.48 & 1.66 & 1.71\\
+Number of listed hospitals & 0.44 & 0.40 & 0.62\\
+Number of hospitals listed with PBSC collection & 0.15 & 0.14 & 0.21\\
+Number of hospitals listed with BM collection & 0.23 & 0.20 & 0.33\\
+N & 4913 & 2683 & 3389\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item 
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
 \hypertarget{reply-speed}{%
 \subsection{Response Speed to Notification}\label{reply-speed}}
@@ -555,16 +602,16 @@ Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439}
 \toprule
 \multicolumn{1}{c}{ } & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Age < 30} & \multicolumn{1}{c}{30 < Age} & \multicolumn{1}{c}{Age < 30} & \multicolumn{1}{c}{30 < Age} \\
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Age $<$ 30} & \multicolumn{1}{c}{30 $\le$ Age} & \multicolumn{1}{c}{Age $<$ 30} & \multicolumn{1}{c}{30 $\le$ Age} \\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
  & (1) & (2) & (3) & (4)\\
 \midrule
-B & -0.0006 & -0.0090 & 0.1227*** & 0.0215\\
- & (0.0480) & (0.0286) & (0.0400) & (0.0213)\\
-C & 0.0427 & -0.0148 & 0.0506 & -0.0094\\
- & (0.0481) & (0.0295) & (0.0409) & (0.0226)\\
-D & -0.0548 & 0.0074 & 0.0498 & 0.0252\\
- & (0.0483) & (0.0290) & (0.0402) & (0.0220)\\
+B & -0.0125 & -0.0054 & 0.1280*** & 0.0177\\
+ & (0.0479) & (0.0287) & (0.0395) & (0.0214)\\
+C & 0.0368 & -0.0152 & 0.0515 & -0.0115\\
+ & (0.0487) & (0.0298) & (0.0408) & (0.0226)\\
+D & -0.0673 & 0.0098 & 0.0495 & 0.0204\\
+ & (0.0490) & (0.0291) & (0.0396) & (0.0221)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -572,6 +619,10 @@ D & -0.0548 & 0.0074 & 0.0498 & 0.0252\\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\begin{figure}[t]
+\includegraphics{JMDPRC~2/figure-latex/rcf-policy-dist-1} \caption{Distribution of Predicted Treatment Effect}\label{fig:rcf-policy-dist}
+\end{figure}
 
 \begin{table}[H]
 
@@ -584,78 +635,20 @@ D & -0.0548 & 0.0074 & 0.0498 & 0.0252\\
 \toprule
 \multicolumn{1}{c}{ } & \multicolumn{2}{c}{Predicted treatment effect} & \multicolumn{1}{c}{ } \\
 \cmidrule(l{3pt}r{3pt}){2-3}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Effect < 0.1} & \multicolumn{1}{c}{0.1 < Effect} & \multicolumn{1}{c}{P-value} \\
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Effect $\le$ 0.1} & \multicolumn{1}{c}{0.1 < Effect} & \multicolumn{1}{c}{P-value} \\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
-Age & 35.685 & 37.609 & < 0.001\\
-Number of past coordinations & 1.664 & 2.529 & < 0.001\\
-Number of listed hospitals & 0.400 & 1.441 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.136 & 0.473 & < 0.001\\
-Number of hospitals listed with BM collection & 0.202 & 0.848 & < 0.001\\
-N & 9101 & 1948 & \\
+Age & 35.685 & 37.550 & < 0.001\\
+Number of past coordinations & 1.658 & 2.725 & < 0.001\\
+Number of listed hospitals & 0.397 & 1.584 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.134 & 0.536 & < 0.001\\
+Number of hospitals listed with BM collection & 0.200 & 0.937 & < 0.001\\
+N & 9052 & 1933 & \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
 \item Notes: Column (1) and (2) show average sample characteristics. Column (3) shows p-values of difference-in-means test. We use males with 30--39 age.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:rcf-older-male}Sample Characteristics of Predicted Treatment Effect of Arm C (Older Males)}
-\centering
-\fontsize{9}{11}\selectfont
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Predicted treatment effect} & \multicolumn{1}{c}{ } \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Non-positive} & \multicolumn{1}{c}{Positive} & \multicolumn{1}{c}{P-value} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
- & (1) & (2) & (3)\\
-\midrule
-Age & 48.736 & 49.868 & < 0.001\\
-Number of past coordinations & 1.765 & 1.879 & 0.051\\
-Number of listed hospitals & 0.557 & 0.408 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.189 & 0.138 & < 0.001\\
-Number of hospitals listed with BM collection & 0.311 & 0.193 & < 0.001\\
-N & 9054 & 1995 & \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: Column (1) and (2) show average sample characteristics. Column (3) shows p-values of difference-in-means test. We use men over 45 years old.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:rcf-older-female}Sample Characteristics of Predicted Treatment Effect of Arm C (Older Females)}
-\centering
-\fontsize{9}{11}\selectfont
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Predicted treatment effect} & \multicolumn{1}{c}{ } \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Non-positive} & \multicolumn{1}{c}{Positive} & \multicolumn{1}{c}{P-value} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
- & (1) & (2) & (3)\\
-\midrule
-Age & 48.653 & 49.992 & < 0.001\\
-Number of past coordinations & 1.667 & 1.533 & 0.039\\
-Number of listed hospitals & 0.563 & 0.419 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.168 & 0.157 & 0.472\\
-Number of hospitals listed with BM collection & 0.302 & 0.213 & < 0.001\\
-N & 9993 & 1056 & \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: Column (1) and (2) show average sample characteristics. Column (3) shows p-values of difference-in-means test. We use women over 45 years old.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

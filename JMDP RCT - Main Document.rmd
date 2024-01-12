@@ -279,7 +279,8 @@ Coordination may be interrupted for patient reasons before a matched donor respo
 
 ```{r setup-stock-analysis, include=FALSE}
 id <- which(names(endpoint) %in% c("reply", "positive", "negative"))
-stock <- rct$
+rct_clone <- rct$clone()
+stock <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   lm(id)
 ```
@@ -319,8 +320,7 @@ In the control group, approximately 50% ($=38.6/74.4$) of men in their 20s who r
 ```{r rcf-int, include=FALSE}
 library(xfun)
 rcf <- cache_rds({
-  id2 <- which(names(endpoint) == "positive")
-  rct$rcf(id2)
+  rct$rcf("positive")
 })
 ```
 
@@ -339,7 +339,7 @@ RCF predicts the treatment effect from the observed characteristics. In other wo
 rcf$subset_boxplot()
 ```
 
-Figure \@ref(fig:boxplot-rcf-int) shows the distribution of the predicted treatment effects for each experimental arm by age. Notably, the effect in experimental arm B is positive for all men under 25 years of age. As a result, the RCF shows that the average effect of experimental arm B for men in their 20s is $12.1$ percentage points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \@ref(fig:coefplot-reg-stock-subset) (see Table \@ref(tab:rcf-int-cate) in the Appendix).
+Figure \@ref(fig:boxplot-rcf-int) shows the distribution of the predicted treatment effects for each experimental arm by gender and age. Notably, the effect in experimental arm B is positive for all men under 25 years of age. As a result, the RCF shows that the average effect of experimental arm B for men in their 20s is $12.1$ percentage points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \@ref(fig:coefplot-reg-stock-subset) (see Table \@ref(tab:rcf-int-cate) in the Appendix).
 
 For other genders and ages, the message effects are heterogeneous. For example, for some men in their 30s and 40s, the effect of experimental arm B is greater than 10 percentage points. They live in areas with a relatively large number of hospitals and have lower travel costs for coordination and donations (see Table \@ref(tab:rcf-middle-male) in the Appendix). Experimental arm C, with only the Early Coordination message added, has a negative effect on most women in their early 30s. For men and women in their late 40s and older, the median effect of experimental arm C is positive, but widely distributed.[^sample-character]
 
@@ -357,7 +357,7 @@ mechanism$kable(
   title = "Correlation of Predicted Treatment Effects",
   subset_label = list(
     c("Male", "Female"),
-    c("30 < Age", "Age < 30")
+    c("30 $\\\\le$ Age", "Age $<$ 30")
   )
 )
 ```
@@ -370,10 +370,26 @@ A matched donor who does not completely receive information would value either t
 
 Interestingly, for men and women over 30 years, the partial correlations between experimental arms C and D are weaker than those between experimental arms B and D, which is a statistically significant difference according to the F-test. In other words, they value the probability message more than the early coordination message. Thus, while the median effect of experimental arm C for men and women in their late 40s and older is approximately 8 points, the median treatment effect of experimental arm D is almost zero.
 
+```{r targeting-effect}
+targeting <- rcf$targeting()
+
+targeting$kable(
+  title = "Uniform Assignment Policy and Targeting Policy"
+)
+```
+
+```{r targeting-character, include=TRUE}
+targeting$
+  summarize_X()$
+  kable(
+    title = "Average Characteristics of Optimal Treatment"
+  )
+```
+
 ## Response Speed to Notification {#reply-speed}
 
 ```{r flow-setup, include=FALSE}
-flow <- rct$
+flow <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   flow(outcome = "reply")
 
@@ -390,7 +406,7 @@ flow$plot(
   age >= 30,
   label_list = list(
     c("Female", "Male"),
-    c("Age < 30", "Age > 30")
+    c("under 30 years old", "aged 30 and over")
   )
 )
 ```
@@ -421,7 +437,7 @@ In the 20s women group, the responses of experimental arms C and D, with the add
 
 ```{r setup-coordinate, include=FALSE}
 id3 <- which(names(endpoint) %in% c("test", "candidate", "consent", "donate"))
-coordinate <- rct$
+coordinate <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   lm(id3)
 ```
@@ -479,12 +495,12 @@ Although this study identifies the causal effects of information provision throu
 <!-- *NOTE ロジット推定 -->
 
 ```{r setup-logit, include=FALSE}
-logit_stock <- rct$
+logit_stock <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   logit(id)$
   fit_all()
 
-logit_coordinate <- rct$
+logit_coordinate <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   logit(id3)$
   fit_all()
@@ -533,12 +549,16 @@ rcf$
   cate(age < 30, male == 0)$
   kable(
     label = list(
-      c("30 < Age", "Age < 30"),
+      c("30 $\\\\le$ Age", "Age $<$ 30"),
       c("Male", "Female")
     ),
     title = "Conditional Average Treatment Effect Estimated by RCF",
     hold = TRUE
   )
+```
+
+```{r rcf-policy-dist, fig.cap = "Distribution of Predicted Treatment Effect"}
+targeting$hist()
 ```
 
 ```{r rcf-middle-male}
@@ -551,13 +571,14 @@ rcf$
   )$
   kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)",
-    group_label = c("Effect < 0.1", "0.1 < Effect"),
+    group_label = c("Effect $\\\\le$ 0.1", "0.1 < Effect"),
     notes = "We use males with 30--39 age.",
-    hold = TRUE
+    hold = TRUE,
+    escape = FALSE
   )
 ```
 
-```{r rcf-older-male}
+```{r rcf-older-male, eval=FALSE}
 rcf$
   effect_characteristics(
     target = "C",
@@ -571,7 +592,7 @@ rcf$
   )
 ```
 
-```{r rcf-older-female}
+```{r rcf-older-female, eval=FALSE}
 rcf$
   effect_characteristics(
     target = "C",
