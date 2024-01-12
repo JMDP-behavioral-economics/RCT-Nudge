@@ -175,10 +175,14 @@ RCF <- R6::R6Class("RCF",
 
       EffectCharacteristics$new(tbl)
     },
-    targeting = function() {
+    targeting = function(include_ctrl = FALSE) {
       tau <- private$tau
       positive_target <- apply(tau, 2, function(x) ifelse(x < 0, 0, x))
       optimum_target <- apply(tau, 1, max)
+      if (include_ctrl) {
+        optimum_negative <- optimum_target < 0
+        optimum_target <- ifelse(optimum_negative, 0, optimum_target)
+      }
       cbind_tau <- cbind(tau, positive_target, optimum_target)
 
       labels <- str_remove(colnames(tau), "effect_")
@@ -192,6 +196,7 @@ RCF <- R6::R6Class("RCF",
       X <- data.frame(private$X)
       optim_treat <- apply(tau, 1, which.max)
       X$optim <- labels[optim_treat]
+      if (include_ctrl) X$optim[optimum_negative] <- private$ctrl_arm
 
       Targeting$new(cbind_tau, X, private$X_label)
     }
@@ -745,8 +750,8 @@ Targeting <- R6::R6Class("Targeting",
         pivot_longer(everything(), names_to = "policy", values_to = "effect") %>%
         mutate(
           policy = factor(policy, levels = levels, labels = labels),
-          positive = if_else(effect > 0, 1, 0),
-          positive = factor(positive, labels = c("Non-positive effect", "Positive effect"))
+          positive = if_else(effect >= 0, 1, 0),
+          positive = factor(positive, labels = c("Negative effect", "Non-negative effect"))
         ) %>%
         ggplot(aes(x = effect, fill = positive)) +
           geom_histogram(color = "black") +

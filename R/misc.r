@@ -1,4 +1,4 @@
-# //NOTE template of flextable output
+# * template of flextable output
 library(flextable)
 library(officer)
 
@@ -10,7 +10,7 @@ ft_theme <- function(ft) {
     hline_top(part = "footer", border = fp_border())
 }
 
-# //NOTE template of ggplot2
+# * template of ggplot2
 library(tidyverse)
 
 my_theme_classic <- function(size = 15, strip_hjust = 0) {
@@ -21,7 +21,7 @@ my_theme_classic <- function(size = 15, strip_hjust = 0) {
     )
 }
 
-# //NOTE Tidy custom for glm class
+# * Tidy custom for glm class
 tidy_custom.glm <- function(x, ...) {
   tbl <- broom::tidy(x) %>%
     mutate(
