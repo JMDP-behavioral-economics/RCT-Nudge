@@ -53,6 +53,19 @@
 % ------------------------------ other packages
 \renewcommand\Affilfont{\itshape\small}
 \usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \usepackage{siunitx}
 
   \newcolumntype{d}{S[
@@ -87,7 +100,7 @@ A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor 
 \affil[c]{Department of Oncology, Ina Central Hospital}
 \affil[d]{Graduate School of Medicine, Tokyo University}
 \affil[e]{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital}
-\date{Last updated on January 12, 2024}
+\date{Last updated on January 14, 2024}
 
 \begin{document}
 \maketitle
@@ -320,7 +333,7 @@ In the control group, approximately 50\% (\(=38.6/74.4\)) of men in their 20s wh
 
 To further explore the heterogeneity of message effects, we use random causal forests (RCF), which allows us to test the heterogeneous treatment effects in a fully nonparametric manner \citep{Athey2016, Wager2018}. The method is based on a regression tree algorithm and estimates the average treatment effect conditional on the observed characteristics. This method has been used in various contexts, including labor \citep{Davis2017}, education \citep{Carlana2022}, and energy conservation \citep{Murakami2022}.
 
-The algorithm splits the sample into two subsamples (leaves) using one of the covariates \(X_j\). Specifically, the algorithm divides the sample into samples for which \(X_j \le x\) and \(X_j > x\). The regression tree determines a specific threshold \(x\) to minimize the mean squared error of the outcome variable. Given that the RCF aims to estimate the average treatment effect of a leaf (conditional average treatment effect), the threshold \(x\) is set to minimize the expected mean squared error of the predicted treatment effect. This minimization is achieved by increasing the variance in the conditional mean treatment effect across leaves (heterogeneity) and decreasing the variance within leaves. This splitting process is repeated for each leaf until the termination condition is reached. RCF predicts the conditional mean treatment effect on terminal leaves.
+The algorithm splits the sample into two subsamples (leaves) using one of the covariates \(X_j\). Specifically, the algorithm divides the sample into samples for which \(X_j \le x\) and \(X_j > x\). The regression tree determines a specific threshold \(x\) to minimize the mean squared error of the outcome variable. Given that the RCF aims to estimate the average treatment effect of a leaf (conditional average treatment effect or CATE), the threshold \(x\) is set to minimize the expected mean squared error of the predicted treatment effect. This minimization is achieved by increasing the variance in the conditional mean treatment effect across leaves (heterogeneity) and decreasing the variance within leaves. This splitting process is repeated for each leaf until the termination condition is reached. RCF predicts the conditional mean treatment effect on terminal leaves.
 
 A disadvantage of the regression tree algorithm is that the variance in the predictions increases (overfitting), which reduces the accuracy of the predictions. To prevent this, RCF introduces an algorithm called the ensemble method. It creates thousands of subsamples and grows a tree for each subsample. The final result is the average of the predictions from thousands of trees.\footnote{For technical details, see \citet{Athey2016} and \citet{Wager2018}. This study also uses a technique called generalized random forests, which treats RCF as a special case; however, the intuition remains the same. See \citet{Athey2019} and \citet{Athey2019a} for details on generalized random forests.}
 
@@ -330,9 +343,7 @@ RCF predicts the treatment effect from the observed characteristics. In other wo
 \includegraphics{JMDPRC~2/figure-latex/boxplot-rcf-int-1} \caption{Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, and number of hospitals with BM collection per 10 square kilometers.}\label{fig:boxplot-rcf-int}
 \end{figure}
 
-Figure \ref{fig:boxplot-rcf-int} shows the distribution of the predicted treatment effects for each experimental arm by gender and age. Notably, the effect in experimental arm B is positive for all men under 25 years of age. As a result, the RCF shows that the average effect of experimental arm B for men in their 20s is \(12.1\) percentage points, which is close to the results of the subsample analysis of the linear probability model presented in Figure \ref{fig:coefplot-reg-stock-subset} (see Table \ref{tab:rcf-int-cate} in the Appendix).
-
-For other genders and ages, the message effects are heterogeneous. For example, for some men in their 30s and 40s, the effect of experimental arm B is greater than 10 percentage points. They live in areas with a relatively large number of hospitals and have lower travel costs for coordination and donations (see Table \ref{tab:rcf-middle-male} in the Appendix). Experimental arm C, with only the Early Coordination message added, has a negative effect on most women in their early 30s. For men and women in their late 40s and older, the median effect of experimental arm C is positive, but widely distributed.\footnote{Surprisingly, among men and women in this age group, for whom experimental arm C has a positive effect, live in areas with relatively fewer hospitals (higher traveling costs). See Tables \ref{tab:rcf-older-male} and \ref{tab:rcf-older-female} in the Appendix.}
+Figure \ref{fig:boxplot-rcf-int} illustrates the distribution of predicted treatment effects for each experimental group by gender and age. The predicted treatment effects vary considerably depending on age and gender. Even when conditioned on gender and age, the predicted treatment effects exhibit significant heterogeneity. Notably, the effect of experimental group B is positive for men in their early 20s.\footnote{Experimental arm B also exhibits a positive impact of a similar magnitude on some men aged 30 to 40, comparable to the positive effect observed in men in their early 20s. Such individuals tend to have relatively more coordination experience and reside in regions with a higher concentration of hospitals (see Table \ref{tab:rcf-middle-male} in the Appendix).} As a result, the average treatment effect of experimental arm B for men in their 20s is \(12.3\) percentage points, which is close to the results of the subsample analysis shown in Figure \ref{fig:coefplot-reg-stock-subset} (see Table \ref{tab:rcf-int-cate} in the Appendix). This effect is statistically significantly higher than the CATE for women of the same age group (\(-0.3\) percentage points) and men aged 30 and above (\(1.6\) percentage points), as the 95\% confidence intervals for the difference in effects do not include zero.
 
 \begin{table}
 
@@ -370,13 +381,7 @@ Num.Obs. & \num{1127} & \num{3006} & \num{1556} & \num{5296}\\
 \end{threeparttable}
 \end{table}
 
-In addition to examining heterogeneity, we discuss the mechanism of experimental arm D using the treatment effects predicted by the RCF. To test the effects of the cognitive load due to information overload, experimental arm D adds both a probability message (experimental arm B) and an early coordination message (experimental arm C).
-
-If the matched donor fully understands the information in experimental arm D, its effect should be the sum of the effects of experimental arms B and C. To test this point, columns (1)--(4) of Table \ref{tab:rcf-int-corr} regress the predicted treatment effect of experimental arm D on the sum of the predicted effects of experimental arms B and C. For each gender and age group, a 1-point increase in the sum of the effects of experimental arms B and C increases the effect of experimental arm D by \(0.3\)--\(0.4\) points. As we can reject the null hypothesis that the coefficient of the sum of the predicted effects of experimental arms B and C is 1 (the sum of their predicted effects is equal to the effect of experimental arm D), this suggests that the matched donors do not fully understand the information in experimental arm D and are cognitively overloaded because of information overload.
-
-A matched donor who does not completely receive information would value either the probability message or the early coordination message or would discount the two pieces of information equally. To test this point, columns (5)--(8) of Table \ref{tab:rcf-int-corr} regress the predicted treatment effects of experimental arm D on those of experimental arms B and C. The results show that for men and women in their 20s, the partial correlations between experimental arms C and D are stronger than those between experimental arms B and D, which is a statistically significant difference according to the F-test. This implies that they value the early coordination message more than the probability message. Thus, experimental arm D is ineffective for men in their 20s.
-
-Interestingly, for men and women over 30 years, the partial correlations between experimental arms C and D are weaker than those between experimental arms B and D, which is a statistically significant difference according to the F-test. In other words, they value the probability message more than the early coordination message. Thus, while the median effect of experimental arm C for men and women in their late 40s and older is approximately 8 points, the median treatment effect of experimental arm D is almost zero.
+From the perspective of the distribution and CATE, the effect of experimental arm D on men in their 20s, containing the probability message, is lower than the effect of experimental arm B. Since experimental arm D simultaneously presents the early coordination message, young men may have discounted the probability message due to information overload. Table \ref{tab:rcf-int-corr} presents the results of regressing the predicted effects of experimental arm D on the predicted effects of experimental arm B and C. If donors fully understand the information, the coefficients, excluding the intercept, should be 1 (the effect of experimental arm D equals the sum of the effects of experimental arms B and C). However, the F-test rejects this null hypothesis, suggesting that donors may not be accurately evaluating the information. Furthermore, the impact of experimental arm C is larger than that of experimental arm B, indicating that young men may prioritize the early coordination message over the probability message. Therefore, by simultaneously providing both messages, young male donors may have made decisions emphasizing early coordination due to information overload.\footnote{Similarly, young women also prioritize the early coordination message in decision-making. In contrast, men and women aged 30 and above prioritize the probability message in decision-making.}
 
 \begin{table}
 
@@ -401,6 +406,8 @@ Optimum &  &  & 0.0518 & 0.0455\\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+The heterogeneity of treatment effects indicates that there is a mixture of individuals experiencing positive and negative effects (see Figure \ref{fig:rcf-policy-dist}, upper left, upper right, and lower left panels in the Appendix). Therefore, a targeting policy that tailors treatment to individuals may be more effective than a policy that uniformly applies the treatment. Considering a targeting policy that assigns treatment only to individuals with a positive treatment effect, while assigning the control (experimental arm A) to others, Table \ref{tab:targeting-effect} shows that this targeting policy enhances the average effect compared to a uniform assignment policy. For instance, the targeting policy for experimental arm B increases the average effect by 63\%.
 
 \begin{table}
 
@@ -428,6 +435,8 @@ N & 1961 & 3806 & 2271 & 2947\\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+Since an individual may experience negative effects from one treatment but positive effects from another, a targeting policy that administers the most effective treatment (optimum targeting policy) may be more effective than a targeting policy that only treats individuals with a positive treatment effect.\footnote{In the optimum targeting policy, the control group (experimental arm A) is allocated when the treatment effects for other experimental arms are negative.} Indeed, Table \ref{tab:targeting-effect} demonstrates that optimal targeting is the most effective policy. Compared to a policy that uniformly assigns experimental arm B, the optimum targeting policy increases the average effect by 155\%. Compared to a targeting policy that assigns experimental arm B to individuals with a positive effect, the optimum targeting policy increases the average effect by 133\%. Table \ref{tab:targeting-character} compares the characteristics of average individual for each experimental arm in the optimum targeting policy. The allocation ratios for each experimental group in the optimum targeting policy are as follows: 18\% for experimental arm A, 35\% for experimental arm B, 20\% for experimental arm C, and 27\% for experimental arm D. Average individual assigned to group B are relatively man, young, having little coordination experience, and residing in areas with many hospitals (major cities like Tokyo). This result further suggests the effectiveness of group B for young men.
 
 \hypertarget{reply-speed}{%
 \subsection{Response Speed to Notification}\label{reply-speed}}
