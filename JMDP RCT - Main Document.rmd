@@ -312,8 +312,7 @@ rcf$
       c("30 $\\\\le$ Age", "Age $<$ 30"),
       c("Male", "Female")
     ),
-    title = "Conditional Average Treatment Effect Estimated by RCF",
-    hold = TRUE
+    title = "Conditional Average Treatment Effect Estimated by RCF"
   )
 ```
 
@@ -425,6 +424,7 @@ Although this study identifies the causal effects of information provision throu
 
 \clearpage
 
+\appendix
 # Appendix {-}
 # Text Messages {#message}
 
@@ -437,6 +437,12 @@ Two intervention messages are as follows.
 - *Probability message*: The number of registered donors whose HLA type matches that of a single registered patient is one in hundreds to tens of thousands. We hope you understand that while we may find more than one potential donor, it is not a large number.
 - *Early coordination message*: About 60% of patients can receive a transplant through the Japan Marrow Donor Program. The earlier a donor can be found to donate bone marrow, the higher that percentage can be.
 
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\renewcommand\thefigure{\thesection\arabic{figure}}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\renewcommand{\theHfigure}{\thesection\arabic{figure}}
+\renewcommand{\theHtable}{\thesection\arabic{table}}
 # Figures and Tables {#figtab}
 
 <!-- * Assignment 関連 -->
@@ -448,7 +454,8 @@ schedule$kable(
   notes = paste(
     "Notes: See Table \\@ref(tab:summary) for detail intervention of each experimental arm.",
     "Control group is experimental arm A."
-  )
+  ),
+  hold = TRUE
 )
 ```
 
@@ -466,7 +473,8 @@ stock$
       "number of hospitals with PBSC collection per 10 square kilometers,",
       "number of hospitals with BM collection per 10 square kilometers,",
       "month dummies, and week dummies."
-    )
+    ),
+    hold = TRUE
   )
 ```
 
@@ -614,7 +622,3 @@ rcf$
     hold = TRUE
   )
 ```
-
-\clearpage
-
-# References {-}

@@ -76,12 +76,14 @@ $endif$
 \date{$date$}
 
 \begin{document}
-\maketitle
-$if(abstract)$
-\begin{abstract}
-$abstract$
-\end{abstract}
-$endif$
+\begin{spacing}{1}
+  \maketitle
+  $if(abstract)$
+  \begin{abstract}
+  $abstract$
+  \end{abstract}
+  $endif$
+\end{spacing}
 
 $for(include-before)$
 $include-before$

@@ -87,16 +87,18 @@ A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor 
 \date{Last updated on January 15, 2024}
 
 \begin{document}
-\maketitle
-\begin{abstract}
-Only half of the patients registered with the Japan Marrow Donor Program receive allogeneic hematopoietic stem cell transplantation because much of the transplant coordination is interrupted due to the reluctance of registered donors to donate. In collaboration with the Japan Marrow Donor Program, we conducted a field experiment to test an information provision intervention for increasing registered donors' willingness to donate. We found that information about the low number of potential donor matches per patient increased the willingness to donate by 25\% among men in their 20s. We also found that knowing that early coordination increases a patient's transplant rate encourages women in their 20s to respond early. These results suggest that providing information affects only certain genders and ages and encourages behavioral change among younger donors with better transplant outcomes.
-\vskip\baselineskip
-\noindent
-\textit{JEL classification}: D64, D90, H41, I11
-\vskip\baselineskip
-\noindent
-\textit{Keywords}: Japan Marrow Donor Program, field experiment, text message, information provision, free-riding, present bias
-\end{abstract}
+\begin{spacing}{1}
+  \maketitle
+    \begin{abstract}
+  Only half of the patients registered with the Japan Marrow Donor Program receive allogeneic hematopoietic stem cell transplantation because much of the transplant coordination is interrupted due to the reluctance of registered donors to donate. In collaboration with the Japan Marrow Donor Program, we conducted a field experiment to test an information provision intervention for increasing registered donors' willingness to donate. We found that information about the low number of potential donor matches per patient increased the willingness to donate by 25\% among men in their 20s. We also found that knowing that early coordination increases a patient's transplant rate encourages women in their 20s to respond early. These results suggest that providing information affects only certain genders and ages and encourages behavioral change among younger donors with better transplant outcomes.
+  \vskip\baselineskip
+  \noindent
+  \textit{JEL classification}: D64, D90, H41, I11
+  \vskip\baselineskip
+  \noindent
+  \textit{Keywords}: Japan Marrow Donor Program, field experiment, text message, information provision, free-riding, present bias
+  \end{abstract}
+  \end{spacing}
 
 
 
@@ -252,7 +254,7 @@ RCF predicts the treatment effect from the observed characteristics. In other wo
 \includegraphics{JMDPRC~2/figure-latex/boxplot-rcf-int-1} \caption{Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, and number of hospitals with BM collection per 10 square kilometers.}\label{fig:boxplot-rcf-int}
 \end{figure}
 
-\begin{table}[H]
+\begin{table}
 
 \caption{\label{tab:rcf-int-cate}Conditional Average Treatment Effect Estimated by RCF}
 \centering
@@ -373,6 +375,8 @@ Although this study identifies the causal effects of information provision throu
 
 \clearpage
 
+\appendix
+
 \hypertarget{appendix}{%
 \section*{Appendix}\label{appendix}}
 \addcontentsline{toc}{section}{Appendix}
@@ -396,10 +400,17 @@ Two intervention messages are as follows.
   \emph{Early coordination message}: About 60\% of patients can receive a transplant through the Japan Marrow Donor Program. The earlier a donor can be found to donate bone marrow, the higher that percentage can be.
 \end{itemize}
 
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\renewcommand\thefigure{\thesection\arabic{figure}}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\renewcommand{\theHfigure}{\thesection\arabic{figure}}
+\renewcommand{\theHtable}{\thesection\arabic{table}}
+
 \hypertarget{figtab}{%
 \section{Figures and Tables}\label{figtab}}
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tab:assignment}Assignment Schedule}
 \centering
@@ -422,7 +433,7 @@ Week 4 & C & A & D & B & A & D\\
 \end{threeparttable}
 \end{table}
 
-\begin{table}
+\begin{table}[H]
 
 \caption{\label{tab:reg-stock}Linear Probability Model of Reply and Intention}
 \centering
@@ -647,8 +658,6 @@ N & 1842 & 91 & \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-\clearpage
 
 \clearpage
 
