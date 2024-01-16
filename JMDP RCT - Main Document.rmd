@@ -440,7 +440,6 @@ Two intervention messages are as follows.
 \renewcommand{\theHtable}{\thesection\arabic{table}}
 # Figures and Tables {#figtab}
 
-<!-- * Assignment 関連 -->
 
 ```{r assignment}
 schedule <- Schedule$new(here(data_root, "RCT-schedule.csv"))
@@ -454,7 +453,6 @@ schedule$kable(
 )
 ```
 
-<!-- *NOTE ロジット推定 -->
 
 ```{r reg-stock}
 stock$
@@ -473,15 +471,10 @@ stock$
   )
 ```
 
-```{r setup-logit, include=FALSE}
+```{r setup-logit-stock, include=FALSE}
 logit_stock <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   logit(id)$
-  fit_all()
-
-logit_coordinate <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  logit(id3)$
   fit_all()
 ```
 
@@ -496,43 +489,6 @@ logit_stock$
     hold = TRUE
   )
 ```
-
-```{r logit-coordination}
-logit_coordinate$
-  kable(
-    title = "Logit Model of Coordination",
-    notes = paste(
-      "Covariates are gender, (demeaned) age, its squared term, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    fmt = 2,
-    hold = TRUE
-  )
-```
-
-<!-- * Additional analysis of flow data -->
-
-```{r cumulative-response-rate, fig.cap = 'Cumulative Response Rates by Gender and Age Group.'}
-flow$plot(
-  male == 1,
-  age >= 30,
-  label_list = list(
-    c("Female", "Male"),
-    c("under 30 years old", "aged 30 and over")
-  )
-)
-```
-
-```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
-
-flow_fit$plot(male = TRUE, old = TRUE)
-```
-
-```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
-
-flow_fit$plot(male = FALSE, old = TRUE)
-```
-
-<!-- * RCF -->
 
 ```{r rcf-middle-male}
 rcf$
@@ -567,4 +523,44 @@ mechanism$kable(
   ),
   notes = "Outcome variable is treatment effect of experimental arm D predicted by RCF. Explanatory variables are treatment effects of experimental arm B and C predicted by RCF."
 )
+```
+
+```{r cumulative-response-rate, fig.cap = 'Cumulative Response Rates by Gender and Age Group.', fig.pos="H"}
+flow$plot(
+  male == 1,
+  age >= 30,
+  label_list = list(
+    c("Female", "Male"),
+    c("under 30 years old", "aged 30 and over")
+  )
+)
+```
+
+```{r old-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.', fig.pos="H"}
+
+flow_fit$plot(male = TRUE, old = TRUE)
+```
+
+```{r old-female-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.', fig.pos="H"}
+
+flow_fit$plot(male = FALSE, old = TRUE)
+```
+
+```{r setup-logit-coordination, include=FALSE}
+logit_coordinate <- rct_clone$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(id3)$
+  fit_all()
+```
+
+```{r logit-coordination}
+logit_coordinate$
+  kable(
+    title = "Logit Model of Coordination",
+    notes = paste(
+      "Covariates are gender, (demeaned) age, its squared term, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+    ),
+    fmt = 2,
+    hold = TRUE
+  )
 ```

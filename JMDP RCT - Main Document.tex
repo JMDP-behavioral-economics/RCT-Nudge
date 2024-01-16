@@ -496,48 +496,6 @@ Log.Lik. & \num{-3884.517} & \num{-3712.289} & \num{-7534.803} & \num{-7364.638}
 
 \begin{table}[H]
 
-\caption{\label{tab:logit-coordination}Logit Model of Coordination}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccccccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} & \multicolumn{2}{c}{Candidate} & \multicolumn{2}{c}{Consent} & \multicolumn{2}{c}{Donation} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
-  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\
-\midrule
-Treatment B & \num{1.19} & \num{1.20} & \num{1.07} & \num{1.04} & \num{1.09} & \num{1.06} & \num{1.07} & \num{1.04}\\
- & {}[\num{1.05}, \num{1.35}] & {}[\num{1.05}, \num{1.36}] & {}[\num{0.86}, \num{1.33}] & {}[\num{0.83}, \num{1.31}] & {}[\num{0.87}, \num{1.38}] & {}[\num{0.83}, \num{1.35}] & {}[\num{0.83}, \num{1.39}] & {}[\num{0.80}, \num{1.35}]\\
-Treatment C & \num{1.08} & \num{1.08} & \num{1.01} & \num{0.97} & \num{1.04} & \num{0.99} & \num{1.03} & \num{0.98}\\
- & {}[\num{0.95}, \num{1.23}] & {}[\num{0.94}, \num{1.24}] & {}[\num{0.81}, \num{1.27}] & {}[\num{0.76}, \num{1.23}] & {}[\num{0.82}, \num{1.32}] & {}[\num{0.77}, \num{1.27}] & {}[\num{0.79}, \num{1.34}] & {}[\num{0.74}, \num{1.29}]\\
-Treatment D & \num{1.15} & \num{1.18} & \num{1.12} & \num{1.12} & \num{1.16} & \num{1.16} & \num{1.06} & \num{1.05}\\
- & {}[\num{1.01}, \num{1.31}] & {}[\num{1.03}, \num{1.35}] & {}[\num{0.90}, \num{1.40}] & {}[\num{0.89}, \num{1.41}] & {}[\num{0.92}, \num{1.46}] & {}[\num{0.91}, \num{1.47}] & {}[\num{0.81}, \num{1.37}] & {}[\num{0.80}, \num{1.38}]\\
-\midrule
-Covariates &  & X &  & X &  & X &  & X\\
-Num.Obs. & \num{10435} & \num{10435} & \num{8587} & \num{8587} & \num{8558} & \num{8558} & \num{8441} & \num{8441}\\
-Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439} & \num{-2243.901} & \num{-2168.120} & \num{-1906.131} & \num{-1851.371}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Gender and Age Group.}\label{fig:cumulative-response-rate}
-\end{figure}
-
-\begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/old-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
-\end{figure}
-
-\begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
-\end{figure}
-
-\begin{table}[H]
-
 \caption{\label{tab:rcf-middle-male}Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)}
 \centering
 \fontsize{9}{11}\selectfont
@@ -597,6 +555,48 @@ Num.Obs. & \num{1127} & \num{3006} & \num{1556} & \num{5296}\\
 \end{tabular}
 \begin{tablenotes}
 \item Notes: * p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. Outcome variable is treatment effect of experimental arm D predicted by RCF. Explanatory variables are treatment effects of experimental arm B and C predicted by RCF.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Gender and Age Group.}\label{fig:cumulative-response-rate}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~2/figure-latex/old-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~2/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
+\end{figure}
+
+\begin{table}[H]
+
+\caption{\label{tab:logit-coordination}Logit Model of Coordination}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} & \multicolumn{2}{c}{Candidate} & \multicolumn{2}{c}{Consent} & \multicolumn{2}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\
+\midrule
+Treatment B & \num{1.19} & \num{1.20} & \num{1.07} & \num{1.04} & \num{1.09} & \num{1.06} & \num{1.07} & \num{1.04}\\
+ & {}[\num{1.05}, \num{1.35}] & {}[\num{1.05}, \num{1.36}] & {}[\num{0.86}, \num{1.33}] & {}[\num{0.83}, \num{1.31}] & {}[\num{0.87}, \num{1.38}] & {}[\num{0.83}, \num{1.35}] & {}[\num{0.83}, \num{1.39}] & {}[\num{0.80}, \num{1.35}]\\
+Treatment C & \num{1.08} & \num{1.08} & \num{1.01} & \num{0.97} & \num{1.04} & \num{0.99} & \num{1.03} & \num{0.98}\\
+ & {}[\num{0.95}, \num{1.23}] & {}[\num{0.94}, \num{1.24}] & {}[\num{0.81}, \num{1.27}] & {}[\num{0.76}, \num{1.23}] & {}[\num{0.82}, \num{1.32}] & {}[\num{0.77}, \num{1.27}] & {}[\num{0.79}, \num{1.34}] & {}[\num{0.74}, \num{1.29}]\\
+Treatment D & \num{1.15} & \num{1.18} & \num{1.12} & \num{1.12} & \num{1.16} & \num{1.16} & \num{1.06} & \num{1.05}\\
+ & {}[\num{1.01}, \num{1.31}] & {}[\num{1.03}, \num{1.35}] & {}[\num{0.90}, \num{1.40}] & {}[\num{0.89}, \num{1.41}] & {}[\num{0.92}, \num{1.46}] & {}[\num{0.91}, \num{1.47}] & {}[\num{0.81}, \num{1.37}] & {}[\num{0.80}, \num{1.38}]\\
+\midrule
+Covariates &  & X &  & X &  & X &  & X\\
+Num.Obs. & \num{10435} & \num{10435} & \num{8587} & \num{8587} & \num{8558} & \num{8558} & \num{8441} & \num{8441}\\
+Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439} & \num{-2243.901} & \num{-2168.120} & \num{-1906.131} & \num{-1851.371}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item Notes: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
