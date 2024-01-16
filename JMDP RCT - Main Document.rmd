@@ -325,12 +325,6 @@ From the perspective of the distribution and CATE, the effect of experimental ar
 
 [^other-generation]: Similarly, young women also prioritize the early coordination message in decision-making. In contrast, men and women aged 30 and above prioritize the probability message in decision-making.
 
-The heterogeneity of treatment effects indicates that there is a mixture of individuals experiencing positive and negative effects (see Figure \@ref(fig:rcf-policy-dist), upper left, upper right, and lower left panels in the Appendix). Therefore, a targeting policy that tailors treatment to individuals may be more effective than a policy that uniformly applies the treatment. Consider a targeting policy that assigns treatment only to individuals with a positive treatment effect, while assigning the control (experimental arm A) to others. As a result, this targeting policy enhances the average effect compared to a uniform assignment policy (see Table \@ref(tab:targeting-effect) in the Appendix \@ref(figtab)). For instance, the targeting policy for experimental arm B increases the average effect by 63%.
-
-Since an individual may experience negative effects from one treatment but positive effects from another, a targeting policy that administers the most effective treatment to each individual (optimum targeting policy) is more effective than a targeting policy that only treats individuals with a positive treatment effect (see Table \@ref(tab:targeting-effect) in the Appendix \@ref(figtab)).[^how-to-A] Compared to a targeting policy that assigns experimental arm B to individuals with a positive effect, the optimum targeting policy increases the average effect by 133%. The allocation ratios for each experimental group in the optimum targeting policy are as follows: 18% for experimental arm A, 35% for experimental arm B, 20% for experimental arm C, and 27% for experimental arm D (see Table \@ref(tab:targeting-character) in the Appendix \@ref(figtab)). Average individual assigned to group B is relatively man, young, having little coordination experience, and residing in areas with many hospitals (major cities like Tokyo). This result further suggests the effectiveness of group B for young men.
-
-[^how-to-A]:  In the optimum targeting policy, the control group (experimental arm A) is allocated when the treatment effects for other experimental arms are negative.
-
 ## Response Speed to Notification {#reply-speed}
 
 ```{r flow-setup, include=FALSE}
@@ -540,45 +534,6 @@ flow_fit$plot(male = FALSE, old = TRUE)
 
 <!-- * RCF -->
 
-```{r rcf-int-corr}
-mechanism <- rcf$decompose_effect(
-  "D",
-  c("B", "C"),
-  male == 0,
-  age < 30
-)
-
-mechanism$kable(
-  title = "Correlation of Predicted Treatment Effects",
-  subset_label = list(
-    c("Male", "Female"),
-    c("30 $\\\\le$ Age", "Age $<$ 30")
-  ),
-  notes = "Outcome variable is treatment effect of experimental arm D predicted by RCF. Explanatory variables are treatment effects of experimental arm B and C predicted by RCF."
-)
-```
-
-```{r rcf-policy-dist, fig.cap = "Distribution of Predicted Treatment Effect"}
-targeting <- rcf$targeting(include_ctrl = TRUE)
-targeting$hist()
-```
-
-```{r targeting-effect}
-targeting$kable(
-  title = "Uniform Assignment Policy and Targeting Policy",
-  notes = "The table presents the simple average and standard deviation of treatment effects for a particular policy. The uniform policy allocates a specific treatment to all individuals. The targeting policy allocates a treatment only to individuals for whom the treatment effect is positive, assigning the control (experimental arm A) to others. The optimal targeting policy provides the most effective treatment to each individual. When the effects of experimental arms B, C, and D are negative, this policy assigns the control."
-)
-```
-
-```{r targeting-character, include=TRUE}
-targeting$
-  summarize_X()$
-  kable(
-    title = "Average Characteristics of Optimal Treatment",
-    notes = "The table illustrates the average attributes of individuals assigned to a specific treatment under the optimal targeting policy."
-  )
-```
-
 ```{r rcf-middle-male}
 rcf$
   effect_characteristics(
@@ -596,30 +551,20 @@ rcf$
   )
 ```
 
-```{r rcf-older-male, eval=FALSE}
-rcf$
-  effect_characteristics(
-    target = "C",
-    male = male == 1,
-    age = 45 < age
-  )$
-  kable(
-    title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Males)",
-    notes = "We use men over 45 years old.",
-    hold = TRUE
-  )
-```
+```{r rcf-int-corr}
+mechanism <- rcf$decompose_effect(
+  "D",
+  c("B", "C"),
+  male == 0,
+  age < 30
+)
 
-```{r rcf-older-female, eval=FALSE}
-rcf$
-  effect_characteristics(
-    target = "C",
-    male = male == 0,
-    age = 45 < age
-  )$
-  kable(
-    title = "Sample Characteristics of Predicted Treatment Effect of Arm C (Older Females)",
-    notes = "We use women over 45 years old.",
-    hold = TRUE
-  )
+mechanism$kable(
+  title = "Correlation of Predicted Treatment Effects",
+  subset_label = list(
+    c("Male", "Female"),
+    c("30 $\\\\le$ Age", "Age $<$ 30")
+  ),
+  notes = "Outcome variable is treatment effect of experimental arm D predicted by RCF. Explanatory variables are treatment effects of experimental arm B and C predicted by RCF."
+)
 ```

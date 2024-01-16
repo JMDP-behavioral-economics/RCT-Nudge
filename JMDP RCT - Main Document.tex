@@ -287,10 +287,6 @@ Figure \ref{fig:boxplot-rcf-int} illustrates the distribution of predicted treat
 
 From the perspective of the distribution and CATE, the effect of experimental arm D on men in their 20s, containing the probability message, is lower than the effect of experimental arm B. Since experimental arm D simultaneously presents the early coordination message, young men may have discounted the probability message due to information overload. Table \ref{tab:rcf-int-corr} in the Appendix \ref{figtab} presents the results of regressing the predicted effects of experimental arm D on the predicted effects of experimental arm B and C. If donors fully understand the information, the coefficients, excluding the intercept, should be 1 (the effect of experimental arm D equals the sum of the effects of experimental arms B and C). However, the F-test rejects this null hypothesis, suggesting that donors may not be accurately evaluating the information. Furthermore, the impact of experimental arm C is larger than that of experimental arm B, indicating that young men may prioritize the early coordination message over the probability message.\footnote{Similarly, young women also prioritize the early coordination message in decision-making. In contrast, men and women aged 30 and above prioritize the probability message in decision-making.}
 
-The heterogeneity of treatment effects indicates that there is a mixture of individuals experiencing positive and negative effects (see Figure \ref{fig:rcf-policy-dist}, upper left, upper right, and lower left panels in the Appendix). Therefore, a targeting policy that tailors treatment to individuals may be more effective than a policy that uniformly applies the treatment. Consider a targeting policy that assigns treatment only to individuals with a positive treatment effect, while assigning the control (experimental arm A) to others. As a result, this targeting policy enhances the average effect compared to a uniform assignment policy (see Table \ref{tab:targeting-effect} in the Appendix \ref{figtab}). For instance, the targeting policy for experimental arm B increases the average effect by 63\%.
-
-Since an individual may experience negative effects from one treatment but positive effects from another, a targeting policy that administers the most effective treatment to each individual (optimum targeting policy) is more effective than a targeting policy that only treats individuals with a positive treatment effect (see Table \ref{tab:targeting-effect} in the Appendix \ref{figtab}).\footnote{In the optimum targeting policy, the control group (experimental arm A) is allocated when the treatment effects for other experimental arms are negative.} Compared to a targeting policy that assigns experimental arm B to individuals with a positive effect, the optimum targeting policy increases the average effect by 133\%. The allocation ratios for each experimental group in the optimum targeting policy are as follows: 18\% for experimental arm A, 35\% for experimental arm B, 20\% for experimental arm C, and 27\% for experimental arm D (see Table \ref{tab:targeting-character} in the Appendix \ref{figtab}). Average individual assigned to group B is relatively man, young, having little coordination experience, and residing in areas with many hospitals (major cities like Tokyo). This result further suggests the effectiveness of group B for young men.
-
 \hypertarget{reply-speed}{%
 \subsection{Response Speed to Notification}\label{reply-speed}}
 
@@ -540,6 +536,35 @@ Log.Lik. & \num{-5909.753} & \num{-5764.480} & \num{-2427.295} & \num{-2349.439}
 \includegraphics{JMDPRC~2/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control number of past coordinations, number of hospitals per 10 square kilometers, number of hospitals with PBSC collection per 10 square kilometers, number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
 \end{figure}
 
+\begin{table}[H]
+
+\caption{\label{tab:rcf-middle-male}Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)}
+\centering
+\fontsize{9}{11}\selectfont
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Predicted treatment effect} & \multicolumn{1}{c}{ } \\
+\cmidrule(l{3pt}r{3pt}){2-3}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Effect $\le$ 0.1} & \multicolumn{1}{c}{0.1 < Effect} & \multicolumn{1}{c}{P-value} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
+ & (1) & (2) & (3)\\
+\midrule
+Age & 35.676 & 37.516 & < 0.001\\
+Number of past coordinations & 1.648 & 2.813 & < 0.001\\
+Number of listed hospitals & 0.393 & 1.526 & < 0.001\\
+Number of hospitals listed with PBSC collection & 0.132 & 0.533 & < 0.001\\
+Number of hospitals listed with BM collection & 0.197 & 0.909 & < 0.001\\
+N & 1842 & 91 & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item Notes: Column (1) and (2) show average sample characteristics. Column (3) shows p-values of difference-in-means test. We use males with 30--39 age.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 \begin{table}
 
 \caption{\label{tab:rcf-int-corr}Correlation of Predicted Treatment Effects}
@@ -572,90 +597,6 @@ Num.Obs. & \num{1127} & \num{3006} & \num{1556} & \num{5296}\\
 \end{tabular}
 \begin{tablenotes}
 \item Notes: * p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. Outcome variable is treatment effect of experimental arm D predicted by RCF. Explanatory variables are treatment effects of experimental arm B and C predicted by RCF.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/rcf-policy-dist-1} \caption{Distribution of Predicted Treatment Effect}\label{fig:rcf-policy-dist}
-\end{figure}
-
-\begin{table}
-
-\caption{\label{tab:targeting-effect}Uniform Assignment Policy and Targeting Policy}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Uniform} & \multicolumn{2}{c}{Targeting} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
- & Mean & S.D. & Mean & S.D.\\
-\midrule
-B & 0.0203 & 0.0565 & 0.0331 & 0.0416\\
-C & -0.0032 & 0.0597 & 0.0222 & 0.0331\\
-D & 0.0085 & 0.0613 & 0.0285 & 0.0389\\
-Optimum &  &  & 0.0518 & 0.0455\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: The table presents the simple average and standard deviation of treatment effects for a particular policy. The uniform policy allocates a specific treatment to all individuals. The targeting policy allocates a treatment only to individuals for whom the treatment effect is positive, assigning the control (experimental arm A) to others. The optimal targeting policy provides the most effective treatment to each individual. When the effects of experimental arms B, C, and D are negative, this policy assigns the control.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}
-
-\caption{\label{tab:targeting-character}Average Characteristics of Optimal Treatment}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Optimal treatment} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
- & A & B & C & D\\
-\midrule
-Male (= 1) & 0.55 & 0.65 & 0.59 & 0.67\\
-Age & 36.73 & 34.44 & 43.03 & 39.50\\
-Number of past coordinations & 1.45 & 1.53 & 1.68 & 1.71\\
-Number of listed hospitals & 0.47 & 0.44 & 0.39 & 0.62\\
-Number of hospitals listed with PBSC collection & 0.15 & 0.15 & 0.13 & 0.22\\
-Number of hospitals listed with BM collection & 0.24 & 0.23 & 0.20 & 0.33\\
-N & 1961 & 3806 & 2271 & 2947\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: The table illustrates the average attributes of individuals assigned to a specific treatment under the optimal targeting policy.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:rcf-middle-male}Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)}
-\centering
-\fontsize{9}{11}\selectfont
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Predicted treatment effect} & \multicolumn{1}{c}{ } \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Effect $\le$ 0.1} & \multicolumn{1}{c}{0.1 < Effect} & \multicolumn{1}{c}{P-value} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
- & (1) & (2) & (3)\\
-\midrule
-Age & 35.676 & 37.516 & < 0.001\\
-Number of past coordinations & 1.648 & 2.813 & < 0.001\\
-Number of listed hospitals & 0.393 & 1.526 & < 0.001\\
-Number of hospitals listed with PBSC collection & 0.132 & 0.533 & < 0.001\\
-Number of hospitals listed with BM collection & 0.197 & 0.909 & < 0.001\\
-N & 1842 & 91 & \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: Column (1) and (2) show average sample characteristics. Column (3) shows p-values of difference-in-means test. We use males with 30--39 age.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
