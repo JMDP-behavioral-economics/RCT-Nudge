@@ -334,13 +334,7 @@ RCFCate <- R6::R6Class("RCFCate",
         kableExtra::footnote(
           general_title = "",
           general = paste(
-            "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
-            "Standard errors are in parentheses.",
-            "See Athey and Wager (2019) for estimation method",
-            "of conditional average treatment effect (CATE).",
-            "Since these estimates are asymptotically normal,",
-            "we calculate z-score under the null hypothesis that CATE is zero,",
-            "and obtain p-value.",
+            "Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors are in parentheses. See Athey and Wager (2019) for estimation method of conditional average treatment effect (CATE). Since these estimates are asymptotically normal, we calculate the z-score under the null hypothesis that CATE is zero, and obtain p-value.",
             notes
           ),
           threeparttable = TRUE,
@@ -508,7 +502,7 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         kableExtra::footnote(
           general_title = "",
           general = paste(
-            "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+            "Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
             "The robust standard errors are in parentheses.",
             notes
           ),

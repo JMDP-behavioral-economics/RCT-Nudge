@@ -231,7 +231,7 @@ LmAll <- R6::R6Class("LmAll",
       flex %>%
         align(j = -1, align = "center", part = "all") %>%
         add_footer_lines(paste(
-          "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+          "Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
           "The robust standard errors are in parentheses.",
           notes
         )) %>%
