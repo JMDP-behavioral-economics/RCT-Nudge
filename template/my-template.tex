@@ -75,10 +75,15 @@ $endfor$
 $endif$
 \date{$date$}
 
+\makeatletter
+\renewcommand*{\@fnsymbol}[1]{\ifcase#1\or*\else\@arabic{\numexpr#1-1\relax}\fi}
+\makeatother
+
 \begin{document}
 \begin{spacing}{1}
   \maketitle
   $if(abstract)$
+  \clearpage
   \begin{abstract}
   $abstract$
   \end{abstract}
@@ -102,6 +107,8 @@ $endif$
 }
 $endif$
 
+\clearpage
+\setcounter{footnote}{0}
 $body$
 
 \clearpage
