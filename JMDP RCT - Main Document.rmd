@@ -43,15 +43,14 @@ bibliography: biblio.bib
 biblio-style: agsm
 output:
   bookdown::pdf_document2:
-    latex_engine: lualatex
+    latex_engine: pdflatex
     template: template/my-template.tex
     keep_tex: true
     toc: false
     number_sections: true
     citation_package: natbib
 base-strech: 1.5
-header-includes:
-  - \renewcommand\Affilfont{\itshape\small}
+fontsize: 12pt
 params:
   is_fe: TRUE
   is_cluster: FALSE
