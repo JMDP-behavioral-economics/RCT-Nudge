@@ -379,26 +379,29 @@ LmSubset <- R6::R6Class("LmSubset",
       plot_list <- unique(plotdt$outcome) %>%
         purrr::map(function(x) {
           subset(plotdt, outcome == x) %>%
-            ggplot(aes(x = pos, y = estimate)) +
+            ggplot(aes(x = pos, y = estimate, shape = term)) +
             geom_hline(aes(yintercept = 0), linetype = 2) +
             geom_point(
-              aes(color = term, shape = term),
-              size = 3, position = position_dodge(0.5)
+              size = 3, position = position_dodge(0.5),
+              color = "black"
             ) +
             geom_errorbar(
-              aes(ymin = conf.low, ymax = conf.high, color = term),
+              aes(ymin = conf.low, ymax = conf.high),
               position = position_dodge(0.5),
-              width = 0
-            ) +
-            geom_text(
-              aes(y = label_N_y_pos, label = N),
-              data = subset(text, outcome == x),
+              width = 0,
               color = "black"
             ) +
             geom_text(
-              aes(y = label_mean_y_pos, label = avg),
+              aes(x = pos, y = label_N_y_pos, label = N),
               data = subset(text, outcome == x),
-              color = "black"
+              color = "black",
+              inherit.aes = FALSE
+            ) +
+            geom_text(
+              aes(x = pos, y = label_mean_y_pos, label = avg),
+              data = subset(text, outcome == x),
+              color = "black",
+              inherit.aes = FALSE
             ) +
             scale_x_discrete(breaks = c("01", "00", "11", "10"), labels = xlabels) +
             scale_y_continuous(breaks = axis_y$breaks, limits = axis_y$limits) +
@@ -408,7 +411,8 @@ LmSubset <- R6::R6Class("LmSubset",
               y = "Estimated Effects (95%CI)",
               color = "Treatment", shape = "Treatment"
             ) +
-            my_theme_classic()
+            my_theme_classic() +
+            guides(shape = guide_legend(override.aes = list(size = 4)))
         })
 
       wrap_plots(plot_list, ncol = 2) +

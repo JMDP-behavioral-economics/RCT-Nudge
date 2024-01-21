@@ -42,7 +42,7 @@ RCF <- R6::R6Class("RCF",
         ggplot(aes(x = age, y = effect)) +
         geom_hline(aes(yintercept = 0), linetype = 2) +
         geom_boxplot(aes(group = age)) +
-        stat_smooth(se = FALSE, color = "blue") +
+        stat_smooth(se = FALSE, color = "black", linewidth = 1) +
         facet_grid(treat ~ male) +
         labs(x = "Age", y = "Predicted treatment effect") +
         my_theme_classic(strip_hjust = 0.5) +
