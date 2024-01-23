@@ -7,7 +7,7 @@ render_inference_opt <- function( fe = TRUE,
                                   output = NULL)
 {
   out <- output
-  
+
   if (is.null(out)) {
     out <- paste0(
       "body_fe-", fe,
@@ -16,7 +16,7 @@ render_inference_opt <- function( fe = TRUE,
       ".docx"
     )
   }
-  
+
   render(
     here("JMDP RCT - Main Document.rmd"),
     output_file = out,
@@ -29,14 +29,19 @@ render_inference_opt <- function( fe = TRUE,
   )
 }
 
-render_inference_opt(TRUE, FALSE, "stata", "JMDP RCT - Main Document.pdf") #main
-render_inference_opt(TRUE, TRUE, "stata", "JMDP RCT - Main Document (Robust).pdf") # robustness
-# render_inference_opt(FALSE, FALSE, "stata")
-# render_inference_opt(FALSE, TRUE, "stata")
-# render_inference_opt()
-# render_inference_opt(FALSE)
+# Main manuscript
+render_inference_opt(
+  TRUE, FALSE, "stata",
+  "JMDP RCT - Main Document.pdf"
+)
 
-# //NOTE Appendix
+# Robust analysis
+render_inference_opt(
+  TRUE, TRUE, "stata",
+  "JMDP RCT - Main Document (Robust).pdf"
+)
+
+# Appendix
 render(
   here("JMDP RCT - Appendix.rmd"),
   output_file = "JMDP RCT - Appendix.pdf"
