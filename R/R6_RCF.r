@@ -608,15 +608,21 @@ EffectCharacteristics <- R6::R6Class("EffectCharacteristics",
                       group_label = c("Non-positive", "Positive"),
                       escape = TRUE,
                       hold = FALSE) {
-      kbl <- self$table %>%
+      table <- self$table %>%
+        mutate(
+          p.value = if_else(p.value == "< 0.001", "$<$ 0.001", p.value)
+        )
+
+      kbl <- table %>%
         knitr::kable(
           caption = title,
           col.names = c("", paste0("(", 1:3, ")")),
           align = "lcccc",
           booktabs = TRUE,
-          linesep = ""
+          linesep = "",
+          escape = FALSE
         )
-      
+
       if (hold) {
         kbl <- kbl %>%
           kable_styling(font_size = font_size, latex_options = "HOLD_position")

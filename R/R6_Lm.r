@@ -270,7 +270,7 @@ LmAll <- R6::R6Class("LmAll",
         kableExtra::footnote(
           general_title = "",
           general = paste(
-            "Notes: * p < 0.1, ** p < 0.05, *** p < 0.01.",
+            "Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
             "The robust standard errors are in parentheses.",
             notes
           ),

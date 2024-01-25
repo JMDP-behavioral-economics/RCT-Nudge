@@ -502,7 +502,7 @@ rcf$
   )$
   kable(
     title = "Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)",
-    group_label = c("Effect $\\\\le$ 0.1", "0.1 < Effect"),
+    group_label = c("Effect $\\\\le$ 0.1", "0.1 $<$ Effect"),
     notes = "We use males aged 30--39.",
     hold = TRUE,
     escape = FALSE
