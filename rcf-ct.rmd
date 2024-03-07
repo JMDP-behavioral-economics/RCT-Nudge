@@ -77,7 +77,7 @@ rct$set_default_se_type("stata")
 
 # Primary Outcomes
 
-## 回帰分析：線形確率モデル {.tabset}
+## 回帰分析 {.tabset}
 
 ```{r lm-prime, include=FALSE}
 prime <- rct$
@@ -85,7 +85,13 @@ prime <- rct$
   lm(c(1, 2, 4), sample_drop = FALSE)
 ```
 
-### Full Sample
+```{r logit-prime, include=FALSE}
+logit_prime <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(c(1, 2, 4), sample_drop=FALSE)
+```
+
+### Full Sample (LPM)
 
 ```{r tab-lm-prime}
 prime$
@@ -104,7 +110,25 @@ prime$
   )
 ```
 
-### Subsample
+### Full Sample (Logit)
+
+```{r tab-logit-prime}
+logit_prime$
+  fit_all()$
+  kable(
+    title = "Logit Model of Primary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+### Subsample (LPM)
 
 ```{r fig-lm-prime, fig.cap = "Subsample Analysis"}
 prime$
