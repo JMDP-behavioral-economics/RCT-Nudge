@@ -75,22 +75,49 @@ rct$add_fixed_effect(c("month", "week"))
 rct$set_default_se_type("stata")
 ```
 
+# 提供意向のRandom Causal Forest {.tabset}
+
+```{r rcf-pint, include=FALSE}
+pint_rcf <- rct$rcf("positive", sample_drop = FALSE)
+```
+
+## Boxplot
+
+```{r rcf-pint-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Positive Intention)"}
+pint_rcf$subset_boxplot()
+```
+
+## CATE
+
+```{r rcf-pint-cate}
+pint_rcf$
+  cate(age < 30, male == 0)$
+  kable(
+    label = list(
+      c("30 < Age", "Age < 30"),
+      c("Male", "Female")
+    ),
+    title = "Conditional Average Treatment Effect Estimated by RCF (Positive Intention)",
+    font_size = 16
+)
+```
+
 # 確認検査のRandom Causal Forest {.tabset}
 
 ```{r rcf-ct, include=FALSE}
-rcf <- rct$rcf("test", sample_drop = FALSE)
+ct_rcf <- rct$rcf("test", sample_drop = FALSE)
 ```
 
 ## Boxplot
 
 ```{r rcf-ct-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Confirmatory Typing)"}
-rcf$subset_boxplot()
+ct_rcf$subset_boxplot()
 ```
 
 ## CATE
 
 ```{r rcf-ct-cate}
-rcf$
+ct_rcf$
   cate(age < 30, male == 0)$
   kable(
     label = list(
