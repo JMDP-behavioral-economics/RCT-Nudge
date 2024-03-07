@@ -75,19 +75,58 @@ rct$add_fixed_effect(c("month", "week"))
 rct$set_default_se_type("stata")
 ```
 
-# 提供意向のRandom Causal Forest {.tabset}
+# Primary Outcomes
+
+## 回帰分析：線形確率モデル {.tabset}
+
+```{r lm-prime, include=FALSE}
+prime <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(c(1, 2, 4), sample_drop = FALSE)
+```
+
+### Full Sample
+
+```{r tab-lm-prime}
+prime$
+  fit_all()$
+  kable(
+    title = "Linear Probability Model of Primary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+### Subsample
+
+```{r fig-lm-prime, fig.cap = "Subsample Analysis"}
+prime$
+  fit_sub()$
+  coefplot()
+```
+
+
+## Random Causal Forest
+### 提供意向 {.tabset}
 
 ```{r rcf-pint, include=FALSE}
 pint_rcf <- rct$rcf("positive", sample_drop = FALSE)
 ```
 
-## Boxplot
+#### Boxplot
 
 ```{r rcf-pint-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Positive Intention)"}
 pint_rcf$subset_boxplot()
 ```
 
-## CATE
+#### CATE
 
 ```{r rcf-pint-cate}
 pint_rcf$
@@ -102,19 +141,19 @@ pint_rcf$
 )
 ```
 
-# 確認検査のRandom Causal Forest {.tabset}
+### 確認検査 {.tabset}
 
 ```{r rcf-ct, include=FALSE}
 ct_rcf <- rct$rcf("test", sample_drop = FALSE)
 ```
 
-## Boxplot
+#### Boxplot
 
 ```{r rcf-ct-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Confirmatory Typing)"}
 ct_rcf$subset_boxplot()
 ```
 
-## CATE
+#### CATE
 
 ```{r rcf-ct-cate}
 ct_rcf$
