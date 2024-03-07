@@ -75,6 +75,29 @@ rct$add_fixed_effect(c("month", "week"))
 rct$set_default_se_type("stata")
 ```
 
+# 返信タイミングと患者都合中断 {.tabset}
+
+## Logit Regression
+
+```{r reg-speed-interrupt, echo=TRUE}
+dt <- subset(rct$data, positive == 1)
+mod <- glm(exg_stop_test ~ days_reply, data = dt, family = binomial())
+summary(mod)
+```
+
+## Fitted Lines
+
+```{r response-speed-and-exg-stop, fig.cap = "Relationshipt between Response Speed and Interruption due to Patients. Note: Fitted line represents the prediction of logit regression.", echo=FALSE}
+dt$pred <- predict(mod, data = dt, type = "response")
+
+ggplot(dt, aes(x = days_reply, y = exg_stop_test)) +
+  stat_summary(geom = "point", fun = "mean", size = 3, color = "grey20") +
+  geom_smooth(method = "glm", method.args = list(family = binomial())) +
+  scale_x_continuous(breaks = seq(0, 70, by = 5)) +
+  labs(x = "Response Speed (day)", y = "Interrupted due to patients until CT\n(proportion)") +
+  my_theme_classic()
+```
+
 # Primary Outcomes
 
 ## 回帰分析 {.tabset}
