@@ -7,7 +7,7 @@ source(here("R/R6_Logit.r"))
 source(here("R/R6_RCF.r"))
 source(here("R/R6_Flow.r"))
 
-RCT <- R6Class("RCT", 
+RCT <- R6Class("RCT",
   public = list(
     data = NULL,
     initialize = function(data) self$data <- data,
@@ -65,11 +65,11 @@ RCT <- R6Class("RCT",
         cluster
       )
     },
-    lm = function(outcome_id, se, cluster) {
+    lm = function(outcome_id, sample_drop = TRUE, se, cluster) {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
 
-      use <- private$create_analysis_data()
+      use <- private$create_analysis_data(sample_drop)
       if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
 
       if (missing(cluster)) cluster <- private$cluster
@@ -79,16 +79,16 @@ RCT <- R6Class("RCT",
         LmCluster$new(use, private$covariate, se, cluster, private$fe)
       }
     },
-    logit = function(outcome_id) {
-      use <- private$create_analysis_data()
+    logit = function(outcome_id, sample_drop = TRUE) {
+      use <- private$create_analysis_data(sample_drop)
       if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
       Logit$new(use, private$covariate, private$fe)
     },
-    rcf = function(outcome) {
+    rcf = function(outcome, sample_drop = TRUE) {
       if (length(private$covariate) == 0) stop("Specify covariate by add_covariate()")
       if (length(outcome) > 1) stop("Specify only one outcome")
 
-      dt <- private$create_analysis_data()
+      dt <- private$create_analysis_data(sample_drop)
       outcome_id <- which(names(private$outcome) == outcome)
       use <- private$subset_by_outcome(dt, outcome_id)
 
@@ -101,14 +101,14 @@ RCT <- R6Class("RCT",
 
       RCF$new(Y, D, X, private$covariate)
     },
-    flow = function(se, cluster, outcome) {
+    flow = function(se, cluster, outcome, sample_drop = TRUE) {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
       if (!(outcome %in% c("reply", "positive", "negative"))) {
         stop("Please specify outcomes related with response: 'reply', 'positive', 'negative'")
       }
 
-      dt <- private$create_analysis_data()
+      dt <- private$create_analysis_data(sample_drop)
       outcome_id <- which(names(private$outcome) == outcome)
       use <- private$subset_by_outcome(dt, outcome_id)
 
@@ -123,7 +123,7 @@ RCT <- R6Class("RCT",
     outcome = list(),
     se_type = "",
     cluster = NULL,
-    create_analysis_data = function() {
+    create_analysis_data = function(drop) {
       exclude <- self$data %>%
         select(id, starts_with("exg_stop")) %>%
         rename(exg_stop_positive = exg_stop_intention) %>%
@@ -134,7 +134,7 @@ RCT <- R6Class("RCT",
           names_prefix = "exg_stop_"
         )
 
-      self$data %>%
+      data <- self$data %>%
         select(
           reply,
           positive,
@@ -148,12 +148,18 @@ RCT <- R6Class("RCT",
         ) %>%
         pivot_longer(reply:donate, names_to = "outcome") %>%
         dplyr::left_join(exclude, by = c("id", "outcome")) %>%
-        dplyr::filter(exclude == 0) %>%
         mutate(outcome = factor(
           outcome,
           levels = names(private$outcome),
           labels = unname(unlist(private$outcome))
         ))
+
+      if (drop) {
+        subset(data, exclude == 0)
+      } else {
+        data
+      }
+
     },
     subset_by_outcome = function(data, outcome_id) {
       keep <- unname(unlist(private$outcome))[outcome_id]
