@@ -114,6 +114,33 @@ prime$
 
 
 ## Random Causal Forest
+### 返信 {.tabset}
+
+```{r rcf-reply, include=FALSE}
+rcf_reply <- rct$rcf("reply", sample_drop = FALSE)
+```
+
+#### Boxplot
+
+```{r rcf-reply-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Reply)"}
+rcf_reply$subset_boxplot()
+```
+
+#### CATE
+
+```{r rcf-reply-cate}
+rcf_reply$
+  cate(age < 30, male == 0)$
+  kable(
+    label = list(
+      c("30 < Age", "Age < 30"),
+      c("Male", "Female")
+    ),
+    title = "Conditional Average Treatment Effect Estimated by RCF (Reply)",
+    font_size = 16
+)
+```
+
 ### 提供意向 {.tabset}
 
 ```{r rcf-pint, include=FALSE}
