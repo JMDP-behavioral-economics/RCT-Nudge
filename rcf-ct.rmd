@@ -218,3 +218,64 @@ ct_rcf$
     font_size = 16
 )
 ```
+
+# Secondary Outcomes
+
+## 回帰分析 {.tabset}
+
+```{r lm-second, include=FALSE}
+second <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(5:7, sample_drop = FALSE)
+```
+
+```{r logit-second, include=FALSE}
+logit_second <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(5:7, sample_drop=FALSE)
+```
+
+### Full Sample (LPM)
+
+```{r tab-lm-second}
+second$
+  fit_all()$
+  kable(
+    title = "Linear Probability Model of Secondary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+### Full Sample (Logit)
+
+```{r tab-logit-second}
+logit_second$
+  fit_all()$
+  kable(
+    title = "Logit Model of Secondary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+### Subsample (LPM)
+
+```{r fig-lm-second, fig.cap = "Subsample Analysis"}
+second$
+  fit_sub()$
+  coefplot()
+```
