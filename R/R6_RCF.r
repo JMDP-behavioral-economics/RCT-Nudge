@@ -82,23 +82,20 @@ RCF <- R6::R6Class("RCF",
     ) {
       lhs <- multi_intervention_arm
       rhs <- one_intervention_arm
-      sum_rhs <- paste0("I(", paste(rhs, collapse = " + "), ")")
-      model <- list(
-        reformulate(sum_rhs, lhs),
-        reformulate(rhs, lhs)
-      )
+      model <- reformulate(rhs, lhs)
 
-      lh1 <- paste(sum_rhs, "- 1")
+      h0_1 <- sapply(rhs, function(x) paste(x, "= 1"), USE.NAMES = FALSE)
+
       combn_rhs <- combn(rhs, 2)
-      lh2 <- sapply(
+      h0_2 <- sapply(
         seq(ncol(combn_rhs)),
-        function(i) paste(combn_rhs[1, i], "-", combn_rhs[2, i])
+        function(i) paste(combn_rhs[1, i], "=", combn_rhs[2, i])
       )
 
       tau <- private$tau
       colnames(tau) <- str_remove(colnames(tau), "effect_")
       dt <- data.frame(tau)
-      
+
       cond <- private$list_subset(...)
       for (i in seq(length(cond))) {
         label <- paste0("cond", i)
@@ -109,36 +106,15 @@ RCF <- R6::R6Class("RCF",
         group_by(across(starts_with("cond"))) %>%
         nest() %>%
         mutate(
-          fit1 = map(data, ~ lh_robust(
-            model[[1]],
-            data = .,
-            se_type = "stata",
-            linear_hypothesis = lh1
-          )),
-          fit2 = map(data, ~ lh_robust(
-            model[[2]],
-            data = .,
-            se_type = "stata",
-            linear_hypothesis = lh2
-          ))
+          fit = map(data, ~ lm_robust(model, data = ., se_type = "stata")),
+          lh1 = map_dbl(fit, ~ linearHypothesis(., h0_1, test = "F")$"Pr(>F)"[2]),
+          lh2 = map_dbl(fit, ~ linearHypothesis(., h0_2, test = "F")$"Pr(>F)"[2])
         ) %>%
         select(-data) %>%
         ungroup() %>%
-        pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
-          names_to = "model",
-          values_to = "fit"
-        ) %>%
-        arrange(desc(across(starts_with("cond")))) %>%
-        arrange(model)
+        arrange(desc(across(starts_with("cond"))))
 
-      DecomposeEffect$new(
-        est,
-        lhs,
-        c(sum_rhs, rhs),
-        c(lh1, lh2)
-      )
+      DecomposeEffect$new(est, lhs, rhs, list(h0_1, h0_2))
     },
     effect_characteristics = function(target, effect = 0, ...) {
       X <- private$X
@@ -196,8 +172,28 @@ RCF <- R6::R6Class("RCF",
         dplyr::left_join(cov_label, by = "var") %>%
         select(label, everything()) %>%
         select(-var)
-      
+
       EffectCharacteristics$new(tbl)
+    },
+    targeting = function() {
+      tau <- private$tau
+      positive_target <- apply(tau, 2, function(x) ifelse(x < 0, 0, x))
+      optimum_target <- apply(tau, 1, max)
+      cbind_tau <- cbind(tau, positive_target, optimum_target)
+
+      labels <- str_remove(colnames(tau), "effect_")
+      colnames(cbind_tau) <- c(
+        paste0(labels, "_Uniform"),
+        paste0(labels, "_Target"),
+        "Optimum_Target"
+      )
+      cbind_tau <- data.frame(cbind_tau)
+
+      X <- data.frame(private$X)
+      optim_treat <- apply(tau, 1, which.max)
+      X$optim <- labels[optim_treat]
+
+      Targeting$new(cbind_tau, X, private$X_label)
     }
   ),
   private = list(
@@ -372,7 +368,7 @@ RCFCate <- R6::R6Class("RCFCate",
 
 DecomposeEffect <- R6::R6Class("DecomposeEffect",
   public = list(
-    initialize = function(est, response, vars, lh, ctrl_arm) {
+    initialize = function(est, response, vars, lh) {
       private$est <- est
       private$vars <- vars
       private$lh <- lh
@@ -388,20 +384,21 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       private$msummary("data.frame")
       tbl <- private$reg_tab %>%
         mutate(
-          part = if_else(
-            term %in% str_remove(private$lh, "I"),
-            "Linear combination test (F-test)",
-            ""
+          part = dplyr::recode(
+            part,
+            manual = "Linear combination test (F-test, p-value)",
+            .default = ""
           ),
           term = if_else(statistic == "std.error", "", term)
         ) %>%
         select(-statistic)
-      
+
       flex <- tbl %>%
         as_grouped_data("part") %>%
         as_flextable(hide_grouplabel = TRUE) %>%
+        set_header_labels(term = "") %>%
         set_caption(title)
-      
+
       est <- private$est
       names(subset_label) <- paste0("cond", seq(length(subset_label)))
       for (i in names(subset_label)) {
@@ -433,15 +430,13 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
         width(j = 1, 1) %>%
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
-      
-      num_vars_line <- (1 + length(private$vars)) * 2
-      num_lh_line <- length(private$lh) * 2
-      pos_lh <- c(num_vars_line + 2, num_vars_line + num_lh_line + 1)
+
+      start_pos <- (length(private$vars) + 1) * 2 + 1 + 2
+      end_pos <- start_pos + 1
 
       flex <- flex %>%
-        hline(num_vars_line + num_lh_line + 2, border = fp_border()) %>%
-        padding(pos_lh[1]:pos_lh[2], padding.left = 10)
-      
+        padding(start_pos:end_pos, padding.left = 10)
+
       flex
     },
     kable = function( subset_label,
@@ -462,12 +457,12 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
 
       if (hold) {
         kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")        
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
       } else {
         kbl <- kbl %>%
           kableExtra::kable_styling(font_size = font_size)
       }
-      
+
       est <- private$est
       names(subset_label) <- paste0("cond", seq(length(subset_label)))
       for (i in names(subset_label)) {
@@ -493,14 +488,13 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       kbl <- kbl %>%
         kableExtra::add_header_above(outcome_header)
 
-      num_vars_line <- (1 + length(private$vars)) * 2
-      num_lh_line <- length(private$lh) * 2
-      pos_lh <- c(num_vars_line + 1, num_vars_line + num_lh_line)
+      start_pos <- (length(private$vars) + 1) * 2 + 1
+      end_pos <- start_pos + 1
 
       kbl %>%
         kableExtra::group_rows(
           "Linear combination test (F-test)",
-          pos_lh[1], pos_lh[2],
+          start_pos, end_pos,
           bold = FALSE, italic = TRUE
         ) %>%
         kableExtra::footnote(
@@ -526,19 +520,39 @@ DecomposeEffect <- R6::R6Class("DecomposeEffect",
       stars <- c("***" = 0.01, "**" = 0.05, "*" = 0.1)
       gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
 
-      label <- c(
-        str_remove(private$vars, "I"),
-        str_remove(private$lh, "I")
-      )
+      label <- paste("Treatment", private$vars)
       label <- c("(Intercept)", label)
-      names(label) <- c("(Intercept)", private$vars, private$lh)
+      names(label) <- c("(Intercept)", private$vars)
+
+      ftest <- private$est %>%
+        select(starts_with("lh")) %>%
+        mutate(id = paste0("(", 1:n(), ")")) %>%
+        pivot_longer(-id, names_to = "term") %>%
+        mutate(
+          value = sprintf("%1.3f", value),
+          value = if_else(value == "0.000", "< 0.001", value)
+        ) %>%
+        pivot_wider(names_from = id) %>%
+        mutate(
+          term = dplyr::recode(
+            term,
+            lh1 = paste(private$lh[[1]], collapse = " & "),
+            lh2 = paste(private$lh[[2]], collapse = " & ")
+          ),
+          term = paste("H0:", term)
+        )
+
+      start_pos <- (length(private$vars) + 1) * 2 + 1
+      end_pos <- start_pos + 1
+      attr(ftest, "position") <- start_pos:end_pos
 
       args <- list(
         models = fit,
         coef_map = label,
         output = output,
         stars = stars,
-        gof_omit = gof_omit
+        gof_omit = gof_omit,
+        add_rows = ftest
       )
 
       if(!missing(...)) args <- append(args, list(...))
@@ -618,4 +632,216 @@ EffectCharacteristics <- R6::R6Class("EffectCharacteristics",
     }
   ),
   private = list()
+)
+
+Targeting <- R6::R6Class("Targeting",
+  public = list(
+    initialize = function(data, X, X_label) {
+      private$X <- X
+      private$X_label <- X_label
+      private$tau <- data
+
+      summarize_tau <- data %>%
+        pivot_longer(
+          everything(),
+          names_pattern = "(.*)_(.*)",
+          names_to = c("treat", "target")
+        ) %>%
+        group_by(treat, target) %>%
+        summarize(
+          mean = mean(value),
+          sd = sd(value)
+        ) %>%
+        ungroup() %>%
+        pivot_wider(
+          names_from = target,
+          names_glue = "{target}_{.value}",
+          values_from = c(mean, sd)
+        ) %>%
+        select(treat, starts_with("Uniform"), starts_with("Target"))
+
+      private$table <- summarize_tau
+    },
+    get_X = function() private$X,
+    get_tau = function() private$tau,
+    get_table = function() private$table,
+    flextable = function( title = "",
+                          notes = "",
+                          font_size = 9) {
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      private$table %>%
+        flextable() %>%
+        set_caption(title) %>%
+        set_header_labels(
+          "Uniform_mean" = "Mean",
+          "Uniform_sd" = "S.D.",
+          "Target_mean" = "Mean",
+          "Target_sd" = "S.D."
+        ) %>%
+        add_header_row(values = c("", "Uniform", "Targeting"), colwidths = c(1, 2, 2)) %>%
+        colformat_double(digits = 4) %>%
+        align(j = -1, align = "center", part = "all") %>%
+        width(j = 1, 2) %>%
+        width(j = -1, 1) %>%
+        add_footer_lines(notes) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+    },
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      hold = FALSE) {
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      kbl <- private$table %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", rep(c("Mean", "S.D."), 2)),
+          align = "lcccc",
+          digits = 4,
+          booktabs = TRUE,
+          linesep = ""
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size)
+      }
+
+      kbl %>%
+        add_header_above(c(" ", "Uniform" = 2, "Targeting" = 2)) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = notes,
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    },
+    hist = function() {
+      dt <- private$tau
+      dt2 <- dt[str_detect(colnames(dt), "Uniform|Optimum")]
+      labels <- sapply(colnames(dt2), function(x) {
+        ifelse(
+          str_detect(x, "Uniform"),
+          paste("Treatment", str_split_1(x, "_")[1], "(uniform)"),
+          "Optimum targeting"
+        )
+      })
+      levels <- names(labels)
+
+      dt2 %>%
+        pivot_longer(everything(), names_to = "policy", values_to = "effect") %>%
+        mutate(
+          policy = factor(policy, levels = levels, labels = labels),
+          positive = if_else(effect > 0, 1, 0),
+          positive = factor(positive, labels = c("Non-positive effect", "Positive effect"))
+        ) %>%
+        ggplot(aes(x = effect, fill = positive)) +
+          geom_histogram(color = "black") +
+          scale_x_continuous(limits = c(-0.25, 0.25)) +
+          scale_fill_manual(values = c("white", "grey80")) +
+          facet_wrap(~policy, scales = "free_x") +
+          labs(x = "Predicted treatment effect", y = "Count", fill = "") +
+          my_theme_classic() +
+          theme(legend.position = "bottom")
+    },
+    summarize_X = function() {
+      summarize_mean <- private$X %>%
+        group_by(optim) %>%
+        summarize_all(mean) %>%
+        pivot_longer(-optim, names_to = "vars") %>%
+        mutate(value = sprintf("%1.2f", value)) %>%
+        pivot_wider(names_from = optim) %>%
+        mutate(vars = factor(
+          vars,
+          levels = private$X_label,
+          labels = names(private$X_label)
+        ))
+
+      summarize_n <- table(private$X$optim) %>%
+        data.frame() %>%
+        mutate(Freq = sprintf("%1d", Freq)) %>%
+        pivot_wider(names_from = Var1, values_from = Freq)
+
+      summarize_tab <- summarize_mean %>%
+        bind_rows(bind_cols(vars = "N", summarize_n))
+
+      SummaryX$new(summarize_tab)
+    }
+  ),
+  private = list(
+    X = NULL,
+    tau = NULL,
+    table = NULL,
+    X_label = NULL
+  )
+)
+
+SummaryX <- R6::R6Class("SummaryX",
+  public = list(
+    initialize = function(table) private$table <- table,
+    get_table = function() private$table,
+    flextable = function( title = "",
+                          notes = "",
+                          font_size = 9) {
+      header <- as.list(c("", colnames(private$table)[-1]))
+      names(header) <- colnames(private$table)
+
+      n_treats <- ncol(private$table) - 1
+
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      private$table %>%
+        flextable() %>%
+        set_caption(title) %>%
+        set_header_labels(values = header) %>%
+        add_header_row(values = c("", "Optimal treatment"), colwidths = c(1, n_treats)) %>%
+        align(j = -1, align = "center", part = "all") %>%
+        width(j = 1, 4) %>%
+        width(j = -1, 1) %>%
+        add_footer_lines(notes) %>%
+        fontsize(size = font_size, part = "all") %>%
+        ft_theme()
+    },
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      hold = FALSE) {
+      n_treats <- ncol(private$table) - 1
+      if (notes != "") notes <- paste("Notes:", notes)
+
+      kbl <- private$table %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", colnames(private$table)[-1]),
+          align = paste0(c("l", rep("c", n_treats)), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size)
+      }
+
+      kbl %>%
+        add_header_above(c(" ", "Optimal treatment" = n_treats)) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = notes,
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
+  ),
+  private = list(
+    table = NULL
+  )
 )

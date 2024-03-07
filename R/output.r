@@ -79,7 +79,7 @@ rct$
 # //NOTE Stock data analysis
 stock <- rct$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(1:3)
+  lm(1:3, sample_drop = FALSE)
 
 # full sample analysis: linear regression
 stock_all <- stock$fit_all()
@@ -114,7 +114,7 @@ stock_all$
 # full sample analysis: logit regression
 stock_logit <- rct$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  logit(1:3)$
+  logit(1:3, sample_drop = FALSE)$
   fit_all()
 
 stock_logit$
@@ -162,7 +162,7 @@ stock_g$
 # //NOTE Coordination data analysis
 coordinate <- rct$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(4:7)
+  lm(4:7, sample_drop = FALSE)
 
 # full sample analysis
 coordinate_all <- coordinate$fit_all()
@@ -199,7 +199,7 @@ coordinate_sub <- coordinate$fit_sub()
 coordinate_sub$coefplot()
 
 # //NOTE Random causal forest
-rcf <- rct$rcf(2)
+rcf <- rct$rcf("test", sample_drop = FALSE)
 
 # boxplot
 rcf$subset_boxplot()
