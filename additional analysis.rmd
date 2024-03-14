@@ -149,8 +149,9 @@ logit_prime$
   )
 ```
 
-## サブサンプル分析 {.tabset}
-### 年齢区分：30歳
+## サブサンプル分析
+### 係数プロット {.tabset}
+#### 年齢区分：30歳
 
 ```{r fig-lmsub-prime1, fig.cap = "Subsample Analysis (Age cutoff = 30)"}
 prime$
@@ -158,7 +159,7 @@ prime$
   coefplot()
 ```
 
-### 年齢区分：25歳
+#### 年齢区分：25歳
 
 ```{r fig-lmsub-prime2, fig.cap = "Subsample Analysis (Age cutoff = 25)"}
 prime$
@@ -166,7 +167,7 @@ prime$
   coefplot(y_lim = c(-0.2, 0.4))
 ```
 
-### 年齢区分：35歳
+#### 年齢区分：35歳
 
 ```{r fig-lmsub-prime3, fig.cap = "Subsample Analysis (Age cutoff = 35)"}
 prime$
@@ -174,12 +175,62 @@ prime$
   coefplot()
 ```
 
-### 年齢区分：40歳
+#### 年齢区分：40歳
 
 ```{r fig-lmsub-prime4, fig.cap = "Subsample Analysis (Age cutoff = 40)"}
 prime$
   fit_sub(age_cut = 40)$
   coefplot()
+```
+
+### 回帰表 {.tabset}
+#### 年齢区分：25歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 25)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 25 years old or older."
+  )
+```
+
+```{r}
+(0.050 - 0.066 * (1566 / 2422)) / ((2422 - 1566) / 2422)
+(0.023 - 0.026 * (5333 / 6081)) / ((6081 - 5333) / 6081)
+```
+
+#### 年齢区分：30歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 30)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 30 years old or older."
+  )
+```
+
+#### 年齢区分：35歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 35)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 35 years old or older."
+  )
+```
+
+#### 年齢区分：40歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 40)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 40 years old or older."
+  )
 ```
 
 # Secondary Outcomes
