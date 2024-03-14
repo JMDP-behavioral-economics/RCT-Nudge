@@ -149,95 +149,37 @@ logit_prime$
   )
 ```
 
-### Subsample (LPM)
+## サブサンプル分析 {.tabset}
+### 年齢区分：30歳
 
-```{r fig-lm-prime, fig.cap = "Subsample Analysis"}
+```{r fig-lmsub-prime1, fig.cap = "Subsample Analysis (Age cutoff = 30)"}
 prime$
   fit_sub()$
   coefplot()
 ```
 
+### 年齢区分：25歳
 
-## Random Causal Forest
-### 返信 {.tabset}
-
-```{r rcf-reply, include=FALSE}
-rcf_reply <- rct$rcf("reply", sample_drop = FALSE)
+```{r fig-lmsub-prime2, fig.cap = "Subsample Analysis (Age cutoff = 25)"}
+prime$
+  fit_sub(age_cut = 25)$
+  coefplot(y_lim = c(-0.2, 0.4))
 ```
 
-#### Boxplot
+### 年齢区分：35歳
 
-```{r rcf-reply-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Reply)"}
-rcf_reply$subset_boxplot()
+```{r fig-lmsub-prime3, fig.cap = "Subsample Analysis (Age cutoff = 35)"}
+prime$
+  fit_sub(age_cut = 35)$
+  coefplot()
 ```
 
-#### CATE
+### 年齢区分：40歳
 
-```{r rcf-reply-cate}
-rcf_reply$
-  cate(age < 30, male == 0)$
-  kable(
-    label = list(
-      c("30 < Age", "Age < 30"),
-      c("Male", "Female")
-    ),
-    title = "Conditional Average Treatment Effect Estimated by RCF (Reply)",
-    font_size = 16
-)
-```
-
-### 提供意向 {.tabset}
-
-```{r rcf-pint, include=FALSE}
-pint_rcf <- rct$rcf("positive", sample_drop = FALSE)
-```
-
-#### Boxplot
-
-```{r rcf-pint-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Positive Intention)"}
-pint_rcf$subset_boxplot()
-```
-
-#### CATE
-
-```{r rcf-pint-cate}
-pint_rcf$
-  cate(age < 30, male == 0)$
-  kable(
-    label = list(
-      c("30 < Age", "Age < 30"),
-      c("Male", "Female")
-    ),
-    title = "Conditional Average Treatment Effect Estimated by RCF (Positive Intention)",
-    font_size = 16
-)
-```
-
-### 確認検査 {.tabset}
-
-```{r rcf-ct, include=FALSE}
-ct_rcf <- rct$rcf("test", sample_drop = FALSE)
-```
-
-#### Boxplot
-
-```{r rcf-ct-boxplot, fig.cap = "Box plot of Predicted Treatment Effect by Age, Gender, and Treatments (Confirmatory Typing)"}
-ct_rcf$subset_boxplot()
-```
-
-#### CATE
-
-```{r rcf-ct-cate}
-ct_rcf$
-  cate(age < 30, male == 0)$
-  kable(
-    label = list(
-      c("30 < Age", "Age < 30"),
-      c("Male", "Female")
-    ),
-    title = "Conditional Average Treatment Effect Estimated by RCF (Confirmatroy Typing)",
-    font_size = 16
-)
+```{r fig-lmsub-prime4, fig.cap = "Subsample Analysis (Age cutoff = 40)"}
+prime$
+  fit_sub(age_cut = 40)$
+  coefplot()
 ```
 
 # Secondary Outcomes
@@ -293,10 +235,35 @@ logit_second$
   )
 ```
 
-### Subsample (LPM)
+## サブサンプル分析 {.tabset}
+### 年齢区分：30歳
 
-```{r fig-lm-second, fig.cap = "Subsample Analysis"}
+```{r fig-lm-second1}
 second$
   fit_sub()$
-  coefplot()
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
+```
+
+### 年齢区分：25歳
+
+```{r fig-lm-second2}
+second$
+  fit_sub(age_cut = 25)$
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
+```
+
+### 年齢区分：35歳
+
+```{r fig-lm-second3}
+second$
+  fit_sub(age_cut = 35)$
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
+```
+
+### 年齢区分：40歳
+
+```{r fig-lm-second4}
+second$
+  fit_sub(age_cut = 40)$
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
 ```
