@@ -355,6 +355,52 @@ LmSubset <- R6::R6Class("LmSubset",
 
     },
     get_est = function() private$est,
+    kable = function(title = "", notes = "", font_size = 9, hold = FALSE, ...) {
+      est <- private$est
+      tbl <- private$reg_table(est)
+
+      outcome_labels <- unique(est$outcome)
+
+      group_labels <- est %>%
+        arrange(male, desc(young), outcome) %>%
+        ungroup() %>%
+        mutate(N = map_dbl(fit, nobs)) %>%
+        select(male, young, N) %>%
+        mutate(g = case_when(
+          male == 0 & young == 1 ~ "Young females",
+          male == 0 & young == 0 ~ "Older females",
+          male == 1 & young == 1 ~ "Young males",
+          male == 1 & young == 0 ~ "Older males"
+        )) %>%
+        mutate(label = sprintf(paste(g, "(N = %1d)"), N)) %>%
+        select(male, young, label) %>%
+        distinct()
+
+      kbl <- tbl %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", as.character(outcome_labels)),
+          align = paste0(c("l", rep("c", length(outcome_labels))), collapse = "")
+        ) %>%
+        pack_rows(group_labels$label[1], 1, 3) %>%
+        pack_rows(group_labels$label[2], 4, 6) %>%
+        pack_rows(group_labels$label[3], 7, 9) %>%
+        pack_rows(group_labels$label[4], 10, 12) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste("Notes:", notes),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+
+      if (hold) {
+        kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+    },
     coefplot = function(label_N_y_pos = -0.15,
                         label_mean_y_pos = label_N_y_pos - 0.025,
                         y_lim = c(-0.2, 0.2),
@@ -424,6 +470,46 @@ LmSubset <- R6::R6Class("LmSubset",
   ),
   private = list(
     est = NULL,
-    subset_labels = NULL
+    subset_labels = NULL,
+    reg_table = function(x) {
+      tab <- x %>%
+        arrange(male, desc(young), outcome) %>%
+        ungroup() %>%
+        pull(fit) %>%
+        modelsummary(
+          estimate = "{estimate}{stars} ({std.error})",
+          statistic = NULL,
+          stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+          coef_map = c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D"
+          ),
+          gof_omit = "R2",
+          output = "data.frame"
+        ) %>%
+        select(-part, -statistic)
+
+      num_outcomes <- length(unique(x$outcome))
+      tab_cut <- vector("list", 4)
+      for (i in seq_len(length(tab_cut))) {
+        if (i == 1) {
+          tab_cut[[i]] <- c(1, seq(2, length = num_outcomes))
+        } else {
+          tab_cut[[i]] <- c(1, seq(max(tab_cut[[i-1]]) + 1, length = num_outcomes))
+        }
+      }
+
+      stack_tab <- tab_cut %>%
+        map(function(cols) {
+          cutting <- tab[, cols]
+          names(cutting) <- c("term", paste0("(", seq(num_outcomes), ")"))
+          return(cutting)
+        }) %>%
+        reduce(bind_rows) %>%
+        filter(term != "Num.Obs.")
+
+      stack_tab
+    }
   )
 )
