@@ -67,9 +67,10 @@ Lm <- R6::R6Class("Lm",
 
       LmAll$new(est)
     },
-    fit_sub = function() {
+    fit_sub = function(age_cut = 30) {
       est <- self$data %>%
-        group_by(outcome, male, age_less30) %>%
+        mutate(young = if_else(age < age_cut, 1, 0)) %>%
+        group_by(outcome, male, young) %>%
         nest() %>%
         mutate(
           fit = private$call_lm(
@@ -86,8 +87,8 @@ Lm <- R6::R6Class("Lm",
           )
         ) %>%
         select(-data)
-      
-      LmSubset$new(est)
+
+      LmSubset$new(est, age_cut)
     }
   ),
   private = list(
@@ -337,15 +338,27 @@ LmAll <- R6::R6Class("LmAll",
 
 LmSubset <- R6::R6Class("LmSubset",
   public = list(
-    initialize = function(est) private$est <- est,
+    initialize = function(est, age_cut) {
+      private$est <- est
+
+      lev <- c("01", "00", "11", "10")
+      young_lab <- paste0("Age < ", age_cut)
+      old_lab <- paste0(age_cut, " \u2264 Age")
+      labs <- c(
+        paste0("Female\u00d7\n", young_lab),
+        paste0("Female\u00d7\n", old_lab),
+        paste0("Male\u00d7\n", young_lab),
+        paste0("Male\u00d7\n", old_lab)
+      )
+      names(lev) <- labs
+      private$subset_labels <- lev
+
+    },
     get_est = function() private$est,
     coefplot = function(label_N_y_pos = -0.15,
                         label_mean_y_pos = label_N_y_pos - 0.025,
-                        axis_y = list(
-                          breaks = seq(-0.2, 0.2, by = 0.05),
-                          limits = c(-0.2, 0.2)
-                        )
-    ) 
+                        y_lim = c(-0.2, 0.2),
+                        y_break = seq(-1, 1, by = 0.05))
     {
       plotdt <- private$est %>%
         mutate(
@@ -357,24 +370,19 @@ LmSubset <- R6::R6Class("LmSubset",
         select(-fit) %>%
         unnest(cols = tidy) %>%
         mutate(
-          pos = paste0(male, age_less30),
+          pos = paste0(male, young),
           pos = factor(
             pos,
-            levels = c("01", "00", "11", "10"),
-            labels = c(
-              "Female\u00d7\nAge<30",
-              "Female\u00d7\n30\u2264Age",
-              "Male\u00d7\nAge<30",
-              "Male\u00d7\n30\u2264Age"
-            )
+            levels = private$subset_labels,
+            labels = names(private$subset_labels)
           ),
           term = str_remove(term, "treat")
         )
-      
+
       text <- plotdt %>%
-        select(male, age_less30, pos, N, avg) %>%
+        select(male, young, pos, N, avg) %>%
         distinct()
-      
+
       plot_list <- unique(plotdt$outcome) %>%
         purrr::map(function(x) {
           subset(plotdt, outcome == x) %>%
@@ -399,7 +407,7 @@ LmSubset <- R6::R6Class("LmSubset",
               data = subset(text, outcome == x),
               color = "black"
             ) +
-            scale_y_continuous(breaks = axis_y$breaks, limits = axis_y$limits) +
+            scale_y_continuous(breaks = y_break, limits = y_lim) +
             labs(
               title = paste("Outcome:", x),
               x = "Subset",
@@ -415,6 +423,7 @@ LmSubset <- R6::R6Class("LmSubset",
     }
   ),
   private = list(
-    est = NULL
+    est = NULL,
+    subset_labels = NULL
   )
 )
