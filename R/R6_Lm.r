@@ -67,9 +67,10 @@ Lm <- R6::R6Class("Lm",
 
       LmAll$new(est)
     },
-    fit_sub = function() {
+    fit_sub = function(age_cut = 30) {
       est <- self$data %>%
-        group_by(outcome, male, age_less30) %>%
+        mutate(young = if_else(age < age_cut, 1, 0)) %>%
+        group_by(outcome, male, young) %>%
         nest() %>%
         mutate(
           fit = private$call_lm(
@@ -86,8 +87,8 @@ Lm <- R6::R6Class("Lm",
           )
         ) %>%
         select(-data)
-      
-      LmSubset$new(est)
+
+      LmSubset$new(est, age_cut)
     }
   ),
   private = list(
@@ -337,15 +338,73 @@ LmAll <- R6::R6Class("LmAll",
 
 LmSubset <- R6::R6Class("LmSubset",
   public = list(
-    initialize = function(est) private$est <- est,
+    initialize = function(est, age_cut) {
+      private$est <- est
+
+      lev <- c("01", "00", "11", "10")
+      young_lab <- paste0("Age < ", age_cut)
+      old_lab <- paste0(age_cut, " \u2264 Age")
+      labs <- c(
+        paste0("Female\u00d7\n", young_lab),
+        paste0("Female\u00d7\n", old_lab),
+        paste0("Male\u00d7\n", young_lab),
+        paste0("Male\u00d7\n", old_lab)
+      )
+      names(lev) <- labs
+      private$subset_labels <- lev
+
+    },
     get_est = function() private$est,
+    kable = function(title = "", notes = "", font_size = 9, hold = FALSE, ...) {
+      est <- private$est
+      tbl <- private$reg_table(est)
+
+      outcome_labels <- unique(est$outcome)
+
+      group_labels <- est %>%
+        arrange(male, desc(young), outcome) %>%
+        ungroup() %>%
+        mutate(N = map_dbl(fit, nobs)) %>%
+        select(male, young, N) %>%
+        mutate(g = case_when(
+          male == 0 & young == 1 ~ "Young females",
+          male == 0 & young == 0 ~ "Older females",
+          male == 1 & young == 1 ~ "Young males",
+          male == 1 & young == 0 ~ "Older males"
+        )) %>%
+        mutate(label = sprintf(paste(g, "(N = %1d)"), N)) %>%
+        select(male, young, label) %>%
+        distinct()
+
+      kbl <- tbl %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", as.character(outcome_labels)),
+          align = paste0(c("l", rep("c", length(outcome_labels))), collapse = "")
+        ) %>%
+        pack_rows(group_labels$label[1], 1, 3) %>%
+        pack_rows(group_labels$label[2], 4, 6) %>%
+        pack_rows(group_labels$label[3], 7, 9) %>%
+        pack_rows(group_labels$label[4], 10, 12) %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste("Notes:", notes),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+
+      if (hold) {
+        kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+    },
     coefplot = function(label_N_y_pos = -0.15,
                         label_mean_y_pos = label_N_y_pos - 0.025,
-                        axis_y = list(
-                          breaks = seq(-0.2, 0.2, by = 0.05),
-                          limits = c(-0.2, 0.2)
-                        )
-    ) 
+                        y_lim = c(-0.2, 0.2),
+                        y_break = seq(-1, 1, by = 0.05))
     {
       plotdt <- private$est %>%
         mutate(
@@ -357,24 +416,18 @@ LmSubset <- R6::R6Class("LmSubset",
         select(-fit) %>%
         unnest(cols = tidy) %>%
         mutate(
-          pos = paste0(male, age_less30),
+          pos = paste0(male, young),
           pos = factor(
             pos,
-            levels = c("01", "00", "11", "10")
+            levels = private$subset_labels,
+            labels = names(private$subset_labels)
           ),
           term = str_remove(term, "treat")
         )
 
       text <- plotdt %>%
-        select(male, age_less30, pos, N, avg) %>%
+        select(male, young, pos, N, avg) %>%
         distinct()
-
-      xlabels <- expression(
-        "Female" %*% "Age" < "30",
-        "Female" %*% "30" <= "Age",
-        "Male" %*% "Age" < "30",
-        "Male" %*% "30" <= "Age"
-      )
 
       plot_list <- unique(plotdt$outcome) %>%
         purrr::map(function(x) {
@@ -404,7 +457,7 @@ LmSubset <- R6::R6Class("LmSubset",
               inherit.aes = FALSE
             ) +
             scale_x_discrete(breaks = c("01", "00", "11", "10"), labels = xlabels) +
-            scale_y_continuous(breaks = axis_y$breaks, limits = axis_y$limits) +
+            scale_y_continuous(breaks = y_break, limits = y_lim) +
             labs(
               title = paste("Outcome:", x),
               x = "Subset",
@@ -421,6 +474,47 @@ LmSubset <- R6::R6Class("LmSubset",
     }
   ),
   private = list(
-    est = NULL
+    est = NULL,
+    subset_labels = NULL,
+    reg_table = function(x) {
+      tab <- x %>%
+        arrange(male, desc(young), outcome) %>%
+        ungroup() %>%
+        pull(fit) %>%
+        modelsummary(
+          estimate = "{estimate}{stars} ({std.error})",
+          statistic = NULL,
+          stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+          coef_map = c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D"
+          ),
+          gof_omit = "R2",
+          output = "data.frame"
+        ) %>%
+        select(-part, -statistic)
+
+      num_outcomes <- length(unique(x$outcome))
+      tab_cut <- vector("list", 4)
+      for (i in seq_len(length(tab_cut))) {
+        if (i == 1) {
+          tab_cut[[i]] <- c(1, seq(2, length = num_outcomes))
+        } else {
+          tab_cut[[i]] <- c(1, seq(max(tab_cut[[i-1]]) + 1, length = num_outcomes))
+        }
+      }
+
+      stack_tab <- tab_cut %>%
+        map(function(cols) {
+          cutting <- tab[, cols]
+          names(cutting) <- c("term", paste0("(", seq(num_outcomes), ")"))
+          return(cutting)
+        }) %>%
+        reduce(bind_rows) %>%
+        filter(term != "Num.Obs.")
+
+      stack_tab
+    }
   )
 )

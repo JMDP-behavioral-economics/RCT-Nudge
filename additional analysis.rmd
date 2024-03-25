@@ -1,0 +1,320 @@
+---
+title: 追加分析やサンプルの整理
+author: Hiroki Kato
+date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE,
+  dev = "png",
+  fig.width = 15,
+  fig.height = 8,
+  fig.pos = "t",
+  out.extra = ""
+)
+```
+
+```{r library, include=FALSE}
+library(here)
+source(here("R/R6_RawData.r"))
+
+data_root <- "D:/JMDPフィールド実験"
+```
+
+```{r def-study-sample, include=FALSE}
+rawdt <- RawData$new(
+  here(data_root, "shape.csv"),
+  treat_vars = "treat",
+  treat_levels = LETTERS[1:4]
+)
+
+rawdt$add_cond_study_sample("ongoing == 0")
+```
+
+```{r rct-setup, include=FALSE}
+intervention <- list(
+  "Standard notification" = c(A = "X", B = "X", C = "X", D = "X"),
+  "Probability message" = c(A = "", B = "X", C = "", D = "X"),
+  "Early Coordination message" = c(A = "", B = "", C = "X", D = "X")
+)
+
+endpoint <- list(
+  reply = "Reply",
+  positive = "Positive intention",
+  negative = "Negative intention",
+  test = "CT",
+  candidate = "Candidate",
+  consent = "Consent",
+  donate = "Donation"
+)
+
+covs <- c(
+  "Male (= 1)" = "male",
+  "Age" = "age",
+  "Number of past coordinations" = "coordinate",
+  "Number of listed hospitals" = "hospital_per_area",
+  "Number of hospitals listed with PBSC collection" = "PB_per_area",
+  "Number of hospitals listed with BM collection" = "BM_per_area"
+)
+
+rct <- rawdt$RCT()
+rct$add_intervention(intervention)
+rct$add_outcome(endpoint)
+rct$add_covariate(covs)
+rct$add_fixed_effect(c("month", "week"))
+rct$set_default_se_type("stata")
+```
+
+# 返信タイミングと患者都合中断 {.tabset}
+
+## Logit Regression
+
+```{r reg-speed-interrupt, echo=TRUE}
+dt <- subset(rct$data, positive == 1)
+mod <- glm(exg_stop_test ~ days_reply, data = dt, family = binomial())
+summary(mod)
+```
+
+## Fitted Lines
+
+```{r response-speed-and-exg-stop, fig.cap = "Relationshipt between Response Speed and Interruption due to Patients. Note: Fitted line represents the prediction of logit regression.", echo=FALSE}
+dt$pred <- predict(mod, data = dt, type = "response")
+
+ggplot(dt, aes(x = days_reply, y = exg_stop_test)) +
+  stat_summary(geom = "point", fun = "mean", size = 3, color = "grey20") +
+  geom_smooth(method = "glm", method.args = list(family = binomial())) +
+  scale_x_continuous(breaks = seq(0, 70, by = 5)) +
+  labs(x = "Response Speed (day)", y = "Interrupted due to patients until CT\n(proportion)") +
+  my_theme_classic()
+```
+
+# Primary Outcomes
+
+## 回帰分析 {.tabset}
+
+```{r lm-prime, include=FALSE}
+prime <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(c(1, 2, 4), sample_drop = FALSE)
+```
+
+```{r logit-prime, include=FALSE}
+logit_prime <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(c(1, 2, 4), sample_drop=FALSE)
+```
+
+### Full Sample (LPM)
+
+```{r tab-lm-prime}
+prime$
+  fit_all()$
+  kable(
+    title = "Linear Probability Model of Primary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+### Full Sample (Logit)
+
+```{r tab-logit-prime}
+logit_prime$
+  fit_all()$
+  kable(
+    title = "Logit Model of Primary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+## サブサンプル分析
+### 係数プロット {.tabset}
+#### 年齢区分：30歳
+
+```{r fig-lmsub-prime1, fig.cap = "Subsample Analysis (Age cutoff = 30)"}
+prime$
+  fit_sub()$
+  coefplot()
+```
+
+#### 年齢区分：25歳
+
+```{r fig-lmsub-prime2, fig.cap = "Subsample Analysis (Age cutoff = 25)"}
+prime$
+  fit_sub(age_cut = 25)$
+  coefplot(y_lim = c(-0.2, 0.4))
+```
+
+#### 年齢区分：35歳
+
+```{r fig-lmsub-prime3, fig.cap = "Subsample Analysis (Age cutoff = 35)"}
+prime$
+  fit_sub(age_cut = 35)$
+  coefplot()
+```
+
+#### 年齢区分：40歳
+
+```{r fig-lmsub-prime4, fig.cap = "Subsample Analysis (Age cutoff = 40)"}
+prime$
+  fit_sub(age_cut = 40)$
+  coefplot()
+```
+
+### 回帰表 {.tabset}
+#### 年齢区分：25歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 25)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 25 years old or older."
+  )
+```
+
+```{r}
+(0.050 - 0.066 * (1566 / 2422)) / ((2422 - 1566) / 2422)
+(0.023 - 0.026 * (5333 / 6081)) / ((6081 - 5333) / 6081)
+```
+
+#### 年齢区分：30歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 30)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 30 years old or older."
+  )
+```
+
+#### 年齢区分：35歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 35)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 35 years old or older."
+  )
+```
+
+#### 年齢区分：40歳
+
+```{r}
+prime$
+  fit_sub(age_cut = 40)$
+  kable(
+    font_size = 16,
+    notes = "* p < 0.1, ** p < 0.05, *** p < 0.01. The robust standard errors are in parentheses. The age category is defined as under 40 years old or older."
+  )
+```
+
+# Secondary Outcomes
+
+## 回帰分析 {.tabset}
+
+```{r lm-second, include=FALSE}
+second <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(5:7, sample_drop = FALSE)
+```
+
+```{r logit-second, include=FALSE}
+logit_second <- rct$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(5:7, sample_drop=FALSE)
+```
+
+### Full Sample (LPM)
+
+```{r tab-lm-second}
+second$
+  fit_all()$
+  kable(
+    title = "Linear Probability Model of Secondary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of age,",
+      "number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+### Full Sample (Logit)
+
+```{r tab-logit-second}
+logit_second$
+  fit_all()$
+  kable(
+    title = "Logit Model of Secondary Outcomes",
+    notes = paste(
+      "Covariates are gender, squared polynomial of (demeaned) age, number of past coordinations,",
+      "number of hospitals per 10 square kilometers,",
+      "number of hospitals with PBSC collection per 10 square kilometers,",
+      "number of hospitals with BM collection per 10 square kilometers,",
+      "month dummies, and week dummies."
+    ),
+    font_size = 16
+  )
+```
+
+## サブサンプル分析 {.tabset}
+### 年齢区分：30歳
+
+```{r fig-lm-second1}
+second$
+  fit_sub()$
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
+```
+
+### 年齢区分：25歳
+
+```{r fig-lm-second2}
+second$
+  fit_sub(age_cut = 25)$
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
+```
+
+### 年齢区分：35歳
+
+```{r fig-lm-second3}
+second$
+  fit_sub(age_cut = 35)$
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
+```
+
+### 年齢区分：40歳
+
+```{r fig-lm-second4}
+second$
+  fit_sub(age_cut = 40)$
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
+```
