@@ -456,7 +456,7 @@ LmSubset <- R6::R6Class("LmSubset",
               color = "black",
               inherit.aes = FALSE
             ) +
-            scale_y_continuous(breaks = axis_y$breaks, limits = axis_y$limits) +
+            scale_y_continuous(breaks = y_break, limits = y_lim) +
             labs(
               title = paste("Outcome:", x),
               x = "Subset",
