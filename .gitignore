@@ -1,5 +1,8 @@
 *.log
 git-worktree/
-/.quarto/
+JMDP-RCT---Main-Document_cache/
 .vscode/c_cpp_properties.json
-body_cache
+
+JMDP RCT - Appendix.pdf
+JMDP RCT - Main Document (Robust).pdf
+JMDP RCT - Main Document.pdf
