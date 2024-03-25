@@ -71,6 +71,14 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r option, include = FALSE}
+options(
+  knitr.table.format = "latex",
+  knitr.kable.NA = "",
+  kableExtra.auto_format = FALSE
+)
+```
+
 # Introduction {#intro}
 
 Allogeneic hematopoietic stem cell transplantation (HSCT) is one of the treatments with the lowest relapse rates for leukemia and other blood diseases. In this treatment, (1) anticancer drugs and radiation simultaneously kill tumor cells and healthy hematopoietic stem cells, and (2) healthy hematopoietic stem cells donated by others are transplanted. Transplantation requires that the donor's white blood cell type, called HLA, match the patient's HLA.[^hapro] Whereas the probability of a match between two randomly selected individuals is less than 1%, the probability of a match between siblings is the highest at approximately 30%. The probability of a match between parents and their children is also low.
@@ -264,11 +272,11 @@ To estimate these effects, we code the outcome variables of non-responders as ze
 Coordination may be interrupted for patient reasons before a matched donor responds. Given that this occurs independently of the matched donor's intentions, we exclude it from our analysis sample ($0.5$--$0.7$% in each experimental arm).
 
 ```{r setup-stock-analysis, include=FALSE}
-id <- which(names(endpoint) %in% c("reply", "positive", "negative"))
+id <- which(names(endpoint) %in% c("reply", "positive", "test"))
 rct_clone <- rct$clone()
 stock <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(id)
+  lm(id, sample_drop = FALSE)
 ```
 
 We show the estimation results of overall effect in Table \@ref(tab:reg-stock) in the Appendix \@ref(figtab). The estimated results show that all experimental arms, with and without covariates, have no statistically significant effect on responses and intentions. As an alternative method, we estimate a logit model (see Table \@ref(tab:logit-stock) in the Appendix) and obtain similar results (95% confidence intervals for odds ratios include 1).
@@ -285,29 +293,29 @@ In the control group, approximately 50% ($=38.6/74.4$) of males in their 20s who
 
 [^cal]: For females in their 20s, 59 ($=51.6/87.4$)%; for males over 30, 66 ($=59.0/89.1$)%; for females over 30, 62 ($=58.8/94.6$)%.
 
-## Random Causal Forest {#rcf}
+<!-- ## Random Causal Forest {#rcf} -->
 
-```{r rcf-int, include=FALSE}
+```{r rcf-int, eval=FALSE}
 library(xfun)
 rcf <- cache_rds({
   rct$rcf("positive")
 })
 ```
-
+<!-- 
 To further explore the heterogeneity of the message effects, we use random causal forests (RCF), which allows us to test the heterogeneous treatment effects in a fully nonparametric manner [@Athey2016; @Wager2018]. The method is based on a regression tree algorithm and estimates the average treatment effect conditional on the observed characteristics (Conditional Average Treatment Effect or CATE). This method has been used in various contexts, including labor [@Davis2017], education [@Carlana2022], and energy conservation [@Murakami2022].
 
 The algorithm splits the sample into two subsamples (leaves) using one of the covariates $X_j$. Specifically, the algorithm divides the sample into samples for which $X_j \le x$ and $X_j > x$. The threshold $x$ is set to minimize the expected mean squared error of the predicted treatment effect. This minimization is achieved by increasing the variance in the conditional mean treatment effect across leaves (heterogeneity) and decreasing the variance within leaves. This splitting process is repeated for each leaf until the termination condition is reached. RCF estimates the CATE on terminal leaves.[^tech-detail]
 
 RCF predicts the treatment effect from the observed characteristics. Thus, it can predict the treatment effects based on individual characteristics, even for individuals who did not receive the intervention. This method assumes that the treatment assignment is conditionally independent of the potential outcome variable. Thus, this method could be used in our study. This subsection focuses on the effects on intentions. The covariates used in the RCF are gender, age, past coordination experience, and the density of hospitals in the area of residence.
 
-[^tech-detail]: A disadvantage of the regression tree algorithm is that the variance in the predictions increases (overfitting), which reduces the accuracy of the predictions. To prevent this, RCF introduces an algorithm called the ensemble method, which creates thousands of subsamples and grows a tree for each subsample. The final result is the average of the predictions from thousands of trees. For technical details, see @Athey2016 and @Wager2018. This study also uses a technique called generalized random forests, which treats RCF as a special case; however, the intuition remains the same. See @Athey2019 and @Athey2019a for details on generalized random forests.
+[^tech-detail]: A disadvantage of the regression tree algorithm is that the variance in the predictions increases (overfitting), which reduces the accuracy of the predictions. To prevent this, RCF introduces an algorithm called the ensemble method, which creates thousands of subsamples and grows a tree for each subsample. The final result is the average of the predictions from thousands of trees. For technical details, see @Athey2016 and @Wager2018. This study also uses a technique called generalized random forests, which treats RCF as a special case; however, the intuition remains the same. See @Athey2019 and @Athey2019a for details on generalized random forests. -->
 
-```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and number of hospitals with BM collection per 10 square kilometers.'}
+```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and number of hospitals with BM collection per 10 square kilometers.', eval=FALSE}
 
 rcf$subset_boxplot()
 ```
 
-```{r rcf-int-cate}
+```{r rcf-int-cate, eval=FALSE}
 rcf$
   cate(age < 30, male == 0)$
   kable(
@@ -319,20 +327,20 @@ rcf$
   )
 ```
 
-Figure \@ref(fig:boxplot-rcf-int) illustrates the distribution of predicted treatment effects for each experimental group by gender and age. The predicted treatment effects vary considerably depending on these factors. Even when conditioned on gender and age, the predicted treatment effects exhibit significant heterogeneity. Notably, the effect of experimental group B is positive for males in their early 20s.[^middle-age] As a result, the average treatment effect of experimental arm B for males in their 20s is $12.3$ percentage points, which is close to the results of the subsample analysis shown in Figure \@ref(fig:coefplot-reg-stock-subset) (see Table \@ref(tab:rcf-int-cate)). This effect is statistically significantly higher than the CATE for females of the same age group ($-0.3$ percentage points) and males aged 30 and above ($1.6$ percentage points), as the 95% confidence intervals for the difference in effects do not include zero.
+<!-- Figure \@ref(fig:boxplot-rcf-int) illustrates the distribution of predicted treatment effects for each experimental group by gender and age. The predicted treatment effects vary considerably depending on these factors. Even when conditioned on gender and age, the predicted treatment effects exhibit significant heterogeneity. Notably, the effect of experimental group B is positive for males in their early 20s.[^middle-age] As a result, the average treatment effect of experimental arm B for males in their 20s is $12.3$ percentage points, which is close to the results of the subsample analysis shown in Figure \@ref(fig:coefplot-reg-stock-subset) (see Table \@ref(tab:rcf-int-cate)). This effect is statistically significantly higher than the CATE for females of the same age group ($-0.3$ percentage points) and males aged 30 and above ($1.6$ percentage points), as the 95% confidence intervals for the difference in effects do not include zero.
 
 [^middle-age]: Experimental arm B also exhibits a positive impact of a similar magnitude on some males aged 30 to 40, comparable to the positive effect observed in males in their early 20s. Such individuals tend to have relatively more coordination experience and reside in regions with a higher concentration of hospitals (see Table \@ref(tab:rcf-middle-male) in the Appendix \@ref(figtab)).
 
 From the perspective of the distribution and CATE, the effect of experimental arm D on males in their 20s, containing the probability message, is lower than the effect of experimental arm B. Since experimental arm D simultaneously presents the early coordination message, young males may have discounted the probability message due to information overload. Table \@ref(tab:rcf-int-corr) in the Appendix \@ref(figtab) presents the results of regressing the predicted effects of experimental arm D on the predicted effects of experimental arm B and C. If donors fully understand the information, the coefficients, excluding the intercept, should be 1 (the effect of experimental arm D equals the sum of the effects of experimental arms B and C). However, the F-test rejects this null hypothesis, suggesting that donors may not be accurately evaluating the information. Furthermore, the impact of experimental arm C is larger than that of experimental arm B, indicating that young males may prioritize the early coordination message over the probability message.[^other-generation]
 
-[^other-generation]: Similarly, young females also prioritize the early coordination message in decision-making. In contrast, males and females aged 30 and older prioritize the probability message in decision-making.
+[^other-generation]: Similarly, young females also prioritize the early coordination message in decision-making. In contrast, males and females aged 30 and older prioritize the probability message in decision-making. -->
 
 ## Response Speed to Notification {#reply-speed}
 
 ```{r flow-setup, include=FALSE}
 flow <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  flow(outcome = "reply")
+  flow(outcome = "reply", sample_drop = FALSE)
 
 flow_fit <- flow$fit(
   1:40,
@@ -366,10 +374,10 @@ In the group of females in their 20s, the responses of experimental arms C and D
 ## Effects on the Coordination Process {#process}
 
 ```{r setup-coordinate, include=FALSE}
-id3 <- which(names(endpoint) %in% c("test", "candidate", "consent", "donate"))
+id3 <- which(names(endpoint) %in% c("candidate", "consent", "donate"))
 coordinate <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(id3)
+  lm(id3, sample_drop = FALSE)
 ```
 
 Finally, we examine the impact of messages on each step of the coordination process. As explained in Section \@ref(background), the coordination process comprises four stages: CT, candidate selection, final consent, and collection. As the outcome variable, we use a dummy variable that takes the value of 1 if a matched donor has reached each stage. In this subsection, our primary focus is on the impact on CT, which provides crucial insights into the donor's availability. We also examine the influence on the post-candidate selection process, acknowledging the involvement of demand-side effects and emphasizing the need for caution in interpretation.
@@ -402,7 +410,7 @@ The effect of experimental arms B and D on the stage after candidate selection i
 
 coordinate$
   fit_sub()$
-  coefplot()
+  coefplot(label_N_y_pos = -0.1, y_lim = c(-0.15, 0.15))
 ```
 
 Figure \@ref(fig:coefplot-reg-subsample-coordination) divides the sample into four subsets by gender and age (under 30 or not) and estimates the message effect in each subset. The results show that experimental arm B increases the proportion of males in their 20s who reach the CT by approximately 8 percentage points, which is statistically significant. Thus, it is possible that experimental arm B not only increases the willingness of males in their 20s to donate but also maintains it. Moreover, the probability message contributes to the availability of donors with good transplant performance.
@@ -476,7 +484,7 @@ stock$
 ```{r setup-logit-stock, include=FALSE}
 logit_stock <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  logit(id)$
+  logit(id, sample_drop = FALSE)$
   fit_all()
 ```
 
@@ -492,7 +500,7 @@ logit_stock$
   )
 ```
 
-```{r rcf-middle-male}
+```{r rcf-middle-male, eval=FALSE}
 rcf$
   effect_characteristics(
     target = "B",
@@ -509,7 +517,7 @@ rcf$
   )
 ```
 
-```{r rcf-int-corr}
+```{r rcf-int-corr, eval=FALSE}
 mechanism <- rcf$decompose_effect(
   "D",
   c("B", "C"),
@@ -551,7 +559,7 @@ flow_fit$plot(male = FALSE, old = TRUE)
 ```{r setup-logit-coordination, include=FALSE}
 logit_coordinate <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  logit(id3)$
+  logit(id3, sample_drop = FALSE)$
   fit_all()
 ```
 
