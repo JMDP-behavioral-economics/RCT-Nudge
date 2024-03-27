@@ -83,11 +83,10 @@ Lm <- R6::R6Class("Lm",
             data,
             ~ with(
               subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.1f%%", mean(value) * 100)
+              sprintf("Ctrl Avg = %1.2f", mean(value * scale))
             )
           )
-        ) %>%
-        select(-data)
+        )
 
       LmSubset$new(est, age_cut)
     }
@@ -181,11 +180,10 @@ LmCluster <- R6::R6Class("LmCluster",
             data,
             ~ with(
               subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.1f%%", mean(value) * 100)
+              sprintf("Ctrl Avg = %1.2f", mean(value * 100))
             )
           )
-        ) %>%
-        select(-data)
+        )
 
       LmSubset$new(est, age_cut)
     }
@@ -457,9 +455,15 @@ LmSubset <- R6::R6Class("LmSubset",
 
     },
     get_est = function() private$est,
-    kable = function(title = "", notes = "", font_size = 9, hold = FALSE, ...) {
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      digit = 2,
+                      hold = FALSE,
+                      ...)
+    {
       est <- private$est
-      tbl <- private$reg_table(est)
+      tbl <- private$reg_table(est, digit)
 
       outcome_labels <- unique(est$outcome)
 
@@ -486,10 +490,10 @@ LmSubset <- R6::R6Class("LmSubset",
           booktabs = TRUE,
           linesep = ""
         ) %>%
-        pack_rows(group_labels$label[1], 1, 3) %>%
-        pack_rows(group_labels$label[2], 4, 6) %>%
-        pack_rows(group_labels$label[3], 7, 9) %>%
-        pack_rows(group_labels$label[4], 10, 12) %>%
+        pack_rows(group_labels$label[1], 1, 4) %>%
+        pack_rows(group_labels$label[2], 5, 8) %>%
+        pack_rows(group_labels$label[3], 9, 12) %>%
+        pack_rows(group_labels$label[4], 13, 16) %>%
         kableExtra::footnote(
           general_title = "",
           general = paste("Notes:", notes),
@@ -575,7 +579,25 @@ LmSubset <- R6::R6Class("LmSubset",
   private = list(
     est = NULL,
     subset_labels = NULL,
-    reg_table = function(x) {
+    reg_table = function(x, digit = 2) {
+      ctrl_avg <- est %>%
+        arrange(male, desc(young), outcome) %>%
+        ungroup() %>%
+        pull(data) %>%
+        map_chr(
+          function(x) {
+            sprintf(
+              paste0("%1.", digit, "f"),
+              mean(subset(x, treat == levels(x$treat)[1])$value)
+            )
+          }
+        )
+
+      ctrl_avg_tbl <- tibble(
+        name = c("term", paste0("(", seq(length(ctrl_avg)), ")")),
+        value = c("Control average", ctrl_avg)
+      )
+
       tab <- x %>%
         arrange(male, desc(young), outcome) %>%
         ungroup() %>%
@@ -590,6 +612,8 @@ LmSubset <- R6::R6Class("LmSubset",
             "treatD" = "Treatment D"
           ),
           gof_omit = "R2",
+          fmt = digit,
+          add_rows = pivot_wider(ctrl_avg_tbl),
           output = "data.frame"
         ) %>%
         select(-part, -statistic)

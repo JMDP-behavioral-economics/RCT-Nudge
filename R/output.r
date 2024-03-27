@@ -145,8 +145,10 @@ stock_logit$
   )
 
 # subsample analysis
-stock_sub <- stock$fit_sub()
+stock_sub <- stock$fit_sub(scale = 100)
+
 stock_sub$coefplot()
+stock_sub$kable()
 
 # cluster se
 stock_g <- rct$
