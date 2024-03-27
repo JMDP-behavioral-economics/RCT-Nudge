@@ -281,6 +281,105 @@ LmAll <- R6::R6Class("LmAll",
           threeparttable = TRUE,
           escape = FALSE
         )
+    },
+    plot = function(segment_margin = 3,
+                    add_segment_margin = 7,
+                    edge_length = 2,
+                    show_p = 0.1,
+                    p_digit = 3,
+                    p_text_size = 5,
+                    p_text_margin = 2,
+                    avg_digit = 1,
+                    avg_percent = TRUE,
+                    avg_text_size = 5,
+                    avg_text_pos = 10,
+                    ylim = c(0, 100),
+                    ybreaks = seq(0, 100, by = 10))
+    {
+      wocov <- subset(private$est, covs == "")
+
+      est <- wocov %>%
+        mutate(
+          tidy = map(fit, broom::tidy),
+          tidy = map(tidy, ~ subset(., str_detect(term, "treat"))),
+          tidy = map(tidy, ~ select(., -outcome))
+        ) %>%
+        select(outcome, tidy) %>%
+        unnest(tidy) %>%
+        mutate(treat = str_remove(term, "treat")) %>%
+        select(outcome, treat, p.value)
+
+      mu <- wocov %>%
+        select(outcome, data) %>%
+        mutate(avg = map(
+          data,
+          function(x) {
+            group_by(x, treat) %>%
+              summarize(mu = mean(value), se = se(value))
+          }
+        )) %>%
+        select(-data) %>%
+        unnest(avg)
+
+      plotdt <- mu %>%
+        dplyr::left_join(est, by = c("outcome", "treat"), keep = TRUE) %>%
+        select(-outcome.y, -treat.y) %>%
+        rename(treat = treat.x, outcome = outcome.x)
+
+      mu_ctrl <- plotdt %>%
+        dplyr::filter(is.na(p.value)) %>%
+        select(outcome, ctrl_mu = mu)
+
+      plotdt <- plotdt %>%
+        dplyr::left_join(mu_ctrl, by = "outcome") %>%
+        group_by(outcome) %>%
+        mutate(x_start = 1, x_end = 1:n()) %>%
+        rowwise() %>%
+        mutate(
+          y = max(mu, ctrl_mu),
+          y = y + segment_margin + add_segment_margin * (x_end - 1)
+        ) %>%
+        ungroup() %>%
+        select(-ctrl_mu) %>%
+        mutate_at(
+          vars(y, x_end, x_start),
+          list(~ ifelse(p.value > show_p | is.na(p.value), NA_real_, .))
+        )
+
+      avg_format <- paste0("%1.", avg_digit, "f")
+      if (avg_percent) avg_format <- paste0(avg_format, "%%")
+
+      ggplot(plotdt, aes(x = treat, y = mu)) +
+        geom_bar(stat = "identity", fill = "grey90", color = "black") +
+        geom_errorbar(aes(ymin = mu - se, ymax = mu + se), width = 0.25) +
+        geom_text(
+          aes(y = avg_text_pos, label = sprintf(avg_format, mu)),
+          color = "black", size = avg_text_size
+        ) +
+        geom_segment(
+          aes(x = x_start, xend = x_end, y = y, yend = y),
+          color = "black"
+        ) +
+        geom_segment(
+          aes(x = x_start, xend = x_start, y = y, yend = y - edge_length),
+          color = "black"
+        ) +
+        geom_segment(
+          aes(x = x_end, xend = x_end, y = y, yend = y - edge_length),
+          color = "black"
+        ) +
+        geom_text(
+          aes(
+            x = x_start,
+            y = y + p_text_margin,
+            label = sprintf(paste0("p = %1.", p_digit, "f"), p.value)
+          ),
+          hjust = 0, color = "black", size = p_text_size
+        ) +
+        scale_y_continuous(limits = ylim, breaks = ybreaks) +
+        facet_wrap(~outcome) +
+        labs(x = "Treatment", y = "Sample average") +
+        my_theme_classic(strip_hjust = 0.5)
     }
   ),
   private = list(

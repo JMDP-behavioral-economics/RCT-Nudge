@@ -79,10 +79,12 @@ rct$
 # //NOTE Stock data analysis
 stock <- rct$
   add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(1:3, sample_drop = FALSE)
+  lm(c(1, 2, 4), sample_drop = FALSE)
 
 # full sample analysis: linear regression
-stock_all <- stock$fit_all()
+stock_all <- stock$fit_all(scale = 100)
+
+stock_all$plot(p_text_margin = 3)
 
 stock_all$
   flextable(
