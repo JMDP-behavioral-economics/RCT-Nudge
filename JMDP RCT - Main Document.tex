@@ -171,7 +171,7 @@ The participants in the experiment were 11,154 matched donors who received a com
 
 JMDP provided coordination data at the end of June 2022. The unit of observation was experimental participants. For individual characteristics, the data included donors' gender, age, the number of coordination experiences, and prefecture-level residence area. Data concerning the coordination process included whether each stage (response to compatibility notice, CT, candidate selection, final consent, and collection) was reached. In addition, for responses to the notice, the data included the number of days donors took to respond and their willingness to donate. If coordination was interrupted, the reasons for the interruption were recorded in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis used 11,049 matched donors living in Japan whose coordination (including interruptions) was completed.\footnote{One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data provision. The proportion of matched donors with ongoing matching is balanced across the experimental arms (F-test, p-value = \(0.383\)).}
 
-Our primary outcome is the response to the compatibility notice and the intention expressed during the response. When examining the impact on the response time, we use the number of days required to respond. As a secondary outcome, we use whether the matched donor reached the CT. Since patients' physicians select donors from matched donors who have completed the CT, we can also investigate the impact on the donor's ``availability'' \citep{Haylock2022}. In this study, we also examine the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
+Our primary outcomes are donor's intention and donor's ``availability.'' To evaluate the impact on the donor's intention, we use the response to the compatibility notice and the intention expressed during the response. Following \citet{Haylock2022}, since patients' physicians select donors from matched donors who have completed the CT, we use whether the matched donor reached the CT to investigate donor's availability. When examining the impact on the response time, we use the number of days required to respond. In this study, we also examine the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
 
 For additional data, we used a list of medical institutions published on the Internet by the JMDP.\footnote{\url{https://www.jmdp.or.jp/hospitals/view2/} (access date: August 4, 2022)} This list includes complete addresses, the availability of bone marrow collection (BM collection), and availability of peripheral blood stem cell collection (PBSC collection). We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged it with the coordination data using the prefecture as the merge key. We consider this variable to be the traveling cost of coordination and donation.
 
@@ -227,18 +227,48 @@ where \(X_i\) is a vector of individual characteristics including age. We add mo
 \hypertarget{result}{%
 \section{Experimental Results}\label{result}}
 
-\hypertarget{intention}{%
-\subsection{Effects on Reply and Intention}\label{intention}}
+\hypertarget{main}{%
+\subsection{Effects on Intention and Availability}\label{main}}
 
-First, we estimate the message effect on the responses and intentions, which are our primary outcomes. The outcome variable for responses is a dummy variable that takes the value of one if a donor responds to the compatibility notice, regardless of their intention. The response rate in the control group is \(88.35\)\%.
+First, we estimate the message effect on donor's intention and availability. We use two outcome variables as donor's intention. The first one is a dummy variable that takes the value of one if a donor responds to the compatibility notice, regardless of their intention. The second one is a dummy variable that takes one if a matched donor responded to the compatibility notice and indicated a willingness to donate.\footnote{We code the outcome variables of non-responders as zero and include them in the analysis sample.} In the control group, the response rate is \(87.69\)\% and the response rate for positive intentions is \(54.91\)\%. Thus, \(62.63(=54.91/87.69)\)\% of respondents have the intention to donate.
 
-We decompose the message effect on responses into two effects. The first is the effect on the responses associated with the intention to donate. The outcome variable is a dummy variable that takes one if a matched donor responded to the compatibility notice and indicated a willingness to donate. The second is the effect on responses without intention. The outcome variable is a dummy variable that takes one if a matched donor responded to the compatibility notice and did not indicate an intention to donate.
+To evalute donor's availability, we use a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control group, \(22.25\)\% of matched donors underwent the CT. Thus, \(40.52(=22.25/54.91)\)\% of respondents with positive intention reached the CT stage.
 
-To estimate these effects, we code the outcome variables of non-responders as zero and include them in the analysis sample. Thus, the sum of the two outcome variables is always equal to a dummy variable for response, such that the sum of the effects on positive and negative intentions is the effect on response. In the control group, the response rate for positive intentions is \(55.33\)\%, whereas that for negative intentions is \(33.03\)\%. Thus, \(62.63(=55.33/88.35)\)\% of respondents have the intention to donate.
+\begin{table}
 
-Coordination may be interrupted for patient reasons before a matched donor responds. Given that this occurs independently of the matched donor's intentions, we exclude it from our analysis sample (\(0.5\)--\(0.7\)\% in each experimental arm).
+\caption{\label{tab:reg-stock}Linear Probability Model of Intention and Avairability}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{3}{c}{ } & \multicolumn{2}{c}{Intention} & \multicolumn{2}{c}{ } \\
+\cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Reply} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{0.013} & \num{0.017}* & \num{0.023}* & \num{0.023}* & \num{0.031}*** & \num{0.031}***\\
+ & (\num{0.009}) & (\num{0.009}) & (\num{0.013}) & (\num{0.014}) & (\num{0.011}) & (\num{0.012})\\
+Treatment C & \num{-0.004} & \num{0.005} & \num{-0.004} & \num{-0.002} & \num{0.012} & \num{0.011}\\
+ & (\num{0.009}) & (\num{0.009}) & (\num{0.014}) & (\num{0.014}) & (\num{0.012}) & \vphantom{1} (\num{0.012})\\
+Treatment D & \num{0.008} & \num{0.008} & \num{0.006} & \num{0.007} & \num{0.024}** & \num{0.026}**\\
+ & (\num{0.009}) & (\num{0.009}) & (\num{0.014}) & (\num{0.014}) & (\num{0.012}) & (\num{0.012})\\
+\midrule
+Control average & 0.8769 & 0.8769 & 0.5491 & 0.5491 & 0.2225 & 0.2225\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
-We show the estimation results of overall effect in Table \ref{tab:reg-stock} in the Appendix \ref{figtab}. The estimated results show that all experimental arms, with and without covariates, have no statistically significant effect on responses and intentions. As an alternative method, we estimate a logit model (see Table \ref{tab:logit-stock} in the Appendix) and obtain similar results (95\% confidence intervals for odds ratios include 1).
+We show the estimation results of overall effect in Table \ref{tab:reg-stock}. When controlling for covariates, experimental arm B, which includes the probability message, may increase response rates and positive intentions, suggesting that the probability message enhances donor willingness. However, the statistical significance is marginal, and logistic regression model (Table \ref{tab:logit-stock} in the Appendix), as an alternative approach, fails to reject the null hypothesis that there is no message effect (95\% confidence intervals for odds ratios include 1). Therefore, we cannot robustly obtain the result that the message improves donor intentions.
+
+However, experimental arms B and D increase the probability of reaching the CT by \(3.1\) percentage points and \(2.4\) percentage points, respectively, which is statistically significant. These results are robust to controlling for covariates and logistic regressions. The effect on reaching the CT is greater than the effects on responses and positive intentions. This suggests that coordination prevents donor dropout. In the control group, the attrition rate between responses with positive intentions and the CT is approximately 60\% (\(=1-0.2225/0.5491\)). In contrast, the attrition rate for experimental arms B and D is approximately 56\% (\(=1-((0.2225+0.031)/(0.5491+0.023))\) for experimental arm B). Thus, although the probability message, which is included in experimental arms B and D, does not increase the number of donors willing to donate, it maintain their intention to donate, which contributes to an increase in donors' availability.
 
 \begin{figure}[t]
 \includegraphics{JMDPRC~2/figure-latex/coefplot-reg-stock-subset-1} \caption{Effect on Reply and Intentions by Gender and Age Group. Notes: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month and week dummies.}\label{fig:coefplot-reg-stock-subset}
@@ -391,38 +421,6 @@ Week 4 & C & A & D & B & A & D\\
 
 \begin{table}[H]
 
-\caption{\label{tab:reg-stock}Linear Probability Model of Reply and Intention}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
-\toprule
-\multicolumn{3}{c}{ } & \multicolumn{2}{c}{Intention} & \multicolumn{2}{c}{ } \\
-\cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Reply} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
-\midrule
-Treatment B & \num{0.013} & \num{0.017}* & \num{0.023}* & \num{0.023}* & \num{0.031}*** & \num{0.031}***\\
- & (\num{0.009}) & (\num{0.009}) & (\num{0.013}) & (\num{0.014}) & (\num{0.011}) & (\num{0.012})\\
-Treatment C & \num{-0.004} & \num{0.005} & \num{-0.004} & \num{-0.002} & \num{0.012} & \num{0.011}\\
- & (\num{0.009}) & (\num{0.009}) & (\num{0.014}) & (\num{0.014}) & (\num{0.012}) & \vphantom{1} (\num{0.012})\\
-Treatment D & \num{0.008} & \num{0.008} & \num{0.006} & \num{0.007} & \num{0.024}** & \num{0.026}**\\
- & (\num{0.009}) & (\num{0.009}) & (\num{0.014}) & (\num{0.014}) & (\num{0.012}) & (\num{0.012})\\
-\midrule
-Control average & 0.8769 & 0.8769 & 0.5491 & 0.5491 & 0.2225 & 0.2225\\
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
 \caption{\label{tab:logit-stock}Logit Model of Reply and Intention}
 \centering
 \fontsize{9}{11}\selectfont
@@ -449,6 +447,44 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \end{tabular}
 \begin{tablenotes}
 \item Notes: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:reg-stock-subset}Subsample Analysis for Primary Outcomes}
+\centering
+\begin{threeparttable}
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{lccc}
+\toprule
+ & Reply & Positive intention & CT\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Young females (N = 1132)}}\\
+\hspace{1em}Treatment B & 0.008 (0.033) & -0.002 (0.045) & 0.032 (0.036)\\
+\hspace{1em}Treatment C & 0.040 (0.031) & 0.034 (0.046) & 0.040 (0.037)\\
+\hspace{1em}Treatment D & -0.011 (0.032) & -0.035 (0.044) & 0.057 (0.036)\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Older females (N = 3018)}}\\
+\hspace{1em}Treatment B & -0.006 (0.013) & -0.009 (0.026) & 0.019 (0.021)\\
+\hspace{1em}Treatment C & -0.012 (0.014) & -0.027 (0.028) & 0.002 (0.022)\\
+\hspace{1em}Treatment D & -0.008 (0.013) & -0.004 (0.027) & 0.047** (0.022)\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Young males (N = 1566)}}\\
+\hspace{1em}Treatment B & 0.064** (0.031) & 0.092** (0.036) & 0.066** (0.032)\\
+\hspace{1em}Treatment C & 0.023 (0.032) & 0.023 (0.036) & -0.010 (0.031)\\
+\hspace{1em}Treatment D & 0.060* (0.032) & 0.026 (0.036) & -0.025 (0.030)\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Older males (N = 5333)}}\\
+\hspace{1em}Treatment B & 0.017 (0.013) & 0.021 (0.019) & 0.026 (0.017)\\
+\hspace{1em}Treatment C & -0.003 (0.014) & -0.015 (0.021) & 0.015 (0.018)\\
+\hspace{1em}Treatment D & 0.004 (0.013) & 0.011 (0.020) & 0.021 (0.018)\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item Notes: The robust standard errors are in parentheses. The age category is defined as under 30 years old or older. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

@@ -184,7 +184,7 @@ rawdt <- RawData$new(
 
 JMDP provided coordination data at the end of June 2022. The unit of observation was experimental participants. For individual characteristics, the data included donors' gender, age, the number of coordination experiences, and prefecture-level residence area. Data concerning the coordination process included whether each stage (response to compatibility notice, CT, candidate selection, final consent, and collection) was reached. In addition, for responses to the notice, the data included the number of days donors took to respond and their willingness to donate. If coordination was interrupted, the reasons for the interruption were recorded in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis used 11,049 matched donors living in Japan whose coordination (including interruptions) was completed.[^exclude]
 
-Our primary outcome is the response to the compatibility notice and the intention expressed during the response. When examining the impact on the response time, we use the number of days required to respond. As a secondary outcome, we use whether the matched donor reached the CT. Since patients' physicians select donors from matched donors who have completed the CT, we can also investigate the impact on the donor's "availability" [@Haylock2022]. In this study, we also examine the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
+Our primary outcomes are donor's intention and donor's "availability." To evaluate the impact on the donor's intention, we use the response to the compatibility notice and the intention expressed during the response. Following @Haylock2022, since patients' physicians select donors from matched donors who have completed the CT, we use whether the matched donor reached the CT to investigate donor's availability. When examining the impact on the response time, we use the number of days required to respond. In this study, we also examine the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
 
 ```{r ongoing-balance, include=FALSE}
 rawdt$add_cond_study_sample("ongoing == 0")
@@ -261,15 +261,13 @@ where $X_i$ is a vector of individual characteristics including age. We add mont
 [^LZ]: We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.
 
 # Experimental Results {#result}
-## Effects on Reply and Intention {#intention}
+## Effects on Intention and Availability {#main}
 
-First, we estimate the message effect on the responses and intentions, which are our primary outcomes. The outcome variable for responses is a dummy variable that takes the value of one if a donor responds to the compatibility notice, regardless of their intention. The response rate in the control group is $88.35$%.
+First, we estimate the message effect on donor's intention and availability. We use two outcome variables as donor's intention. The first one is a dummy variable that takes the value of one if a donor responds to the compatibility notice, regardless of their intention. The second one is a dummy variable that takes one if a matched donor responded to the compatibility notice and indicated a willingness to donate.[^coding] In the control group, the response rate is $87.69$% and the response rate for positive intentions is $54.91$%. Thus, $62.63(=54.91/87.69)$% of respondents have the intention to donate.
 
-We decompose the message effect on responses into two effects. The first is the effect on the responses associated with the intention to donate. The outcome variable is a dummy variable that takes one if a matched donor responded to the compatibility notice and indicated a willingness to donate. The second is the effect on responses without intention. The outcome variable is a dummy variable that takes one if a matched donor responded to the compatibility notice and did not indicate an intention to donate.
+[^coding]: We code the outcome variables of non-responders as zero and include them in the analysis sample.
 
-To estimate these effects, we code the outcome variables of non-responders as zero and include them in the analysis sample. Thus, the sum of the two outcome variables is always equal to a dummy variable for response, such that the sum of the effects on positive and negative intentions is the effect on response. In the control group, the response rate for positive intentions is $55.33$%, whereas that for negative intentions is $33.03$%. Thus, $62.63(=55.33/88.35)$% of respondents have the intention to donate.
-
-Coordination may be interrupted for patient reasons before a matched donor responds. Given that this occurs independently of the matched donor's intentions, we exclude it from our analysis sample ($0.5$--$0.7$% in each experimental arm).
+To evalute donor's availability, we use a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control group, $22.25$% of matched donors underwent the CT. Thus, $40.52(=22.25/54.91)$% of respondents with positive intention reached the CT stage.
 
 ```{r setup-stock-analysis, include=FALSE}
 id <- which(names(endpoint) %in% c("reply", "positive", "test"))
@@ -279,11 +277,24 @@ stock <- rct_clone$
   lm(id, sample_drop = FALSE)
 ```
 
-We show the estimation results of overall effect in Table \@ref(tab:reg-stock) in the Appendix \@ref(figtab). The estimated results show that all experimental arms, with and without covariates, have no statistically significant effect on responses and intentions. As an alternative method, we estimate a logit model (see Table \@ref(tab:logit-stock) in the Appendix) and obtain similar results (95% confidence intervals for odds ratios include 1).
+```{r reg-stock}
+stock$
+  fit_all()$
+  kable(
+    title = "Linear Probability Model of Intention and Avairability",
+    notes = paste(
+      "Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+    )
+  )
+```
+
+We show the estimation results of overall effect in Table \@ref(tab:reg-stock). When controlling for covariates, experimental arm B, which includes the probability message, may increase response rates and positive intentions, suggesting that the probability message enhances donor willingness. However, the statistical significance is marginal, and logistic regression model (Table \@ref(tab:logit-stock) in the Appendix), as an alternative approach, fails to reject the null hypothesis that there is no message effect (95% confidence intervals for odds ratios include 1). Therefore, we cannot robustly obtain the result that the message improves donor intentions.
+
+However, experimental arms B and D increase the probability of reaching the CT by $3.1$ percentage points and $2.4$ percentage points, respectively, which is statistically significant. These results are robust to controlling for covariates and logistic regressions. The effect on reaching the CT is greater than the effects on responses and positive intentions. This suggests that coordination prevents donor dropout. In the control group, the attrition rate between responses with positive intentions and the CT is approximately 60% ($=1-0.2225/0.5491$). In contrast, the attrition rate for experimental arms B and D is approximately 56% ($=1-((0.2225+0.031)/(0.5491+0.023))$ for experimental arm B). Thus, although the probability message, which is included in experimental arms B and D, does not increase the number of donors willing to donate, it maintain their intention to donate, which contributes to an increase in donors' availability.
 
 ```{r coefplot-reg-stock-subset, fig.cap = "Effect on Reply and Intentions by Gender and Age Group. Notes: These plots show the average effect (and associated 95 percent confidential interval) on each outcome by gender and age group. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month and week dummies."}
 stock$
-  fit_sub()$
+  fit_sub(age_cut = 30)$
   coefplot()
 ```
 
@@ -292,48 +303,6 @@ Since it is important to increase donors' willingness to donate among younger ma
 In the control group, approximately 50% ($=38.6/74.4$) of males in their 20s who responded to the compatibility notice were willing to donate, which is lower than the willingness rate of respondents in the other gender and age groups.[^cal] Experimental arm B raises the intention rate of male respondents in their 20s from 50% to 60% ($=(38.6 + 10)/(74.4 + 6)$). In addition, young males have better transplant outcomes than males of other genders and ages. Thus, the results indicate that the probability message improves coordination efficiency in the sense that it encourages behavioral change (initiation of coordination) in desirable donors.
 
 [^cal]: For females in their 20s, 59 ($=51.6/87.4$)%; for males over 30, 66 ($=59.0/89.1$)%; for females over 30, 62 ($=58.8/94.6$)%.
-
-<!-- ## Random Causal Forest {#rcf} -->
-
-```{r rcf-int, eval=FALSE}
-library(xfun)
-rcf <- cache_rds({
-  rct$rcf("positive")
-})
-```
-<!-- 
-To further explore the heterogeneity of the message effects, we use random causal forests (RCF), which allows us to test the heterogeneous treatment effects in a fully nonparametric manner [@Athey2016; @Wager2018]. The method is based on a regression tree algorithm and estimates the average treatment effect conditional on the observed characteristics (Conditional Average Treatment Effect or CATE). This method has been used in various contexts, including labor [@Davis2017], education [@Carlana2022], and energy conservation [@Murakami2022].
-
-The algorithm splits the sample into two subsamples (leaves) using one of the covariates $X_j$. Specifically, the algorithm divides the sample into samples for which $X_j \le x$ and $X_j > x$. The threshold $x$ is set to minimize the expected mean squared error of the predicted treatment effect. This minimization is achieved by increasing the variance in the conditional mean treatment effect across leaves (heterogeneity) and decreasing the variance within leaves. This splitting process is repeated for each leaf until the termination condition is reached. RCF estimates the CATE on terminal leaves.[^tech-detail]
-
-RCF predicts the treatment effect from the observed characteristics. Thus, it can predict the treatment effects based on individual characteristics, even for individuals who did not receive the intervention. This method assumes that the treatment assignment is conditionally independent of the potential outcome variable. Thus, this method could be used in our study. This subsection focuses on the effects on intentions. The covariates used in the RCF are gender, age, past coordination experience, and the density of hospitals in the area of residence.
-
-[^tech-detail]: A disadvantage of the regression tree algorithm is that the variance in the predictions increases (overfitting), which reduces the accuracy of the predictions. To prevent this, RCF introduces an algorithm called the ensemble method, which creates thousands of subsamples and grows a tree for each subsample. The final result is the average of the predictions from thousands of trees. For technical details, see @Athey2016 and @Wager2018. This study also uses a technique called generalized random forests, which treats RCF as a special case; however, the intuition remains the same. See @Athey2019 and @Athey2019a for details on generalized random forests. -->
-
-```{r boxplot-rcf-int, fig.cap='Boxplot of Predicted Treatment Effects by Treatment, Gender and Age. Notes: Fitted line represents GAM smoothing. Covariates are gender, age, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and number of hospitals with BM collection per 10 square kilometers.', eval=FALSE}
-
-rcf$subset_boxplot()
-```
-
-```{r rcf-int-cate, eval=FALSE}
-rcf$
-  cate(age < 30, male == 0)$
-  kable(
-    label = list(
-      c("30 $\\\\le$ Age", "Age $<$ 30"),
-      c("Male", "Female")
-    ),
-    title = "Conditional Average Treatment Effect Estimated by RCF"
-  )
-```
-
-<!-- Figure \@ref(fig:boxplot-rcf-int) illustrates the distribution of predicted treatment effects for each experimental group by gender and age. The predicted treatment effects vary considerably depending on these factors. Even when conditioned on gender and age, the predicted treatment effects exhibit significant heterogeneity. Notably, the effect of experimental group B is positive for males in their early 20s.[^middle-age] As a result, the average treatment effect of experimental arm B for males in their 20s is $12.3$ percentage points, which is close to the results of the subsample analysis shown in Figure \@ref(fig:coefplot-reg-stock-subset) (see Table \@ref(tab:rcf-int-cate)). This effect is statistically significantly higher than the CATE for females of the same age group ($-0.3$ percentage points) and males aged 30 and above ($1.6$ percentage points), as the 95% confidence intervals for the difference in effects do not include zero.
-
-[^middle-age]: Experimental arm B also exhibits a positive impact of a similar magnitude on some males aged 30 to 40, comparable to the positive effect observed in males in their early 20s. Such individuals tend to have relatively more coordination experience and reside in regions with a higher concentration of hospitals (see Table \@ref(tab:rcf-middle-male) in the Appendix \@ref(figtab)).
-
-From the perspective of the distribution and CATE, the effect of experimental arm D on males in their 20s, containing the probability message, is lower than the effect of experimental arm B. Since experimental arm D simultaneously presents the early coordination message, young males may have discounted the probability message due to information overload. Table \@ref(tab:rcf-int-corr) in the Appendix \@ref(figtab) presents the results of regressing the predicted effects of experimental arm D on the predicted effects of experimental arm B and C. If donors fully understand the information, the coefficients, excluding the intercept, should be 1 (the effect of experimental arm D equals the sum of the effects of experimental arms B and C). However, the F-test rejects this null hypothesis, suggesting that donors may not be accurately evaluating the information. Furthermore, the impact of experimental arm C is larger than that of experimental arm B, indicating that young males may prioritize the early coordination message over the probability message.[^other-generation]
-
-[^other-generation]: Similarly, young females also prioritize the early coordination message in decision-making. In contrast, males and females aged 30 and older prioritize the probability message in decision-making. -->
 
 ## Response Speed to Notification {#reply-speed}
 
@@ -468,19 +437,6 @@ schedule$kable(
 )
 ```
 
-
-```{r reg-stock}
-stock$
-  fit_all()$
-  kable(
-    title = "Linear Probability Model of Reply and Intention",
-    notes = paste(
-      "Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    hold = TRUE
-  )
-```
-
 ```{r setup-logit-stock, include=FALSE}
 logit_stock <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
@@ -500,39 +456,14 @@ logit_stock$
   )
 ```
 
-```{r rcf-middle-male, eval=FALSE}
-rcf$
-  effect_characteristics(
-    target = "B",
-    effect = 0.1,
-    male = male == 1,
-    age = 30 < age & age <= 40
-  )$
+```{r reg-stock-subset}
+stock$
+  fit_sub(age_cut = 30)$
   kable(
-    title = "Sample Characteristics of Predicted Treatment Effect of Arm B (Middle-aged Males)",
-    group_label = c("Effect $\\\\le$ 0.1", "0.1 $<$ Effect"),
-    notes = "We use males aged 30--39.",
-    hold = TRUE,
-    escape = FALSE
+    title = "Subsample Analysis for Primary Outcomes",
+    notes = "The robust standard errors are in parentheses. The age category is defined as under 30 years old or older. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
+    hold = TRUE
   )
-```
-
-```{r rcf-int-corr, eval=FALSE}
-mechanism <- rcf$decompose_effect(
-  "D",
-  c("B", "C"),
-  male == 0,
-  age < 30
-)
-
-mechanism$kable(
-  title = "Correlation of Predicted Treatment Effects",
-  subset_label = list(
-    c("Male", "Female"),
-    c("30 $\\\\le$ Age", "Age $<$ 30")
-  ),
-  notes = "Outcome variable is treatment effect of experimental arm D predicted by RCF. Explanatory variables are treatment effects of experimental arm B and C predicted by RCF."
-)
 ```
 
 ```{r cumulative-response-rate, fig.cap = 'Cumulative Response Rates by Gender and Age Group.', fig.pos="H"}
