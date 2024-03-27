@@ -380,7 +380,9 @@ LmSubset <- R6::R6Class("LmSubset",
         knitr::kable(
           caption = title,
           col.names = c("", as.character(outcome_labels)),
-          align = paste0(c("l", rep("c", length(outcome_labels))), collapse = "")
+          align = paste0(c("l", rep("c", length(outcome_labels))), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
         ) %>%
         pack_rows(group_labels$label[1], 1, 3) %>%
         pack_rows(group_labels$label[2], 4, 6) %>%
