@@ -39,19 +39,17 @@ Lm <- R6::R6Class("Lm",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit_all = function() {
+    fit_all = function(scale = 1) {
       est <- self$data %>%
+        mutate(value = value * scale) %>%
         group_by(outcome) %>%
         nest() %>%
         mutate(
           fit1 = private$call_lm(data, private$model$unctrl, private$se_type),
           fit2 = private$call_lm(data, private$model$ctrl, private$se_type),
-          avg = map_chr(
+          avg = map_dbl(
             data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("%1.4f", mean(value))
-            )
+            ~ mean(subset(., treat == private$ctrl_arm)$value)
           )
         ) %>%
         ungroup() %>%
@@ -61,14 +59,14 @@ Lm <- R6::R6Class("Lm",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        select(-data) %>%
         rename(covs = model) %>%
         mutate(covs = if_else(covs == "2", "X", ""))
 
       LmAll$new(est)
     },
-    fit_sub = function(age_cut = 30) {
+    fit_sub = function(age_cut = 30, scale = 1) {
       est <- self$data %>%
+        mutate(value = value * scale) %>%
         mutate(young = if_else(age < age_cut, 1, 0)) %>%
         group_by(outcome, male, young) %>%
         nest() %>%
@@ -82,11 +80,10 @@ Lm <- R6::R6Class("Lm",
             data,
             ~ with(
               subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.1f%%", mean(value) * 100)
+              sprintf("Ctrl Avg = %1.2f", mean(value * scale))
             )
           )
-        ) %>%
-        select(-data)
+        )
 
       LmSubset$new(est, age_cut)
     }
@@ -135,19 +132,17 @@ LmCluster <- R6::R6Class("LmCluster",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit_all = function() {
+    fit_all = function(scale = 1) {
       est <- self$data %>%
+        mutate(value = value * scale) %>%
         group_by(outcome) %>%
         nest() %>%
         mutate(
           fit1 = private$call_lm(data, private$model$unctrl, private$se_type, private$cluster),
           fit2 = private$call_lm(data, private$model$ctrl, private$se_type, private$cluster),
-          avg = map_chr(
+          avg = map_dbl(
             data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("%1.4f", mean(value))
-            )
+            ~ mean(subset(., treat == private$ctrl_arm)$value)
           )
         ) %>%
         ungroup() %>%
@@ -157,15 +152,16 @@ LmCluster <- R6::R6Class("LmCluster",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        select(-data) %>%
         rename(covs = model) %>%
         mutate(covs = if_else(covs == "2", "X", ""))
 
       LmAll$new(est)
     },
-    fit_sub = function() {
+    fit_sub = function(age_cut = 30, scale = 1) {
       est <- self$data %>%
-        group_by(outcome, male, age_less30) %>%
+        mutate(value = value * scale) %>%
+        mutate(young = if_else(age < age_cut, 1, 0)) %>%
+        group_by(outcome, male, young) %>%
         nest() %>%
         mutate(
           fit = private$call_lm(
@@ -178,13 +174,12 @@ LmCluster <- R6::R6Class("LmCluster",
             data,
             ~ with(
               subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.1f%%", mean(value) * 100)
+              sprintf("Ctrl Avg = %1.2f", mean(value * 100))
             )
           )
-        ) %>%
-        select(-data)
-      
-      LmSubset$new(est)
+        )
+
+      LmSubset$new(est, age_cut)
     }
   ),
   private = list(
@@ -214,8 +209,13 @@ LmAll <- R6::R6Class("LmAll",
     initialize = function(est) private$est <- est,
     get_est = function() private$est,
     print_msummary = function() private$reg_tab,
-    flextable = function(title = "", notes = "", font_size = 9, ...) {
-      private$msummary("flextable", title = title, ...)
+    flextable = function( title = "",
+                          notes = "",
+                          font_size = 9,
+                          digit = 2,
+                          ...)
+    {
+      private$msummary("flextable", title = title, digit = digit, ...)
 
       label <- private$label_structure(private$est)
       rle1 <- label$rle1
@@ -223,7 +223,7 @@ LmAll <- R6::R6Class("LmAll",
 
       flex <- private$reg_tab %>%
         add_header_row(values = rle1$values, colwidths = rle1$lengths)
-      
+
       if (!is.null(rle2)) {
         flex <- flex %>%
           add_header_row(values = rle2$values, colwidths = rle2$lengths)
@@ -240,8 +240,14 @@ LmAll <- R6::R6Class("LmAll",
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
     },
-    kable = function(title = "", notes = "", font_size = 9, hold = FALSE, ...) {
-      private$msummary("kableExtra", title = title, ...)
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      digit = 2,
+                      hold = FALSE,
+                      ...)
+    {
+      private$msummary("kableExtra", title = title, digit = digit, ...)
 
       tbl <- private$reg_tab
 
@@ -257,7 +263,7 @@ LmAll <- R6::R6Class("LmAll",
       names(lab1) <- rle1$values
 
       tbl <- tbl %>% kableExtra::add_header_above(lab1)
-      
+
       if (!is.null(label$rle2)) {
         rle2 <- label$rle2
         lab2 <- rle2$lengths
@@ -278,6 +284,105 @@ LmAll <- R6::R6Class("LmAll",
           threeparttable = TRUE,
           escape = FALSE
         )
+    },
+    plot = function(segment_margin = 3,
+                    add_segment_margin = 7,
+                    edge_length = 2,
+                    show_p = 0.1,
+                    p_digit = 3,
+                    p_text_size = 5,
+                    p_text_margin = 2,
+                    avg_digit = 1,
+                    avg_percent = TRUE,
+                    avg_text_size = 5,
+                    avg_text_pos = 10,
+                    ylim = c(0, 100),
+                    ybreaks = seq(0, 100, by = 10))
+    {
+      wocov <- subset(private$est, covs == "")
+
+      est <- wocov %>%
+        mutate(
+          tidy = map(fit, broom::tidy),
+          tidy = map(tidy, ~ subset(., str_detect(term, "treat"))),
+          tidy = map(tidy, ~ select(., -outcome))
+        ) %>%
+        select(outcome, tidy) %>%
+        unnest(tidy) %>%
+        mutate(treat = str_remove(term, "treat")) %>%
+        select(outcome, treat, p.value)
+
+      mu <- wocov %>%
+        select(outcome, data) %>%
+        mutate(avg = map(
+          data,
+          function(x) {
+            group_by(x, treat) %>%
+              summarize(mu = mean(value), se = se(value))
+          }
+        )) %>%
+        select(-data) %>%
+        unnest(avg)
+
+      plotdt <- mu %>%
+        dplyr::left_join(est, by = c("outcome", "treat"), keep = TRUE) %>%
+        select(-outcome.y, -treat.y) %>%
+        rename(treat = treat.x, outcome = outcome.x)
+
+      mu_ctrl <- plotdt %>%
+        dplyr::filter(is.na(p.value)) %>%
+        select(outcome, ctrl_mu = mu)
+
+      plotdt <- plotdt %>%
+        dplyr::left_join(mu_ctrl, by = "outcome") %>%
+        group_by(outcome) %>%
+        mutate(x_start = 1, x_end = 1:n()) %>%
+        rowwise() %>%
+        mutate(
+          y = max(mu, ctrl_mu),
+          y = y + segment_margin + add_segment_margin * (x_end - 1)
+        ) %>%
+        ungroup() %>%
+        select(-ctrl_mu) %>%
+        mutate_at(
+          vars(y, x_end, x_start),
+          list(~ ifelse(p.value > show_p | is.na(p.value), NA_real_, .))
+        )
+
+      avg_format <- paste0("%1.", avg_digit, "f")
+      if (avg_percent) avg_format <- paste0(avg_format, "%%")
+
+      ggplot(plotdt, aes(x = treat, y = mu)) +
+        geom_bar(stat = "identity", fill = "grey90", color = "black") +
+        geom_errorbar(aes(ymin = mu - se, ymax = mu + se), width = 0.25) +
+        geom_text(
+          aes(y = avg_text_pos, label = sprintf(avg_format, mu)),
+          color = "black", size = avg_text_size
+        ) +
+        geom_segment(
+          aes(x = x_start, xend = x_end, y = y, yend = y),
+          color = "black"
+        ) +
+        geom_segment(
+          aes(x = x_start, xend = x_start, y = y, yend = y - edge_length),
+          color = "black"
+        ) +
+        geom_segment(
+          aes(x = x_end, xend = x_end, y = y, yend = y - edge_length),
+          color = "black"
+        ) +
+        geom_text(
+          aes(
+            x = x_start,
+            y = y + p_text_margin,
+            label = sprintf(paste0("p = %1.", p_digit, "f"), p.value)
+          ),
+          hjust = 0, color = "black", size = p_text_size
+        ) +
+        scale_y_continuous(limits = ylim, breaks = ybreaks) +
+        facet_wrap(~outcome) +
+        labs(x = "Treatment", y = "Sample average") +
+        my_theme_classic(strip_hjust = 0.5)
     }
   ),
   private = list(
@@ -299,7 +404,7 @@ LmAll <- R6::R6Class("LmAll",
 
       return(list(rle1 = rle1, rle2 = rle2))
     },
-    msummary = function(output, ...) {
+    msummary = function(output, digit = 2, ...) {
       fit <- private$est %>% pull(fit)
       coef_map <- c(
         "treatB" = "Treatment B",
@@ -310,9 +415,11 @@ LmAll <- R6::R6Class("LmAll",
       gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
       align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
 
+      avg_format <- paste0("%1.", digit, "f")
+
       add_tab <- data.frame(
         rbind(
-          c("Control average", private$est$avg),
+          c("Control average", sprintf(avg_format, private$est$avg)),
           c("Covariates", private$est$covs)
         )
       )
@@ -325,7 +432,8 @@ LmAll <- R6::R6Class("LmAll",
         stars = stars,
         gof_omit = gof_omit,
         align = align,
-        add_rows = add_tab
+        add_rows = add_tab,
+        fmt = digit
       )
 
       if (!missing(...)) args <- append(args, list(...))
@@ -355,9 +463,15 @@ LmSubset <- R6::R6Class("LmSubset",
 
     },
     get_est = function() private$est,
-    kable = function(title = "", notes = "", font_size = 9, hold = FALSE, ...) {
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      digit = 2,
+                      hold = FALSE,
+                      ...)
+    {
       est <- private$est
-      tbl <- private$reg_table(est)
+      tbl <- private$reg_table(est, digit)
 
       outcome_labels <- unique(est$outcome)
 
@@ -384,10 +498,10 @@ LmSubset <- R6::R6Class("LmSubset",
           booktabs = TRUE,
           linesep = ""
         ) %>%
-        pack_rows(group_labels$label[1], 1, 3) %>%
-        pack_rows(group_labels$label[2], 4, 6) %>%
-        pack_rows(group_labels$label[3], 7, 9) %>%
-        pack_rows(group_labels$label[4], 10, 12) %>%
+        pack_rows(group_labels$label[1], 1, 4) %>%
+        pack_rows(group_labels$label[2], 5, 8) %>%
+        pack_rows(group_labels$label[3], 9, 12) %>%
+        pack_rows(group_labels$label[4], 13, 16) %>%
         kableExtra::footnote(
           general_title = "",
           general = paste("Notes:", notes),
@@ -477,7 +591,25 @@ LmSubset <- R6::R6Class("LmSubset",
   private = list(
     est = NULL,
     subset_labels = NULL,
-    reg_table = function(x) {
+    reg_table = function(x, digit = 2) {
+      ctrl_avg <- est %>%
+        arrange(male, desc(young), outcome) %>%
+        ungroup() %>%
+        pull(data) %>%
+        map_chr(
+          function(x) {
+            sprintf(
+              paste0("%1.", digit, "f"),
+              mean(subset(x, treat == levels(x$treat)[1])$value)
+            )
+          }
+        )
+
+      ctrl_avg_tbl <- tibble(
+        name = c("term", paste0("(", seq(length(ctrl_avg)), ")")),
+        value = c("Control average", ctrl_avg)
+      )
+
       tab <- x %>%
         arrange(male, desc(young), outcome) %>%
         ungroup() %>%
@@ -492,6 +624,8 @@ LmSubset <- R6::R6Class("LmSubset",
             "treatD" = "Treatment D"
           ),
           gof_omit = "R2",
+          fmt = digit,
+          add_rows = pivot_wider(ctrl_avg_tbl),
           output = "data.frame"
         ) %>%
         select(-part, -statistic)
