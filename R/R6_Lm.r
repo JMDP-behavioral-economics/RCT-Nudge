@@ -297,7 +297,8 @@ LmAll <- R6::R6Class("LmAll",
                     avg_text_size = 5,
                     avg_text_pos = 10,
                     ylim = c(0, 100),
-                    ybreaks = seq(0, 100, by = 10))
+                    ybreaks = seq(0, 100, by = 10),
+                    base_size = 15)
     {
       wocov <- subset(private$est, covs == "")
 
@@ -382,7 +383,7 @@ LmAll <- R6::R6Class("LmAll",
         scale_y_continuous(limits = ylim, breaks = ybreaks) +
         facet_wrap(~outcome) +
         labs(x = "Treatment", y = "Sample average") +
-        my_theme_classic(strip_hjust = 0.5)
+        my_theme_classic(size = base_size, strip_hjust = 0.5)
     }
   ),
   private = list(
@@ -592,7 +593,7 @@ LmSubset <- R6::R6Class("LmSubset",
     est = NULL,
     subset_labels = NULL,
     reg_table = function(x, digit = 2) {
-      ctrl_avg <- est %>%
+      ctrl_avg <- private$est %>%
         arrange(male, desc(young), outcome) %>%
         ungroup() %>%
         pull(data) %>%
