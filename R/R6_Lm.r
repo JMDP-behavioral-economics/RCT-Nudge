@@ -39,8 +39,9 @@ Lm <- R6::R6Class("Lm",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit_all = function() {
+    fit_all = function(scale = 1) {
       est <- self$data %>%
+        mutate(value = value * scale) %>%
         group_by(outcome) %>%
         nest() %>%
         mutate(
@@ -61,14 +62,14 @@ Lm <- R6::R6Class("Lm",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        select(-data) %>%
         rename(covs = model) %>%
         mutate(covs = if_else(covs == "2", "X", ""))
 
       LmAll$new(est)
     },
-    fit_sub = function(age_cut = 30) {
+    fit_sub = function(age_cut = 30, scale = 1) {
       est <- self$data %>%
+        mutate(value = value * scale) %>%
         mutate(young = if_else(age < age_cut, 1, 0)) %>%
         group_by(outcome, male, young) %>%
         nest() %>%
@@ -135,8 +136,9 @@ LmCluster <- R6::R6Class("LmCluster",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit_all = function() {
+    fit_all = function(scale = 1) {
       est <- self$data %>%
+        mutate(value = value * scale) %>%
         group_by(outcome) %>%
         nest() %>%
         mutate(
@@ -157,14 +159,14 @@ LmCluster <- R6::R6Class("LmCluster",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        select(-data) %>%
         rename(covs = model) %>%
         mutate(covs = if_else(covs == "2", "X", ""))
 
       LmAll$new(est)
     },
-    fit_sub = function() {
+    fit_sub = function(scale = 1) {
       est <- self$data %>%
+        mutate(value = value * scale) %>%
         group_by(outcome, male, age_less30) %>%
         nest() %>%
         mutate(
@@ -183,7 +185,7 @@ LmCluster <- R6::R6Class("LmCluster",
           )
         ) %>%
         select(-data)
-      
+
       LmSubset$new(est)
     }
   ),
@@ -223,7 +225,7 @@ LmAll <- R6::R6Class("LmAll",
 
       flex <- private$reg_tab %>%
         add_header_row(values = rle1$values, colwidths = rle1$lengths)
-      
+
       if (!is.null(rle2)) {
         flex <- flex %>%
           add_header_row(values = rle2$values, colwidths = rle2$lengths)
@@ -257,7 +259,7 @@ LmAll <- R6::R6Class("LmAll",
       names(lab1) <- rle1$values
 
       tbl <- tbl %>% kableExtra::add_header_above(lab1)
-      
+
       if (!is.null(label$rle2)) {
         rle2 <- label$rle2
         lab2 <- rle2$lengths
