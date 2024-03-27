@@ -47,12 +47,9 @@ Lm <- R6::R6Class("Lm",
         mutate(
           fit1 = private$call_lm(data, private$model$unctrl, private$se_type),
           fit2 = private$call_lm(data, private$model$ctrl, private$se_type),
-          avg = map_chr(
+          avg = map_dbl(
             data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("%1.4f", mean(value))
-            )
+            ~ mean(subset(., treat == private$ctrl_arm)$value)
           )
         ) %>%
         ungroup() %>%
@@ -143,12 +140,9 @@ LmCluster <- R6::R6Class("LmCluster",
         mutate(
           fit1 = private$call_lm(data, private$model$unctrl, private$se_type, private$cluster),
           fit2 = private$call_lm(data, private$model$ctrl, private$se_type, private$cluster),
-          avg = map_chr(
+          avg = map_dbl(
             data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("%1.4f", mean(value))
-            )
+            ~ mean(subset(., treat == private$ctrl_arm)$value)
           )
         ) %>%
         ungroup() %>%
@@ -215,8 +209,13 @@ LmAll <- R6::R6Class("LmAll",
     initialize = function(est) private$est <- est,
     get_est = function() private$est,
     print_msummary = function() private$reg_tab,
-    flextable = function(title = "", notes = "", font_size = 9, ...) {
-      private$msummary("flextable", title = title, ...)
+    flextable = function( title = "",
+                          notes = "",
+                          font_size = 9,
+                          digit = 2,
+                          ...)
+    {
+      private$msummary("flextable", title = title, digit = digit, ...)
 
       label <- private$label_structure(private$est)
       rle1 <- label$rle1
@@ -241,8 +240,14 @@ LmAll <- R6::R6Class("LmAll",
         fontsize(size = font_size, part = "all") %>%
         ft_theme()
     },
-    kable = function(title = "", notes = "", font_size = 9, hold = FALSE, ...) {
-      private$msummary("kableExtra", title = title, ...)
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      digit = 2,
+                      hold = FALSE,
+                      ...)
+    {
+      private$msummary("kableExtra", title = title, digit = digit, ...)
 
       tbl <- private$reg_tab
 
@@ -399,7 +404,7 @@ LmAll <- R6::R6Class("LmAll",
 
       return(list(rle1 = rle1, rle2 = rle2))
     },
-    msummary = function(output, ...) {
+    msummary = function(output, digit = 2, ...) {
       fit <- private$est %>% pull(fit)
       coef_map <- c(
         "treatB" = "Treatment B",
@@ -410,9 +415,11 @@ LmAll <- R6::R6Class("LmAll",
       gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
       align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
 
+      avg_format <- paste0("%1.", digit, "f")
+
       add_tab <- data.frame(
         rbind(
-          c("Control average", private$est$avg),
+          c("Control average", sprintf(avg_format, private$est$avg)),
           c("Covariates", private$est$covs)
         )
       )
@@ -425,7 +432,8 @@ LmAll <- R6::R6Class("LmAll",
         stars = stars,
         gof_omit = gof_omit,
         align = align,
-        add_rows = add_tab
+        add_rows = add_tab,
+        fmt = digit
       )
 
       if (!missing(...)) args <- append(args, list(...))
