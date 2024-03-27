@@ -164,10 +164,11 @@ LmCluster <- R6::R6Class("LmCluster",
 
       LmAll$new(est)
     },
-    fit_sub = function(scale = 1) {
+    fit_sub = function(age_cut = 30, scale = 1) {
       est <- self$data %>%
         mutate(value = value * scale) %>%
-        group_by(outcome, male, age_less30) %>%
+        mutate(young = if_else(age < age_cut, 1, 0)) %>%
+        group_by(outcome, male, young) %>%
         nest() %>%
         mutate(
           fit = private$call_lm(
@@ -186,7 +187,7 @@ LmCluster <- R6::R6Class("LmCluster",
         ) %>%
         select(-data)
 
-      LmSubset$new(est)
+      LmSubset$new(est, age_cut)
     }
   ),
   private = list(
