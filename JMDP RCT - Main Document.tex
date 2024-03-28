@@ -238,13 +238,45 @@ To evalute donor's availability, we use a dummy variable that takes the value of
 \includegraphics{JMDPRC~2/figure-latex/stock-diff-mean-1} \caption{Sample Averages of Responses, Positive Intention and CT by Treatments. Notes: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:stock-diff-mean}
 \end{figure}
 
-We show the estimation results of overall effect in Table \ref{tab:reg-stock}. When controlling for covariates, experimental arm B, which includes the probability message, may increase response rates and positive intentions, suggesting that the probability message enhances donor willingness. However, the statistical significance is marginal, and logistic regression model (Table \ref{tab:logit-stock} in the Appendix), as an alternative approach, fails to reject the null hypothesis that there is no message effect (95\% confidence intervals for odds ratios include 1). Therefore, we cannot robustly obtain the result that the message improves donor intentions.
+\begin{table}
 
-However, experimental arms B and D increase the probability of reaching the CT by \(3.1\) percentage points and \(2.4\) percentage points, respectively, which is statistically significant. These results are robust to controlling for covariates and logistic regressions. The effect on reaching the CT is greater than the effects on responses and positive intentions. This suggests that coordination prevents donor dropout. In the control group, the attrition rate between responses with positive intentions and the CT is approximately 60\% (\(=1-0.2225/0.5491\)). In contrast, the attrition rate for experimental arms B and D is approximately 56\% (\(=1-((0.2225+0.031)/(0.5491+0.023))\) for experimental arm B). Thus, although the probability message, which is included in experimental arms B and D, does not increase the number of donors willing to donate, it maintain their intention to donate, which contributes to an increase in donors' availability.
+\caption{\label{tab:stock-reg}Linear Probability Model of Intention and Avairability}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{3}{c}{ } & \multicolumn{2}{c}{Intention} & \multicolumn{2}{c}{ } \\
+\cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Reply} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{1.27} & \num{1.65}* & \num{2.31}* & \num{2.25}* & \num{3.10}*** & \num{3.06}***\\
+ & (\num{0.86}) & (\num{0.88}) & (\num{1.33}) & (\num{1.35}) & (\num{1.14}) & (\num{1.16})\\
+Treatment C & \num{-0.42} & \num{0.46} & \num{-0.44} & \num{-0.17} & \num{1.19} & \num{1.11}\\
+ & (\num{0.91}) & (\num{0.94}) & (\num{1.37}) & (\num{1.42}) & (\num{1.16}) & (\num{1.20})\\
+Treatment D & \num{0.79} & \num{0.80} & \num{0.59} & \num{0.68} & \num{2.39}** & \num{2.63}**\\
+ & (\num{0.89}) & (\num{0.90}) & (\num{1.37}) & (\num{1.39}) & (\num{1.17}) & (\num{1.19})\\
+\midrule
+Control average & 87.69 & 87.69 & 54.91 & 54.91 & 22.25 & 22.25\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+We show sample averages of each outcome by experimental arms in Figure \ref{fig:stock-diff-mean}. Although statistical significance is marginal, experimental arm B, which includes the probability message, may increase response rates and positive intentions by \(2.3\) percentage points, suggesting that the probability message enhances donor willingness. We show the estimation results of linear probability model in Table \ref{tab:stock-reg}. When controlling for covariates, although statistical siginificance is marginal, experimental arm B may also increase response rates. However, logistic regressions show that 95\% confidence intervals for odds ratios include 1 and fails to reject the null hypothesis that there is no message effect (see Table \ref{tab:stock-logit} in the Appendix \ref{figtab}). Therefore, we cannot robustly obtain the result that the message improves donor intentions.
+
+However, Figure \ref{fig:stock-diff-mean} shows that experimental arms B and D increase the probability of reaching the CT by \(3.1\) percentage points and \(2.4\) percentage points, respectively, which is statistically significant. These results are robust to controlling for covariates (Table \ref{tab:stock-reg}) and logistic regressions (Table \ref{tab:stock-logit} in the Appendix \ref{figtab}). The effect on reaching the CT is greater than the effects on responses and positive intentions. This suggests that coordination prevents donor dropout. In the control group, the attrition rate between responses with positive intentions and the CT is approximately 60\% (\(=1 - 22.2/54.9\)). In contrast, the attrition rate for experimental arms B and D is approximately 56\% (\(=1 - 25.4/57.2\) for experimental arm B). Thus, although the probability message, which is included in experimental arms B and D, does not increase the number of donors willing to donate, it maintains their intention to donate, which contributes to an increase in donors' availability.
 
 \begin{table}
 
-\caption{\label{tab:reg-stock-subset}Subsample Analysis for Primary Outcomes}
+\caption{\label{tab:stock-reg-subset}Subsample Analysis for Primary Outcomes (Age cutoff: 30)}
 \centering
 \begin{threeparttable}
 \fontsize{9}{11}\selectfont
@@ -284,9 +316,17 @@ However, experimental arms B and D increase the probability of reaching the CT b
 \end{threeparttable}
 \end{table}
 
-Since it is important to increase donors' willingness to donate among younger males, we test for heterogeneity in message effects. We divide the sample into four subsets by gender and age (under thirty or not) and estimate the message effects in each subset. Figure \ref{fig:coefplot-reg-stock-subset} presents the coefficient plots. The results show that experimental arms B and D, which include the probability message, increase the response rate of males in their 20s by approximately 6 percentage points (\(8.06\)\% increase, since the control mean is \(74.4\)\%), which is statistically significant at the 5\% level. In particular, experimental arm B, to which only the probability message was added, increased the number of responses with positive intentions by approximately 10 percentage points (\(25.91\)\% increase, because the control mean is \(38.6\)\%), which is also statistically significant. However, for the other gender and age groups, the treatment messages had no statistically significant effect on responses and intentions.
+Although the probability message increases the probability of reaching the CT, but it may have a negative impact on the probability of reaching the CT for specific gender and age groups. In such cases, instead of uniformly allocating the probability message to all matched donors, it should be allocated to specific groups (targeting). Additionally, given the relatively favorable transplantation outcomes for young males, we should adopt message to enhance the willingness and availability of young male donors. These considerations motivate us to examine the heterogeneity of message effects. We divide the sample into four subsets by gender and age (under thirty or not) and estimate the message effects in each subset.\footnote{\citet{Kollman2016} also defines the younger age group using a similar age cutoff.}
 
-In the control group, approximately 50\% (\(=38.6/74.4\)) of males in their 20s who responded to the compatibility notice were willing to donate, which is lower than the willingness rate of respondents in the other gender and age groups.\footnote{For females in their 20s, 59 (\(=51.6/87.4\))\%; for males over 30, 66 (\(=59.0/89.1\))\%; for females over 30, 62 (\(=58.8/94.6\))\%.} Experimental arm B raises the intention rate of male respondents in their 20s from 50\% to 60\% (\(=(38.6 + 10)/(74.4 + 6)\)). In addition, young males have better transplant outcomes than males of other genders and ages. Thus, the results indicate that the probability message improves coordination efficiency in the sense that it encourages behavioral change (initiation of coordination) in desirable donors.
+The estimation results are presented in Table \ref{tab:stock-reg-subset}. Before discussing the message effects, we note two important findings regarding the coordination process of young males. First, compared to other gender and age groups, young males have lower willingness to donate. The response rate for young male group is \(74.2\)\%, with only \(51.9\)\% (\(=38.5/74.24\))\% expressing willingness to donate. In contrast, response rates for other groups excluding young males exceed 85\%, with approximately 60\% of responses expressing willingness to donate.\footnote{For females in their 20s, \(59.1\) (\(=50.8/86\))\%; for females over 30, \(62.2\) (\(=58.66/94.32\))\%; for males over 30, \(66.3\) (\(=58.44/88.2\))\%.} Second, compared to other gender and age groups, the attrition rate of young males between responses with positive intentions and the CT is significantly lower. The attrition rate for the young male group is \(39.6\)\% (\(=1-23.27/38.5\))\%, while the attrition rates for other groups exceed 50\%.\footnote{For females in their 20s, \(59.1\) (\(=1 - 20.8/50.8\))\%; for females over 30, \(67.8\) (\(=1-18.89/58.66\))\%; for males over 30, \(58.6\) (\(=1-24.18/58.44\))\%.} Consequently, although the willingness to donate among young males is relatively low, their probability of reaching the CT is relatively high.
+
+We find that the probability message has a significant impact on young males. Experimental arm B, which includes only the probability message, increases the response rate by \(6.4\) percentage points, which is statistically significant. Moreover, it further boosts the response rate with positive intentions by \(9.2\) percentage points, which is also statistically significant. These results suggest that the probability message suppresses responses with negative intentions. Therefore, the probability message elevates the intention rate among young male responders from \(51.9\)\% to \(59.2\) (\(=(9.22+38.50)/(6.43+74.24)\))\%. The probability message resolves the problem that the willingness to donate among young males is relatively low.
+
+Furthermore, the probability message enhances the CT reach probability for young males by \(6.6\) percentage points, which is statistically significant. This message slightly reduces the attrition rate between responses with positive intentions and the CT from \(39.6\)\% to \(37.4\) (\(=1-(6.62+23.27)/(9.22+38.5)\))\%. Thus, the probability message increases the absolute availability of young male donors through the increase in intention rather than the decrease in attrition rate.
+
+For other gender and age groups excluding young males, experimental arm B, containing only the probability message, enhances the CT reach probability, although not statistically significant. Experimental arm D, containing both the probability message and the early coordination message, reduces the CT reach probability for young males, although not statistically significant. However, experimental arm D enhances the CT reach probability for other groups, particularly showing statistically significant effects for older female groups. Considering these results, the probability message enhances the availability of young male donors with favorable transplantation outcomes without negatively impacting other groups. Presenting both the probability message and the early coordination message increases the availability of older female donors without negatively affecting other groups. Therefore, it can be concluded that a policy uniformly allocating only the probability message is most desirable.
+
+Table \ref{tab:stock-reg-subset-2} in the Appendix \ref{figtab} presents the subset analysis with an age cutoff set at 40. The effect of the probability message (experimental arm B) on young males slightly weakens, while it slightly strengthens for older males. Particularly, the effect on the response rate of older males is statistically significant. This suggests that in males, the effect of the probability message follows a convex function of age. However, there is no change in our overall conclusion.
 
 \hypertarget{reply-speed}{%
 \subsection{Response Speed to Notification}\label{reply-speed}}
@@ -443,39 +483,7 @@ Week 4 & C & A & D & B & A & D\\
 
 \begin{table}[H]
 
-\caption{\label{tab:reg-stock}Linear Probability Model of Intention and Avairability}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
-\toprule
-\multicolumn{3}{c}{ } & \multicolumn{2}{c}{Intention} & \multicolumn{2}{c}{ } \\
-\cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Reply} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
-\midrule
-Treatment B & \num{1.27} & \num{1.65}* & \num{2.31}* & \num{2.25}* & \num{3.10}*** & \num{3.06}***\\
- & (\num{0.86}) & (\num{0.88}) & (\num{1.33}) & (\num{1.35}) & (\num{1.14}) & (\num{1.16})\\
-Treatment C & \num{-0.42} & \num{0.46} & \num{-0.44} & \num{-0.17} & \num{1.19} & \num{1.11}\\
- & (\num{0.91}) & (\num{0.94}) & (\num{1.37}) & (\num{1.42}) & (\num{1.16}) & (\num{1.20})\\
-Treatment D & \num{0.79} & \num{0.80} & \num{0.59} & \num{0.68} & \num{2.39}** & \num{2.63}**\\
- & (\num{0.89}) & (\num{0.90}) & (\num{1.37}) & (\num{1.39}) & (\num{1.17}) & (\num{1.19})\\
-\midrule
-Control average & 87.69 & 87.69 & 54.91 & 54.91 & 22.25 & 22.25\\
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item Notes: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:logit-stock}Logit Model of Reply and Intention}
+\caption{\label{tab:stock-logit}Logit Model of Reply and Intention}
 \centering
 \fontsize{9}{11}\selectfont
 \begin{threeparttable}
@@ -507,7 +515,7 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 
 \begin{table}[H]
 
-\caption{\label{tab:reg-stock-subset-2}Subsample Analysis for Primary Outcomes}
+\caption{\label{tab:stock-reg-subset-2}Subsample Analysis for Primary Outcomes (Age cutoff: 40)}
 \centering
 \begin{threeparttable}
 \fontsize{9}{11}\selectfont
