@@ -333,13 +333,15 @@ Table \ref{tab:stock-reg-subset-2} in the Appendix \ref{figtab} presents the sub
 \hypertarget{reply-speed}{%
 \subsection{Response Speed to Notification}\label{reply-speed}}
 
-The early coordination message states that early coordination increases the patient's transplantation rate. Therefore, this message may encourage early responses to compatibility notice. Figure \ref{fig:cumulative-response-rate} in the Appendix \ref{figtab} shows the cumulative response rate for the forty days after the compatibility notice was sent. Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focus on the heterogeneity of the effect on quick responses.
+The early coordination message states that early coordination increases the patient's transplantation rate. Therefore, this message may encourage early responses to the compatibility notice. As the compatibility notice recommends responding within 7 days, we define ``early response'' as responding within 7 days. Figure \ref{fig:cumulative-response-rate} in the Appendix \ref{figtab} shows the cumulative response rate up to 40 days after the compatibility notice was sent. In the 5-10 days after the compatibility notice was sent, the cumulative response rate for all treatment groups was slightly lower than the control group, which is statistically significant (see Figure \ref{fig:flow} in the Appendix \ref{figtab}). Furthermore, after that, the cumulative response rate for treatment group B (dashed line) and treatment group D (dotted line) was slightly higher than the control group, which is statistically insignificant for most periods, except for some.
+
+Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focus on the heterogeneity of the effect on quick responses. Figure \ref{fig:cumulative-response-rate} in the Appendix \ref{figtab} shows the cumulative response rate by gender and age groups (age cutoff is 30).
 
 \begin{figure}[t]
 \includegraphics{JMDPRC~2/figure-latex/young-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
 \end{figure}
 
-While there are no significant differences in the pattern of cumulative response rates for males and females aged 30 and older, there are some notable results for males and females under 30.\footnote{For males and females aged 30 and older, the cumulative response rate for each day differs little between the experimental arms, except for certain periods, and is not statistically significant. See Figure \ref{fig:old-male-flow} and \ref{fig:old-female-flow} in Appendix \ref{figtab}.} In the group of males in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \ref{fig:young-male-flow}).\footnote{In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within \(d\) days as the outcome variable. If the potential donor responded after \(d\) days or did not respond, the outcome variable is 0.} Given that the compatibility notice recommends a response within seven days, a response 15 days after the mailing of the compatibility notice cannot be considered an early response. Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message are added, is almost the same as that in the control, so it cannot be said that the early coordination message encourages early responses in this group.
+While there are no significant differences in the pattern of cumulative response rates for males and females aged 30 and older, there are some notable results for males and females under 30.\footnote{For males and females aged 30 and older, the cumulative response rate for each day differs little between the experimental arms, except for certain periods, and is not statistically significant. See Figure \ref{fig:old-male-flow} and \ref{fig:old-female-flow} in Appendix \ref{figtab}.} In the group of males in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \ref{fig:young-male-flow}).\footnote{In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within \(d\) days as the outcome variable. If the potential donor responded after \(d\) days or did not respond, the outcome variable is 0.} Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message are added, is almost the same as that in the control, so it cannot be said that the early coordination message encourages early responses in this group.
 
 \begin{figure}[t]
 \includegraphics{JMDPRC~2/figure-latex/young-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
@@ -360,7 +362,7 @@ We show sample averages of each outcome by treatments in Figure \ref{fig:coordin
 
 \begin{table}
 
-\caption{\label{tab:coordinate-reg-subset}Subsample Analysis for Coordination Process}
+\caption{\label{tab:coordinate-reg-subset}Subsample Analysis for Coordination Process (Age Cutoff: 40)}
 \centering
 \begin{threeparttable}
 \fontsize{9}{11}\selectfont
@@ -555,7 +557,15 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Gender and Age Group.}\label{fig:cumulative-response-rate}
+\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Treatments}\label{fig:cumulative-response-rate}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~2/figure-latex/flow-1} \caption{Effect on Reply within Specific Days after Sending Notification. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-subset-1} \caption{Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).}\label{fig:cumulative-response-rate-subset}
 \end{figure}
 
 \begin{figure}[H]
@@ -628,7 +638,7 @@ Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250}
 
 \begin{table}[H]
 
-\caption{\label{tab:coordinate-reg-subset-2}Subsample Analysis for Coordination Process}
+\caption{\label{tab:coordinate-reg-subset-2}Subsample Analysis for Coordination Process (Age Cutoff: 40)}
 \centering
 \begin{threeparttable}
 \fontsize{9}{11}\selectfont

@@ -354,14 +354,16 @@ flow_fit <- flow$fit(
 )
 ```
 
-The early coordination message states that early coordination increases the patient's transplantation rate. Therefore, this message may encourage early responses to compatibility notice. Figure \@ref(fig:cumulative-response-rate) in the Appendix \@ref(figtab) shows the cumulative response rate for the forty days after the compatibility notice was sent. Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focus on the heterogeneity of the effect on quick responses.
+The early coordination message states that early coordination increases the patient's transplantation rate. Therefore, this message may encourage early responses to the compatibility notice. As the compatibility notice recommends responding within 7 days, we define "early response" as responding within 7 days. Figure \@ref(fig:cumulative-response-rate) in the Appendix \@ref(figtab) shows the cumulative response rate up to 40 days after the compatibility notice was sent. In the 5-10 days after the compatibility notice was sent, the cumulative response rate for all treatment groups was slightly lower than the control group, which is statistically significant (see Figure \@ref(fig:flow) in the Appendix \@ref(figtab)). Furthermore, after that, the cumulative response rate for treatment group B (dashed line) and treatment group D (dotted line) was slightly higher than the control group, which is statistically insignificant for most periods, except for some.
+
+Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focus on the heterogeneity of the effect on quick responses. Figure \@ref(fig:cumulative-response-rate) in the Appendix \@ref(figtab) shows the cumulative response rate by gender and age groups (age cutoff is 30).
 
 ```{r young-male-flow, fig.cap='Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
 
 flow_fit$plot(male = TRUE, old = FALSE)
 ```
 
-While there are no significant differences in the pattern of cumulative response rates for males and females aged 30 and older, there are some notable results for males and females under 30.[^speed-older] In the group of males in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \@ref(fig:young-male-flow)).[^flow-analysis] Given that the compatibility notice recommends a response within seven days, a response 15 days after the mailing of the compatibility notice cannot be considered an early response. Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message are added, is almost the same as that in the control, so it cannot be said that the early coordination message encourages early responses in this group.
+While there are no significant differences in the pattern of cumulative response rates for males and females aged 30 and older, there are some notable results for males and females under 30.[^speed-older] In the group of males in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \@ref(fig:young-male-flow)).[^flow-analysis] Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message are added, is almost the same as that in the control, so it cannot be said that the early coordination message encourages early responses in this group.
 
 [^speed-older]: For males and females aged 30 and older, the cumulative response rate for each day differs little between the experimental arms, except for certain periods, and is not statistically significant. See Figure \@ref(fig:old-male-flow) and \@ref(fig:old-female-flow) in Appendix \@ref(figtab).
 
@@ -413,7 +415,7 @@ We show sample averages of each outcome by treatments in Figure \@ref(fig:coordi
 ```{r coordinate-reg-subset}
 subset_coordinate$
   kable(
-    title = "Subsample Analysis for Coordination Process",
+    title = "Subsample Analysis for Coordination Process (Age Cutoff: 40)",
     notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
   )
 ```
@@ -504,7 +506,19 @@ stock$
   )
 ```
 
-```{r cumulative-response-rate, fig.cap = 'Cumulative Response Rates by Gender and Age Group.', fig.pos="H"}
+```{r cumulative-response-rate, fig.cap = 'Cumulative Response Rates by Treatments', fig.pos = "H"}
+flow$plot()
+```
+
+```{r est-flow, include=FALSE}
+flow_fit_all <- flow$fit(1:40)
+```
+
+```{r flow, fig.cap = 'Effect on Reply within Specific Days after Sending Notification. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.', fig.pos = "H"}
+flow_fit_all$plot()
+```
+
+```{r cumulative-response-rate-subset, fig.cap = 'Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).', fig.pos="H"}
 flow$plot(
   male == 1,
   age >= 30,
@@ -559,7 +573,7 @@ logit_coordinate$
 coordinate$
   fit_sub(age_cut = 40, scale = 100)$
   kable(
-    title = "Subsample Analysis for Coordination Process",
+    title = "Subsample Analysis for Coordination Process (Age Cutoff: 40)",
     notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
     hold = TRUE
   )
