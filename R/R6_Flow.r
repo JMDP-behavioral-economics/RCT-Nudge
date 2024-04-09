@@ -178,7 +178,7 @@ FlowFit <- R6::R6Class("FlowFit",
         geom_hline(aes(yintercept = 0), linetype = 2) +
         geom_point(size = 3) +
         geom_line(linewidth = 1) +
-        geom_ribbon(alpha = 0.2) +
+        geom_ribbon(alpha = 0.1) +
         scale_x_continuous(breaks = c(1, seq(5, 80, by = 5))) +
         facet_wrap(~term, ncol = 2, scales = "free_x") +
         labs(
