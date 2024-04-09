@@ -9,16 +9,15 @@ Schedule <- R6::R6Class("Schedule",
     initialize = function(path) {
       self$data <- read_csv(path) %>%
         mutate(
-          my = paste0(month, "/", year - 2000),
-          my = factor(
-            my,
-            levels = c("9/21", "10/21", "11/21", "12/21", "1/22", "2/22"),
-            labels = c("Sep 21", "Oct 21", "Nov 21", "Dec 21", "Jan 22", "Feb 22")
-          ),
-          week = factor(week, levels = 1:4, labels = paste("Week", 1:4))
+          date = paste(format(start_date, "%m/%d"), "to", format(end_date, "%m/%d")),
+          date = paste0("(", date, ")"),
+          year_month = format(make_date(year, month), "%B, %Y")
         ) %>%
-        dplyr::select(week, my, treat) %>%
-        pivot_wider(values_from = treat, names_from = my)
+        select(year_month, week, treat, date) %>%
+        pivot_longer(treat:date) %>%
+        pivot_wider(names_from = year_month) %>%
+        mutate(week = if_else(name == "date", NA_real_, week)) %>%
+        select(-name)
     },
     flextable = function(title = "", notes = "", font_size = 9) {
       flextable(self$data) %>%
@@ -36,17 +35,16 @@ Schedule <- R6::R6Class("Schedule",
           booktabs = TRUE,
           linesep = ""
         )
-      
+
       if (hold) {
         kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")  
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
       } else {
         kbl <- kbl %>%
           kableExtra::kable_styling(font_size = font_size)
       }
 
       kbl %>%
-        kableExtra::kable_styling(font_size = font_size) %>%
         kableExtra::footnote(
           general_title = "",
           general = notes,
