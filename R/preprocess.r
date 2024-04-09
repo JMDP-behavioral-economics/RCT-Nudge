@@ -1,7 +1,8 @@
 #' //NOTE: メインデータの加工
 #+ include = FALSE
 library(here)
-source(here("R", "_library.r"))
+library(tidyverse)
+library(lubridate)
 
 #+ include = FALSE
 root <- "D:/JMDPフィールド実験"
@@ -181,29 +182,30 @@ shape_schedule_dt <- schedule_dt %>%
   ) %>%
   mutate(
     ymd = ymd(ymd),
-    month = month(ymd(ymd))
+    RCTweek = rep(1:(n() %/% 7 + 1), each = 7, length.out = n())
   ) %>%
-  group_by(month, treat) %>%
+  group_by(RCTweek, treat) %>%
   summarize(
-    year = year(ymd),
     start_date = min(ymd),
     end_date = max(ymd)
   ) %>%
   ungroup() %>%
   arrange(start_date) %>%
   distinct() %>%
-  group_by(month) %>%
-  mutate(week = 1:n()) %>%
-  ungroup() %>%
-  mutate(RCTweek = 1:n()) %>%
+  dplyr::filter(start_date != make_date(2021, 12, 27)) %>%
+  mutate(
+    week = rep(1:4, length.out = n()),
+    month = rep(c(9, 10, 11, 12, 1, 2), each = 4, length.out = n()),
+    year = year(start_date)
+  ) %>%
   select(
     year,
     month,
-    treat,
     week,
     RCTweek,
     start_date,
-    end_date
+    end_date,
+    treat
   )
 
 #' //NOTE: 病院施設データの加工
