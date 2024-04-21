@@ -1,0 +1,220 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+  \newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+  ]}
+  
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{natbib}
+\bibliographystyle{agsm}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Online Appendix ``Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program''},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Online Appendix
+``Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program''}
+\author{}
+\date{\vspace{-2.5em}Last updated on April 21, 2024}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{economic-models-for-predictions}{%
+\section{Economic Models for Predictions}\label{economic-models-for-predictions}}
+
+In this section, we present a simple inter-temporal economic model to make predicitions of message effects. We assume that the matched donor may have the present bias, which is one of the most important insight from behaviorl economics \citep{Laibson1997, ODonoghue2001}.
+
+\noindent
+\textbf{Events.} Consider three periods (\(t = 1, 2, 3\)). At \(t=1\), a matched donor receives the compatibility notice, which asks him/her to donate. The matched donor has three options: quick response (responsding at \(t=1\)); late response (responding at \(t=2\)); no response. If the matched donor responds, then the donor pays coordination cost \(c\) at that time and obtains net-benefit of transplantion at the next period. The net-benefit of transplantion may be time-variant: \(b_t\) if the matched donor responds at period \(t\). We assume \(b_1 \ge b_2\). If the matched donor does not respond, the donor does not pay any cost and receive any net-benefit.
+
+\noindent
+\textbf{Preference.} According to \citet{Laibson1997}, the utility function is \(U_t = u_t + \beta \sum_{\tau = t + 1}^{3} \delta^{\tau - t} u_{\tau}\) where \(\beta \in (0, 1]\) is the degree of present bias and \(\delta \in (0, 1]\) is standard time discount factor. Moreover, at period \(t\), the donor expect that s/he makes decisions after \(t + 1\) based on \(\hat{\beta} \in [\beta, 1]\). If \(\beta < \hat{\beta}\), the donor falsely believes that the present bias of their future self is not as strong.
+
+We will solve an interpersonal game \citep{ODonoghue2001} to obtain optimal response timing. The first result shows that the matched donor thinks that the late response is never optimal regardless of the present bias before receiving the compatibility notice (\(t=0\)).
+
+\noindent
+\textbf{Result 1.} For any \(\beta\), \(\hat{\beta}\) and \(b_2\), at \(t = 0\), the quick response is optimal if \(b_1 \ge c/\delta\); otherwise the no response is optimal.
+
+\noindent
+\emph{Proof.} At \(t=0\), the utility of the quick response is \(\beta(-\delta c + \delta^2 b_1)\), which is positive \(b_1 > c / \delta\). The utility of the late response is \(\beta(-\delta^2 c + \delta^3 b_2)\). Let \(b_2 = b_1 - d\) for \(d \ge 0\). Then, the utility of the late response is positive if \(b_1 > c/\delta + d\). Note that the utility of the no response is zero. Thus, if \(b_1 < c/\delta\), then the no response is optimal because the quick response and the late response produce negative utilities. The quick response is preferred to the late response if
+\begin{equation}
+  b_1 \ge \frac{c}{\delta} - \frac{\delta}{1-\delta}d. \label{eq:cond-t0}
+\end{equation}
+Thus, the quick response is optimal if \(b_1 \ge c/\delta\) since the Equation (\ref{eq:cond-t0}) holds.
+
+This resuls implies that, before receiving the compatibility notice, the matched donor thinks that the donor quickly respond to the compatibility notice if the transplantion net-benefit is sufficiently large. The next result presents that the donor may delay the response, while receiving the notice, even if the trasplantation value is sufficiently large.
+
+\noindent
+\textbf{Result 2.} Suppose that \(b_1 = b_2\). At \(t=1\), the quick response is optimal if \(b_1 \ge c \frac{1-\beta\delta}{(1-\delta)\beta\delta}\); the late response is optimal if \(c \frac{1-\beta\delta}{(1-\delta)\beta\delta} > b_1 \ge c/\beta\delta\); otherwise the no response is optimal.
+
+\noindent
+\emph{Proof.} We employ the backward-induction to solve the interpersonal game. Consider \(t=2\). If the matched donor does not choose the quick response, the donor can respond to the notice at that period. Then, the utility of the late response at \(t=2\) is \(-c + \beta\delta b_2\). Thus, the late response is optimal iff \(b_2 \ge c/\beta\delta\). Otherwise, the donor choose the no response. Next, we go back to \(t=1\) and analyze how the donor expects behavior at \(t=2\). The donor believes that future selve's present bias is \(\hat{\beta}\). Thus, at \(t = 1\), the donor expect that s/he will respond at \(t = 2\) (the late response) if and only if \(b_2 \ge c/\hat{\beta}\delta\). Assuming \(b_2 = b_1\), we derive the optimal choice at \(t=1\) in three cases.
+
+\begin{itemize}
+\tightlist
+\item
+  Consider \(b_1 < c/\hat{\beta}\delta\). Then, at \(t = 1\), the donor expects to give up responding, and actually does so. Thus, the donor at \(t = 1\) responds if and only if \(U_1 = -c + \beta\delta b_1 \ge 0\) or \(b_1 \ge c/\beta\delta\). Otherwise, the donor gives up responding. Thus, the optimal choice is the no response.
+\item
+  Consider \(c/\hat{\beta}\delta \le b_1 < c/\beta\delta\). Then, at \(t=1\), the donor expects to respond at \(t = 2\), but will not actually take that action (no response). Due to this false prediction, the donor at \(t = 1\) responds if and only if \(U_1 \ge \beta(-\delta c + \delta^2 b_1)\) or
+  \begin{equation}
+  c \frac{1 - \beta\delta}{(1-\delta)\beta\delta} \le b_1. \label{eq:cond-t1}
+  \end{equation}
+  Otherwise, the donor eventually stops responding. Since \(\frac{1}{\beta\delta} < \frac{1 - \beta\delta}{\beta\delta}\), the optimal choice is the no response in this case.
+\item
+  Consider \(c/\beta\delta \le b_1\). Then, at \(t = 1\), the donor expects to respond at \(t = 2\), and actually does so. Thus, the donor responds at \(t = 1\) if and only if equation (\ref{eq:cond-t1}) holds. Otherwise, the donor responds at \(t=2\).
+\end{itemize}
+
+This result is motivated us to create the Early Coordination message. If the net benefit of transplantion is time-invariant, then some mathced donors thinks that the quick response is ideal but acutually choose the late response or the no response. Especially, if \(c/\delta \le b_1 < c/\beta\delta\), then the matched donor thinks that the quick response but does not actually respond to the compatibility notice. If \(c/\beta\delta \le b_1 < c \frac{1 - \beta\delta}{(1-\delta)\beta\delta}\), then the matched donor thinks that the quick response but does delay response to the compatibility notice.
+
+The next result shows that almost matched donor follows ideal behavior (the optimal choice at \(t=0\); see Result 1) if there is sufficiently large difference between \(b_1\) and \(b_2\)
+
+\noindent
+\textbf{Result 3.} Let \(b_2 = b_1 - d\). Suppose that \(c \left(\frac{1-\beta\delta}{\beta\delta} - \frac{1-\delta}{\hat{\beta}\delta} \right) < d\). Then, the matched donor actually chooses the quick response if \(c/\beta\delta \le b_1\); otherwise the matched donor actually chooses the no response.
+
+\hypertarget{preference-survey-data-for-matched-donors}{%
+\section{Preference Survey Data for Matched Donors}\label{preference-survey-data-for-matched-donors}}
+
+\begin{table}
+
+\caption{\label{tab:time-discount}Regressions of Time Preference}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Full sample} & \multicolumn{3}{c}{Sample without bound response} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\beta < 1$} & \multicolumn{1}{c}{$\beta$} & \multicolumn{1}{c}{Procrastination} & \multicolumn{1}{c}{$\beta < 1$} & \multicolumn{1}{c}{$\beta$} & \multicolumn{1}{c}{Procrastination} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6} \cmidrule(l{3pt}r{3pt}){7-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Age in 30s & \num{0.006} & \num{-0.006} & \num{0.039} & \num{0.024} & \num{-0.004} & \num{0.059}\\
+ & (\num{0.041}) & (\num{0.007}) & (\num{0.042}) & (\num{0.044}) & (\num{0.006}) & (\num{0.048})\\
+Age over 40 & \num{0.148} & \num{-0.041} & \num{0.067} & \num{0.149} & \num{-0.027} & \num{0.127}\\
+ & (\num{0.113}) & (\num{0.025}) & (\num{0.114}) & (\num{0.118}) & (\num{0.019}) & (\num{0.121})\\
+Female & \num{-0.118}*** & \num{0.018}*** & \num{0.024} & \num{-0.093}** & \num{0.014}** & \num{0.034}\\
+ & (\num{0.044}) & (\num{0.006}) & (\num{0.046}) & (\num{0.047}) & (\num{0.006}) & (\num{0.053})\\
+Female $\times$ Age in 30s & \num{-0.001} & \num{-0.002} & \num{-0.032} & \num{-0.040} & \num{0.001} & \num{-0.053}\\
+ & (\num{0.050}) & (\num{0.007}) & (\num{0.052}) & (\num{0.053}) & (\num{0.007}) & (\num{0.059})\\
+Female $\times$ Age over 40 & \num{-0.146} & \num{0.011} & \num{0.046} & \num{-0.130} & \num{-0.011} & \num{0.002}\\
+ & (\num{0.156}) & (\num{0.034}) & (\num{0.152}) & (\num{0.166}) & (\num{0.032}) & (\num{0.161})\\
+\midrule
+Num.Obs. & \num{2511} & \num{2511} & \num{2508} & \num{2254} & \num{2254} & \num{1898}\\
+R2 & \num{0.039} & \num{0.031} & \num{0.030} & \num{0.046} & \num{0.042} & \num{0.042}\\
+R2 Adj. & \num{0.013} & \num{0.005} & \num{0.004} & \num{0.017} & \num{0.014} & \num{0.007}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:altruistic-pref}Regressions of Altruistic Preference and Expectation}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{lccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{Warm glow} & \multicolumn{1}{c}{Impure} & \multicolumn{1}{c}{Selfish} & \multicolumn{1}{c}{High expectation} & \multicolumn{1}{c}{Unexpectation} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6}
+  & (1) & (2) & (3) & (4) & (5)\\
+\midrule
+Age in 30s & \num{0.023} & \num{-0.023} & \num{0.007} & \num{0.065}* & \num{0.033}\\
+ & (\num{0.038}) & (\num{0.027}) & (\num{0.036}) & (\num{0.034}) & (\num{0.029})\\
+Age over 40 & \num{-0.077} & \num{0.073} & \num{0.003} & \num{0.117} & \num{-0.096}*\\
+ & (\num{0.100}) & (\num{0.088}) & (\num{0.100}) & (\num{0.104}) & (\num{0.051})\\
+Female & \num{0.067} & \num{-0.004} & \num{-0.048} & \num{-0.105}*** & \num{0.050}\\
+ & (\num{0.042}) & (\num{0.031}) & (\num{0.039}) & (\num{0.035}) & (\num{0.033})\\
+Female $\times$ Age in 30s & \num{-0.057} & \num{0.050} & \num{-0.007} & \num{0.035} & \num{-0.031}\\
+ & (\num{0.047}) & (\num{0.035}) & (\num{0.044}) & (\num{0.040}) & (\num{0.037})\\
+Female $\times$ Age over 40 & \num{-0.033} & \num{-0.056} & \num{0.141} & \num{0.025} & \num{0.098}\\
+ & (\num{0.145}) & (\num{0.117}) & (\num{0.147}) & (\num{0.141}) & (\num{0.091})\\
+\midrule
+Num.Obs. & \num{2999} & \num{3001} & \num{2990} & \num{3007} & \num{3007}\\
+R2 & \num{0.029} & \num{0.024} & \num{0.034} & \num{0.048} & \num{0.031}\\
+R2 Adj. & \num{0.007} & \num{0.002} & \num{0.012} & \num{0.027} & \num{0.010}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+  \bibliography{biblio.bib}
+
+\end{document}

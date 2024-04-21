@@ -60,3 +60,113 @@ The next result shows that almost matched donor follows ideal behavior (the opti
 
 \noindent
 **Result 3.** Let $b_2 = b_1 - d$. Suppose that $c \left(\frac{1-\beta\delta}{\beta\delta} - \frac{1-\delta}{\hat{\beta}\delta} \right) < d$. Then, the matched donor actually chooses the quick response if $c/\beta\delta \le b_1$; otherwise the matched donor actually chooses the no response.
+
+# Preference Survey Data for Matched Donors
+
+```{r include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  error = FALSE,
+  message = FALSE
+)
+```
+
+```{r library, include=FALSE}
+library(here)
+library(tidyverse)
+library(estimatr)
+library(modelsummary)
+library(kableExtra)
+```
+
+```{r data, include=FALSE}
+path <- "D:/JMDP2018サーベイ"
+data <- read_csv(
+  here(path, "donordata_clean.csv"),
+  locale = locale(encoding = "cp932")
+)
+```
+
+```{r control-list, include=FALSE}
+ctrl <- c(
+  "female * age30", "female * age40",
+  "move", "pref",
+  "emp_priv", "emp_pub", "emp_prof", "emp_part", "not_work", "emp_other",
+  "job_med", "job_fire", "job_npo", "job_sdf", "job_care",
+  "married", "with_child", "with_care"
+)
+```
+
+```{r time-discount}
+mod <- list(
+  reformulate(ctrl, "p_bias"),
+  reformulate(ctrl, "beta"),
+  reformulate(ctrl, "proc_hw")
+)
+
+full_mod <- map(mod, ~ lm_robust(., data, se_type = "stata"))
+sub_mod <- map(
+  mod,
+  ~ lm_robust(
+    .,
+    subset(data, bound_df_today == 0 & bound_df_day90 == 0),
+    se_type = "stata"
+  )
+)
+
+append(full_mod, sub_mod) %>%
+  modelsummary(
+    title = "Regressions of Time Preference",
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    coef_map = c(
+      "age30" = "Age in 30s",
+      "age40" = "Age over 40",
+      "female" = "Female",
+      "female:age30" = "Female $\\times$ Age in 30s",
+      "female:age40" = "Female $\\times$ Age over 40"
+    ),
+    gof_omit = "AIC|BIC|RMSE",
+    escape = FALSE
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) %>%
+  kableExtra::add_header_above(
+    c(" ", rep(c("$\\\\beta < 1$", "$\\\\beta$", "Procrastination"), 2)),
+    escape = FALSE
+  ) %>%
+  kableExtra::add_header_above(
+    c(" ", "Full sample" = 3, "Sample without bound response" = 3)
+  )
+```
+
+```{r altruistic-pref}
+mod <- list(
+  reformulate(ctrl, "warm_glow"),
+  reformulate(ctrl, "impure"),
+  reformulate(ctrl, "selfish"),
+  reformulate(ctrl, "high_expect"),
+  reformulate(ctrl, "unexpect")
+)
+
+full_mod <- map(mod, ~ lm_robust(., data, se_type ="stata"))
+
+full_mod %>%
+  modelsummary(
+    title = "Regressions of Altruistic Preference and Expectation",
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    coef_map = c(
+      "age30" = "Age in 30s",
+      "age40" = "Age over 40",
+      "female" = "Female",
+      "female:age30" = "Female $\\times$ Age in 30s",
+      "female:age40" = "Female $\\times$ Age over 40"
+    ),
+    gof_omit = "AIC|BIC|RMSE",
+    escape = FALSE
+  ) %>%
+  kableExtra::kable_styling(font_size = 9) %>%
+  kableExtra::add_header_above(
+    c(" ", "Warm glow", "Impure", "Selfish", "High expectation", "Unexpectation"),
+    escape = FALSE
+  )
+```
