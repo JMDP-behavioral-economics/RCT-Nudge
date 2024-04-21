@@ -624,7 +624,7 @@ LmSubset <- R6::R6Class("LmSubset",
             "treatC" = "Treatment C",
             "treatD" = "Treatment D"
           ),
-          gof_omit = "R2",
+          gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
           fmt = digit,
           add_rows = pivot_wider(ctrl_avg_tbl),
           output = "data.frame"
