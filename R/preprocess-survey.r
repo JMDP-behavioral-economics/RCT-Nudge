@@ -228,8 +228,18 @@ data3 <- data2 %>%
     impure = if_else(q51 < 5 & q52 != 2, 1, 0)
   )
 
+# * Expectation
+data4 <- data3 %>%
+  mutate(
+    q26 = if_else(str_detect(q26, "[.,]"), NA_character_, q26),
+    expect = as.numeric(q26),
+    expect = 5 - expect,
+    high_expect = if_else(expect > 2, 1, 0),
+    unexpect = if_else(expect == 0, 1, 0)
+  )
+
 # * output
-output <- data3 %>%
+output <- data4 %>%
   select(-starts_with("q"))
 
 write.csv(
