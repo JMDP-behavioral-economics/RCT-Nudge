@@ -49,19 +49,6 @@
 
 % ------------------------------ other packages
 \usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
-\usepackage{xcolor}
 \usepackage{siunitx}
 
   \newcolumntype{d}{S[
@@ -252,7 +239,7 @@ First, we estimate the message effect on donor's intention and availability. We 
 To evalute donor's availability, we use a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control group, \(22.25\)\% of matched donors underwent the CT. Thus, \(40.52(=22.25/54.91)\)\% of respondents with positive intention reached the CT stage.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/stock-diff-mean-1} \caption{Sample Averages of Responses, Positive Intention and CT by Treatments. Notes: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:stock-diff-mean}
+\includegraphics{JMDPRC~1/figure-latex/stock-diff-mean-1} \caption{Sample Averages of Responses, Positive Intention and CT by Treatments. Notes: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:stock-diff-mean}
 \end{figure}
 
 \begin{table}
@@ -269,12 +256,12 @@ To evalute donor's availability, we use a dummy variable that takes the value of
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.27} & \num{1.65}* & \num{2.31}* & \num{2.25}* & \num{3.10}*** & \num{3.06}***\\
- & (\num{0.86}) & (\num{0.88}) & (\num{1.33}) & (\num{1.35}) & (\num{1.14}) & (\num{1.16})\\
+Treatment B & \num{1.27} & \num{1.65}*** & \num{2.31}* & \num{2.25}* & \num{3.10}** & \num{3.06}***\\
+ & (\num{0.77}) & (\num{0.58}) & (\num{1.33}) & (\num{1.19}) & (\num{1.42}) & (\num{0.75})\\
 Treatment C & \num{-0.42} & \num{0.46} & \num{-0.44} & \num{-0.17} & \num{1.19} & \num{1.11}\\
- & (\num{0.91}) & (\num{0.94}) & (\num{1.37}) & (\num{1.42}) & (\num{1.16}) & (\num{1.20})\\
-Treatment D & \num{0.79} & \num{0.80} & \num{0.59} & \num{0.68} & \num{2.39}** & \num{2.63}**\\
- & (\num{0.89}) & (\num{0.90}) & (\num{1.37}) & (\num{1.39}) & (\num{1.17}) & (\num{1.19})\\
+ & (\num{0.83}) & (\num{0.48}) & (\num{1.43}) & (\num{1.06}) & (\num{1.55}) & (\num{0.80})\\
+Treatment D & \num{0.79} & \num{0.80} & \num{0.59} & \num{0.68} & \num{2.39} & \num{2.63}***\\
+ & (\num{0.71}) & (\num{0.51}) & (\num{1.61}) & (\num{0.97}) & (\num{1.63}) & (\num{0.77})\\
 \midrule
 Control average & 87.69 & 87.69 & 54.91 & 54.91 & 22.25 & 22.25\\
 Covariates &  & X &  & X &  & X\\
@@ -303,27 +290,27 @@ However, Figure \ref{fig:stock-diff-mean} shows that experimental arms B and D i
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 1132)}}\\
-\hspace{1em}Treatment B & 0.81 (3.29) & -0.23 (4.50) & 3.24 (3.63)\\
-\hspace{1em}Treatment C & 4.05 (3.14) & 3.44 (4.56) & 3.97 (3.66)\\
-\hspace{1em}Treatment D & -1.13 (3.18) & -3.46 (4.36) & 5.70 (3.61)\\
+\hspace{1em}Treatment B & 0.81 (2.24) & -0.23 (3.63) & 3.24 (2.64)\\
+\hspace{1em}Treatment C & 4.05** (1.82) & 3.44 (2.80) & 3.97 (2.95)\\
+\hspace{1em}Treatment D & -1.13 (1.85) & -3.46 (2.13) & 5.70** (2.52)\\
 \hspace{1em}Control average & 86.00 & 50.80 & 20.80\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older females (N = 3018)}}\\
-\hspace{1em}Treatment B & -0.59 (1.27) & -0.92 (2.59) & 1.86 (2.08)\\
-\hspace{1em}Treatment C & -1.21 (1.37) & -2.67 (2.77) & 0.15 (2.19)\\
-\hspace{1em}Treatment D & -0.84 (1.26) & -0.42 (2.65) & 4.68** (2.20)\\
+\hspace{1em}Treatment B & -0.59 (0.91) & -0.92 (1.90) & 1.86 (1.31)\\
+\hspace{1em}Treatment C & -1.21 (1.09) & -2.67 (1.79) & 0.15 (1.42)\\
+\hspace{1em}Treatment D & -0.84 (0.84) & -0.42 (1.69) & 4.68*** (1.27)\\
 \hspace{1em}Control average & 94.32 & 58.66 & 18.89\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young males (N = 1566)}}\\
-\hspace{1em}Treatment B & 6.43** (3.10) & 9.22** (3.61) & 6.62** (3.17)\\
-\hspace{1em}Treatment C & 2.34 (3.22) & 2.34 (3.64) & -0.97 (3.07)\\
-\hspace{1em}Treatment D & 6.02* (3.21) & 2.59 (3.63) & -2.49 (3.05)\\
+\hspace{1em}Treatment B & 6.43*** (2.19) & 9.22*** (2.73) & 6.62** (2.74)\\
+\hspace{1em}Treatment C & 2.34 (1.93) & 2.34 (1.85) & -0.97 (1.88)\\
+\hspace{1em}Treatment D & 6.02** (2.54) & 2.59 (2.52) & -2.49 (1.95)\\
 \hspace{1em}Control average & 74.24 & 38.50 & 23.27\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older males (N = 5333)}}\\
-\hspace{1em}Treatment B & 1.70 (1.25) & 2.12 (1.94) & 2.57 (1.71)\\
-\hspace{1em}Treatment C & -0.31 (1.37) & -1.49 (2.06) & 1.52 (1.79)\\
-\hspace{1em}Treatment D & 0.45 (1.31) & 1.09 (2.01) & 2.12 (1.77)\\
+\hspace{1em}Treatment B & 1.70 (1.25) & 2.12 (1.70) & 2.57*** (0.80)\\
+\hspace{1em}Treatment C & -0.31 (1.16) & -1.49 (1.58) & 1.52 (1.35)\\
+\hspace{1em}Treatment D & 0.45 (0.96) & 1.09 (1.31) & 2.12* (1.25)\\
 \hspace{1em}Control average & 88.20 & 58.44 & 24.18\\
 \bottomrule
 \end{tabular}
@@ -353,13 +340,13 @@ The early coordination message states that early coordination increases the pati
 Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focus on the heterogeneity of the effect on quick responses. Figure \ref{fig:cumulative-response-rate} in the Appendix \ref{figtab} shows the cumulative response rate by gender and age groups (age cutoff is 30).
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
+\includegraphics{JMDPRC~1/figure-latex/young-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
 \end{figure}
 
 While there are no significant differences in the pattern of cumulative response rates for males and females aged 30 and older, there are some notable results for males and females under 30.\footnote{For males and females aged 30 and older, the cumulative response rate for each day differs little between the experimental arms, except for certain periods, and is not statistically significant. See Figure \ref{fig:old-male-flow} and \ref{fig:old-female-flow} in Appendix \ref{figtab}.} In the group of males in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \ref{fig:young-male-flow}).\footnote{In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within \(d\) days as the outcome variable. If the potential donor responded after \(d\) days or did not respond, the outcome variable is 0.} Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message are added, is almost the same as that in the control, so it cannot be said that the early coordination message encourages early responses in this group.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
+\includegraphics{JMDPRC~1/figure-latex/young-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
 \end{figure}
 
 In the group of females in their 20s, the responses of experimental arms C and D increased compared with the control within four days of sending the compatibility message. As a result, the cumulative response rates of the two experimental arms are statistically significantly higher than that of the control arm (Figure \ref{fig:young-female-flow}). This result suggests that early coordination messages encourage females in their 20s to respond quickly.\footnote{We decompose the effect of message C on responses within four days (early responses) into two parts in terms of intentions and find that it increases positive and negative intentions to the same extent.}
@@ -370,7 +357,7 @@ In the group of females in their 20s, the responses of experimental arms C and D
 Finally, we examine the impact of messages on each step of the coordination process after the candidate selection. As explained in Section \ref{background}, the coordination process comprises three stages: candidate selection, final consent, and collection. As the outcome variable, we use a dummy variable that takes the value of 1 if a matched donor has reached each stage. We examine the influence on the post-candidate selection process, acknowledging the involvement of demand-side effects and emphasizing the need for caution in interpretation. In the control group, \(6.2\)\% became candidates, and \(4.5\)\% ultimately donated.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Candidate Selection, Final Consent and Donation by Treatments. Notes: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~1/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Candidate Selection, Final Consent and Donation by Treatments. Notes: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 We show sample averages of each outcome by treatments in Figure \ref{fig:coordinate-diff-mean}. No experimental arm affects the post-candidate selection process. Similar results are obtained with linear probability models and logistic regressions controlling for covariates (see Table \ref{tab:coordinate-reg} and \ref{tab:coordinate-logit} in Appendix \ref{figtab}). This result should be interpreted with caution. Given that our intervention does not affect demand (number of patients), if our intervention increases the number of people who reached the CT, it should increase the number of people who are not selected as candidates for exogenous reasons. Particularly, compared to the control arm, experimental arm B increases the probability by \(4.3\) percentage points of donors who reached CT not being selected due to patient reasons or donor health reasons. This difference is marginally statistical significant (\(p = 0.095\)). Thus, intervention effects are canceled out due to demand-side factor.
@@ -387,27 +374,27 @@ We show sample averages of each outcome by treatments in Figure \ref{fig:coordin
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 1132)}}\\
-\hspace{1em}Treatment B & -2.36 (1.96) & -1.69 (1.83) & -0.67 (1.75)\\
-\hspace{1em}Treatment C & 0.96 (2.24) & 1.01 (2.07) & 1.41 (1.97)\\
-\hspace{1em}Treatment D & -1.47 (2.02) & -1.12 (1.89) & -0.60 (1.74)\\
+\hspace{1em}Treatment B & -2.36* (1.22) & -1.69* (1.02) & -0.67 (1.07)\\
+\hspace{1em}Treatment C & 0.96 (1.64) & 1.01 (1.35) & 1.41 (1.38)\\
+\hspace{1em}Treatment D & -1.47 (1.31) & -1.12 (1.18) & -0.60 (1.25)\\
 \hspace{1em}Control average & 6.80 & 5.60 & 4.40\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older females (N = 3018)}}\\
-\hspace{1em}Treatment B & -0.91 (0.92) & -0.73 (0.86) & -0.54 (0.82)\\
-\hspace{1em}Treatment C & -0.04 (1.05) & 0.24 (0.99) & -0.30 (0.90)\\
-\hspace{1em}Treatment D & 0.56 (1.04) & 0.41 (0.94) & -0.33 (0.84)\\
+\hspace{1em}Treatment B & -0.91 (0.63) & -0.73 (0.56) & -0.54 (0.48)\\
+\hspace{1em}Treatment C & -0.04 (0.66) & 0.24 (0.51) & -0.30 (0.41)\\
+\hspace{1em}Treatment D & 0.56 (0.66) & 0.41 (0.49) & -0.33 (0.38)\\
 \hspace{1em}Control average & 3.55 & 2.98 & 2.70\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young males (N = 1566)}}\\
-\hspace{1em}Treatment B & 2.30 (2.03) & 1.94 (1.88) & 2.87* (1.74)\\
-\hspace{1em}Treatment C & -1.40 (1.92) & -0.73 (1.82) & 0.15 (1.68)\\
-\hspace{1em}Treatment D & 0.59 (2.08) & 1.42 (1.97) & 1.41 (1.76)\\
+\hspace{1em}Treatment B & 2.30 (1.43) & 1.94 (1.35) & 2.87** (1.34)\\
+\hspace{1em}Treatment C & -1.40 (1.02) & -0.73 (1.01) & 0.15 (1.02)\\
+\hspace{1em}Treatment D & 0.59 (1.18) & 1.42 (1.18) & 1.41 (1.04)\\
 \hspace{1em}Control average & 7.76 & 6.37 & 4.71\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older males (N = 5333)}}\\
-\hspace{1em}Treatment B & 0.39 (1.05) & 0.36 (1.01) & -0.49 (0.91)\\
-\hspace{1em}Treatment C & -0.19 (1.07) & -0.40 (1.03) & -0.55 (0.94)\\
-\hspace{1em}Treatment D & 0.97 (1.10) & 0.92 (1.06) & 0.05 (0.96)\\
+\hspace{1em}Treatment B & 0.39 (0.54) & 0.36 (0.54) & -0.49 (0.64)\\
+\hspace{1em}Treatment C & -0.19 (0.78) & -0.40 (0.71) & -0.55 (0.74)\\
+\hspace{1em}Treatment D & 0.97 (0.79) & 0.92 (0.86) & 0.05 (0.87)\\
 \hspace{1em}Control average & 7.13 & 6.56 & 5.49\\
 \bottomrule
 \end{tabular}
@@ -541,27 +528,27 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
-\hspace{1em}Treatment B & -0.95 (1.95) & -2.58 (3.11) & 2.21 (2.51)\\
-\hspace{1em}Treatment C & 0.17 (1.95) & -2.65 (3.21) & 2.30 (2.57)\\
-\hspace{1em}Treatment D & -2.54 (1.98) & -3.29 (3.15) & 5.73** (2.60)\\
+\hspace{1em}Treatment B & -0.95 (0.90) & -2.58 (1.98) & 2.21 (1.41)\\
+\hspace{1em}Treatment C & 0.17 (0.87) & -2.65 (1.71) & 2.30 (1.70)\\
+\hspace{1em}Treatment D & -2.54*** (0.96) & -3.29** (1.52) & 5.73*** (1.69)\\
 \hspace{1em}Control average & 90.45 & 53.05 & 19.72\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older females (N = 1882)}}\\
-\hspace{1em}Treatment B & 0.56 (1.59) & 2.42 (3.22) & 2.54 (2.62)\\
-\hspace{1em}Treatment C & 0.07 (1.73) & 2.16 (3.50) & -0.08 (2.79)\\
-\hspace{1em}Treatment D & 0.76 (1.49) & 1.72 (3.27) & 4.08 (2.71)\\
+\hspace{1em}Treatment B & 0.56 (0.94) & 2.42 (1.84) & 2.54 (1.94)\\
+\hspace{1em}Treatment C & 0.07 (1.16) & 2.16 (1.99) & -0.08 (1.96)\\
+\hspace{1em}Treatment D & 0.76 (0.90) & 1.72 (1.92) & 4.08** (1.85)\\
 \hspace{1em}Control average & 93.94 & 60.39 & 19.05\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young males (N = 3445)}}\\
-\hspace{1em}Treatment B & 3.34* (1.96) & 5.37** (2.49) & 4.05* (2.18)\\
-\hspace{1em}Treatment C & -0.07 (2.05) & -0.63 (2.53) & 0.73 (2.17)\\
-\hspace{1em}Treatment D & 3.11 (2.05) & 0.85 (2.56) & -0.70 (2.18)\\
+\hspace{1em}Treatment B & 3.34*** (1.09) & 5.37*** (2.04) & 4.05** (1.72)\\
+\hspace{1em}Treatment C & -0.07 (0.84) & -0.63 (1.88) & 0.73 (1.28)\\
+\hspace{1em}Treatment D & 3.11** (1.22) & 0.85 (1.98) & -0.70 (1.79)\\
 \hspace{1em}Control average & 79.76 & 46.02 & 24.70\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older males (N = 3454)}}\\
-\hspace{1em}Treatment B & 3.08** (1.41) & 3.01 (2.35) & 2.45 (2.09)\\
-\hspace{1em}Treatment C & 2.07 (1.56) & 1.42 (2.53) & 1.11 (2.23)\\
-\hspace{1em}Treatment D & 1.24 (1.48) & 3.21 (2.42) & 2.87 (2.17)\\
+\hspace{1em}Treatment B & 3.08*** (1.17) & 3.01* (1.75) & 2.45** (1.12)\\
+\hspace{1em}Treatment C & 2.07* (1.16) & 1.42 (1.74) & 1.11 (1.69)\\
+\hspace{1em}Treatment D & 1.24 (0.97) & 3.21** (1.55) & 2.87* (1.59)\\
 \hspace{1em}Control average & 89.64 & 60.83 & 23.33\\
 \bottomrule
 \end{tabular}
@@ -572,23 +559,23 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Treatments}\label{fig:cumulative-response-rate}
+\includegraphics{JMDPRC~1/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Treatments}\label{fig:cumulative-response-rate}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/flow-1} \caption{Effect on Reply within Specific Days after Sending Notification. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
+\includegraphics{JMDPRC~1/figure-latex/flow-1} \caption{Effect on Reply within Specific Days after Sending Notification. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/cumulative-response-rate-subset-1} \caption{Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).}\label{fig:cumulative-response-rate-subset}
+\includegraphics{JMDPRC~1/figure-latex/cumulative-response-rate-subset-1} \caption{Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).}\label{fig:cumulative-response-rate-subset}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/old-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
+\includegraphics{JMDPRC~1/figure-latex/old-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
+\includegraphics{JMDPRC~1/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
 \end{figure}
 
 \begin{table}[H]
@@ -604,11 +591,11 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
 Treatment B & \num{0.16} & \num{-0.06} & \num{0.26} & \num{0.01} & \num{0.12} & \num{-0.10}\\
- & (\num{0.65}) & (\num{0.66}) & (\num{0.62}) & (\num{0.63}) & (\num{0.56}) & (\num{0.58})\\
+ & (\num{0.59}) & (\num{0.40}) & (\num{0.56}) & (\num{0.34}) & (\num{0.45}) & (\num{0.36})\\
 Treatment C & \num{-0.07} & \num{-0.34} & \num{0.06} & \num{-0.23} & \num{0.02} & \num{-0.25}\\
- & (\num{0.66}) & (\num{0.69}) & (\num{0.63}) & (\num{0.66}) & (\num{0.57}) & (\num{0.61})\\
+ & (\num{0.76}) & (\num{0.41}) & (\num{0.64}) & (\num{0.32}) & (\num{0.57}) & (\num{0.35})\\
 Treatment D & \num{0.50} & \num{0.49} & \num{0.63} & \num{0.59} & \num{0.07} & \num{0.03}\\
- & (\num{0.68}) & (\num{0.70}) & (\num{0.64}) & (\num{0.66}) & (\num{0.57}) & (\num{0.60})\\
+ & (\num{0.72}) & (\num{0.35}) & (\num{0.80}) & (\num{0.39}) & (\num{0.74}) & (\num{0.43})\\
 \midrule
 Control average & 6.19 & 6.19 & 5.44 & 5.44 & 4.50 & 4.50\\
 Covariates &  & X &  & X &  & X\\
@@ -663,27 +650,27 @@ Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250}
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
-\hspace{1em}Treatment B & -1.71 (1.18) & -1.74 (1.10) & -0.87 (1.06)\\
-\hspace{1em}Treatment C & 1.12 (1.38) & 0.97 (1.30) & 0.84 (1.19)\\
-\hspace{1em}Treatment D & -0.34 (1.32) & -0.67 (1.22) & -0.56 (1.11)\\
+\hspace{1em}Treatment B & -1.71*** (0.48) & -1.74*** (0.53) & -0.87** (0.44)\\
+\hspace{1em}Treatment C & 1.12** (0.54) & 0.97* (0.49) & 0.84 (0.52)\\
+\hspace{1em}Treatment D & -0.34 (0.45) & -0.67 (0.49) & -0.56 (0.52)\\
 \hspace{1em}Control average & 4.88 & 4.27 & 3.46\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older females (N = 1882)}}\\
-\hspace{1em}Treatment B & -0.71 (1.21) & -0.02 (1.14) & -0.16 (1.08)\\
-\hspace{1em}Treatment C & -0.82 (1.35) & -0.22 (1.27) & -0.62 (1.16)\\
-\hspace{1em}Treatment D & 0.33 (1.33) & 0.71 (1.19) & -0.24 (1.05)\\
+\hspace{1em}Treatment B & -0.71 (0.58) & -0.02 (0.58) & -0.16 (0.59)\\
+\hspace{1em}Treatment C & -0.82 (0.56) & -0.22 (0.59) & -0.62 (0.48)\\
+\hspace{1em}Treatment D & 0.33 (0.77) & 0.71 (0.63) & -0.24 (0.56)\\
 \hspace{1em}Control average & 3.90 & 3.03 & 2.81\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young males (N = 3445)}}\\
-\hspace{1em}Treatment B & 0.96 (1.40) & 0.69 (1.34) & 0.48 (1.21)\\
-\hspace{1em}Treatment C & -1.21 (1.35) & -1.33 (1.28) & -0.73 (1.18)\\
-\hspace{1em}Treatment D & -0.07 (1.45) & 0.36 (1.39) & -0.24 (1.26)\\
+\hspace{1em}Treatment B & 0.96 (0.91) & 0.69 (0.65) & 0.48 (0.60)\\
+\hspace{1em}Treatment C & -1.21 (1.04) & -1.33 (0.83) & -0.73 (0.70)\\
+\hspace{1em}Treatment D & -0.07 (0.78) & 0.36 (0.70) & -0.24 (0.70)\\
 \hspace{1em}Control average & 8.23 & 7.29 & 5.94\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older males (N = 3454)}}\\
-\hspace{1em}Treatment B & 0.40 (1.25) & 0.47 (1.20) & -0.18 (1.09)\\
-\hspace{1em}Treatment C & 0.02 (1.34) & 0.15 (1.29) & -0.30 (1.18)\\
-\hspace{1em}Treatment D & 1.72 (1.33) & 1.61 (1.28) & 0.80 (1.15)\\
+\hspace{1em}Treatment B & 0.40 (0.87) & 0.47 (0.90) & -0.18 (0.91)\\
+\hspace{1em}Treatment C & 0.02 (0.99) & 0.15 (1.02) & -0.30 (1.03)\\
+\hspace{1em}Treatment D & 1.72 (1.06) & 1.61 (1.12) & 0.80 (1.07)\\
 \hspace{1em}Control average & 6.43 & 5.83 & 4.76\\
 \bottomrule
 \end{tabular}
