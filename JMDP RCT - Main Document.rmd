@@ -204,9 +204,7 @@ rawdt <- RawData$new(
 )
 ```
 
-JMDP provided coordination data at the end of June 2022. The unit of observation was experimental participants. For individual characteristics, the data included donors' gender, age, the number of coordination experiences, and prefecture-level residence area. Data concerning the coordination process included whether each stage (response to compatibility notice, CT, candidate selection, final consent, and collection) was reached. In addition, for responses to the notice, the data included the number of days donors took to respond and their willingness to donate. If coordination was interrupted, the reasons for the interruption were recorded in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis used 11,049 matched donors living in Japan whose coordination (including interruptions) was completed.[^exclude]
-
-Our primary outcomes are donor's intention and donor's availability. To evaluate the impact on the donor's intention, we use the response to the compatibility notice and the intention expressed during the response. Since patients' physicians select donors from matched donors who have completed the CT, we use whether the matched donor reached the CT to investigate donor's availability. When examining the impact on the response time, we use the number of days required to respond. In this study, we also examine the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
+We use coordination data provided by JMDP. The unit of observation was experimental participants. For individual characteristics, the data included donors' gender, age, the number of coordination experiences, and prefecture-level residence area. Data concerning the coordination process included whether each stage (response to compatibility notice, CT, candidate selection, final consent, and collection) was reached. In addition, for responses to the notice, the data included the number of days donors took to respond and their willingness to donate. If coordination was interrupted, the reasons for the interruption were recorded in three categories (patient reasons, donor non-health reasons, and donor health reasons). The analysis used 11,049 matched donors living in Japan whose coordination was completed or interrupted.[^exclude]
 
 ```{r ongoing-balance, include=FALSE}
 rawdt$add_cond_study_sample("ongoing == 0")
@@ -214,6 +212,8 @@ ongoing_f <- rawdt$balance_attrition()
 ```
 
 [^exclude]: One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data provision. The proportion of matched donors with ongoing matching is balanced across the experimental arms (`r ongoing_f`).
+
+Our primary outcome is whether the matched donor reached the CT. This represents donor's availability since patient's physician select donors from matched donors who have completed the CT. Since responses without the intention to donate or late responses lead to coordination interruptions befor the CT, reaching the CT depends on donor's response behavior. Thus, our secondary outcomes are whether the matched donor responded to the compatibility notice and whether the matched donor responded intending to donate. When examining the impact on the response speed, the outcome is whether the matched donor responded within a specific number of days. Using this variable, we estimate the effect on responses over time. In this study, we also examine the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
 
 For additional data, we used a list of medical institutions published on the Internet by the JMDP.[^ref] This list includes complete addresses, the availability of bone marrow collection (BM collection), and availability of peripheral blood stem cell collection (PBSC collection). We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged it with the coordination data using the prefecture as the merge key. We consider this variable to be the traveling cost of coordination and donation.
 
@@ -223,7 +223,7 @@ For additional data, we used a list of medical institutions published on the Int
 intervention <- list(
   "Standard notification" = c(A = "X", B = "X", C = "X", D = "X"),
   "Probability message" = c(A = "", B = "X", C = "", D = "X"),
-  "Early Coordination message" = c(A = "", B = "", C = "X", D = "X")
+  "Early coordination message" = c(A = "", B = "", C = "X", D = "X")
 )
 
 endpoint <- list(
