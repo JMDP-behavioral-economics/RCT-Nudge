@@ -260,7 +260,7 @@ rct$
   kable(
   title = "Summary of Field Experiment",
   notes = paste(
-    "Notes: For balance test, we regress a covariate on treatment dummies",
+    "\\\\emph{Note}: For balance test, we regress a covariate on treatment dummies",
     "and test a null hypothesis that all coefficients are zero.",
     "We use the robust standard errors for statistical inference."
   )

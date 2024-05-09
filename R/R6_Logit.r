@@ -70,15 +70,15 @@ LogitAll <- R6::R6Class("LogitAll",
 
       label <- private$label_structure(private$est)
       rle1 <- label$rle1
-      rle2 <- label$rle2
+      # rle2 <- label$rle2
 
       flex <- private$reg_tab %>%
         add_header_row(values = rle1$values, colwidths = rle1$lengths)
 
-      if (!is.null(rle2)) {
-        flex <- flex %>%
-          add_header_row(values = rle2$values, colwidths = rle2$lengths)
-      }
+      # if (!is.null(rle2)) {
+      #   flex <- flex %>%
+      #     add_header_row(values = rle2$values, colwidths = rle2$lengths)
+      # }
 
       flex %>%
         align(j = -1, align = "center", part = "all") %>%
@@ -109,20 +109,20 @@ LogitAll <- R6::R6Class("LogitAll",
       tbl <- tbl %>%
         kableExtra::add_header_above(lab1)
 
-      if (!is.null(label$rle2)) {
-        rle2 <- label$rle2
-        lab2 <- rle2$lengths
-        names(lab2) <- rle2$values
+      # if (!is.null(label$rle2)) {
+      #   rle2 <- label$rle2
+      #   lab2 <- rle2$lengths
+      #   names(lab2) <- rle2$values
 
-        tbl <- tbl %>%
-          kableExtra::add_header_above(lab2)
-      }
+      #   tbl <- tbl %>%
+      #     kableExtra::add_header_above(lab2)
+      # }
 
       tbl %>%
         kableExtra::footnote(
           general_title = "",
           general = paste(
-            "Notes: We show odds ratios and associated 95 percent confidential intervals",
+            "\\\\emph{Note}: We show odds ratios and associated 95 percent confidential intervals",
             "in square brackets.",
             notes
           ),
@@ -136,19 +136,19 @@ LogitAll <- R6::R6Class("LogitAll",
     reg_tab = NULL,
     label_structure = function(est) {
       label <- c(" ", as.character(est$outcome))
-      intention_label <- str_detect(label, "intention")
+      # intention_label <- str_detect(label, "intention")
 
-      if (any(intention_label)) {
-        label2 <- ifelse(intention_label, "Intention", " ")
-        rle2 <- rle(label2)
-      } else {
-        label2 <- rle2 <- NULL
-      }
+      # if (any(intention_label)) {
+      #   label2 <- ifelse(intention_label, "Intention", " ")
+      #   rle2 <- rle(label2)
+      # } else {
+      #   label2 <- rle2 <- NULL
+      # }
 
-      label1 <- str_remove(label, " intention")
-      rle1 <- rle(label1)
+      # label1 <- str_remove(label, " intention")
+      rle1 <- rle(label)
 
-      return(list(rle1 = rle1, rle2 = rle2))
+      return(list(rle1 = rle1))
     },
     msummary = function(output, ...) {
       fit <- private$est %>% pull(fit)
