@@ -27,6 +27,7 @@
 % \newcolumntype{d}{S[input-symbols = ()]}
 
 % ------------------------------- figures
+\usepackage[labelfont=bf, labelsep=period, justification=justified]{caption}
 \usepackage{graphics, graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -119,15 +120,15 @@ To increase transplantation rates, one possible intervention involves increasing
 
 Since young male donors have good transplant outcomes, interventions that can increase their availability are the most important. \citet{Kollman2016} revealed that the older the donor is, the higher the mortality risk is. Furthermore, \citet{Loren2006} and \citet{Kollman2016} found that female donors who have given birth increase the risk of the representative complication of HSCT, GVHD, compared to male donors.\footnote{GVHD is a phenomenon in which donor-derived lymphocytes mistakenly identify the patient's normal cells as foreign and attack them. This can lead to fever, skin symptoms, gastrointestinal symptoms such as diarrhea, and liver damage that may cause impaired consciousness.} These studies suggest that young male donors have better transplant outcomes.\footnote{Many registry organizations target young males for recruitment \citep{Fingrut2018}.} However, males in their 20s are more likely to interrupt coordination due to personal reasons such as lack of motivation caused by lack of information or misinformation \citep{Hirakawa2018, Kurosawa2022}. Thus, we need to develop intervention most effective for male donors in their 20s.
 
-The intervention effects for other gender and age groups determine whether a policy that uniformly assigns the intervention most effective for males in their 20s, regardless of gender and age, is preferable. If the intervention has negative effects for gender and age groups other than males in their 20s, it would be better to implement the intervention only for males in their 20s (targeting policy). Otherwise, it should be fine to implement the intervention most effective for males in their 20s to everyone. To examine the appropriateness of a uniform policy, we should examine the intervention effects not only for males in their 20s but also for other gender and age subgroups.
+From an operational perspective, a policy that uniformly assigns the intervention most effective for males in their 20s regardless of gender and age is simpler than a policy that assigns it only to them. However, if that intervention has negative effects on gender and age groups other than males in their 20s, there is a downside to the uniform policy. Otherwise, implementing the uniform policy is not problematic. To examine the downsides of the uniform policy, we should examine the intervention effects not only for males in their 20s but also for other gender and age subgroups.
 
 This study examines the effect of providing information that increases donor avairability as a measure to improve the quality of the donor pool. When a potential donor registered with the JMDP is matched to a specific patient, the matched donor receives a compatibility notice from the JMDP. Matched donors who respond to the notice by indicating their willingness to donate are then coordinated for transplantation. We added two new messages to the compatibility notice based on information published by the JMDP. In collaboration with JMDP, we conducted a field experiment with 11,154 matched donors who received compatibility notices between September 2021 and February 2022.
 
-The first message (\emph{probability} messeage) informs the matched donor that the number of HLA-compatible donors per patient is low. If there are other potential donors with the same HLA type in the pool, compatible donations are interchangeable. Thus, transplantation through JMDP is a public good and faces a standard ``free-ride'' problem \citep{Bergstrom2009}. However, potential donors in the JMDP do not know their own HLA type. Consequently, if potential donors gain utility from patient's survival and overestimate the number of possible substitutes, they may be reluctant to donate. The first message aims to correct the behavior resulting from this misperception.
+The first message (\emph{probability} messeage) informs the matched donor that the number of HLA-compatible donors per patient is low. If there are other potential donors with the same HLA type in the pool, compatible donations are interchangeable. Thus, transplantation through JMDP is a public good and faces a standard ``free-ride'' problem \citep{Bergstrom2009}. However, potential donors in the JMDP do not know their own HLA type. Consequently, if potential donors gain utility from patient's survival and overestimate the number of possible substitutes, they may be reluctant to donate. The first message aims to correct the lack of motivation due to this misperception.
 
 The second message (\emph{early coordination} message) informs the matched donor that early coordination would increase a patient's transplant rate. This message is intended to prevent time-inconsistent donors from delaying their response to the compatibility notice. Time inconsistency is caused by present bias, a key finding in behavioral economics \citep{Laibson1997, ODonoghue2001}.\footnote{Present bias is a phenomenon in which the time discount rate decreases over time. This can cause people to choose low current benefits even if they believe in advance that high future benefits are desirable.} Time-inconsistent donors delay responding even if they in advance believe that they should respond immediately. The second message indicates that the utility of transplantation decreases over time (regardless of the individual's time preference) and aims to prevent delayed responses.
 
-We use the coordination data managed by JMDP to examine the effects of the messages on coordination process. Our primary outcome is reaching the CT, which represents the availability of matched donors. Since responses without the intention to donate or late responses lead to coordination interruptions befor the CT, reaching the CT depends on donor's response behavior. Therefore, as secondary outcomes, we examine the message effects on the donor's response behavior.
+We use the coordination data managed by JMDP to examine the effects of the messages on coordination process. Our primary outcome is reaching the CT, which represents the availability of matched donors. Since responses without the intention to donate or late responses lead to coordination interruptions before the CT, reaching the CT depends on donor's response behavior. Therefore, as secondary outcomes, we examine the message effects on the donor's response behavior.
 
 The experimental results show that the probability message increases the probability of reaching the CT by 14\%, increasing the availability of donors. Furthermore, this information increases avairability of male donors in their 20s, who have better transplant outcomes, by 28\% through increasing their willingness to donate. At the same time, the probability message does not have a negative impact on other gender and age groups, so there is no downside to uniformly assigning the probability message.
 
@@ -162,9 +163,9 @@ Our experiment intervenes in the content of the compatibility notice through whi
 
 We added two messages (a probability message and an early coordination message) to the compatibility notice to facilitate coordination.\footnote{In designing our intervention messages, we were careful to avoid placing undue psychological pressure on potential donors. Specifically, first, we avoided using language that sounds like an appeal. Second, we only used information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual manner. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics of Osaka University and the JMDP.} The probability message emphasizes the low number of matched donors per registered patient. If there are other potential donors with the same HLA type in the pool, one's donation can be substituted for that of another compatible donor. In addition, multiple donors (up to ten) can be simultaneously coordinated with a single patient. Thus, transplantation through JMDP is a public good \citep{Bergstrom2009}. As predicted by the volunteer dilemma, the more common the HLA type, the more reluctant the donor will be to donate.\footnote{In the volunteer dilemma, public goods are produced by the cooperative behavior of only one person. The theory of the volunteer dilemma predicts that the probability of cooperative behavior by even one person decreases with group size. This hypothesis has been confirmed by laboratory experiments \citep{Diekmann1985, Diekmann1986, Franzen1999, Davis2017}.} Additionally, \citet{Kurosawa2022} interviewed previously matched donors and found that those with low donation intentions felt that they were ``one of several donors,'' implying that the fact that their donation could be substituted by others discouraged them from donating.
 
-In the context of stem cell transplantation, matched donors' expectations regarding the donor group size influences their decision because a matched donor cannot know the exact size of the group. Therefore, the higher the donor's expectations regarding the number of potential donors with the same HLA type or the number of matched donors who are simultaneously coordinated, the more reluctant they will be to donate. If a donor's beliefs are too high, the probability message discourages free-riding and increases their willingness to donate by adjusting their beliefs downward. However, the opposite effect may also occur. If the donor's beliefs are underestimated, the probability message may induce free-riding and reduce donation intentions by adjusting their beliefs upward.\footnote{Even if prior beliefs about the number of matched donors are not biased, this message makes the rarity of the opportunity to donate more sailient, which may change donors' behavior.}
+In the context of stem cell transplantation, matched donors' expectations regarding the donor group size influences their decision because a matched donor cannot know the exact size of the group. Therefore, the higher the donor's expectations regarding the number of potential donors with the same HLA type or the number of matched donors who are simultaneously coordinated, the more reluctant they will be to donate. If a donor's beliefs are too high, the probability message discourages free-riding and increases their willingness to donate by adjusting their beliefs downward. However, the opposite effect may also occur. If the donor's beliefs are underestimated, the probability message may induce free-riding and reduce donation intentions by adjusting their beliefs upward.\footnote{Even if prior beliefs about the number of matched donors are not biased, this message makes the rarity of the opportunity to donate more sailient, which may change donors' behavior.} If this message succeeds in increasing donation intention, then this message also raises the probability that a donor reaches the CT (donor availability).
 
-The early coordination message emphasizes that early coordination would increase a patient's transplant rate. This message is expected to work for time-inconsistent matched donors. Time-inconsistent donors may believe that it is optimal to respond immediately in advance but delay their response. This message suggests that the utility of transplantation decays over time (regardless of the individual's time preference). Time-inconsistent donors who read this message may recognize that delaying a response does not increase their utility and may change their decision to respond immediately. Thus, this message is expected to increase the response rate over a short period.
+The early coordination message emphasizes that early coordination would increase a patient's transplant rate. This message is expected to work for time-inconsistent matched donors. Time-inconsistent donors may believe that it is optimal to respond immediately in advance but delay their response. This message suggests that the utility of transplantation decays over time (regardless of the individual's time preference). Time-inconsistent donors who read this message may recognize that delaying a response does not increase their utility and may change their decision to respond immediately. Thus, this message is expected to increase the response rate over a short period. Since late responses may lead to coordination interruptions before the CT, this meesage is expected to increase the donor availability.
 
 Four experimental arms were established to estimate the effects of two intervention messages. Experimental arm A received a standard compatibility notice with no intervention messages (control group). Experimental arms B and C received notices with the probability message and the early coordination message, respectively. Experimental arm D received a notice with two intervention messages added simultaneously. This experimental arm was designed to test the negative effects of the cognitive load caused by information overload.
 
@@ -239,7 +240,7 @@ In this subsection, we estimate the message effects on the probability that a ma
 To further understand the messag effect on donor availability, we also estimate the message effects on the donor's response behavior using two secondary outcome variables. The first one is a dummy variable that takes the value of one if a donor responds to the compatibility notice, regardless of their intention. The second one is a dummy variable that takes the value of one if a matched donor responded to the compatibility notice and indicated a willingness to donate.\footnote{We code the outcome variables of non-responders as zero and include them in the analysis sample.} In the control group, the response rate is \(87.69\)\% and the rate of responding with positive intentions is \(54.91\)\%. Thus, \(62.63\)\% (\(=54.91/87.69\)) of respondents have the intention to donate. Note that \(40.52\)\% (\(=22.25/54.91\)) of respondents with positive intention reached the CT stage.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/stock-diff-mean-1} \caption{Sample Averages of Responses, Positive Intention and CT by Treatments. Notes: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:stock-diff-mean}
+\includegraphics{JMDPRC~2/figure-latex/stock-diff-mean-1} \caption{Sample Averages of Response, Positive Intention and CT by Treatments.\newline \emph{Note}: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:stock-diff-mean}
 \end{figure}
 
 \begin{table}
@@ -252,7 +253,7 @@ To further understand the messag effect on donor availability, we also estimate 
 \toprule
 \multicolumn{3}{c}{ } & \multicolumn{2}{c}{Intention} & \multicolumn{2}{c}{ } \\
 \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Reply} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Response} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
@@ -288,7 +289,7 @@ These results suggests that the probability message prevents donor dropout. In t
 \fontsize{9}{11}\selectfont
 \begin{tabular}[t]{lccc}
 \toprule
- & Reply & Positive intention & CT\\
+ & Response & Positive intention & CT\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 1132)}}\\
@@ -322,7 +323,7 @@ These results suggests that the probability message prevents donor dropout. In t
 \end{threeparttable}
 \end{table}
 
-The most important intervention is one that changes the behavior of young males, who have good transplant outcomes but are prone to interrupting coordination. However, the probability message that increases the probability of reaching the CT may have a negative impact on the probability that young males reach the CT. Conversely, even if the probability message is the most effective for young males, it may have negative impacts on other gender and age groups. In such cases, that intervention should only be implemented for young males. Thus, we divide the sample into four subsets by gender and age (under 30 or not) and estimate the message effects in each subset.
+The most important intervention is one that changes the behavior of young males, who have good transplant outcomes but are prone to interrupting coordination. However, the probability message that increases the probability of reaching the CT may have a negative impact on the probability that young males reach the CT. Conversely, even if the probability message is the most effective for young males, it may have negative impacts on other gender and age groups. In such cases, a policy that uniformly assigns the probability message regardless of gender and age may be problematic. An analysis using the full sample alone cannot address this point. Thus, we divide the sample into four subsets by gender and age (under 30 or not) and estimate the message effects in each subset.
 
 The estimation results are presented in Table \ref{tab:stock-reg-subset}. Before discussing the message effects, we note two important findings regarding the coordination process of young males. First, compared to other gender and age groups, young males have lower willingness to donate. In the control group, the response rate for young male group is \(74.2\)\%, with only \(51.9\)\% (\(=38.5/74.24\)) expressing willingness to donate. In contrast, response rates for other groups excluding young males exceed 85\%, with approximately 60\% of responses expressing willingness to donate.\footnote{For females in their 20s, \(59.1\)\% (\(=50.8/86\)); for females over 30, \(62.2\)\% (\(=58.66/94.32\)); for males over 30, \(66.3\)\% (\(=58.44/88.2\)).} Second, compared to other gender and age groups, the attrition rate of young males between responses with positive intentions and the CT is significantly lower. In the control group, the attrition rate for the young male group is \(39.6\)\% (\(=1-23.27/38.5\)), while the attrition rates for other groups exceed 50\%.\footnote{For females in their 20s, \(59.1\)\% (\(=1 - 20.8/50.8\)); for females over 30, \(67.8\)\% (\(=1-18.89/58.66\)); for males over 30, \(58.6\)\% (\(=1-24.18/58.44\)).} Therefore, increasing the willingness of young male donors to donate raises the opportunity for physicians to select young male donors who have good transplant outcomes.
 
@@ -330,7 +331,7 @@ We find that the probability message has a significant impact on avairability of
 
 These results suggest that the probability message suppresses responses with negative intentions. The probability message elevates the intention rate among young male responders from \(51.9\)\% to \(59.2\)\% (\(=(9.22+38.50)/(6.43+74.24)\)). The probability message resolves the problem that the willingness to donate among young males is relatively low. Also, this message slightly reduces the attrition rate between responses with positive intentions and the CT from \(39.6\)\% to \(37.4\)\% (\(=1-(6.62+23.27)/(9.22+38.5)\)). Thus, the probability message increases the absolute availability of young male donors through the increase in intention rather than the decrease in attrition rate.
 
-For other gender and age groups excluding young males, experimental arm B, containing only the probability message, enhances the CT reach probability, although not statistically significant. Experimental arm D, containing both the probability message and the early coordination message, reduces the CT reach probability for young males, although not statistically significant. However, experimental arm D enhances the CT reach probability for other groups, particularly showing statistically significant effects for older female groups. Considering these results, the probability message enhances the availability of young male donors with favorable transplantation outcomes without negatively impacting other groups. Presenting both the probability message and the early coordination message increases the availability of older female donors without negatively affecting other groups. Therefore, it can be concluded that a policy uniformly allocating only the probability message is most desirable.
+For other gender and age groups excluding young males, experimental arm B, containing only the probability message, enhances the CT reach probability, although not statistically significant. Experimental arm D, containing both the probability message and the early coordination message, reduces the CT reach probability for young males, although not statistically significant. However, experimental arm D enhances the CT reach probability for other groups, particularly showing statistically significant effects for older female groups. Considering these results, the probability message enhances the availability of young male donors with favorable transplantation outcomes without negatively impacting other groups. Presenting both the probability message and the early coordination message increases the availability of older female donors without negatively affecting other groups. Therefore, it can be concluded that there is no downside to uniformly assigning only the probability message.
 
 Table \ref{tab:stock-reg-subset-2} in the Appendix \ref{figtab} presents the subsample analysis with an age cutoff set at 40. The effect of the probability message (experimental arm B) on young males slightly weakens, while it slightly strengthens for older males. This suggests that in males, the effect of the probability message seems to follow a convex function of age. However, there is no change in our overall conclusion.
 
@@ -344,13 +345,13 @@ Figure \ref{fig:cumulative-response-rate} in the Appendix \ref{figtab} shows the
 Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focus on the heterogeneity of the effect on quick responses. Figure \ref{fig:cumulative-response-rate} in the Appendix \ref{figtab} shows the cumulative response rate by gender and age groups (age cutoff is 30).
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
+\includegraphics{JMDPRC~2/figure-latex/young-male-flow-1} \caption{Effect on Response Speed of Young Males.\newline \emph{Note}: These plots show the difference of cumulative responses on specific days between the treated and the control (and associated 95 percent confidential interval). We use males less than 30 for analysis sample. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
 \end{figure}
 
 While there are no significant differences in the pattern of cumulative response rates for males and females aged 30 and older, there are some notable results for males and females under 30.\footnote{For males and females aged 30 and older, the cumulative response rate for each day differs little between the experimental arms, except for certain periods, and is not statistically significant. See Figure \ref{fig:old-male-flow} and \ref{fig:old-female-flow} in Appendix \ref{figtab}.} In the group of males in their 20s, 15 days after the compatibility notice was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \ref{fig:young-male-flow}).\footnote{In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within \(d\) days as the outcome variable. If the potential donor responded after \(d\) days or did not respond, the outcome variable is 0.} Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message are added, is almost the same as that in the control, so it cannot be said that the early coordination message encourages early responses in this group.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females Less than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific days. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
+\includegraphics{JMDPRC~2/figure-latex/young-female-flow-1} \caption{Effect on Response Speed of Young Females.\newline \emph{Note}: These plots show the difference of cumulative responses on specific days between the treated and the control (and associated 95 percent confidential interval). We use females less than 30 for analysis sample. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
 \end{figure}
 
 In the group of females in their 20s, the responses of experimental arms C and D increased compared with the control within four days of sending the compatibility message. As a result, the cumulative response rates of the two experimental arms are statistically significantly higher than that of the control arm (Figure \ref{fig:young-female-flow}). This result suggests that the early coordination message encourages females in their 20s to respond quickly.\footnote{We decompose the effect of message C on responses within four days (early responses) into two parts in terms of intentions and find that it increases positive and negative intentions to the same extent.} However, despite the fact that early responses increase donor avairability, the early coordination message does not affect the probability that a female donor in her 20s reaches the CT (see Table \ref{tab:stock-reg-subset}).
@@ -361,7 +362,7 @@ In the group of females in their 20s, the responses of experimental arms C and D
 Finally, we examine the impact of messages on each step of the coordination process after the CT. As explained in Section \ref{background}, the coordination process comprises three stages: candidate selection, final consent, and collection (donation). As the outcome variable, we use a dummy variable that takes the value of 1 if a matched donor has reached each stage. We examine the influence on the post-candidate selection process, acknowledging the involvement of demand-side effects and emphasizing the need for caution in interpretation. In the control group, \(6.2\)\% became candidates, and \(4.5\)\% ultimately donated.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Candidate Selection, Final Consent and Donation by Treatments. Notes: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~2/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Candidate Selection, Final Consent and Donation by Treatments.\newline \emph{Note}: Error bars show standard errors of mean. For statistical test, we use robust standard errors.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 We show sample averages of each outcome by treatments in Figure \ref{fig:coordinate-diff-mean}. No experimental arm affects the post-candidate selection process. Similar results are obtained with linear probability models and logistic regressions controlling for covariates (see Table \ref{tab:coordinate-reg} and \ref{tab:coordinate-logit} in Appendix \ref{figtab}). This result should be interpreted with caution. Given that our intervention does not affect demand (number of patients), if our intervention increases the number of people who reached the CT, it should increase the number of people who are not selected as candidates for exogenous reasons. Particularly, compared to the control arm, experimental arm B increases the probability by \(4.3\) percentage points of donors who reached CT not being selected due to patient reasons or donor health reasons. This difference is marginally statistical significant (\(p = 0.095\)). Thus, intervention effects are canceled out due to demand-side factor.
@@ -374,7 +375,7 @@ We show sample averages of each outcome by treatments in Figure \ref{fig:coordin
 \fontsize{9}{11}\selectfont
 \begin{tabular}[t]{lccc}
 \toprule
- & Candidate & Consent & Donation\\
+ & Candidate selection & Final consent & Donation\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 1132)}}\\
@@ -496,7 +497,7 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \toprule
 \multicolumn{3}{c}{ } & \multicolumn{2}{c}{Intention} & \multicolumn{2}{c}{ } \\
 \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Reply} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Response} & \multicolumn{2}{c}{Positive} & \multicolumn{2}{c}{CT} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
@@ -526,7 +527,7 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \fontsize{9}{11}\selectfont
 \begin{tabular}[t]{lccc}
 \toprule
- & Reply & Positive intention & CT\\
+ & Response & Positive intention & CT\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
@@ -565,7 +566,7 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/flow-1} \caption{Effect on Reply within Specific Days after Sending Notification. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
+\includegraphics{JMDPRC~2/figure-latex/flow-1} \caption{Effect on Response Speed. \newline \emph{Note}: These plots show the difference of cumulative responses on specific days between the treated and the control (and associated 95 percent confidential interval). We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
 \end{figure}
 
 \begin{figure}[H]
@@ -573,11 +574,11 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/old-male-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Males More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
+\includegraphics{JMDPRC~2/figure-latex/old-male-flow-1} \caption{Effect on Response Speed of Older Males.\newline \emph{Note}: These plots show the difference of cumulative responses on specific days between the treated and the control (and associated 95 percent confidential interval). We use males more than 30 for analysis sample. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/old-female-flow-1} \caption{Effect on Reply within Specific Days after Sending Notification among Females More than 30. Notes: These plots show the average effect (and associated 95 percent confidential interval) on cumulative responses on specific day. We use robust standard errors. We control the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
+\includegraphics{JMDPRC~2/figure-latex/old-female-flow-1} \caption{Effect on Response Speed of Older Females.\newline \emph{Note}: These plots show the difference of cumulative responses on specific days between the treated and the control (and associated 95 percent confidential interval). We use females more than 30 for analysis sample. We use robust standard errors. We control number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
 \end{figure}
 
 \begin{table}[H]
@@ -588,7 +589,7 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate} & \multicolumn{2}{c}{Consent} & \multicolumn{2}{c}{Donation} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
@@ -618,7 +619,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate} & \multicolumn{2}{c}{Consent} & \multicolumn{2}{c}{Donation} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
@@ -648,7 +649,7 @@ Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250}
 \fontsize{9}{11}\selectfont
 \begin{tabular}[t]{lccc}
 \toprule
- & Candidate & Consent & Donation\\
+ & Candidate selection & Final consent & Donation\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\

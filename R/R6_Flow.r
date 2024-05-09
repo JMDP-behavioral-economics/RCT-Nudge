@@ -163,7 +163,9 @@ FlowFit <- R6::R6Class("FlowFit",
   public = list(
     data = NULL,
     initialize = function(data) self$data <- data,
-    plot = function(...) {
+    plot = function(xlab = "Days after sending notification",
+                    ylab = "Estimated Effects (95%CI)",
+                    ...) {
       dt <- self$data
 
       if (!missing(...)) {
@@ -182,8 +184,8 @@ FlowFit <- R6::R6Class("FlowFit",
         scale_x_continuous(breaks = c(1, seq(5, 80, by = 5))) +
         facet_wrap(~term, ncol = 2, scales = "free_x") +
         labs(
-          x = "Days after sending notification",
-          y = "Estimated Effects (95%CI)"
+          x = xlab,
+          y = ylab
         ) +
         my_theme_classic()
     }
