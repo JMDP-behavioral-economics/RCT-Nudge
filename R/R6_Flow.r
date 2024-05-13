@@ -24,7 +24,8 @@ Flow <- R6::R6Class("Flow",
     plot = function(...,
                     label_list,
                     xlim = c(0, 40),
-                    ylab = "Cumulative response rate (%)") {
+                    ylab = "Cumulative response rate (%)",
+                    base_size = 15) {
       
       dt <- self$data %>%
         select(treat, days_reply, value)
@@ -80,13 +81,13 @@ Flow <- R6::R6Class("Flow",
           y = ylab,
           linetype = "Treatment"
         ) +
-        my_theme_classic() +
+        my_theme_classic(size = base_size) +
         theme(
           legend.key.size = grid::unit(1.5, "cm"),
           legend.position = "bottom"
         )
     },
-    fit = function(days, ...) {
+    fit = function(days, scale = 1, ...) {
       dt <- self$data
       model <- private$model
 
@@ -117,7 +118,7 @@ Flow <- R6::R6Class("Flow",
             mutate(value = case_when(
               value == 0 ~ 0,
               days_reply > x ~ 0,
-              TRUE ~ 1
+              TRUE ~ 1 * scale
             )) %>%
             group_by(across(starts_with("cond"))) %>%
             nest() %>%
@@ -165,6 +166,9 @@ FlowFit <- R6::R6Class("FlowFit",
     initialize = function(data) self$data <- data,
     plot = function(xlab = "Days after sending notification",
                     ylab = "Estimated Effects (95%CI)",
+                    ylim = c(-100, 100),
+                    ybreaks = 10,
+                    base_size = 15,
                     ...) {
       dt <- self$data
 
@@ -181,13 +185,17 @@ FlowFit <- R6::R6Class("FlowFit",
         geom_point(size = 3) +
         geom_line(linewidth = 1) +
         geom_ribbon(alpha = 0.1) +
+        scale_y_continuous(
+          limits = ylim,
+          breaks = seq(ylim[1], ylim[2], by = ybreaks)
+        ) +
         scale_x_continuous(breaks = c(1, seq(5, 80, by = 5))) +
         facet_wrap(~term, ncol = 2, scales = "free_x") +
         labs(
           x = xlab,
           y = ylab
         ) +
-        my_theme_classic()
+        my_theme_classic(size=base_size)
     }
   ),
   private = list()
