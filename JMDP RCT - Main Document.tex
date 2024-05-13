@@ -50,19 +50,6 @@
 
 % ------------------------------ other packages
 \usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
-\usepackage{xcolor}
 \usepackage{siunitx}
 
   \newcolumntype{d}{S[
@@ -281,7 +268,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -492,6 +479,30 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \end{tabular}
 \begin{tablenotes}
 \item Notes: See Table \ref{tab:summary} for detail intervention of each experimental arm. Control group is experimental arm A. The experiment was not conducted during the week of December 27, 2021 through January 3, 2022 because JMDP was closed for the New Year's holiday.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:response-speed-CT}Relationship between Response Speed and Coordination}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{CT} & \multicolumn{1}{c}{Exogenous interruption before CT} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3}
+  & (1) & (2)\\
+\midrule
+Response speed (day) & \num{-1.94}*** & \num{-0.12}***\\
+ & (\num{0.07}) & (\num{0.05})\\
+\midrule
+Num.Obs. & \num{9738} & \num{7087}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. In column (1), we used full sample. In column (2), we used those whose coordination was interrupted due to patient reasons before reaching the CT. We controled treatment dummies, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

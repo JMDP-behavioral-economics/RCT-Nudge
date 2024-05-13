@@ -315,7 +315,7 @@ full_stock$
   kable(
     title = "Linear Probability Model of Intention and Avairability",
     notes = paste(
-      "Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+      "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
     )
   )
 ```
@@ -398,7 +398,6 @@ flow_fit$plot(
 )
 ```
 
-<!-- !despite the fact...の部分にfactを加えたい -->
 <!-- ?最後の文章は変に誤解を招きかねないな・・・ -->
 In the group of females in their 20s, the responses of experimental arms C and D increased compared with the control within four days of sending the compatibility message. As a result, the cumulative response rates of the two experimental arms are statistically significantly higher than that of the control arm (Figure \@ref(fig:young-female-flow)). This result suggests that the early coordination message encourages females in their 20s to respond quickly.[^flow-intention] However, despite the fact that early responses increase donor avairability, the early coordination message does not affect the probability that a female donor in her 20s reaches the CT (see Table \@ref(tab:stock-reg-subset)).
 
@@ -502,6 +501,40 @@ schedule$kable(
   ),
   hold = TRUE
 )
+```
+
+```{r response-speed-CT}
+respond <- subset(rct$data, reply == 1)
+respond_not_ct <- subset(respond, test == 0)
+
+add_vars <- c("treat", "factor(month)", "factor(week)")
+
+mod1 <- reformulate(c("days_reply", add_vars, covs), "I(test * 100)")
+mod2 <- reformulate(c("days_reply", add_vars, covs), "I(exg_stop_test * 100)")
+
+est_mod1 <- lm_robust(mod1, respond, se_type = "stata")
+est_mod2 <- lm_robust(mod2, respond_not_ct, se_type = "stata")
+
+list(est_mod1, est_mod2) %>%
+  modelsummary(
+    title = "Relationship between Response Speed and Coordination",
+    coef_map = c("days_reply" = "Response speed (day)"),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    gof_omit = "RMSE|R2|AIC|BIC|Log|Std|FE|se_type",
+    fmt = 2
+  ) %>%
+  kable_styling(font_size = 9, latex_options = "HOLD_position") %>%
+  add_header_above(
+    c(" " = 1, "CT" = 1, "Exogenous interruption before CT" = 1)
+  ) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = paste(
+      "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. In column (1), we used full sample. In column (2), we used those whose coordination was interrupted due to patient reasons before reaching the CT. We controled treatment dummies, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+    ),
+    threeparttable = TRUE,
+    escape = FALSE
+  )
 ```
 
 ```{r setup-stock-logit, include=FALSE}
