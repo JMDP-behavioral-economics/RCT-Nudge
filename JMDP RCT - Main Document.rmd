@@ -211,7 +211,9 @@ ongoing_f <- rawdt$balance_attrition()
 
 [^exclude]: One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data provision. The proportion of matched donors with ongoing matching is balanced across the experimental arms (`r ongoing_f`).
 
-Our primary outcome was whether the matched donor reached the CT. This represents donor's availability since patient's physician select donors from matched donors who have completed the CT. Reaching CT depends on the donor's willingness to donate at the time of response and the response speed. If the donor does not respond indicating their willingness to donate, the coordination is interrupted. Alternatively, if the donor responds late, the possibility of the coordination being interrupted due to patient reasons, such as the patient's condition becoming severe, increases. Thus, our secondary outcomes were whether the matched donor responded to the compatibility notice and whether the matched donor responded intending to donate. When examining the impact on the response speed, the outcome was whether the matched donor responded within a specific number of days. Using this, we estimated the effect on responses over time. In this study, we also examined the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
+Our primary outcome was whether the matched donor reached the CT. This represents donor's availability since patient's physician select donors from matched donors who have completed the CT. Reaching CT depends on the donor's willingness to donate at the time of response and the response speed. If the donor does not respond indicating their willingness to donate, the coordination is interrupted. Alternatively, if the donor responds late, the possibility of the coordination being interrupted due to patient reasons, such as the patient's condition becoming severe, increases.[^fact] Thus, our secondary outcomes were whether the matched donor responded to the compatibility notice and whether the matched donor responded intending to donate. When examining the impact on the response speed, the outcome was whether the matched donor responded within a specific number of days. Using this, we estimated the effect on responses over time. In this study, we also examined the impact on the post-candidate selection process. However, it is essential to exercise caution in interpreting these results, as they are influenced by patient demand and physicians' decision making.
+
+[^fact]: Our data showed that for those who responded to the compatibility notice indicating their willingness to donate, one day delay in their response decreased the probability of reaching CT by $2.4$ percentage points and increased the probability of the coordination being interrupted before CT due to patient reasons by $0.5$ percentage points (See Table \@ref(tab:response-speed-CT) in the Appendix \@ref(figtab)).
 
 For additional data, we used a list of medical institutions published on the Internet by the JMDP.[^ref] This list includes complete addresses, the availability of bone marrow collection (BM collection), and availability of peripheral blood stem cell collection (PBSC collection). We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged it with the coordination data using the prefecture as the merge key. We considered this variable to be the traveling cost of coordination and donation.
 
@@ -405,8 +407,7 @@ flow_fit$plot(
 )
 ```
 
-<!-- ?最後の文章は変に誤解を招きかねないな・・・ -->
-In the group of females in their 20s, the responses of experimental arms C and D increased compared with the control within four days of sending the compatibility message. As a result, the cumulative response rates of the two experimental arms are statistically significantly higher than that of the control arm (Figure \@ref(fig:young-female-flow)). This result suggests that the early coordination message encourages females in their 20s to respond quickly.[^flow-intention] However, despite the fact that early responses increase donor avairability, the early coordination message does not affect the probability that a female donor in her 20s reaches the CT (see Table \@ref(tab:stock-reg-subset)).
+In the group of females in their 20s, the responses of experimental arms C and D increased compared with the control within four days of sending the compatibility message. As a result, the cumulative response rates of the two experimental arms are statistically significantly higher than that of the control arm (Figure \@ref(fig:young-female-flow)). This result suggests that the early coordination message encourages females in their 20s to respond quickly.[^flow-intention]
 
 [^flow-intention]: We decomposed the effect of message C on responses within four days (early responses) into two parts in terms of intentions and found that it increased positive and negative intentions to the same extent.
 
@@ -511,18 +512,18 @@ schedule$kable(
 ```
 
 ```{r response-speed-CT}
-respond <- subset(rct$data, reply == 1)
-respond_not_ct <- subset(respond, test == 0)
+respond <- subset(rct$data, positive == 1)
 
 add_vars <- c("treat", "factor(month)", "factor(week)")
 
-mod1 <- reformulate(c("days_reply", add_vars, covs), "I(test * 100)")
-mod2 <- reformulate(c("days_reply", add_vars, covs), "I(exg_stop_test * 100)")
+mods <- list(
+  reformulate(c("days_reply", add_vars, covs), "I(test * 100)"),
+  reformulate(c("days_reply", add_vars, covs), "I(exg_stop_test * 100)")
+)
 
-est_mod1 <- lm_robust(mod1, respond, se_type = "stata")
-est_mod2 <- lm_robust(mod2, respond_not_ct, se_type = "stata")
+est_mods <- lapply(mods, function(x) lm_robust(x, respond, se_type = "stata"))
 
-list(est_mod1, est_mod2) %>%
+est_mods %>%
   modelsummary(
     title = "Relationship between Response Speed and Coordination",
     coef_map = c("days_reply" = "Response speed (day)"),
@@ -532,12 +533,12 @@ list(est_mod1, est_mod2) %>%
   ) %>%
   kable_styling(font_size = 9, latex_options = "HOLD_position") %>%
   add_header_above(
-    c(" " = 1, "CT" = 1, "Exogenous interruption before CT" = 1)
+    c(" " = 1, "1 = CT" = 1, "1 = Exogenous interruption before CT" = 1)
   ) %>%
   kableExtra::footnote(
     general_title = "",
     general = paste(
-      "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. In column (1), we used full sample. In column (2), we used those whose coordination was interrupted due to patient reasons before reaching the CT. We controled treatment dummies, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+      "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. This table shows the estimation results of linear probability models. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. In column (1), we used full sample. We used those who responded the compatibility notice with positive intention to donate. We controled treatment dummies, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
     ),
     threeparttable = TRUE,
     escape = FALSE
