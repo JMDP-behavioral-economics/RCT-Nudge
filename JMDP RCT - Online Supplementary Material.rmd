@@ -9,7 +9,7 @@ output:
     latex_engine: lualatex
     tempate: template/my-template.tex
     keep_tex: true
-    toc: true
+    toc: false
     number_sections: true
     citation_package: natbib
 base-strech: 1.5
@@ -20,6 +20,7 @@ params:
   se_type: stata
 ---
 
+<!---
 # Economic Models for Predictions
 
 In this section, we present a simple inter-temporal economic model to make predicitions of message effects. We assume that the matched donor may have the present bias, which is one of the most important insight from behaviorl economics [@Laibson1997; @ODonoghue2001].
@@ -64,3 +65,4 @@ The next result shows that almost matched donor follows ideal behavior (the opti
 
 \noindent
 **Result 3.** Let $b_2 = b_1 - d$. Suppose that $c \left(\frac{1-\beta\delta}{\beta\delta} - \frac{1-\delta}{\hat{\beta}\delta} \right) < d$. Then, the matched donor actually chooses the quick response if $c/\beta\delta \le b_1$; otherwise the matched donor actually chooses the no response.
+--->
