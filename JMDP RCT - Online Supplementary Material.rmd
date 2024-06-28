@@ -6,8 +6,8 @@ bibliography: biblio.bib
 biblio-style: agsm
 output:
   bookdown::pdf_document2:
-    latex_engine: lualatex
-    tempate: template/my-template.tex
+    latex_engine: pdflatex
+    template: template/my-template.tex
     keep_tex: true
     toc: false
     number_sections: true

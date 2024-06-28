@@ -1,57 +1,34 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode}{hyperref}
-\PassOptionsToPackage{hyphens}{url}
-%
-\documentclass[
-  12pt,
-]{article}
-\usepackage{lmodern}
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-  \usepackage{unicode-math}
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
-\fi
-% Use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
-  \usepackage[]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
-\makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-  \IfFileExists{parskip.sty}{%
-    \usepackage{parskip}
-  }{% else
-    \setlength{\parindent}{0pt}
-    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
-  \KOMAoptions{parskip=half}}
-\makeatother
-\usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  pdftitle={Online Supplementary Material ``Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program''},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
-\usepackage[margin=1in]{geometry}
-\usepackage{longtable,booktabs}
-% Correct order of tables after \paragraph or \subparagraph
-\usepackage{etoolbox}
-\makeatletter
-\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-\makeatother
-% Allow footnotes in longtable head/foot
-\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-\makesavenoteenv{longtable}
-\usepackage{graphicx}
+\documentclass[12pt, a4paper]{article}
+
+% ------------------------------ font
+\usepackage{times} %pdflatex
+% \usepackage{luatexja}
+% \usepackage{luatexja-fontspec}
+
+% \setmainfont{Times New Roman}
+% \setmainjfont[BoldFont=IPAexGothic]{IPAexMincho}
+
+% ------------------------------ math
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}
+
+% ------------------------------ author & natbib
+\usepackage{authblk}
+\usepackage[semicolon]{natbib}
+\bibliographystyle{agsm}
+
+% ------------------------------ appendix
+\usepackage[title]{appendix}
+
+% ------------------------------ tables
+\usepackage{here}
+\usepackage{longtable, booktabs, array}
+\usepackage{threeparttable, threeparttablex, multirow}
+% \newcolumntype{d}{S[input-symbols = ()]}
+
+% ------------------------------- figures
+\usepackage[labelfont=bf, labelsep=period, justification=justified]{caption}
+\usepackage{graphics, graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -60,81 +37,312 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-% Set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
-\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+% ------------------------------ page settings
+\usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry}
+\usepackage{setspace}
+\renewcommand{\baselinestretch}{1.5}
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{5}
-\usepackage[]{natbib}
-\bibliographystyle{agsm}
 
+% ------------------------------ hyperlink
+\usepackage[hidelinks]{hyperref}
+
+% ------------------------------ other packages
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+  \newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+  ]}
+  
+
+% ------------------------------ paper information
 \title{Online Supplementary Material
 ``Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program''}
 \author{}
-\date{\vspace{-2.5em}}
+\date{}
+
+\makeatletter
+\renewcommand*{\@fnsymbol}[1]{\ifcase#1\or*\else\@arabic{\numexpr#1-1\relax}\fi}
+\makeatother
 
 \begin{document}
-\maketitle
+\begin{spacing}{1}
+  \maketitle
+  \end{spacing}
 
-{
-\setcounter{tocdepth}{2}
-\tableofcontents
-}
-\hypertarget{economic-models-for-predictions}{%
-\section{Economic Models for Predictions}\label{economic-models-for-predictions}}
 
-In this section, we present a simple inter-temporal economic model to make predicitions of message effects. We assume that the matched donor may have the present bias, which is one of the most important insight from behaviorl economics \citep{Laibson1997, ODonoghue2001}.
 
-\noindent
-\textbf{Events.} Consider three periods (\(t = 1, 2, 3\)). At \(t=1\), a matched donor receives the compatibility notice, which asks him/her to donate. The matched donor has three options: quick response (responsding at \(t=1\)); late response (responding at \(t=2\)); no response. If the matched donor responds, then the donor pays coordination cost \(c\) at that time and obtains net-benefit of transplantion at the next period. The net-benefit of transplantion may be time-variant: \(b_t\) if the matched donor responds at period \(t\). We assume \(b_1 \ge b_2\). If the matched donor does not respond, the donor does not pay any cost and receive any net-benefit.
+\setcounter{footnote}{0}
+\appendix
 
-\noindent
-\textbf{Preference.} According to \citet{Laibson1997}, the utility function is \(U_t = u_t + \beta \sum_{\tau = t + 1}^{3} \delta^{\tau - t} u_{\tau}\) where \(\beta \in (0, 1]\) is the degree of present bias and \(\delta \in (0, 1]\) is standard time discount factor. Moreover, at period \(t\), the donor expect that s/he makes decisions after \(t + 1\) based on \(\hat{\beta} \in [\beta, 1]\). If \(\beta < \hat{\beta}\), the donor falsely believes that the present bias of their future self is not as strong.
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\renewcommand\thefigure{\thesection\arabic{figure}}
+\renewcommand{\thetable}{\thesection\arabic{table}}
+\renewcommand{\theHfigure}{\thesection\arabic{figure}}
+\renewcommand{\theHtable}{\thesection\arabic{table}}
 
-We will solve an interpersonal game \citep{ODonoghue2001} to obtain optimal response timing. The first result shows that the matched donor thinks that the late response is never optimal regardless of the present bias before receiving the compatibility notice (\(t=0\)).
+\hypertarget{figtab}{%
+\section{Additional Figures and Tables}\label{figtab}}
 
-\noindent
-\textbf{Result 1.} For any \(\beta\), \(\hat{\beta}\) and \(b_2\), at \(t = 0\), the quick response is optimal if \(b_1 \ge c/\delta\); otherwise the no response is optimal.
+\begin{table}[H]
 
-\noindent
-\emph{Proof.} At \(t=0\), the utility of the quick response is \(\beta(-\delta c + \delta^2 b_1)\), which is positive \(b_1 > c / \delta\). The utility of the late response is \(\beta(-\delta^2 c + \delta^3 b_2)\). Let \(b_2 = b_1 - d\) for \(d \ge 0\). Then, the utility of the late response is positive if \(b_1 > c/\delta + d\). Note that the utility of the no response is zero. Thus, if \(b_1 < c/\delta\), then the no response is optimal because the quick response and the late response produce negative utilities. The quick response is preferred to the late response if
-\begin{equation}
-  b_1 \ge \frac{c}{\delta} - \frac{\delta}{1-\delta}d. \label{eq:cond-t0}
-\end{equation}
-Thus, the quick response is optimal if \(b_1 \ge c/\delta\) since the Equation (\ref{eq:cond-t0}) holds.
+\caption{\label{tab:assignment}Assignment Schedule}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & January, 2022 & February, 2022\\
+\midrule
+1 & B & C & C & D & B & A\\
+ & (09/06 to 09/12) & (10/04 to 10/10) & (11/01 to 11/07) & (11/29 to 12/05) & (01/03 to 01/09) & (01/31 to 02/06)\\
+2 & D & B & A & A & C & B\\
+ & (09/13 to 09/19) & (10/11 to 10/17) & (11/08 to 11/14) & (12/06 to 12/12) & (01/10 to 01/16) & (02/07 to 02/13)\\
+3 & A & D & B & C & D & C\\
+ & (09/20 to 09/26) & (10/18 to 10/24) & (11/15 to 11/21) & (12/13 to 12/19) & (01/17 to 01/23) & (02/14 to 02/20)\\
+4 & C & A & D & B & A & D\\
+ & (09/27 to 10/03) & (10/25 to 10/31) & (11/22 to 11/28) & (12/20 to 12/26) & (01/24 to 01/30) & (02/21 to 02/27)\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item Notes: See Table 1 in the main manuscrpit for a detailed description of the intervention of each experimental arm. The control arm is experimental arm A. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
-This resuls implies that, before receiving the compatibility notice, the matched donor thinks that the donor quickly respond to the compatibility notice if the transplantion net-benefit is sufficiently large. The next result presents that the donor may delay the response, while receiving the notice, even if the trasplantation value is sufficiently large.
+\begin{table}[H]
 
-\noindent
-\textbf{Result 2.} Suppose that \(b_1 = b_2\). At \(t=1\), the quick response is optimal if \(b_1 \ge c \frac{1-\beta\delta}{(1-\delta)\beta\delta}\); the late response is optimal if \(c \frac{1-\beta\delta}{(1-\delta)\beta\delta} > b_1 \ge c/\beta\delta\); otherwise the no response is optimal.
+\caption{\label{tab:response-speed-CT}Relationship between Response Speed and Coordination}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{1 = CT} & \multicolumn{1}{c}{1 = Exogenous interruption before CT} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3}
+  & (1) & (2)\\
+\midrule
+Response speed (day) & \num{-2.43}*** & \num{0.45}***\\
+ & (\num{0.11}) & (\num{0.08})\\
+\midrule
+Num.Obs. & \num{6142} & \num{6142}\\
+\bottomrule
+\multicolumn{3}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. This table shows the estimation results of linear probability models. The robust standard errors are in parentheses. The unit of coefficient is a percentage point. We used those who responded to the HLA match letter with a positive intention to donate. We controlled for treatment dummies, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
-\noindent
-\emph{Proof.} We employ the backward-induction to solve the interpersonal game. Consider \(t=2\). If the matched donor does not choose the quick response, the donor can respond to the notice at that period. Then, the utility of the late response at \(t=2\) is \(-c + \beta\delta b_2\). Thus, the late response is optimal iff \(b_2 \ge c/\beta\delta\). Otherwise, the donor choose the no response. Next, we go back to \(t=1\) and analyze how the donor expects behavior at \(t=2\). The donor believes that future selve's present bias is \(\hat{\beta}\). Thus, at \(t = 1\), the donor expect that s/he will respond at \(t = 2\) (the late response) if and only if \(b_2 \ge c/\hat{\beta}\delta\). Assuming \(b_2 = b_1\), we derive the optimal choice at \(t=1\) in three cases.
+\begin{table}[H]
 
-\begin{itemize}
-\tightlist
-\item
-  Consider \(b_1 < c/\hat{\beta}\delta\). Then, at \(t = 1\), the donor expects to give up responding, and actually does so. Thus, the donor at \(t = 1\) responds if and only if \(U_1 = -c + \beta\delta b_1 \ge 0\) or \(b_1 \ge c/\beta\delta\). Otherwise, the donor gives up responding. Thus, the optimal choice is the no response.
-\item
-  Consider \(c/\hat{\beta}\delta \le b_1 < c/\beta\delta\). Then, at \(t=1\), the donor expects to respond at \(t = 2\), but will not actually take that action (no response). Due to this false prediction, the donor at \(t = 1\) responds if and only if \(U_1 \ge \beta(-\delta c + \delta^2 b_1)\) or
-  \begin{equation}
-  c \frac{1 - \beta\delta}{(1-\delta)\beta\delta} \le b_1. \label{eq:cond-t1}
-  \end{equation}
-  Otherwise, the donor eventually stops responding. Since \(\frac{1}{\beta\delta} < \frac{1 - \beta\delta}{\beta\delta}\), the optimal choice is the no response in this case.
-\item
-  Consider \(c/\beta\delta \le b_1\). Then, at \(t = 1\), the donor expects to respond at \(t = 2\), and actually does so. Thus, the donor responds at \(t = 1\) if and only if equation (\ref{eq:cond-t1}) holds. Otherwise, the donor responds at \(t=2\).
-\end{itemize}
+\caption{\label{tab:stock-logit}Logit Model of CT and Intention}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Response} & \multicolumn{2}{c}{Positive intention} & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{1.13} & \num{1.17} & \num{1.10} & \num{1.10} & \num{1.19} & \num{1.19}\\
+ & {}[\num{0.96}, \num{1.33}] & {}[\num{0.99}, \num{1.39}] & {}[\num{0.99}, \num{1.22}] & {}[\num{0.98}, \num{1.23}] & {}[\num{1.05}, \num{1.34}] & {}[\num{1.05}, \num{1.36}]\\
+Treatment C & \num{0.96} & \num{1.04} & \num{0.98} & \num{0.99} & \num{1.07} & \num{1.07}\\
+ & {}[\num{0.82}, \num{1.13}] & {}[\num{0.88}, \num{1.24}] & {}[\num{0.88}, \num{1.10}] & {}[\num{0.88}, \num{1.11}] & {}[\num{0.94}, \num{1.22}] & {}[\num{0.93}, \num{1.23}]\\
+Treatment D & \num{1.08} & \num{1.08} & \num{1.02} & \num{1.03} & \num{1.14} & \num{1.16}\\
+ & {}[\num{0.91}, \num{1.27}] & {}[\num{0.91}, \num{1.28}] & {}[\num{0.92}, \num{1.14}] & {}[\num{0.92}, \num{1.15}] & {}[\num{1.01}, \num{1.30}] & {}[\num{1.02}, \num{1.33}]\\
+\midrule
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644} & \num{-6083.783} & \num{-5942.333}\\
+\bottomrule
+\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. We show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
-This result is motivated us to create the Early Coordination message. If the net benefit of transplantion is time-invariant, then some mathced donors thinks that the quick response is ideal but acutually choose the late response or the no response. Especially, if \(c/\delta \le b_1 < c/\beta\delta\), then the matched donor thinks that the quick response but does not actually respond to the compatibility notice. If \(c/\beta\delta \le b_1 < c \frac{1 - \beta\delta}{(1-\delta)\beta\delta}\), then the matched donor thinks that the quick response but does delay response to the compatibility notice.
+\begin{table}[H]
 
-The next result shows that almost matched donor follows ideal behavior (the optimal choice at \(t=0\); see Result 1) if there is sufficiently large difference between \(b_1\) and \(b_2\)
+\caption{\label{tab:stock-reg-subset-2}Subsample Analysis for Primary Outcomes (Age cutoff: 40)}
+\centering
+\begin{threeparttable}
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{lccc}
+\toprule
+ & Response & Positive intention & CT\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
+\hspace{1em}Treatment B & -0.95 (1.95) & -2.58 (3.11) & 2.21 (2.51)\\
+\hspace{1em}Treatment C & 0.17 (1.95) & -2.65 (3.21) & 2.30 (2.57)\\
+\hspace{1em}Treatment D & -2.54 (1.98) & -3.29 (3.15) & 5.73** (2.60)\\
+\hspace{1em}Control average & 90.45 & 53.05 & 19.72\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Older females (N = 1882)}}\\
+\hspace{1em}Treatment B & 0.56 (1.59) & 2.42 (3.22) & 2.54 (2.62)\\
+\hspace{1em}Treatment C & 0.07 (1.73) & 2.16 (3.50) & -0.08 (2.79)\\
+\hspace{1em}Treatment D & 0.76 (1.49) & 1.72 (3.27) & 4.08 (2.71)\\
+\hspace{1em}Control average & 93.94 & 60.39 & 19.05\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Young males (N = 3445)}}\\
+\hspace{1em}Treatment B & 3.34* (1.96) & 5.37** (2.49) & 4.05* (2.18)\\
+\hspace{1em}Treatment C & -0.07 (2.05) & -0.63 (2.53) & 0.73 (2.17)\\
+\hspace{1em}Treatment D & 3.11 (2.05) & 0.85 (2.56) & -0.70 (2.18)\\
+\hspace{1em}Control average & 79.76 & 46.02 & 24.70\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Older males (N = 3454)}}\\
+\hspace{1em}Treatment B & 3.08** (1.41) & 3.01 (2.35) & 2.45 (2.09)\\
+\hspace{1em}Treatment C & 2.07 (1.56) & 1.42 (2.53) & 1.11 (2.23)\\
+\hspace{1em}Treatment D & 1.24 (1.48) & 3.21 (2.42) & 2.87 (2.17)\\
+\hspace{1em}Control average & 89.64 & 60.83 & 23.33\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of the treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
-\noindent
-\textbf{Result 3.} Let \(b_2 = b_1 - d\). Suppose that \(c \left(\frac{1-\beta\delta}{\beta\delta} - \frac{1-\delta}{\hat{\beta}\delta} \right) < d\). Then, the matched donor actually chooses the quick response if \(c/\beta\delta \le b_1\); otherwise the matched donor actually chooses the no response.
+\begin{figure}[H]
+\includegraphics{JMDPRC~3/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Treatments}\label{fig:cumulative-response-rate}
+\end{figure}
 
-  \bibliography{biblio.bib}
+\begin{figure}[H]
+\includegraphics{JMDPRC~3/figure-latex/flow-1} \caption{Effect on Response Speed. \newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of treatment effect is a percentage point. Additionally, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~3/figure-latex/cumulative-response-rate-subset-1} \caption{Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).}\label{fig:cumulative-response-rate-subset}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~3/figure-latex/old-male-flow-1} \caption{Effect on Response Speed of Older Males.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used males older than 30 for the analysis sample. Furthermore,  we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~3/figure-latex/old-female-flow-1} \caption{Effect on Response Speed of Older Females.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used females over 30 for the analysis sample. Moreover, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
+\end{figure}
+
+\begin{table}[H]
+
+\caption{\label{tab:coordinate-reg}Linear Probability Model of Coordination}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{0.16} & \num{-0.06} & \num{0.26} & \num{0.01} & \num{0.12} & \num{-0.10}\\
+ & (\num{0.65}) & (\num{0.66}) & (\num{0.62}) & (\num{0.63}) & (\num{0.56}) & (\num{0.58})\\
+Treatment C & \num{-0.07} & \num{-0.34} & \num{0.06} & \num{-0.23} & \num{0.02} & \num{-0.25}\\
+ & (\num{0.66}) & (\num{0.69}) & (\num{0.63}) & (\num{0.66}) & (\num{0.57}) & (\num{0.61})\\
+Treatment D & \num{0.50} & \num{0.49} & \num{0.63} & \num{0.59} & \num{0.07} & \num{0.03}\\
+ & (\num{0.68}) & (\num{0.70}) & (\num{0.64}) & (\num{0.66}) & (\num{0.57}) & (\num{0.60})\\
+\midrule
+Control average & 6.19 & 6.19 & 5.44 & 5.44 & 4.50 & 4.50\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:coordinate-logit}Logit Model of Coordination}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{1.03} & \num{0.99} & \num{1.05} & \num{1.00} & \num{1.03} & \num{0.97}\\
+ & {}[\num{0.83}, \num{1.28}] & {}[\num{0.79}, \num{1.24}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.79}, \num{1.27}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.75}, \num{1.27}]\\
+Treatment C & \num{0.99} & \num{0.94} & \num{1.01} & \num{0.96} & \num{1.00} & \num{0.95}\\
+ & {}[\num{0.79}, \num{1.24}] & {}[\num{0.74}, \num{1.19}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.75}, \num{1.24}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.72}, \num{1.25}]\\
+Treatment D & \num{1.09} & \num{1.09} & \num{1.12} & \num{1.12} & \num{1.02} & \num{1.01}\\
+ & {}[\num{0.87}, \num{1.35}] & {}[\num{0.86}, \num{1.36}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.88}, \num{1.42}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.77}, \num{1.32}]\\
+\midrule
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250} & \num{-2045.363} & \num{-2001.995}\\
+\bottomrule
+\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. We show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:coordinate-reg-subset-2}Subsample Analysis for Coordination Process (Age Cutoff: 40)}
+\centering
+\begin{threeparttable}
+\fontsize{9}{11}\selectfont
+\begin{tabular}[t]{lccc}
+\toprule
+ & Candidate selection & Final consent & Donation\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
+\hspace{1em}Treatment B & -1.71 (1.18) & -1.74 (1.10) & -0.87 (1.06)\\
+\hspace{1em}Treatment C & 1.12 (1.38) & 0.97 (1.30) & 0.84 (1.19)\\
+\hspace{1em}Treatment D & -0.34 (1.32) & -0.67 (1.22) & -0.56 (1.11)\\
+\hspace{1em}Control average & 4.88 & 4.27 & 3.46\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Older females (N = 1882)}}\\
+\hspace{1em}Treatment B & -0.71 (1.21) & -0.02 (1.14) & -0.16 (1.08)\\
+\hspace{1em}Treatment C & -0.82 (1.35) & -0.22 (1.27) & -0.62 (1.16)\\
+\hspace{1em}Treatment D & 0.33 (1.33) & 0.71 (1.19) & -0.24 (1.05)\\
+\hspace{1em}Control average & 3.90 & 3.03 & 2.81\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Young males (N = 3445)}}\\
+\hspace{1em}Treatment B & 0.96 (1.40) & 0.69 (1.34) & 0.48 (1.21)\\
+\hspace{1em}Treatment C & -1.21 (1.35) & -1.33 (1.28) & -0.73 (1.18)\\
+\hspace{1em}Treatment D & -0.07 (1.45) & 0.36 (1.39) & -0.24 (1.26)\\
+\hspace{1em}Control average & 8.23 & 7.29 & 5.94\\
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textbf{Older males (N = 3454)}}\\
+\hspace{1em}Treatment B & 0.40 (1.25) & 0.47 (1.20) & -0.18 (1.09)\\
+\hspace{1em}Treatment C & 0.02 (1.34) & 0.15 (1.29) & -0.30 (1.18)\\
+\hspace{1em}Treatment D & 1.72 (1.33) & 1.61 (1.28) & 0.80 (1.15)\\
+\hspace{1em}Control average & 6.43 & 5.83 & 4.76\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of the treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\clearpage
+
+\bibliography{biblio.bib}
+
+
 
 \end{document}
