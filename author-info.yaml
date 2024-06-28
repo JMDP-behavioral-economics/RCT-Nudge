@@ -1,0 +1,27 @@
+author:
+  - name: Hiroki Kato
+    affil-id: a
+    note: "Corresponding author. Present Address: Hitotsubashi Institute for Advanced Study, Hitotsubashi University, 2-1 Naka, Kunitachi, Tokyo 186-8601, Japan. E-mail address: hkato.econ@r.hit-u.ac.jp"
+  - name: Fumio Ohtake
+    affil-id: b
+    note: "E-mail address: ohtake@cider.osaka-u.ac.jp"
+  - name: Saiko Kurosawa
+    affil-id: c
+    note: "E-mail address: skurosaw@inahp.jp"
+  - name: Kazuhiro Yoshiuchi
+    affil-id: d
+    note: "E-mail address: kyoshiuc-tky@umin.ac.jp "
+  - name: Takahiro Fukuda
+    affil-id: e
+    note: "E-mail address: tafukuda@ncc.go.jp"
+affiliations:
+  - id: a
+    name: Graduate School of Economics, Osaka University, Osaka, Japan
+  - id: b
+    name: Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan
+  - id: c
+    name: Department of Oncology, Ina Central Hospital, Nagano, Japan
+  - id: d
+    name: Graduate School of Medicine, Tokyo University, Tokyo, Japan
+  - id: e
+    name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan

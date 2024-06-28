@@ -8,48 +8,21 @@ abstract: |
   Approximately half of the patients registered with the Japan Marrow Donor Program (JMDP) receive allogeneic hematopoietic stem cell transplantation from JMDP donors. This is because much of transplant coordination is interrupted before the confirmatory typing stage owing to  donor-related reasons. A field experiment was conducted in collaboration with JMDP to  verify the effects of providing information to increase the probability of donors reaching confirmatory typing (donor availability from whom physicians can choose the optimal one for transplantation). We found that providing  information about the low number of compatible donors per patient increased the probability of donors reaching confirmatory typing by 14%. Specifically, this information increased the probability of young male donors, who have better transplant outcomes, reaching the confirmatory typing by 28% through increasing their willingness to donate.
   \vskip\baselineskip
   \noindent
-  \textit{JEL classification}: D64, D90, H41, I11
+  \textit{Keywords}: field experiment, free-riding, information provision, Japan Marrow Donor Program, present bias, text message
   \vskip\baselineskip
   \noindent
-  \textit{Keywords}: field experiment, free-riding, information provision, Japan Marrow Donor Program, present bias, text message
-author:
-  - name: Hiroki Kato
-    affil-id: a
-    note: "Corresponding author. Present Address: Hitotsubashi Institute for Advanced Study, Hitotsubashi University, 2-1 Naka, Kunitachi, Tokyo 186-8601, Japan. E-mail address: hkato.econ@r.hit-u.ac.jp"
-  - name: Fumio Ohtake
-    affil-id: b
-    note: "E-mail address: ohtake@cider.osaka-u.ac.jp"
-  - name: Saiko Kurosawa
-    affil-id: c
-    note: "E-mail address: skurosaw@inahp.jp"
-  - name: Kazuhiro Yoshiuchi
-    affil-id: d
-    note: "E-mail address: kyoshiuc-tky@umin.ac.jp "
-  - name: Takahiro Fukuda
-    affil-id: e
-    note: "E-mail address: tafukuda@ncc.go.jp"
-affiliations:
-  - id: a
-    name: Graduate School of Economics, Osaka University, Osaka, Japan
-  - id: b
-    name: Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan
-  - id: c
-    name: Department of Oncology, Ina Central Hospital, Nagano, Japan
-  - id: d
-    name: Graduate School of Medicine, Tokyo University, Tokyo, Japan
-  - id: e
-    name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan
+  \textit{JEL classification}: D64, D90, H41, I11
 bibliography: biblio.bib
-biblio-style: agsm
+biblio-style: chicago
 output:
   bookdown::pdf_document2:
     latex_engine: pdflatex
-    template: template/my-template.tex
+    template: template/my-template-ajhe.tex
     keep_tex: true
     toc: false
     number_sections: true
     citation_package: natbib
-base-strech: 1.5
+base-strech: 2
 fontsize: 12pt
 params:
   is_fe: TRUE
@@ -78,6 +51,8 @@ options(
   kableExtra.auto_format = FALSE
 )
 ```
+
+\clearpage
 
 # Introduction {#intro}
 
