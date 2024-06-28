@@ -1,10 +1,11 @@
 library(here)
 library(rmarkdown)
 
-render_inference_opt <- function( fe = TRUE,
-                                  cluster = TRUE,
-                                  se_type = "CR2",
-                                  output = NULL)
+render_with_inference_opt <- function(  input,
+                                        fe = TRUE,
+                                        cluster = TRUE,
+                                        se_type = "CR2",
+                                        output = NULL)
 {
   out <- output
 
@@ -18,7 +19,7 @@ render_inference_opt <- function( fe = TRUE,
   }
 
   render(
-    here("JMDP RCT - Main Document.rmd"),
+    input,
     output_file = out,
     params = list(
       is_fe = fe,
@@ -30,19 +31,28 @@ render_inference_opt <- function( fe = TRUE,
 }
 
 # Main manuscript
-render_inference_opt(
-  TRUE, FALSE, "stata",
-  "JMDP RCT - Main Document.pdf"
+render_with_inference_opt(
+  here("JMDP RCT - Main Document.rmd"),
+  fe = TRUE,
+  cluster = FALSE,
+  se_type = "stata",
+  output = "JMDP RCT - Main Document.pdf"
 )
 
-# Robust analysis
-render_inference_opt(
-  TRUE, TRUE, "stata",
-  "JMDP RCT - Main Document (Robust).pdf"
+# Main manuscript (Robust analysis)
+render_with_inference_opt(
+  here("JMDP RCT - Main Document.rmd"),
+  fe = TRUE,
+  cluster = TRUE,
+  se_type = "stata",
+  output = "JMDP RCT - Main Document (Robust).pdf"
 )
 
-# Appendix
-render(
-  here("JMDP RCT - Appendix.rmd"),
-  output_file = "JMDP RCT - Appendix.pdf"
+# Online Supplementary Material
+render_with_inference_opt(
+  here("JMDP RCT - Online Supplementary Material.rmd"),
+  fe = TRUE,
+  cluster = FALSE,
+  se_type = "stata",
+  output = "JMDP RCT - Online Supplementary Material.pdf"
 )
