@@ -1,8 +1,7 @@
 ---
 title: |
-  Online Appendix
+  Online Supplementary Material
   "Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program"
-date: "Last updated on `r format(Sys.Date(), '%B %d, %Y')`"
 bibliography: biblio.bib
 biblio-style: agsm
 output:
@@ -14,6 +13,11 @@ output:
     number_sections: true
     citation_package: natbib
 base-strech: 1.5
+fontsize: 12pt
+params:
+  is_fe: TRUE
+  is_cluster: FALSE
+  se_type: stata
 ---
 
 # Economic Models for Predictions
