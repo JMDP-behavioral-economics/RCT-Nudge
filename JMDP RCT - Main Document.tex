@@ -15,7 +15,7 @@
 % ------------------------------ author & natbib
 \usepackage{authblk}
 \usepackage[semicolon]{natbib}
-\bibliographystyle{agsm}
+\bibliographystyle{chicago}
 
 % ------------------------------ appendix
 \usepackage[title]{appendix}
@@ -72,31 +72,35 @@
     table-align-text-pre=false,
     table-align-text-post=false
   ]}
-  
+
+% ------------------------------ For AJHE
+\renewcommand{\thesection}{\Roman{section}.}
+\renewcommand{\thesubsection}{\Alph{subsection}.}
 
 % ------------------------------ paper information
 \title {Only You:
 Field Experiment  Using Text Messages to Prevent Free-riding in the Japan Marrow Donor Program\thanks{We would like to thank the Japan Marrow Donor Program Office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04). Declarations of interest: none. Funding: This work was supported by the Japan Society for the Promotion of Science {[}grant number 20H05632{]} and the Ministry of Health, Labour and Welfare {[}grant number 19FF1001{]}.}}
-\author[a]{%
-  Hiroki Kato\thanks{Corresponding author. Present Address: Hitotsubashi Institute for Advanced Study, Hitotsubashi University, 2-1 Naka, Kunitachi, Tokyo 186-8601, Japan. E-mail address: \href{mailto:hkato.econ@r.hit-u.ac.jp}{\nolinkurl{hkato.econ@r.hit-u.ac.jp}}}
-}
-\author[b]{%
-  Fumio Ohtake\thanks{E-mail address: \href{mailto:ohtake@cider.osaka-u.ac.jp}{\nolinkurl{ohtake@cider.osaka-u.ac.jp}}}
-}
-\author[c]{%
-  Saiko Kurosawa\thanks{E-mail address: \href{mailto:skurosaw@inahp.jp}{\nolinkurl{skurosaw@inahp.jp}}}
-}
-\author[d]{%
-  Kazuhiro Yoshiuchi\thanks{E-mail address: \href{mailto:kyoshiuc-tky@umin.ac.jp}{\nolinkurl{kyoshiuc-tky@umin.ac.jp}}}
-}
-\author[e]{%
-  Takahiro Fukuda\thanks{E-mail address: \href{mailto:tafukuda@ncc.go.jp}{\nolinkurl{tafukuda@ncc.go.jp}}}
-}
-\affil[a]{Graduate School of Economics, Osaka University, Osaka, Japan}
-\affil[b]{Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan}
-\affil[c]{Department of Oncology, Ina Central Hospital, Nagano, Japan}
-\affil[d]{Graduate School of Medicine, Tokyo University, Tokyo, Japan}
-\affil[e]{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan}
+% \author[a]{%
+%   Hiroki Kato\thanks{Corresponding author. Present Address: Hitotsubashi Institute for Advanced Study, Hitotsubashi University, 2-1 Naka, Kunitachi, Tokyo 186-8601, Japan. E-mail address: \href{mailto:hkato.econ@r.hit-u.ac.jp}{\nolinkurl{hkato.econ@r.hit-u.ac.jp}}}
+% }
+% \author[b]{%
+%   Fumio Ohtake\thanks{E-mail address: \href{mailto:ohtake@cider.osaka-u.ac.jp}{\nolinkurl{ohtake@cider.osaka-u.ac.jp}}}
+% }
+% \author[c]{%
+%   Saiko Kurosawa\thanks{E-mail address: \href{mailto:skurosaw@inahp.jp}{\nolinkurl{skurosaw@inahp.jp}}}
+% }
+% \author[d]{%
+%   Kazuhiro Yoshiuchi\thanks{E-mail address: \href{mailto:kyoshiuc-tky@umin.ac.jp}{\nolinkurl{kyoshiuc-tky@umin.ac.jp}}}
+% }
+% \author[e]{%
+%   Takahiro Fukuda\thanks{E-mail address: \href{mailto:tafukuda@ncc.go.jp}{\nolinkurl{tafukuda@ncc.go.jp}}}
+% }
+% \affil[a]{Graduate School of Economics, Osaka University, Osaka, Japan}
+% \affil[b]{Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan}
+% \affil[c]{Department of Oncology, Ina Central Hospital, Nagano, Japan}
+% \affil[d]{Graduate School of Medicine, Tokyo University, Tokyo, Japan}
+% \affil[e]{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan}
+\author{}
 \date{}
 
 \makeatletter
@@ -104,23 +108,25 @@ Field Experiment  Using Text Messages to Prevent Free-riding in the Japan Marrow
 \makeatother
 
 \begin{document}
+%TC:ignore
 \begin{spacing}{1}
   \maketitle
     \clearpage
   \begin{abstract}
-  Approximately half of the patients registered with the Japan Marrow Donor Program (JMDP) receive allogeneic hematopoietic stem cell transplantation from JMDP donors. This is because much of transplant coordination is interrupted before the confirmatory typing stage owing to  donor-related reasons. A field experiment was conducted in collaboration with JMDP to  verify the effects of providing information to increase the probability of donors reaching confirmatory typing (donor availability from whom physicians can choose the optimal one for transplantation). We found that providing  information about the low number of compatible donors per patient increased the probability of donors reaching confirmatory typing by 14\%. Specifically, this information increased the probability of young male donors, who have better transplant outcomes, reaching the confirmatory typing by 28\% through increasing their willingness to donate.
-  \vskip\baselineskip
-  \noindent
-  \textit{JEL classification}: D64, D90, H41, I11
+  Approximately half of the patients registered with the Japan Marrow Donor Program (JMDP) receive allogeneic hematopoietic stem cell transplantation from JMDP donors. This is because much of transplant coordination is interrupted before the confirmatory typing stage owing to donor-related reasons. A field experiment was conducted in collaboration with JMDP to verify the effects of providing information to increase the probability of donors reaching confirmatory typing (donor availability from whom physicians can choose the optimal one for transplantation). We found that providing information about the low number of compatible donors per patient increased the probability of donors reaching confirmatory typing by 14\%. Specifically, this information increased the probability of young male donors, who have better transplant outcomes, reaching the confirmatory typing by 28\% through increasing their willingness to donate.
   \vskip\baselineskip
   \noindent
   \textit{Keywords}: field experiment, free-riding, information provision, Japan Marrow Donor Program, present bias, text message
+  \vskip\baselineskip
+  \noindent
+  \textit{JEL classification}: D64, D90, H41, I11
   \end{abstract}
   \end{spacing}
 
 
 
 \clearpage
+%TC:endignore
 \setcounter{footnote}{0}
 \hypertarget{intro}{%
 \section{Introduction}\label{intro }}
@@ -460,6 +466,7 @@ The two intervention messages were as follows.
   \emph{Early coordination message}: Approximately 60\% of patients can receive a transplant through the JMDP. The earlier a donor can be found to donate bone marrow, the higher that percentage can be.
 \end{itemize}
 
+%TC:ignore
 \setcounter{figure}{0}
 \setcounter{table}{0}
 \renewcommand\thefigure{\thesection\arabic{figure}}
@@ -515,14 +522,14 @@ Num.Obs. & \num{6142} & \num{6142}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. This table shows the estimation results of linear probability models. The robust standard errors are in parentheses. The unit of coefficient is a percentage point. We used those who responded to the HLA match letter with a positive intention to donate. We controlled for treatment dummies, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. This table shows the estimation results of linear probability models. The robust standard errors are in parentheses. The unit of coefficient is a percentage point. In the second column, the outcome is a dummy that takes the value of one if coordination was interrupted before CT because of patient-side reasons.  We used those who responded to the HLA match letter with a positive intention to donate. We controlled for treatment dummies, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:stock-logit}Logit Model of Reply and Intention}
+\caption{\label{tab:stock-logit}Logit Model of CT and Intention}
 \centering
 \fontsize{9}{11}\selectfont
 \begin{threeparttable}
@@ -715,6 +722,7 @@ Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250}
 \end{table}
 
 \clearpage
+%TC:endignore
 
 \bibliography{biblio.bib}
 
