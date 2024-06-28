@@ -1,6 +1,7 @@
 library(here)
 library(R6)
 library(kableExtra)
+library(lubridate)
 source(here("R/misc.r"))
 
 Schedule <- R6::R6Class("Schedule",
