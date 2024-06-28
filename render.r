@@ -45,7 +45,7 @@ render_with_inference_opt(
   fe = TRUE,
   cluster = TRUE,
   se_type = "stata",
-  output = "JMDP RCT - Main Document (Robust).pdf"
+  output = "JMDP RCT - Main Document (cluster se).pdf"
 )
 
 # Online Supplementary Material
