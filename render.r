@@ -56,3 +56,12 @@ render_with_inference_opt(
   se_type = "stata",
   output = "JMDP RCT - Online Supplementary Material.pdf"
 )
+
+# Online Supplementary Material (Robust analysis with cluster)
+render_with_inference_opt(
+  here("JMDP RCT - Online Supplementary Material.rmd"),
+  fe = TRUE,
+  cluster = TRUE,
+  se_type = "stata",
+  output = "JMDP RCT - Online Supplementary Material (cluster se).pdf"
+)
