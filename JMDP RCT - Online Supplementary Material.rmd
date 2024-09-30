@@ -288,6 +288,58 @@ test_subset$fit %>%
   )
 ```
 
+```{r set-reply-class, include=FALSE}
+id_reply <- which(names(endpoint) %in% c("reply", "positive"))
+rct_clone <- rct$clone()
+logit_reply <- rct_clone$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  logit(id_reply, sample_drop = FALSE)$
+  fit_all()
+
+lm_reply <- rct_clone$
+  add_covariate(c("Squared age" = "I(age^2)"))$
+  lm(id_reply, sample_drop = FALSE)
+```
+
+```{r reply-lm}
+lm_reply$
+  fit_all(scale = 100)$
+  kable(
+    title = "Linear Probability Model of Response",
+    notes = "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
+    hold = TRUE
+  )
+```
+
+```{r reply-logit}
+logit_reply$
+  kable(
+    title = "Logit Model of Response",
+    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
+    hold = TRUE
+  )
+```
+
+```{r reply-reg-subset}
+lm_reply$
+  fit_sub(age_cut = 30, scale = 100)$
+  kable(
+    title = "Heterogeneous Effects of Message on Response (Age cutoff: 30)",
+    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
+    hold = TRUE
+  )
+```
+
+```{r reply-reg-subset-2}
+lm_reply$
+  fit_sub(age_cut = 40, scale = 100)$
+  kable(
+    title = "Heterogeneous Effects of Message on Response (Age cutoff: 40)",
+    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
+    hold = TRUE
+  )
+```
+
 ```{r set-flow-class, include=FALSE}
 flow <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
