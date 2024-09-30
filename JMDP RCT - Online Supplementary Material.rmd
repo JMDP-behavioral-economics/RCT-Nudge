@@ -37,7 +37,6 @@ knitr::opts_chunk$set(
 ```{r option, include = FALSE}
 options(
   knitr.table.format = "latex",
-  knitr.kable.NA = "",
   kableExtra.auto_format = FALSE
 )
 ```
@@ -57,7 +56,12 @@ library(here)
 source(here("R/R6_RawData.r"))
 source(here("R/R6_Schedule.r"))
 
-data_root <- "E:/JMDPフィールド実験"
+options(
+  knitr.kable.NA = "",
+  modelsummary_stars_note = FALSE
+)
+
+data_root <- "D:/JMDPフィールド実験"
 ```
 
 ```{r assignment}
@@ -148,40 +152,139 @@ est_mods %>%
   )
 ```
 
-```{r set-logit-class, include=FALSE}
-id <- which(names(endpoint) %in% c("reply", "positive", "test"))
+```{r set-test-reg-class, include=FALSE}
+id <- which(names(endpoint) %in% c("test"))
 rct_clone <- rct$clone()
-logit_stock <- rct_clone$
+logit_test <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   logit(id, sample_drop = FALSE)$
   fit_all()
-```
 
-```{r stock-logit}
-logit_stock$
-  kable(
-    title = "Logit Model of CT and Intention",
-    notes = paste(
-      "We show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    fmt = 2,
-    hold = TRUE
-  )
-```
-
-```{r set-lm-class, include=FALSE}
-stock <- rct_clone$
+lm_test <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   lm(id, sample_drop = FALSE)
 ```
 
-```{r stock-reg-subset-2}
-stock$
+```{r test-reg}
+lm_tab <- lm_test$
+  fit_all(scale = 100)$
+  get_est()$fit %>%
+  modelsummary(
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    fmt = 2,
+    output = "data.frame"
+  )
+
+logit_tab <- logit_test$get_est()$fit %>%
+  modelsummary(
+    estimate = "{or}{stars}",
+    statistic = "[{lower.or}, {upper.or}]",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
+    fmt = 2,
+    output = "data.frame"
+  )
+
+add_tab <- tribble(
+  ~term, ~"(1).x", ~"(2).x", ~"(1).y", ~"(2).y",
+  "Covariates", "", "X", "", "X"
+)
+
+tab <- lm_tab %>%
+  full_join(logit_tab, by = c("part", "term", "statistic")) %>%
+  mutate(statistic = factor(
+    statistic,
+    levels = c("estimate", "std.error", "[{lower.or}, {upper.or}]")
+  )) %>%
+  arrange(part, term, statistic)
+
+tab2 <- bind_rows(
+  subset(tab, part == "estimates"),
+  add_tab,
+  subset(tab, part == "gof")
+)
+
+tab2 %>%
+  mutate(term = if_else(statistic %in% c("std.error", "[{lower.or}, {upper.or}]"), NA, term)) %>%
+  select(-part, -statistic) %>%
+  knitr::kable(
+    caption = "Linear Probability and Logit Model of CT",
+    col.names = c("", paste0("(", 1:4, ")")),
+    align = "lcccc",
+    booktabs = TRUE,
+    linesep = ""
+  ) %>%
+  kable_styling(font_size = 9, latex_options = "HOLD_position") %>%
+  add_header_above(c(" ", "Linear Probability Model" = 2, "Logit Model" = 2)) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2:5, width = "2cm") %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = paste(
+      "\\\\emph{Note}:",
+      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Column (1) and (2) shows estimation results of linear probability model. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Column (3) and (4) shows estimation results of logit model. In these columns, we show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+    ),
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+```{r test-reg-subset-2}
+test_subset <- lm_test$
   fit_sub(age_cut = 40, scale = 100)$
-  kable(
-    title = "Subsample Analysis for Primary Outcomes (Age cutoff: 40)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of the treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
-    hold = TRUE
+  get_est() %>%
+  arrange(male, desc(young))
+
+add_tab <- data.frame(
+  rbind(
+    c("Control average", str_remove(test_subset$avg, "Ctrl Avg = ")),
+    c("Covariates", rep("X", 4))
+  )
+)
+
+attr(add_tab, "position") <- 7:8
+
+test_subset$fit %>%
+  modelsummary(
+    title = "Heterogeneous Effects of Message on CT (Age cutoff: 40)",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = add_tab,
+    align = "lcccc",
+    fmt = 2
+  ) %>%
+  kable_styling(font_size = 9, latex_options = "HOLD_position") %>%
+  add_header_above(
+    c("Age:", "$< 40$", "$40 \\\\le$", "$< 40$", "$40 \\\\le$"),
+    escape = FALSE
+  ) %>%
+  add_header_above(c("Gender:", "Female" = 2, "Male" = 2)) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2:5, width = "2cm") %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = paste(
+      "\\\\emph{Note}:",
+      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+    ),
+    threeparttable = TRUE,
+    escape = FALSE
   )
 ```
 

@@ -80,7 +80,7 @@ Lm <- R6::R6Class("Lm",
             data,
             ~ with(
               subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.2f", mean(value * scale))
+              sprintf("Ctrl Avg = %1.2f", mean(value))
             )
           )
         )
@@ -174,7 +174,7 @@ LmCluster <- R6::R6Class("LmCluster",
             data,
             ~ with(
               subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.2f", mean(value * 100))
+              sprintf("Ctrl Avg = %1.2f", mean(value))
             )
           )
         )

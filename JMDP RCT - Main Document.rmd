@@ -13,11 +13,11 @@ abstract: |
   \noindent
   \textit{JEL classification}: D64, D90, H41, I11
 bibliography: biblio.bib
-biblio-style: chicago
+biblio-style: agsm
 output:
   bookdown::pdf_document2:
     latex_engine: pdflatex
-    template: template/my-template-ajhe.tex
+    template: template/my-template.tex
     keep_tex: true
     toc: false
     number_sections: true
@@ -246,34 +246,26 @@ To further understand the message effect on showing up for CT, we estimated the 
 
 [^coding]: We coded the outcome variables of non-responders as zero and included them in the analysis sample.
 
-```{r setup-stock-analysis, include=FALSE}
-id <- which(names(endpoint) %in% c("reply", "positive", "test"))
+```{r setup-test-analysis, include=FALSE}
+id <- which(names(endpoint) %in% c("test"))
 rct_clone <- rct$clone()
-stock <- rct_clone$
+test <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   lm(id, sample_drop = FALSE)
 
-full_stock <- stock$fit_all(scale = 100)
-subset_stock <- stock$fit_sub(age_cut = 30, scale = 100)
+full_test <- test$fit_all(scale = 100)
+subset_test <- test$fit_sub(age_cut = 30, scale = 100)
 ```
 
-```{r stock-diff-mean, fig.height=10, fig.cap = "Sample Averages of Response, Positive Intention, and CT by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
-full_stock$
+```{r test-diff-mean, fig.height=10, fig.cap = "Sample Averages of CT by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
+full_test$
   plot(
-    p_text_margin = 3,
+    p_text_margin = 2,
+    add_segment_margin = 5,
     p_text_size = 7,
     avg_text_size = 7,
-    base_size = 25
-  )
-```
-
-```{r stock-reg}
-full_stock$
-  kable(
-    title = "Linear Probability Model of CT and Intention",
-    notes = paste(
-      "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    )
+    base_size = 25,
+    ylim = c(0, 50)
   )
 ```
 
@@ -283,11 +275,49 @@ Although statistical significance is at the 10% level, experimental arm B, which
 
 These results suggest that the probability message prevents donor dropout. In the control arm, the attrition rate between responses with positive intentions and the CT is approximately 60% ($=1 - 22.2/54.9$). In contrast, the attrition rate for experimental arms B and D is approximately 56% ($=1 - 25.4/57.2$ for experimental arm B). Thus, the probability message, which is included in experimental arms B and D, increases donors reaching the CT stage because these messages help maintain donors' intentions to donate rather than increasing the number of donors willing to donate.
 
-```{r stock-reg-subset}
-subset_stock$
-  kable(
-    title = "Subsample Analysis for Primary Outcomes (Age cutoff: 30)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+```{r test-reg-subset}
+est <- subset_test$get_est() %>%
+  arrange(male, desc(young))
+
+add_tab <- data.frame(
+  rbind(
+    c("Control average", str_remove(est$avg, "Ctrl Avg = ")),
+    c("Covariates", rep("X", 4))
+  )
+)
+
+attr(add_tab, "position") <- 7:8
+
+est$fit %>%
+  modelsummary(
+    title = "Heterogeneous Effects of Message on CT (Age cutoff: 30)",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    add_rows = add_tab,
+    align = "lcccc",
+    fmt = 2
+  ) %>%
+  kable_styling(font_size = 9) %>%
+  add_header_above(
+    c("Age:", "$< 30$", "$30 \\\\le$", "$< 30$", "$30 \\\\le$"),
+    escape = FALSE
+  ) %>%
+  add_header_above(c("Gender:", "Female" = 2, "Male" = 2)) %>%
+  column_spec(1, width = "3cm") %>%
+  column_spec(2:5, width = "2cm") %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = paste(
+      "\\\\emph{Note}:",
+      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
+    ),
+    threeparttable = TRUE,
+    escape = FALSE
   )
 ```
 

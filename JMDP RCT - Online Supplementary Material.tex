@@ -134,7 +134,6 @@ Response speed (day) & \num{-2.43}*** & \num{0.45}***\\
 \midrule
 Num.Obs. & \num{6142} & \num{6142}\\
 \bottomrule
-\multicolumn{3}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \begin{tablenotes}
 \item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. This table shows the estimation results of linear probability models. The robust standard errors are in parentheses. The unit of coefficient is a percentage point. We used those who responded to the HLA match letter with a positive intention to donate. We controlled for treatment dummies, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
@@ -144,95 +143,86 @@ Num.Obs. & \num{6142} & \num{6142}\\
 
 \begin{table}[H]
 
-\caption{\label{tab:stock-logit}Logit Model of CT and Intention}
+\caption{\label{tab:test-reg}Linear Probability and Logit Model of CT}
 \centering
 \fontsize{9}{11}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Response} & \multicolumn{2}{c}{Positive intention} & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Linear Probability Model} & \multicolumn{2}{c}{Logit Model} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+ & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & \num{1.13} & \num{1.17} & \num{1.10} & \num{1.10} & \num{1.19} & \num{1.19}\\
- & {}[\num{0.96}, \num{1.33}] & {}[\num{0.99}, \num{1.39}] & {}[\num{0.99}, \num{1.22}] & {}[\num{0.98}, \num{1.23}] & {}[\num{1.05}, \num{1.34}] & {}[\num{1.05}, \num{1.36}]\\
-Treatment C & \num{0.96} & \num{1.04} & \num{0.98} & \num{0.99} & \num{1.07} & \num{1.07}\\
- & {}[\num{0.82}, \num{1.13}] & {}[\num{0.88}, \num{1.24}] & {}[\num{0.88}, \num{1.10}] & {}[\num{0.88}, \num{1.11}] & {}[\num{0.94}, \num{1.22}] & {}[\num{0.93}, \num{1.23}]\\
-Treatment D & \num{1.08} & \num{1.08} & \num{1.02} & \num{1.03} & \num{1.14} & \num{1.16}\\
- & {}[\num{0.91}, \num{1.27}] & {}[\num{0.91}, \num{1.28}] & {}[\num{0.92}, \num{1.14}] & {}[\num{0.92}, \num{1.15}] & {}[\num{1.01}, \num{1.30}] & {}[\num{1.02}, \num{1.33}]\\
-\midrule
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644} & \num{-6083.783} & \num{-5942.333}\\
+Treatment B & 3.10*** & 3.06*** & 1.19*** & 1.19***\\
+ & (1.14) & (1.16) &  & \\
+ &  &  & {}[1.05, 1.34] & {}[1.05, 1.36]\\
+Treatment C & 1.19 & 1.11 & 1.07 & 1.07\\
+ & (1.16) & (1.20) &  & \\
+ &  &  & {}[0.94, 1.22] & {}[0.93, 1.23]\\
+Treatment D & 2.39** & 2.63** & 1.14** & 1.16**\\
+ & (1.17) & (1.19) &  & \\
+ &  &  & {}[1.01, 1.30] & {}[1.02, 1.33]\\
+Covariates &  & X &  & X\\
+Log.Lik. &  &  & -6083.783 & -5942.333\\
+Num.Obs. & 11049 & 11049 & 11049 & 11049\\
 \bottomrule
-\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. We show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Column (1) and (2) shows estimation results of linear probability model. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Column (3) and (4) shows estimation results of logit model. In these columns, we show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:stock-reg-subset-2}Subsample Analysis for Primary Outcomes (Age cutoff: 40)}
+\caption{\label{tab:test-reg-subset-2}Heterogeneous Effects of Message on CT (Age cutoff: 40)}
 \centering
-\begin{threeparttable}
 \fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lccc}
+\begin{threeparttable}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}}
 \toprule
- & Response & Positive intention & CT\\
+\multicolumn{1}{c}{Gender:} & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} \\
+\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{Age:} & \multicolumn{1}{c}{$< 40$} & \multicolumn{1}{c}{$40 \le$} & \multicolumn{1}{c}{$< 40$} & \multicolumn{1}{c}{$40 \le$} \\
+\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
 \midrule
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
-\hspace{1em}Treatment B & -0.95 (1.95) & -2.58 (3.11) & 2.21 (2.51)\\
-\hspace{1em}Treatment C & 0.17 (1.95) & -2.65 (3.21) & 2.30 (2.57)\\
-\hspace{1em}Treatment D & -2.54 (1.98) & -3.29 (3.15) & 5.73** (2.60)\\
-\hspace{1em}Control average & 90.45 & 53.05 & 19.72\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Older females (N = 1882)}}\\
-\hspace{1em}Treatment B & 0.56 (1.59) & 2.42 (3.22) & 2.54 (2.62)\\
-\hspace{1em}Treatment C & 0.07 (1.73) & 2.16 (3.50) & -0.08 (2.79)\\
-\hspace{1em}Treatment D & 0.76 (1.49) & 1.72 (3.27) & 4.08 (2.71)\\
-\hspace{1em}Control average & 93.94 & 60.39 & 19.05\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Young males (N = 3445)}}\\
-\hspace{1em}Treatment B & 3.34* (1.96) & 5.37** (2.49) & 4.05* (2.18)\\
-\hspace{1em}Treatment C & -0.07 (2.05) & -0.63 (2.53) & 0.73 (2.17)\\
-\hspace{1em}Treatment D & 3.11 (2.05) & 0.85 (2.56) & -0.70 (2.18)\\
-\hspace{1em}Control average & 79.76 & 46.02 & 24.70\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Older males (N = 3454)}}\\
-\hspace{1em}Treatment B & 3.08** (1.41) & 3.01 (2.35) & 2.45 (2.09)\\
-\hspace{1em}Treatment C & 2.07 (1.56) & 1.42 (2.53) & 1.11 (2.23)\\
-\hspace{1em}Treatment D & 1.24 (1.48) & 3.21 (2.42) & 2.87 (2.17)\\
-\hspace{1em}Control average & 89.64 & 60.83 & 23.33\\
+Treatment B & \num{2.21} & \num{2.54} & \num{4.05}* & \num{2.45}\\
+ & (\num{2.51}) & (\num{2.62}) & (\num{2.18}) & (\num{2.09})\\
+Treatment C & \num{2.30} & \num{-0.08} & \num{0.73} & \num{1.11}\\
+ & (\num{2.57}) & (\num{2.79}) & (\num{2.17}) & (\num{2.23})\\
+Treatment D & \num{5.73}** & \num{4.08} & \num{-0.70} & \num{2.87}\\
+ & (\num{2.60}) & (\num{2.71}) & (\num{2.18}) & (\num{2.17})\\
+\midrule
+Control average & 19.72 & 19.05 & 24.70 & 23.33\\
+Covariates & X & X & X & X\\
+Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of the treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Treatments}\label{fig:cumulative-response-rate}
+\includegraphics{JMDPRC~4/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Treatments}\label{fig:cumulative-response-rate}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/flow-1} \caption{Effect on Response Speed. \newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of treatment effect is a percentage point. Additionally, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
+\includegraphics{JMDPRC~4/figure-latex/flow-1} \caption{Effect on Response Speed. \newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of treatment effect is a percentage point. Additionally, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/cumulative-response-rate-subset-1} \caption{Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).}\label{fig:cumulative-response-rate-subset}
+\includegraphics{JMDPRC~4/figure-latex/cumulative-response-rate-subset-1} \caption{Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).}\label{fig:cumulative-response-rate-subset}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/old-male-flow-1} \caption{Effect on Response Speed of Older Males.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used males older than 30 for the analysis sample. Furthermore,  we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
+\includegraphics{JMDPRC~4/figure-latex/old-male-flow-1} \caption{Effect on Response Speed of Older Males.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used males older than 30 for the analysis sample. Furthermore,  we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/old-female-flow-1} \caption{Effect on Response Speed of Older Females.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used females over 30 for the analysis sample. Moreover, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
+\includegraphics{JMDPRC~4/figure-latex/old-female-flow-1} \caption{Effect on Response Speed of Older Females.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used females over 30 for the analysis sample. Moreover, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
 \end{figure}
 
 \begin{table}[H]
@@ -258,7 +248,6 @@ Control average & 6.19 & 6.19 & 5.44 & 5.44 & 4.50 & 4.50\\
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
-\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \begin{tablenotes}
 \item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
@@ -289,7 +278,6 @@ Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250} & \num{-2045.363} & \num{-2001.995}\\
 \bottomrule
-\multicolumn{7}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
 \end{tabular}
 \begin{tablenotes}
 \item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. We show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
@@ -338,6 +326,10 @@ Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\clearpage
+
+\bibliography{biblio.bib}
 
 
 
