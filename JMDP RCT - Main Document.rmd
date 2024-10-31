@@ -117,7 +117,7 @@ data_root <- "D:/JMDPフィールド実験"
 
 ## Background: Coordination Process of JMDP {#background}
 
-To provide a better understanding of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the HLA match letter.[^SNS] The matched donor completes a questionnaire and responds to the letter, indicating their willingness to donate; this initiates the coordination process.
+To provide a better understanding of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the HLA match letter.[^SNS] \revise{JMDP recommends in the letter that the matched donor responds within seven days.} The matched donor completes a questionnaire and responds to the letter, indicating their willingness to donate; this initiates the coordination process.
 
 [^SNS]: Simultaneously, the JMDP office sends a social networking message to the matched donors, informing them that JMDP has sent the HLA match letter.
 
@@ -131,11 +131,13 @@ The patient's physicians can select the most appropriate donor for transplantati
 
 Our experiment intervened in the content of the HLA match letter. Appendix \@ref(message) shows the contents of the standard letter and intervention messages. The letter recommends that the donor respond to the letter within seven days. JMDP also encloses a handbook that describes the coordination process outlined in the previous subsection, as well as the medical questionnaire and donor consent form.
 
-We added two messages (a probability message and an early coordination message) to the letter to facilitate coordination.[^pressure] The probability message emphasized the low number of matched donors per registered patient. If there are other potential donors with the same HLA type in the pool, one's donation can be substituted for that of another compatible donor. In addition, multiple donors (up to ten) can be simultaneously coordinated with a single patient. Thus, transplantation through JMDP is a public good and faces a free-ride problem [@Bergstrom2009]. As predicted by the volunteer dilemma, the more common the HLA type, the more reluctant the donor is to donate.[^prediction] Additionally, @Kurosawa2022 interviewed previously matched donors and found that those with low donation intentions felt that they were "one of several donors," implying that the fact that their donation could be substituted by others discouraged them from donating. Because the  probability message emphasizes few possible substitutes, this message is expected to discourage free-riding and increase their willingness to donate.[^rarelity]
+We added two messages (a probability message and an early coordination message) to the letter to facilitate coordination.[^pressure] The probability message emphasized the low number of matched donors per registered patient. If there are other potential donors with the same HLA type in the pool, one's donation can be substituted for that of another compatible donor. In addition, multiple donors (up to ten) can be simultaneously coordinated with a single patient. Thus, transplantation through JMDP is a public good and faces a free-ride problem [@Bergstrom2009]. \revise{According to the volunteer dilemma, we can predict that the more common the HLA type, the more reluctant the donor will be to donate.}[^prediction] [^belief] Additionally, @Kurosawa2022 interviewed previously matched donors and found that those with low donation intentions felt that they were "one of several donors," implying that the fact that their donation could be substituted by others discouraged them from donating. Because the  probability message emphasizes few possible substitutes, this message is expected to discourage free-riding and increase their willingness to donate.[^rarelity]
 
 [^pressure]: In designing our intervention messages, we were careful to avoid placing undue psychological pressure on potential donors. Specifically, first, we avoided using language that sounds like an appeal. Second, we only used information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual manner. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics of Osaka University and the JMDP.
 
-[^prediction]: In the volunteer dilemma, public goods are produced by the cooperative behavior of only one person. The theory of the volunteer dilemma predicts that the probability of cooperative behavior by even one person decreases with group size. This hypothesis has been confirmed by laboratory experiments [@Diekmann1985; @Diekmann1986; @Franzen1999; @Davis2017].
+[^prediction]: In the volunteer dilemma, public goods are produced by the cooperative behavior of only one person. The theory of the volunteer dilemma predicts that the probability of cooperative behavior decreases with group size. This hypothesis has been confirmed by laboratory experiments [@Diekmann1985; @Diekmann1986; @Goeree2017].
+
+[^belief]: \revise{More specifically, donors do not know their HLA type and make decisions based on how many people have the same HLA type.}
 
 [^rarelity]: Alternatively, the probability message makes the rarity of the opportunity to donate more salient, which may change donors' behavior.
 
@@ -233,18 +235,32 @@ Because the assignment of experimental arms should be independent of the potenti
 \end{equation}
 
 \noindent
-where $X_i$ was a vector of individual characteristics, including age. We added month and week dummy variables $\lambda_m$ and $\theta_w$ to control for common shocks in a given period. The parameters of interest were $(\beta_1, \beta_2, \beta_3)$. When fixed effects are added, there appears to be no cause for the generation of correlations within the clusters (experimental weeks) of unobservable elements $u_{imw}$. Thus, we used robust standard errors for statistical inference.[^LZ]
+where $X_i$ was a vector of individual characteristics, including age. We added month and week dummy variables \revise{(the number of a week within each month)} $\lambda_m$ and $\theta_w$ to control for common shocks in a given period. The parameters of interest were $(\beta_1, \beta_2, \beta_3)$. When fixed effects are added, there appears to be no cause for the generation of correlations within the clusters (experimental weeks) of unobservable elements $u_{imw}$. Thus, we used robust standard errors for statistical inference.[^LZ]
 
 [^LZ]: We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.
 
 # Experimental Results {#result}
-## Effects on CT and Intention {#main}
+## Effects on CT {#main}
 
-In this subsection, we estimated the message effects on the probability that a matched donor reaches CT. This effect is critical  because physicians select the optimal donor for transplantation to the patient from matched donors who have completed the CT. We used a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control arm, only $22.25$% of matched donors underwent CT.
+```{r reason-stop, include=FALSE}
+mean_test <- subset(rct$data, treat == "A") %>%
+  with(prop.table(table(test)) * 100)
 
-To further understand the message effect on showing up for CT, we estimated the message effect on the donor's response behavior using two secondary outcome variables. The first was a dummy variable that takes the value of one if a donor responded to the HLA match letter, regardless of their intention. The second was a dummy variable that takes the value of one if a matched donor responded to the letter and indicated a willingness to donate.[^coding] In the control arm, the response rate was $87.69$% and the rate of responding with positive intentions was $54.91$%. Thus, $62.63$% ($=54.91/87.69$) of respondents had the intention to donate. Note that $40.52$% ($=22.25/54.91$) of respondents with a positive intention reached the CT stage.
+mean_positive <- subset(rct$data, treat == "A") %>%
+  with(prop.table(table(positive)) * 100)
 
-[^coding]: We coded the outcome variables of non-responders as zero and included them in the analysis sample.
+positive_clasify <- rct$data %>%
+  filter(treat == "A" & positive == 1) %>%
+  with(prop.table(table(test, exg_stop_test, useNA = "always")) * 100)
+
+reason_clasify <- rct$data %>%
+  filter(positive == 1 & test == 0 & treat == "A") %>%
+  with(prop.table(table(exg_stop_test, useNA = "always")) * 100)
+```
+
+In this subsection, we estimated the message effects on the probability that a matched donor reaches CT. This effect is critical because physicians select the optimal donor for transplantation to the patient from matched donors who have completed the CT. We used a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control arm, only `r sprintf("$%1.2f$%%", mean_test["1"])` of matched donors underwent CT.
+
+CTへの到達確率が低い理由は二つあると考えられる。第一に、コントロール群の`r sprintf("$%1.2f$%%", mean_positive["1"])`しか提供する意向を示していないことである。第二に、提供意向を示した人の`r sprintf("$%1.2f$%%", positive_clasify["1", "0"])`しかCTに到達していないことである。CTへ至らなかった理由の大多数はドナー側の理由である（`r sprintf("$%1.2f$%%", reason_clasify["0"])`）。我々のデータはドナー側の詳細な理由を検証できない。しかしながら、@Hirakawa2018 によれば、ドナー側の理由の上位3つは健康上の理由・都合がつかない・家族の同意なしである。我々の介入メッセージは提供意向の向上と返信からCT間の脱落の防止を通じて、CTへの到達確率を高めると期待される。
 
 ```{r setup-test-analysis, include=FALSE}
 id <- which(names(endpoint) %in% c("test"))
@@ -257,7 +273,7 @@ full_test <- test$fit_all(scale = 100)
 subset_test <- test$fit_sub(age_cut = 30, scale = 100)
 ```
 
-```{r test-diff-mean, fig.height=10, fig.cap = "Sample Averages of CT by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
+```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
 full_test$
   plot(
     p_text_margin = 2,
@@ -269,11 +285,36 @@ full_test$
   )
 ```
 
-We show sample averages of each outcome by experimental arms in Figure \@ref(fig:stock-diff-mean). For clarity, the outcomes are arranged from left to right in the order of the coordination process. Figure \@ref(fig:stock-diff-mean) shows that experimental arms B and D, which include the probability message, increased the probability of reaching the CT by $3.1$ and $2.4$ percentage points, respectively, which is statistically significant. We show the estimation results of the linear probability model in Table \@ref(tab:stock-reg). This suggests that the effects of experimental arms B and D remain robust when controlling for covariates. Moreover, logistic regressions show that 95% confidence intervals for odds ratios do not include 1 and reject the null hypothesis that no message effects exist (see Table A3 in the Online Supplementary Material A).
+We show sample proporting of reaching the CT by experimental arms in Figure \@ref(fig:test-diff-mean). This figure shows that experimental arms B and D, which include the probability message, increased the probability of reaching the CT by $3.1$ and $2.4$ percentage points, respectively, which is statistically significant. We estimated the linear probability model and found that the effects of experimental arms B and D remain robust when controlling for covariates. Moreover, logistic regressions show that 95% confidence intervals for odds ratios do not include 1 and reject the null hypothesis that no message effects exist (see Table A3 in the Online Supplementary Material A).
 
-Although statistical significance is at the 10% level, experimental arm B, which includes the probability message, may have increased rates of response with positive intentions by $2.3$ percentage points, suggesting that the probability message may enhance donor willingness. When controlling for covariates, although statistical significance is at the 10% level, experimental arm B may have also increased response rates (see Table \@ref(tab:stock-reg)). However, logistic regressions showed that 95% confidence intervals for odds ratios included 1 and failed to reject the null hypothesis that there was no message effect (see Table A3 in the Online Supplementary Material A). Therefore, we cannot robustly obtain the result that the probability message improves donor intentions.
+<!-- Although statistical significance is at the 10% level, experimental arm B, which includes the probability message, may have increased rates of response with positive intentions by $2.3$ percentage points, suggesting that the probability message may enhance donor willingness. When controlling for covariates, although statistical significance is at the 10% level, experimental arm B may have also increased response rates (see Table \@ref(tab:stock-reg)). However, logistic regressions showed that 95% confidence intervals for odds ratios included 1 and failed to reject the null hypothesis that there was no message effect (see Table A3 in the Online Supplementary Material A). Therefore, we cannot robustly obtain the result that the probability message improves donor intentions. -->
 
-These results suggest that the probability message prevents donor dropout. In the control arm, the attrition rate between responses with positive intentions and the CT is approximately 60% ($=1 - 22.2/54.9$). In contrast, the attrition rate for experimental arms B and D is approximately 56% ($=1 - 25.4/57.2$ for experimental arm B). Thus, the probability message, which is included in experimental arms B and D, increases donors reaching the CT stage because these messages help maintain donors' intentions to donate rather than increasing the number of donors willing to donate.
+<!-- These results suggest that the probability message prevents donor dropout. In the control arm, the attrition rate between responses with positive intentions and the CT is approximately 60% ($=1 - 22.2/54.9$). In contrast, the attrition rate for experimental arms B and D is approximately 56% ($=1 - 25.4/57.2$ for experimental arm B). Thus, the probability message, which is included in experimental arms B and D, increases donors reaching the CT stage because these messages help maintain donors' intentions to donate rather than increasing the number of donors willing to donate. -->
+
+```{r decompose-ct}
+rct$
+  decompose_ct()$
+  estimate(B = 100)$
+  kable(
+    title = "Decomposition of Message Effects on CT"
+  )
+```
+
+これらのメッセージ効果は提供意向の向上と提供からCTまでの脱落の防止によって生じている。
+メッセージ効果のチャンネルを検証するために、CTへの効果を5つに分解した。
+チャンネル(A)と(B)は提供からCTまでの脱落の防止による貢献を示している。
+チャンネル(C)は提供意向の向上による貢献を示している。
+チャンネル(D)と(E)は二つの要因の交互作用による貢献を示している。
+理由に関わらず、実験群BとDにおける脱落防止による効果は2%ポイント程度である。
+介入はドナー側の理由による脱落を防止していることに大きく貢献している。
+これがCTへの効果の大半を占めている。
+二つの実験群の差は提供意向の向上を通じたチャンネルである。
+このチャンネルの影響は実験群(B)の方が実験群(D)よりも強い。
+実際に、実験群(B)は提供の意向を持つ確率を高めている。
+これは統計的に10%水準で有意である。
+対して、実験群(D)は提供の意向を持つ確率を統計的有意に高めていない。
+実験群(B)と(D)は主に提供からCTまでの脱落の防止を通じてCTへの到達可能性を高めている。
+実験群Bは提供意向の向上を通じてCTへの到達可能性を高めているかもしれない。
 
 ```{r test-reg-subset}
 est <- subset_test$get_est() %>%

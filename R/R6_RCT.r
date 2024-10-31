@@ -6,6 +6,7 @@ source(here("R/R6_Lm.r"))
 source(here("R/R6_Logit.r"))
 source(here("R/R6_RCF.r"))
 source(here("R/R6_Flow.r"))
+source(here("R/R6_DecomposeCT.r"))
 
 RCT <- R6Class("RCT",
   public = list(
@@ -114,6 +115,9 @@ RCT <- R6Class("RCT",
 
       if (missing(cluster)) cluster <- private$cluster
       Flow$new(use, private$covariate, se, cluster, private$fe)
+    },
+    decompose_ct = function() {
+      DecomposeCT$new(self$data)
     }
   ),
   private = list(

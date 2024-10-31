@@ -38,3 +38,8 @@ se <- function(x, na.rm = FALSE) {
   if (na.rm) x <- na.omit(x)
   sqrt(var(x) / length(x))
 }
+
+# * Causal effect from tidy
+coef_from_tidy <- function(tib, treat) {
+  subset(tib, str_detect(term, treat))$estimate
+}
