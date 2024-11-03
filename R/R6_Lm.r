@@ -39,7 +39,7 @@ Lm <- R6::R6Class("Lm",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit_all = function(scale = 1) {
+    fit = function(scale = 1) {
       est <- self$data %>%
         mutate(value = value * scale) %>%
         group_by(outcome) %>%
@@ -64,7 +64,7 @@ Lm <- R6::R6Class("Lm",
 
       LmAll$new(est)
     },
-    fit_sub = function(age_cut = 30, scale = 1) {
+    fit_subset_by_gender_age = function(age_cut = 30, scale = 1) {
       est <- self$data %>%
         mutate(value = value * scale) %>%
         mutate(young = if_else(age < age_cut, 1, 0)) %>%
@@ -86,6 +86,62 @@ Lm <- R6::R6Class("Lm",
         )
 
       LmSubset$new(est, age_cut)
+    },
+    fit_interaction_of_gender_age = function(age_cut = 30, scale = 1) {
+      lh_null <- c(
+        "treatB",
+        "treatC",
+        "treatD",
+        "treatB + treatB:groupOlder female",
+        "treatC + treatC:groupOlder female",
+        "treatD + treatD:groupOlder female",
+        "treatB + treatB:groupYoung male",
+        "treatC + treatC:groupYoung male",
+        "treatD + treatD:groupYoung male",
+        "treatB + treatB:groupOlder male",
+        "treatC + treatC:groupOlder male",
+        "treatD + treatD:groupOlder male"
+      )
+
+      est <- self$data %>%
+        mutate(
+          value = value * scale,
+          young = if_else(age < age_cut, 1, 0),
+          group = case_when(
+            male == 0 & young == 1 ~ 1,
+            male == 0 & young == 0 ~ 2,
+            male == 1 & young == 1 ~ 3,
+            male == 1 & young == 0 ~ 4
+          ),
+          group = factor(group, labels = c("Young female", "Older female", "Young male", "Older male"))
+        ) %>%
+        group_by(outcome) %>%
+        nest() %>%
+        mutate(
+          fit1 = private$call_lh(
+            data,
+            update(private$model$unctrl, . ~ . - treat + treat * group),
+            private$se_type,
+            lh_null
+          ),
+          fit2 = private$call_lh(
+            data,
+            update(private$model$ctrl, . ~ . - treat - male - age - I(age^2) + treat * group),
+            private$se_type,
+            lh_null
+          )
+        ) %>%
+        ungroup() %>%
+        pivot_longer(
+          fit1:fit2,
+          names_prefix = "fit",
+          names_to = "model",
+          values_to = "fit"
+        ) %>%
+        rename(covs = model) %>%
+        mutate(covs = if_else(covs == "2", "X", ""))
+
+      LmInteraction$new(est, age_cut)
     }
   ),
   private = list(
@@ -94,6 +150,9 @@ Lm <- R6::R6Class("Lm",
     se_type = "",
     call_lm = function(data, model, se) {
       map(data, ~ lm_robust(model, data = ., se_type = se))
+    },
+    call_lh = function(data, model, se, lh) {
+      map(data, ~ lh_robust(model, data = ., se_type = se, linear_hypothesis = lh))
     }
   )
 )
@@ -132,7 +191,7 @@ LmCluster <- R6::R6Class("LmCluster",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit_all = function(scale = 1) {
+    fit = function(scale = 1) {
       est <- self$data %>%
         mutate(value = value * scale) %>%
         group_by(outcome) %>%
@@ -157,7 +216,7 @@ LmCluster <- R6::R6Class("LmCluster",
 
       LmAll$new(est)
     },
-    fit_sub = function(age_cut = 30, scale = 1) {
+    fit_subset_by_gender_age = function(age_cut = 30, scale = 1) {
       est <- self$data %>%
         mutate(value = value * scale) %>%
         mutate(young = if_else(age < age_cut, 1, 0)) %>%
@@ -651,6 +710,254 @@ LmSubset <- R6::R6Class("LmSubset",
         filter(term != "Num.Obs.")
 
       stack_tab
+    }
+  )
+)
+
+LmInteraction <- R6::R6Class("LmInteraction",
+  public = list(
+    initialize = function(est, age_cut) {
+      private$est <- est
+      private$age_cut <- age_cut
+    },
+    get_est = function() private$est,
+    kable_reg = function( title = "",
+                          notes = "",
+                          font_size = 9,
+                          digit = 2,
+                          hold = FALSE,
+                          ...)
+    {
+      kbl <- private$reg_msummary("kableExtra", digit = digit, title = title, ...)
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- c(" ", as.character(private$est$outcome))
+      label_structure <- rle(label)
+      lab1 <- label_structure$lengths
+      names(lab1) <- label_structure$values
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(lab1)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    },
+    kable_lh = function(outcome,
+                        title = "",
+                        notes = "",
+                        font_size = 9,
+                        digits = 2,
+                        hold = FALSE)
+    {
+      mtab <- private$lh_msummary(outcome, digits)
+
+      mtab_wide1 <- mtab %>%
+        select(subset, treat, statistic, "(1)") %>%
+        pivot_wider(names_from = subset, values_from = "(1)") %>%
+        mutate(model = private$est$covs[1])
+
+      mtab_wide2 <- mtab %>%
+        select(subset, treat, statistic, "(2)") %>%
+        pivot_wider(names_from = subset, values_from = "(2)") %>%
+        mutate(model = private$est$covs[2])
+
+      avg_format <- paste0("%1.", digits, "f")
+
+      dt <- private$est$data[[1]]
+      statistic <- dt %>%
+        filter(treat == levels(dt$treat)[1]) %>%
+        mutate(
+          group = forcats::fct_recode(
+            group,
+            "YoungFemale" = "Young female",
+            "OlderFemale" = "Older female",
+            "YoungMale" = "Young male",
+            "OlderMale" = "Older male"
+          )
+        ) %>%
+        group_by(group) %>%
+        summarize(`Control average` = sprintf(avg_format, mean(value))) %>%
+        pivot_longer(-group, names_to = "statistic") %>%
+        pivot_wider(names_from = group, values_from = value) %>%
+        mutate(treat = statistic, statistic = "gof")
+
+      tbl <- bind_rows(statistic, mtab_wide1, mtab_wide2) %>%
+        mutate(
+          treat = if_else(statistic == "std.error", "", treat),
+          model = case_when(
+            model == "" ~ "Without control variables",
+            model == "X" ~ "With control variables",
+            TRUE ~ NA_character_
+          )
+        ) %>%
+        select(-statistic) %>%
+        select(treat, everything())
+
+      kbl <- tbl %>%
+        select(-model) %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", paste0("(", seq(ncol(tbl) - 2), ")")),
+          align = paste(c("l", rep("c", ncol(tbl) - 2)), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      col_lab <- names(tbl)[-c(1, ncol(tbl))]
+      label1 <- ifelse(
+        str_detect(col_lab, "Young"),
+        paste0("$\\\\text{Age} < ", private$age_cut, "$"),
+        paste0("$", private$age_cut, " \\\\le \\\\text{Age}$")
+      )
+      label1 <- c(" ", label1)
+      label1_structure <- rle(label1)
+      label1_rle <- label1_structure$lengths
+      names(label1_rle) <- label1_structure$values
+
+      kbl <- kbl %>% kableExtra::add_header_above(label1_rle, escape = FALSE)
+
+      label2 <- ifelse(str_detect(col_lab, "Female"), "Females", "Males")
+      label2 <- c(" ", label2)
+      label2_structure <- rle(label2)
+      label2_rle <- label2_structure$lengths
+      names(label2_rle) <- label2_structure$values
+
+      kbl <- kbl %>% kableExtra::add_header_above(label2_rle)
+
+      mod <- unique(tbl$model)
+
+      for (i in mod) {
+        if (is.na(i)) next
+        row_mod <- which(res_wide$model == i)
+        min_row_mod <- min(row_mod)
+        max_row_mod <- max(row_mod)
+
+        kbl <- kbl %>%
+          group_rows(
+            i,
+            start_row = min_row_mod,
+            end_row = max_row_mod
+          )
+      }
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
+  ),
+  private = list(
+    est = NULL,
+    age_cut = NULL,
+    reg_msummary = function(output, digit = 2, ...) {
+      fit <- pull(private$est, fit) %>% map(~ .$lm_robust)
+      coef_map <- c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D",
+        "treatB:groupOlder female" = "Treatment B $\\times$ Older females",
+        "treatC:groupOlder female" = "Treatment C $\\times$ Older females",
+        "treatD:groupOlder female" = "Treatment D $\\times$ Older females",
+        "treatB:groupYoung male" = "Treatment B $\\times$ Young males",
+        "treatC:groupYoung male" = "Treatment C $\\times$ Young males",
+        "treatD:groupYoung male" = "Treatment D $\\times$ Young males",
+        "treatB:groupOlder male" = "Treatment B $\\times$ Older males",
+        "treatC:groupOlder male" = "Treatment C $\\times$ Older males",
+        "treatD:groupOlder male" = "Treatment D $\\times$ Older males"
+      )
+      stars <- c("***" = .01, "**" = .05, "*" = .1)
+      gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
+      align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
+
+      add_tab <- data.frame(
+        rbind(c("Covariates", private$est$covs))
+      )
+      attr(add_tab, "position") <- 25
+
+      args <- list(
+        models = fit,
+        output = output,
+        coef_map = coef_map,
+        stars = stars,
+        gof_omit = gof_omit,
+        align = align,
+        add_rows = add_tab,
+        fmt = digit
+      )
+
+      if (!missing(...)) args <- append(args, list(...))
+      do.call("modelsummary", args)
+    },
+    lh_msummary = function(y, digit = 2) {
+      use_est <- subset(private$est, outcome == y)
+      if (nrow(use_est) == 0) {
+        stop(
+          paste(
+            "Choose an outcome from the set {",
+            paste(unique(as.character(private$est$outcome)), collapse = ", "),
+            "}"
+          )
+        )
+      }
+      fit <- pull(use_est, fit) %>% map(~ .$lh)
+
+      fit %>%
+        modelsummary(
+          coef_map = c(
+            "treatB" = "B_YoungFemale",
+            "treatC" = "C_YoungFemale",
+            "treatD" = "D_YoungFemale",
+            "treatB + treatB:groupOlder female" = "B_OlderFemale",
+            "treatC + treatC:groupOlder female" = "C_OlderFemale",
+            "treatD + treatD:groupOlder female" = "D_OlderFemale",
+            "treatB + treatB:groupYoung male" = "B_YoungMale",
+            "treatC + treatC:groupYoung male" = "C_YoungMale",
+            "treatD + treatD:groupYoung male" = "D_YoungMale",
+            "treatB + treatB:groupOlder male" = "B_OlderMale",
+            "treatC + treatC:groupOlder male" = "C_OlderMale",
+            "treatD + treatD:groupOlder male" = "D_OlderMale"
+          ),
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          output = "data.frame",
+          fmt = digit
+        ) %>%
+        filter(part == "estimates") %>%
+        mutate(
+          treat = str_extract(term, "^[^_]+"),
+          subset = str_extract(term, "(?<=_)[^_]+$")
+        ) %>%
+        select(-term, -part)
     }
   )
 )
