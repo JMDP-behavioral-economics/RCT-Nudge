@@ -179,7 +179,8 @@ shape_rawdt <- rawdt %>%
 shape_schedule_dt <- schedule_dt %>%
   select(
     ymd = 日付,
-    treat = パターン
+    treat = パターン,
+    holiday = 土日祝
   ) %>%
   mutate(
     ymd = ymd(ymd),
@@ -187,6 +188,7 @@ shape_schedule_dt <- schedule_dt %>%
   ) %>%
   group_by(RCTweek, treat) %>%
   summarize(
+    holidays = sum(holiday),
     start_date = min(ymd),
     end_date = max(ymd)
   ) %>%
@@ -206,7 +208,8 @@ shape_schedule_dt <- schedule_dt %>%
     RCTweek,
     start_date,
     end_date,
-    treat
+    treat,
+    holidays
   )
 
 #' //NOTE: 病院施設データの加工
