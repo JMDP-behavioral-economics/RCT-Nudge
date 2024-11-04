@@ -123,3 +123,81 @@ BalanceTest <- R6::R6Class("BalanceTest",
     table = NULL
   )
 )
+
+SmdBalanceTest <- R6::R6Class("SmdBalanceTest",
+  public = list(
+    initialize = function(data, covariate) {
+      statistics <- data %>%
+        select(!!!covariate, treat) %>%
+        pivot_longer(-treat, names_to = "vars") %>%
+        group_by(treat, vars) %>%
+        summarize(
+          mean = mean(value),
+          var = var(value)
+        ) %>%
+        ungroup()
+
+      ctrl_stats <- statistics %>%
+        filter(treat == levels(statistics$treat)[1]) %>%
+        rename(mean_c = mean, var_c = var) %>%
+        select(-treat)
+
+      tbl <- statistics %>%
+        filter(treat != levels(statistics$treat)[1]) %>%
+        left_join(ctrl_stats, by = "vars") %>%
+        mutate(d = (mean - mean_c) / sqrt((var + var_c) / 2)) %>%
+        select(treat, vars, d) %>%
+        pivot_wider(names_from = treat, values_from = d)
+
+      private$stats <- statistics
+      private$tbl <- tbl
+    },
+    get_table = function() private$tbl,
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      digits = 3,
+                      hold = FALSE)
+    {
+      tbl <- private$tbl
+      kbl <- tbl %>%
+        knitr::kable(
+          caption = title,
+          digits = digits,
+          col.names = c("", paste0("(", seq(ncol(tbl) - 1), ")")),
+          align = paste(c("l", rep("c", ncol(tbl) - 1)), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kable_styling(font_size = font_size)
+      }
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(c(" ", names(tbl)[-1]))
+
+      header <- c(1, ncol(tbl) - 1)
+      names(header) <- c(" ", paste(levels(private$stats$treat)[1], "versus"))
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(header)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = notes,
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
+  ),
+  private = list(
+    stats = NULL,
+    tbl = NULL
+  )
+)

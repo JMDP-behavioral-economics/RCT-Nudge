@@ -66,6 +66,12 @@ RCT <- R6Class("RCT",
         cluster
       )
     },
+    smd_balance = function() {
+      SmdBalanceTest$new(
+        self$data,
+        private$covariate
+      )
+    },
     lm = function(outcome_id, sample_drop = TRUE, se, cluster) {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
