@@ -195,6 +195,11 @@ shape_schedule_dt <- schedule_dt %>%
   ungroup() %>%
   arrange(start_date) %>%
   distinct() %>%
+  mutate(
+    lead_holidays = lead(holidays),
+    lead_holidays = if_else(is.na(lead_holidays), 2, lead_holidays),
+    holidays = holidays + lead_holidays
+  ) %>%
   dplyr::filter(start_date != make_date(2021, 12, 27)) %>%
   mutate(
     week = rep(1:4, length.out = n()),
