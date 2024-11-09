@@ -7,6 +7,8 @@
 
 % \setmainfont{Times New Roman}
 % \setmainjfont[BoldFont=IPAexGothic]{IPAexMincho}
+\usepackage{color}
+\newcommand{\revise}[1]{{\color{red}{#1}}}
 
 % ------------------------------ math
 \usepackage{amsmath,amssymb}
@@ -130,7 +132,7 @@ The remainder of this paper is organized as follows. Section \ref{experiment} pr
 \hypertarget{background}{%
 \subsection{Background: Coordination Process of JMDP}\label{background}}
 
-To provide a better understanding of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the HLA match letter.\footnote{Simultaneously, the JMDP office sends a social networking message to the matched donors, informing them that JMDP has sent the HLA match letter.} The matched donor completes a questionnaire and responds to the letter, indicating their willingness to donate; this initiates the coordination process.
+To provide a better understanding of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the HLA match letter.\footnote{Simultaneously, the JMDP office sends a social networking message to the matched donors, informing them that JMDP has sent the HLA match letter.} \revise{JMDP recommends in the letter that the matched donor responds within seven days.} The matched donor completes a questionnaire and responds to the letter, indicating their willingness to donate; this initiates the coordination process.
 
 The matched donor undergoes CT within approximately one month. At this stage, it is confirmed whether the matched donor meets the criteria established by JMDP. The coordinator explains the details of the donation process and asks matched donors and their families about their willingness to donate. Thereafter, the coordinating physician conducts a medical interview and examination as well as blood tests, including those for infectious disease markers. Note that collection methods (bone marrow or peripheral blood stem cell collection) are also determined based on the preferences of the matched donor and the coordinating physician.
 
@@ -143,7 +145,7 @@ The patient's physicians can select the most appropriate donor for transplantati
 
 Our experiment intervened in the content of the HLA match letter. Appendix \ref{message} shows the contents of the standard letter and intervention messages. The letter recommends that the donor respond to the letter within seven days. JMDP also encloses a handbook that describes the coordination process outlined in the previous subsection, as well as the medical questionnaire and donor consent form.
 
-We added two messages (a probability message and an early coordination message) to the letter to facilitate coordination.\footnote{In designing our intervention messages, we were careful to avoid placing undue psychological pressure on potential donors. Specifically, first, we avoided using language that sounds like an appeal. Second, we only used information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual manner. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics of Osaka University and the JMDP.} The probability message emphasized the low number of matched donors per registered patient. If there are other potential donors with the same HLA type in the pool, one's donation can be substituted for that of another compatible donor. In addition, multiple donors (up to ten) can be simultaneously coordinated with a single patient. Thus, transplantation through JMDP is a public good and faces a free-ride problem \citep{Bergstrom2009}. As predicted by the volunteer dilemma, the more common the HLA type, the more reluctant the donor is to donate.\footnote{In the volunteer dilemma, public goods are produced by the cooperative behavior of only one person. The theory of the volunteer dilemma predicts that the probability of cooperative behavior by even one person decreases with group size. This hypothesis has been confirmed by laboratory experiments \citep{Diekmann1985, Diekmann1986, Franzen1999, Davis2017}.} Additionally, \citet{Kurosawa2022} interviewed previously matched donors and found that those with low donation intentions felt that they were ``one of several donors,'' implying that the fact that their donation could be substituted by others discouraged them from donating. Because the probability message emphasizes few possible substitutes, this message is expected to discourage free-riding and increase their willingness to donate.\footnote{Alternatively, the probability message makes the rarity of the opportunity to donate more salient, which may change donors' behavior.}
+We added two messages (a probability message and an early coordination message) to the letter to facilitate coordination.\footnote{In designing our intervention messages, we were careful to avoid placing undue psychological pressure on potential donors. Specifically, first, we avoided using language that sounds like an appeal. Second, we only used information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual manner. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics of Osaka University and the JMDP.} The probability message emphasized the low number of matched donors per registered patient. If there are other potential donors with the same HLA type in the pool, one's donation can be substituted for that of another compatible donor. In addition, multiple donors (up to ten) can be simultaneously coordinated with a single patient. Thus, transplantation through JMDP is a public good and faces a free-ride problem \citep{Bergstrom2009}. \revise{According to the volunteer dilemma, we can predict that the more common the HLA type, the more reluctant the donor will be to donate.}\footnote{In the volunteer dilemma, public goods are produced by the cooperative behavior of only one person. The theory of the volunteer dilemma predicts that the probability of cooperative behavior decreases with group size. This hypothesis has been confirmed by laboratory experiments \citep{Diekmann1985, Diekmann1986, Goeree2017}.} \footnote{\revise{More specifically, donors do not know their HLA type and make decisions based on how many people have the same HLA type.}} Additionally, \citet{Kurosawa2022} interviewed previously matched donors and found that those with low donation intentions felt that they were ``one of several donors,'' implying that the fact that their donation could be substituted by others discouraged them from donating. Because the probability message emphasizes few possible substitutes, this message is expected to discourage free-riding and increase their willingness to donate.\footnote{Alternatively, the probability message makes the rarity of the opportunity to donate more salient, which may change donors' behavior.}
 
 The early coordination message emphasized that early coordination would have increased a patient's transplant rate. This message is expected to work for time-inconsistently matched donors. Time-inconsistent donors may believe that it is optimal to respond immediately in advance but delay their response. This message suggests that the utility of transplantation decays over time, regardless of the individual's time preference. Time-inconsistent donors who read this message may recognize that delaying a response does not increase their net utility and may change their decision to respond immediately. Thus, this message is expected to increase the response rate over a short period. Since early responses lead to the attainment of the CT, this message is expected to increase donors reaching the CT stage.
 
@@ -190,6 +192,7 @@ For additional data, we used a list of medical institutions published on the JMD
 \hspace{1em}Number of listed hospitals & 0.476 & 0.490 & 0.487 & 0.485 & 0.835\\
 \hspace{1em}Number of hospitals listed with PBSC collection & 0.162 & 0.167 & 0.166 & 0.164 & 0.838\\
 \hspace{1em}Number of hospitals listed with BM collection & 0.246 & 0.256 & 0.254 & 0.251 & 0.741\\
+\hspace{1em}Number of holidays in the assigned week & 4.544 & 4.858 & 4.466 & 4.770 & 0.000\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -209,31 +212,117 @@ Because the assignment of experimental arms should be independent of the potenti
 \end{equation}
 
 \noindent
-where \(X_i\) was a vector of individual characteristics, including age. We added month and week dummy variables \(\lambda_m\) and \(\theta_w\) to control for common shocks in a given period. The parameters of interest were \((\beta_1, \beta_2, \beta_3)\). When fixed effects are added, there appears to be no cause for the generation of correlations within the clusters (experimental weeks) of unobservable elements \(u_{imw}\). Thus, we used robust standard errors for statistical inference.\footnote{We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.}
+where \(X_i\) was a vector of individual characteristics, including age. We added month and week dummy variables \revise{(the number of a week within each month)} \(\lambda_m\) and \(\theta_w\) to control for common shocks in a given period. The parameters of interest were \((\beta_1, \beta_2, \beta_3)\). When fixed effects are added, there appears to be no cause for the generation of correlations within the clusters (experimental weeks) of unobservable elements \(u_{imw}\). Thus, we used robust standard errors for statistical inference.\footnote{We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.}
 
 \hypertarget{result}{%
 \section{Experimental Results}\label{result}}
 
 \hypertarget{main}{%
-\subsection{Effects on CT and Intention}\label{main}}
+\subsection{Effects on CT}\label{main}}
 
 In this subsection, we estimated the message effects on the probability that a matched donor reaches CT. This effect is critical because physicians select the optimal donor for transplantation to the patient from matched donors who have completed the CT. We used a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control arm, only \(22.25\)\% of matched donors underwent CT.
 
-To further understand the message effect on showing up for CT, we estimated the message effect on the donor's response behavior using two secondary outcome variables. The first was a dummy variable that takes the value of one if a donor responded to the HLA match letter, regardless of their intention. The second was a dummy variable that takes the value of one if a matched donor responded to the letter and indicated a willingness to donate.\footnote{We coded the outcome variables of non-responders as zero and included them in the analysis sample.} In the control arm, the response rate was \(87.69\)\% and the rate of responding with positive intentions was \(54.91\)\%. Thus, \(62.63\)\% (\(=54.91/87.69\)) of respondents had the intention to donate. Note that \(40.52\)\% (\(=22.25/54.91\)) of respondents with a positive intention reached the CT stage.
-
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/test-diff-mean-1} \caption{Sample Averages of CT by Treatments.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors.}\label{fig:test-diff-mean}
+\includegraphics{JMDPRC~2/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Treatments.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors.}\label{fig:test-diff-mean}
 \end{figure}
 
-We show sample averages of each outcome by experimental arms in Figure \ref{fig:stock-diff-mean}. For clarity, the outcomes are arranged from left to right in the order of the coordination process. Figure \ref{fig:stock-diff-mean} shows that experimental arms B and D, which include the probability message, increased the probability of reaching the CT by \(3.1\) and \(2.4\) percentage points, respectively, which is statistically significant. We show the estimation results of the linear probability model in Table \ref{tab:stock-reg}. This suggests that the effects of experimental arms B and D remain robust when controlling for covariates. Moreover, logistic regressions show that 95\% confidence intervals for odds ratios do not include 1 and reject the null hypothesis that no message effects exist (see Table A3 in the Online Supplementary Material A).
-
-Although statistical significance is at the 10\% level, experimental arm B, which includes the probability message, may have increased rates of response with positive intentions by \(2.3\) percentage points, suggesting that the probability message may enhance donor willingness. When controlling for covariates, although statistical significance is at the 10\% level, experimental arm B may have also increased response rates (see Table \ref{tab:stock-reg}). However, logistic regressions showed that 95\% confidence intervals for odds ratios included 1 and failed to reject the null hypothesis that there was no message effect (see Table A3 in the Online Supplementary Material A). Therefore, we cannot robustly obtain the result that the probability message improves donor intentions.
-
-These results suggest that the probability message prevents donor dropout. In the control arm, the attrition rate between responses with positive intentions and the CT is approximately 60\% (\(=1 - 22.2/54.9\)). In contrast, the attrition rate for experimental arms B and D is approximately 56\% (\(=1 - 25.4/57.2\) for experimental arm B). Thus, the probability message, which is included in experimental arms B and D, increases donors reaching the CT stage because these messages help maintain donors' intentions to donate rather than increasing the number of donors willing to donate.
+We show sample proporting of reaching the CT by experimental arms in Figure \ref{fig:test-diff-mean}. This figure shows that experimental arms B and D, which include the probability message, increased the probability of reaching the CT by \(3.1\) and \(2.4\) percentage points, respectively, which is statistically significant. We estimated the linear probability model and found that the effects of experimental arms B and D remain robust when controlling for covariates. Moreover, logistic regressions show that 95\% confidence intervals for odds ratios do not include 1 and reject the null hypothesis that no message effects exist (see Table A3 in the Online Supplementary Material A).
 
 \begin{table}
 
-\caption{\label{tab:stock-reg-subset}Heterogeneous Effects of Message on CT (Age cutoff: 30)}
+\caption{\label{tab:reg-interaction}Heterogenous Message Effects by Gender and Age}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3}
+  & (1) & (2)\\
+\midrule
+Treatment B & \num{3.87} & \num{2.49}\\
+ & (\num{3.58}) & (\num{3.57})\\
+Treatment C & \num{4.37} & \num{3.24}\\
+ & (\num{3.63}) & (\num{3.59})\\
+Treatment D & \num{5.21} & \num{4.27}\\
+ & (\num{3.62}) & (\num{3.59})\\
+Older female & \num{-1.91} & \num{-4.01}\\
+ & (\num{2.96}) & (\num{2.98})\\
+Young male & \num{2.47} & \num{1.41}\\
+ & (\num{3.40}) & (\num{3.38})\\
+Older male & \num{3.38} & \num{-0.69}\\
+ & (\num{2.85}) & (\num{2.85})\\
+Treatment B $\times$ Older female & \num{-1.57} & \num{-0.88}\\
+ & (\num{4.13}) & (\num{4.10})\\
+Treatment C $\times$ Older female & \num{-3.93} & \num{-2.92}\\
+ & (\num{4.19}) & (\num{4.13})\\
+Treatment D $\times$ Older female & \num{-0.46} & \num{0.41}\\
+ & (\num{4.20}) & (\num{4.17})\\
+Treatment B $\times$ Young male & \num{1.27} & \num{2.65}\\
+ & (\num{4.76}) & (\num{4.71})\\
+Treatment C $\times$ Young male & \num{-6.91} & \num{-5.35}\\
+ & (\num{4.71}) & (\num{4.63})\\
+Treatment D $\times$ Young male & \num{-7.74} & \num{-6.86}\\
+ & (\num{4.74}) & (\num{4.67})\\
+Covariates &  & X\\
+Treatment B $\times$ Older male & \num{-1.15} & \num{0.41}\\
+ & (\num{3.95}) & (\num{3.92})\\
+Treatment C $\times$ Older male & \num{-2.39} & \num{-0.87}\\
+ & (\num{4.02}) & (\num{3.95})\\
+Treatment D $\times$ Older male & \num{-3.33} & \num{-2.04}\\
+ & (\num{4.01}) & (\num{3.97})\\
+\midrule
+Num.Obs. & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. 
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:reg-interaction-lh}Message Effects for Subgroup by Gender and Age}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+ & (1) & (2) & (3) & (4)\\
+\midrule
+Control average & 20.80 & 18.89 & 23.27 & 24.18\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Without control variables}}\\
+\hspace{1em}B & 3.87 & 2.30 & 5.13 & 2.72\\
+\hspace{1em} & (3.58) & (2.05) & (3.13) & (1.68)\\
+\hspace{1em}C & 4.37 & 0.44 & -2.54 & 1.98\\
+\hspace{1em} & (3.63) & (2.09) & (2.99) & (1.73)\\
+\hspace{1em}D & 5.21 & 4.75** & -2.52 & 1.89\\
+\hspace{1em} & (3.62) & (2.12) & (3.05) & (1.73)\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{With control variables}}\\
+\hspace{1em}B & 2.49 & 1.61 & 5.14* & 2.90*\\
+\hspace{1em} & (3.57) & (2.07) & (3.11) & (1.70)\\
+\hspace{1em}C & 3.24 & 0.32 & -2.11 & 2.37\\
+\hspace{1em} & (3.59) & (2.12) & (2.97) & (1.74)\\
+\hspace{1em}D & 4.27 & 4.68** & -2.60 & 2.22\\
+\hspace{1em} & (3.59) & (2.15) & (3.00) & (1.74)\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. 
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:test-reg-subset}Heterogeneous Effects of Message on CT (Age cutoff: 30)}
 \centering
 \fontsize{9}{11}\selectfont
 \begin{threeparttable}
@@ -241,16 +330,14 @@ These results suggest that the probability message prevents donor dropout. In th
 \toprule
 \multicolumn{1}{c}{Gender:} & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} \\
 \cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{Age:} & \multicolumn{1}{c}{$< 30$} & \multicolumn{1}{c}{$30 \le$} & \multicolumn{1}{c}{$< 30$} & \multicolumn{1}{c}{$30 \le$} \\
-\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & \num{3.24} & \num{1.86} & \num{6.62}** & \num{2.57}\\
- & (\num{3.63}) & (\num{2.08}) & (\num{3.17}) & (\num{1.71})\\
-Treatment C & \num{3.97} & \num{0.15} & \num{-0.97} & \num{1.52}\\
- & (\num{3.66}) & (\num{2.19}) & (\num{3.07}) & (\num{1.79})\\
-Treatment D & \num{5.70} & \num{4.68}** & \num{-2.49} & \num{2.12}\\
- & (\num{3.61}) & (\num{2.20}) & (\num{3.05}) & (\num{1.77})\\
+Treatment B & \num{3.87} & \num{2.30} & \num{5.13} & \num{2.72}\\
+ & (\num{3.58}) & (\num{2.05}) & (\num{3.13}) & (\num{1.67})\\
+Treatment C & \num{4.37} & \num{0.44} & \num{-2.54} & \num{1.98}\\
+ & (\num{3.64}) & (\num{2.09}) & (\num{3.00}) & (\num{1.73})\\
+Treatment D & \num{5.21} & \num{4.75}** & \num{-2.52} & \num{1.89}\\
+ & (\num{3.62}) & (\num{2.12}) & (\num{3.06}) & (\num{1.73})\\
 \midrule
 Control average & 20.80 & 18.89 & 23.27 & 24.18\\
 Covariates & X & X & X & X\\
@@ -317,27 +404,27 @@ We show sample averages of each outcome by treatment in Figure \ref{fig:coordina
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 1132)}}\\
-\hspace{1em}Treatment B & -2.36 (1.96) & -1.69 (1.83) & -0.67 (1.75)\\
-\hspace{1em}Treatment C & 0.96 (2.24) & 1.01 (2.07) & 1.41 (1.97)\\
-\hspace{1em}Treatment D & -1.47 (2.02) & -1.12 (1.89) & -0.60 (1.74)\\
+\hspace{1em}Treatment B & -3.13 (1.93) & -2.27 (1.79) & -1.07 (1.66)\\
+\hspace{1em}Treatment C & -0.16 (2.17) & 0.34 (2.02) & 0.84 (1.85)\\
+\hspace{1em}Treatment D & -1.73 (2.04) & -1.21 (1.88) & -0.68 (1.70)\\
 \hspace{1em}Control average & 6.80 & 5.60 & 4.40\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older females (N = 3018)}}\\
-\hspace{1em}Treatment B & -0.91 (0.92) & -0.73 (0.86) & -0.54 (0.82)\\
-\hspace{1em}Treatment C & -0.04 (1.05) & 0.24 (0.99) & -0.30 (0.90)\\
-\hspace{1em}Treatment D & 0.56 (1.04) & 0.41 (0.94) & -0.33 (0.84)\\
+\hspace{1em}Treatment B & -0.51 (0.92) & -0.43 (0.85) & -0.26 (0.81)\\
+\hspace{1em}Treatment C & 0.48 (1.01) & 0.63 (0.95) & -0.06 (0.86)\\
+\hspace{1em}Treatment D & 0.71 (1.01) & 0.51 (0.92) & -0.37 (0.82)\\
 \hspace{1em}Control average & 3.55 & 2.98 & 2.70\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young males (N = 1566)}}\\
-\hspace{1em}Treatment B & 2.30 (2.03) & 1.94 (1.88) & 2.87* (1.74)\\
-\hspace{1em}Treatment C & -1.40 (1.92) & -0.73 (1.82) & 0.15 (1.68)\\
-\hspace{1em}Treatment D & 0.59 (2.08) & 1.42 (1.97) & 1.41 (1.76)\\
+\hspace{1em}Treatment B & 2.03 (2.02) & 1.74 (1.85) & 2.69 (1.70)\\
+\hspace{1em}Treatment C & -1.66 (1.84) & -0.76 (1.72) & 0.17 (1.54)\\
+\hspace{1em}Treatment D & 0.75 (2.02) & 1.61 (1.90) & 1.41 (1.67)\\
 \hspace{1em}Control average & 7.76 & 6.37 & 4.71\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older males (N = 5333)}}\\
-\hspace{1em}Treatment B & 0.39 (1.05) & 0.36 (1.01) & -0.49 (0.91)\\
-\hspace{1em}Treatment C & -0.19 (1.07) & -0.40 (1.03) & -0.55 (0.94)\\
-\hspace{1em}Treatment D & 0.97 (1.10) & 0.92 (1.06) & 0.05 (0.96)\\
+\hspace{1em}Treatment B & 0.60 (1.01) & 0.65 (0.97) & -0.20 (0.87)\\
+\hspace{1em}Treatment C & 0.04 (1.03) & -0.15 (0.98) & -0.23 (0.90)\\
+\hspace{1em}Treatment D & 0.86 (1.06) & 0.89 (1.02) & 0.17 (0.92)\\
 \hspace{1em}Control average & 7.13 & 6.56 & 5.49\\
 \bottomrule
 \end{tabular}

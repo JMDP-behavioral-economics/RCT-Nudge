@@ -7,6 +7,8 @@
 
 % \setmainfont{Times New Roman}
 % \setmainjfont[BoldFont=IPAexGothic]{IPAexMincho}
+\usepackage{color}
+\newcommand{\revise}[1]{{\color{red}{#1}}}
 
 % ------------------------------ math
 \usepackage{amsmath,amssymb}
@@ -119,6 +121,35 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 
 \begin{table}[H]
 
+\caption{\label{tab:smd-balance}Assessing Balance by Standaridized Mean Difference}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{A versus} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
+ & (1) & (2) & (3)\\
+\midrule
+Age & -0.026 & -0.096 & -0.041\\
+Male (= 1) & 0.019 & 0.016 & -0.031\\
+Number of holidays in the assigned week & 0.071 & 0.104 & 0.315\\
+Number of hospitals listed with BM collection & 0.028 & 0.023 & 0.013\\
+Number of hospitals listed with PBSC collection & 0.023 & 0.019 & 0.011\\
+Number of listed hospitals & 0.024 & 0.019 & 0.015\\
+Number of past coordination & -0.019 & 0.015 & -0.045\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item 
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
 \caption{\label{tab:response-speed-CT}Relationship between Response Speed and Coordination}
 \centering
 \fontsize{9}{11}\selectfont
@@ -129,7 +160,7 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3}
   & (1) & (2)\\
 \midrule
-Response speed (day) & \num{-2.43}*** & \num{0.45}***\\
+Response speed (day) & \num{-2.44}*** & \num{0.46}***\\
  & (\num{0.11}) & (\num{0.08})\\
 \midrule
 Num.Obs. & \num{6142} & \num{6142}\\
@@ -153,17 +184,17 @@ Num.Obs. & \num{6142} & \num{6142}\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
  & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & 3.10*** & 3.06*** & 1.19*** & 1.19***\\
+Treatment B & 3.10*** & 3.04*** & 1.19*** & 1.19***\\
  & (1.14) & (1.16) &  & \\
- &  &  & {}[1.05, 1.34] & {}[1.05, 1.36]\\
-Treatment C & 1.19 & 1.11 & 1.07 & 1.07\\
- & (1.16) & (1.20) &  & \\
- &  &  & {}[0.94, 1.22] & {}[0.93, 1.23]\\
-Treatment D & 2.39** & 2.63** & 1.14** & 1.16**\\
- & (1.17) & (1.19) &  & \\
- &  &  & {}[1.01, 1.30] & {}[1.02, 1.33]\\
+ &  &  & {}[1.05, 1.34] & {}[1.05, 1.35]\\
+Treatment C & 1.19 & 1.07 & 1.07 & 1.07\\
+ & (1.16) & (1.21) &  & \\
+ &  &  & {}[0.94, 1.22] & {}[0.93, 1.22]\\
+Treatment D & 2.39** & 2.58** & 1.14** & 1.16**\\
+ & (1.17) & (1.20) &  & \\
+ &  &  & {}[1.01, 1.30] & {}[1.01, 1.32]\\
 Covariates &  & X &  & X\\
-Log.Lik. &  &  & -6083.783 & -5942.333\\
+Log.Lik. &  &  & -6083.783 & -5942.249\\
 Num.Obs. & 11049 & 11049 & 11049 & 11049\\
 \bottomrule
 \end{tabular}
@@ -187,12 +218,12 @@ Num.Obs. & 11049 & 11049 & 11049 & 11049\\
 \cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & \num{2.21} & \num{2.54} & \num{4.05}* & \num{2.45}\\
- & (\num{2.51}) & (\num{2.62}) & (\num{2.18}) & (\num{2.09})\\
-Treatment C & \num{2.30} & \num{-0.08} & \num{0.73} & \num{1.11}\\
- & (\num{2.57}) & (\num{2.79}) & (\num{2.17}) & (\num{2.23})\\
-Treatment D & \num{5.73}** & \num{4.08} & \num{-0.70} & \num{2.87}\\
- & (\num{2.60}) & (\num{2.71}) & (\num{2.18}) & (\num{2.17})\\
+Treatment B & \num{2.12} & \num{2.58} & \num{4.10}* & \num{2.20}\\
+ & (\num{2.52}) & (\num{2.62}) & (\num{2.18}) & (\num{2.11})\\
+Treatment C & \num{2.17} & \num{-0.01} & \num{0.84} & \num{0.73}\\
+ & (\num{2.59}) & (\num{2.80}) & (\num{2.18}) & (\num{2.26})\\
+Treatment D & \num{5.57}** & \num{4.14} & \num{-0.52} & \num{2.36}\\
+ & (\num{2.63}) & (\num{2.71}) & (\num{2.20}) & (\num{2.22})\\
 \midrule
 Control average & 19.72 & 19.05 & 24.70 & 23.33\\
 Covariates & X & X & X & X\\
@@ -217,12 +248,12 @@ Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & \num{1.27} & \num{1.65}* & \num{2.31}* & \num{2.25}*\\
+Treatment B & \num{1.27} & \num{1.63}* & \num{2.31}* & \num{2.30}*\\
  & (\num{0.86}) & (\num{0.88}) & (\num{1.33}) & (\num{1.35})\\
-Treatment C & \num{-0.42} & \num{0.46} & \num{-0.44} & \num{-0.17}\\
- & (\num{0.91}) & (\num{0.94}) & (\num{1.37}) & (\num{1.42})\\
-Treatment D & \num{0.79} & \num{0.80} & \num{0.59} & \num{0.68}\\
- & (\num{0.89}) & (\num{0.90}) & (\num{1.37}) & (\num{1.39})\\
+Treatment C & \num{-0.42} & \num{0.42} & \num{-0.44} & \num{-0.10}\\
+ & (\num{0.91}) & (\num{0.95}) & (\num{1.37}) & (\num{1.43})\\
+Treatment D & \num{0.79} & \num{0.74} & \num{0.59} & \num{0.78}\\
+ & (\num{0.89}) & (\num{0.91}) & (\num{1.37}) & (\num{1.39})\\
 \midrule
 Control average & 87.69 & 87.69 & 54.91 & 54.91\\
 Covariates &  & X &  & X\\
@@ -247,16 +278,16 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & \num{1.131} & \num{1.174} & \num{1.098} & \num{1.099}\\
- & {}[\num{0.960}, \num{1.333}] & {}[\num{0.990}, \num{1.392}] & {}[\num{0.988}, \num{1.221}] & {}[\num{0.983}, \num{1.227}]\\
-Treatment C & \num{0.962} & \num{1.043} & \num{0.983} & \num{0.992}\\
- & {}[\num{0.817}, \num{1.133}] & {}[\num{0.877}, \num{1.241}] & {}[\num{0.881}, \num{1.095}] & {}[\num{0.884}, \num{1.114}]\\
-Treatment D & \num{1.078} & \num{1.079} & \num{1.024} & \num{1.029}\\
- & {}[\num{0.913}, \num{1.274}] & {}[\num{0.906}, \num{1.284}] & {}[\num{0.919}, \num{1.142}] & {}[\num{0.918}, \num{1.153}]\\
+Treatment B & \num{1.131} & \num{1.171} & \num{1.098} & \num{1.101}\\
+ & {}[\num{0.960}, \num{1.333}] & {}[\num{0.987}, \num{1.389}] & {}[\num{0.988}, \num{1.221}] & {}[\num{0.985}, \num{1.230}]\\
+Treatment C & \num{0.962} & \num{1.039} & \num{0.983} & \num{0.995}\\
+ & {}[\num{0.817}, \num{1.133}] & {}[\num{0.872}, \num{1.237}] & {}[\num{0.881}, \num{1.095}] & {}[\num{0.886}, \num{1.118}]\\
+Treatment D & \num{1.078} & \num{1.073} & \num{1.024} & \num{1.033}\\
+ & {}[\num{0.913}, \num{1.274}] & {}[\num{0.901}, \num{1.279}] & {}[\num{0.919}, \num{1.142}] & {}[\num{0.921}, \num{1.158}]\\
 \midrule
 Covariates &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}\\
+Log.Lik. & \num{-4022.045} & \num{-3848.018} & \num{-7586.840} & \num{-7415.520}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -277,27 +308,27 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \midrule
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Young females (N = 1132)}}\\
-\hspace{1em}Treatment B & 0.81 (3.29) & -0.23 (4.50)\\
-\hspace{1em}Treatment C & 4.05 (3.14) & 3.44 (4.56)\\
-\hspace{1em}Treatment D & -1.13 (3.18) & -3.46 (4.36)\\
+\hspace{1em}Treatment B & 1.08 (3.32) & -0.31 (4.51)\\
+\hspace{1em}Treatment C & 4.43 (3.22) & 3.33 (4.59)\\
+\hspace{1em}Treatment D & -0.72 (3.24) & -3.59 (4.41)\\
 \hspace{1em}Control average & 86.00 & 50.80\\
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Older females (N = 3018)}}\\
-\hspace{1em}Treatment B & -0.59 (1.27) & -0.92 (2.59)\\
-\hspace{1em}Treatment C & -1.21 (1.37) & -2.67 (2.77)\\
-\hspace{1em}Treatment D & -0.84 (1.26) & -0.42 (2.65)\\
+\hspace{1em}Treatment B & -0.68 (1.26) & -1.03 (2.59)\\
+\hspace{1em}Treatment C & -1.33 (1.36) & -2.84 (2.78)\\
+\hspace{1em}Treatment D & -0.99 (1.24) & -0.61 (2.67)\\
 \hspace{1em}Control average & 94.32 & 58.66\\
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Young males (N = 1566)}}\\
-\hspace{1em}Treatment B & 6.43** (3.10) & 9.22** (3.61)\\
-\hspace{1em}Treatment C & 2.34 (3.22) & 2.34 (3.64)\\
-\hspace{1em}Treatment D & 6.02* (3.21) & 2.59 (3.63)\\
+\hspace{1em}Treatment B & 6.52** (3.10) & 9.34*** (3.61)\\
+\hspace{1em}Treatment C & 2.45 (3.23) & 2.48 (3.63)\\
+\hspace{1em}Treatment D & 6.24* (3.23) & 2.88 (3.64)\\
 \hspace{1em}Control average & 74.24 & 38.50\\
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Older males (N = 5333)}}\\
-\hspace{1em}Treatment B & 1.70 (1.25) & 2.12 (1.94)\\
-\hspace{1em}Treatment C & -0.31 (1.37) & -1.49 (2.06)\\
-\hspace{1em}Treatment D & 0.45 (1.31) & 1.09 (2.01)\\
+\hspace{1em}Treatment B & 1.59 (1.25) & 2.18 (1.95)\\
+\hspace{1em}Treatment C & -0.51 (1.37) & -1.37 (2.07)\\
+\hspace{1em}Treatment D & 0.17 (1.32) & 1.25 (2.03)\\
 \hspace{1em}Control average & 88.20 & 58.44\\
 \bottomrule
 \end{tabular}
@@ -319,27 +350,27 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \midrule
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Young females (N = 2268)}}\\
-\hspace{1em}Treatment B & -0.95 (1.95) & -2.58 (3.11)\\
-\hspace{1em}Treatment C & 0.17 (1.95) & -2.65 (3.21)\\
-\hspace{1em}Treatment D & -2.54 (1.98) & -3.29 (3.15)\\
+\hspace{1em}Treatment B & -0.81 (1.96) & -2.78 (3.12)\\
+\hspace{1em}Treatment C & 0.37 (1.97) & -2.92 (3.22)\\
+\hspace{1em}Treatment D & -2.29 (2.01) & -3.64 (3.17)\\
 \hspace{1em}Control average & 90.45 & 53.05\\
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Older females (N = 1882)}}\\
-\hspace{1em}Treatment B & 0.56 (1.59) & 2.42 (3.22)\\
-\hspace{1em}Treatment C & 0.07 (1.73) & 2.16 (3.50)\\
-\hspace{1em}Treatment D & 0.76 (1.49) & 1.72 (3.27)\\
+\hspace{1em}Treatment B & 0.45 (1.58) & 2.38 (3.22)\\
+\hspace{1em}Treatment C & -0.12 (1.72) & 2.11 (3.51)\\
+\hspace{1em}Treatment D & 0.59 (1.48) & 1.67 (3.28)\\
 \hspace{1em}Control average & 93.94 & 60.39\\
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Young males (N = 3445)}}\\
-\hspace{1em}Treatment B & 3.34* (1.96) & 5.37** (2.49)\\
-\hspace{1em}Treatment C & -0.07 (2.05) & -0.63 (2.53)\\
-\hspace{1em}Treatment D & 3.11 (2.05) & 0.85 (2.56)\\
+\hspace{1em}Treatment B & 3.34* (1.96) & 5.52** (2.49)\\
+\hspace{1em}Treatment C & -0.07 (2.06) & -0.29 (2.53)\\
+\hspace{1em}Treatment D & 3.11 (2.07) & 1.41 (2.57)\\
 \hspace{1em}Control average & 79.76 & 46.02\\
 \addlinespace[0.3em]
 \multicolumn{3}{l}{\textbf{Older males (N = 3454)}}\\
-\hspace{1em}Treatment B & 3.08** (1.41) & 3.01 (2.35)\\
-\hspace{1em}Treatment C & 2.07 (1.56) & 1.42 (2.53)\\
-\hspace{1em}Treatment D & 1.24 (1.48) & 3.21 (2.42)\\
+\hspace{1em}Treatment B & 2.94** (1.41) & 2.83 (2.35)\\
+\hspace{1em}Treatment C & 1.85 (1.56) & 1.15 (2.53)\\
+\hspace{1em}Treatment D & 0.94 (1.49) & 2.83 (2.43)\\
 \hspace{1em}Control average & 89.64 & 60.83\\
 \bottomrule
 \end{tabular}
@@ -381,12 +412,12 @@ Log.Lik. & \num{-4022.045} & \num{-3848.179} & \num{-7586.840} & \num{-7415.644}
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{0.16} & \num{-0.06} & \num{0.26} & \num{0.01} & \num{0.12} & \num{-0.10}\\
- & (\num{0.65}) & (\num{0.66}) & (\num{0.62}) & (\num{0.63}) & (\num{0.56}) & (\num{0.58})\\
-Treatment C & \num{-0.07} & \num{-0.34} & \num{0.06} & \num{-0.23} & \num{0.02} & \num{-0.25}\\
- & (\num{0.66}) & (\num{0.69}) & (\num{0.63}) & (\num{0.66}) & (\num{0.57}) & (\num{0.61})\\
-Treatment D & \num{0.50} & \num{0.49} & \num{0.63} & \num{0.59} & \num{0.07} & \num{0.03}\\
- & (\num{0.68}) & (\num{0.70}) & (\num{0.64}) & (\num{0.66}) & (\num{0.57}) & (\num{0.60})\\
+Treatment B & \num{0.16} & \num{-0.09} & \num{0.26} & \num{-0.02} & \num{0.12} & \num{-0.12}\\
+ & (\num{0.65}) & (\num{0.67}) & (\num{0.62}) & (\num{0.63}) & (\num{0.56}) & (\num{0.58})\\
+Treatment C & \num{-0.07} & \num{-0.39} & \num{0.06} & \num{-0.27} & \num{0.02} & \num{-0.28}\\
+ & (\num{0.66}) & (\num{0.70}) & (\num{0.63}) & (\num{0.67}) & (\num{0.57}) & (\num{0.61})\\
+Treatment D & \num{0.50} & \num{0.42} & \num{0.63} & \num{0.54} & \num{0.07} & \num{-0.02}\\
+ & (\num{0.68}) & (\num{0.71}) & (\num{0.64}) & (\num{0.68}) & (\num{0.57}) & (\num{0.61})\\
 \midrule
 Control average & 6.19 & 6.19 & 5.44 & 5.44 & 4.50 & 4.50\\
 Covariates &  & X &  & X &  & X\\
@@ -411,16 +442,16 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.03} & \num{0.99} & \num{1.05} & \num{1.00} & \num{1.03} & \num{0.97}\\
+Treatment B & \num{1.03} & \num{0.99} & \num{1.05} & \num{1.00} & \num{1.03} & \num{0.98}\\
  & {}[\num{0.83}, \num{1.28}] & {}[\num{0.79}, \num{1.24}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.79}, \num{1.27}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.75}, \num{1.27}]\\
 Treatment C & \num{0.99} & \num{0.94} & \num{1.01} & \num{0.96} & \num{1.00} & \num{0.95}\\
- & {}[\num{0.79}, \num{1.24}] & {}[\num{0.74}, \num{1.19}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.75}, \num{1.24}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.72}, \num{1.25}]\\
-Treatment D & \num{1.09} & \num{1.09} & \num{1.12} & \num{1.12} & \num{1.02} & \num{1.01}\\
- & {}[\num{0.87}, \num{1.35}] & {}[\num{0.86}, \num{1.36}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.88}, \num{1.42}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.77}, \num{1.32}]\\
+ & {}[\num{0.79}, \num{1.24}] & {}[\num{0.74}, \num{1.19}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.75}, \num{1.23}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.72}, \num{1.25}]\\
+Treatment D & \num{1.09} & \num{1.08} & \num{1.12} & \num{1.11} & \num{1.02} & \num{1.00}\\
+ & {}[\num{0.87}, \num{1.35}] & {}[\num{0.86}, \num{1.36}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.88}, \num{1.42}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.77}, \num{1.31}]\\
 \midrule
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250} & \num{-2045.363} & \num{-2001.995}\\
+Log.Lik. & \num{-2610.914} & \num{-2547.778} & \num{-2410.035} & \num{-2348.079} & \num{-2045.363} & \num{-2001.819}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -441,27 +472,27 @@ Log.Lik. & \num{-2610.914} & \num{-2548.022} & \num{-2410.035} & \num{-2348.250}
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
-\hspace{1em}Treatment B & -1.71 (1.18) & -1.74 (1.10) & -0.87 (1.06)\\
-\hspace{1em}Treatment C & 1.12 (1.38) & 0.97 (1.30) & 0.84 (1.19)\\
-\hspace{1em}Treatment D & -0.34 (1.32) & -0.67 (1.22) & -0.56 (1.11)\\
+\hspace{1em}Treatment B & -1.61 (1.18) & -1.64 (1.10) & -0.77 (1.06)\\
+\hspace{1em}Treatment C & 1.25 (1.38) & 1.10 (1.30) & 0.98 (1.19)\\
+\hspace{1em}Treatment D & -0.16 (1.30) & -0.51 (1.22) & -0.39 (1.11)\\
 \hspace{1em}Control average & 4.88 & 4.27 & 3.46\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older females (N = 1882)}}\\
-\hspace{1em}Treatment B & -0.71 (1.21) & -0.02 (1.14) & -0.16 (1.08)\\
-\hspace{1em}Treatment C & -0.82 (1.35) & -0.22 (1.27) & -0.62 (1.16)\\
-\hspace{1em}Treatment D & 0.33 (1.33) & 0.71 (1.19) & -0.24 (1.05)\\
+\hspace{1em}Treatment B & -0.76 (1.22) & -0.06 (1.14) & -0.20 (1.08)\\
+\hspace{1em}Treatment C & -0.90 (1.36) & -0.29 (1.27) & -0.69 (1.17)\\
+\hspace{1em}Treatment D & 0.26 (1.34) & 0.65 (1.20) & -0.30 (1.06)\\
 \hspace{1em}Control average & 3.90 & 3.03 & 2.81\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Young males (N = 3445)}}\\
-\hspace{1em}Treatment B & 0.96 (1.40) & 0.69 (1.34) & 0.48 (1.21)\\
-\hspace{1em}Treatment C & -1.21 (1.35) & -1.33 (1.28) & -0.73 (1.18)\\
-\hspace{1em}Treatment D & -0.07 (1.45) & 0.36 (1.39) & -0.24 (1.26)\\
+\hspace{1em}Treatment B & 0.95 (1.40) & 0.69 (1.34) & 0.49 (1.22)\\
+\hspace{1em}Treatment C & -1.22 (1.36) & -1.33 (1.29) & -0.71 (1.20)\\
+\hspace{1em}Treatment D & -0.09 (1.47) & 0.36 (1.42) & -0.20 (1.29)\\
 \hspace{1em}Control average & 8.23 & 7.29 & 5.94\\
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textbf{Older males (N = 3454)}}\\
-\hspace{1em}Treatment B & 0.40 (1.25) & 0.47 (1.20) & -0.18 (1.09)\\
-\hspace{1em}Treatment C & 0.02 (1.34) & 0.15 (1.29) & -0.30 (1.18)\\
-\hspace{1em}Treatment D & 1.72 (1.33) & 1.61 (1.28) & 0.80 (1.15)\\
+\hspace{1em}Treatment B & 0.27 (1.27) & 0.36 (1.22) & -0.32 (1.11)\\
+\hspace{1em}Treatment C & -0.17 (1.37) & -0.02 (1.32) & -0.51 (1.20)\\
+\hspace{1em}Treatment D & 1.45 (1.38) & 1.38 (1.33) & 0.51 (1.20)\\
 \hspace{1em}Control average & 6.43 & 5.83 & 4.76\\
 \bottomrule
 \end{tabular}

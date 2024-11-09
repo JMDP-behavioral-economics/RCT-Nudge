@@ -64,25 +64,28 @@ Lm <- R6::R6Class("Lm",
 
       LmAll$new(est)
     },
-    fit_subset_by_gender_age = function(age_cut = 30, scale = 1) {
+    fit_subset_by_gender_age = function(age_cut = 30, scale = 1, covariates = TRUE) {
+      model <- if (covariates) {
+        update(private$model$ctrl, . ~ . - male - age - I(age^2))
+      } else {
+        private$model$unctrl
+      }
+
       est <- self$data %>%
         mutate(value = value * scale) %>%
         mutate(young = if_else(age < age_cut, 1, 0)) %>%
         group_by(outcome, male, young) %>%
         nest() %>%
         mutate(
-          fit = private$call_lm(
-            data,
-            update(private$model$ctrl, . ~ . - male - age - I(age^2)),
-            private$se_type
-          ),
+          fit = private$call_lm(data, model, private$se_type),
           avg = map_chr(
             data,
             ~ with(
               subset(., treat == private$ctrl_arm),
               sprintf("Ctrl Avg = %1.2f", mean(value))
             )
-          )
+          ),
+          covariates = if_else(covariates, "X", "")
         )
 
       LmSubset$new(est, age_cut)
@@ -852,7 +855,7 @@ LmInteraction <- R6::R6Class("LmInteraction",
 
       for (i in mod) {
         if (is.na(i)) next
-        row_mod <- which(res_wide$model == i)
+        row_mod <- which(tbl$model == i)
         min_row_mod <- min(row_mod)
         max_row_mod <- max(row_mod)
 
@@ -886,15 +889,18 @@ LmInteraction <- R6::R6Class("LmInteraction",
         "treatB" = "Treatment B",
         "treatC" = "Treatment C",
         "treatD" = "Treatment D",
-        "treatB:groupOlder female" = "Treatment B $\\times$ Older females",
-        "treatC:groupOlder female" = "Treatment C $\\times$ Older females",
-        "treatD:groupOlder female" = "Treatment D $\\times$ Older females",
-        "treatB:groupYoung male" = "Treatment B $\\times$ Young males",
-        "treatC:groupYoung male" = "Treatment C $\\times$ Young males",
-        "treatD:groupYoung male" = "Treatment D $\\times$ Young males",
-        "treatB:groupOlder male" = "Treatment B $\\times$ Older males",
-        "treatC:groupOlder male" = "Treatment C $\\times$ Older males",
-        "treatD:groupOlder male" = "Treatment D $\\times$ Older males"
+        "groupOlder female" = "Older female",
+        "groupYoung male" = "Young male",
+        "groupOlder male" = "Older male",
+        "treatB:groupOlder female" = "Treatment B $\\times$ Older female",
+        "treatC:groupOlder female" = "Treatment C $\\times$ Older female",
+        "treatD:groupOlder female" = "Treatment D $\\times$ Older female",
+        "treatB:groupYoung male" = "Treatment B $\\times$ Young male",
+        "treatC:groupYoung male" = "Treatment C $\\times$ Young male",
+        "treatD:groupYoung male" = "Treatment D $\\times$ Young male",
+        "treatB:groupOlder male" = "Treatment B $\\times$ Older male",
+        "treatC:groupOlder male" = "Treatment C $\\times$ Older male",
+        "treatD:groupOlder male" = "Treatment D $\\times$ Older male"
       )
       stars <- c("***" = .01, "**" = .05, "*" = .1)
       gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"

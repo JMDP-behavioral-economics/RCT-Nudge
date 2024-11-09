@@ -106,7 +106,8 @@ covs <- c(
   "Number of past coordination" = "coordinate",
   "Number of listed hospitals" = "hospital_per_area",
   "Number of hospitals listed with PBSC collection" = "PB_per_area",
-  "Number of hospitals listed with BM collection" = "BM_per_area"
+  "Number of hospitals listed with BM collection" = "BM_per_area",
+  "Number of holidays in the assigned week" = "holidays"
 )
 
 rct <- rawdt$RCT()
@@ -116,6 +117,15 @@ rct$add_covariate(covs)
 if (params$is_fe) rct$add_fixed_effect(c("month", "week"))
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
 rct$set_default_se_type(params$se_type)
+```
+
+```{r smd-balance}
+rct$
+  smd_balance()$
+  kable(
+    title = "Assessing Balance by Standaridized Mean Difference",
+    hold = TRUE
+  )
 ```
 
 ```{r response-speed-CT}
@@ -167,7 +177,7 @@ lm_test <- rct_clone$
 
 ```{r test-reg}
 lm_tab <- lm_test$
-  fit_all(scale = 100)$
+  fit(scale = 100)$
   get_est()$fit %>%
   modelsummary(
     coef_map = c(
@@ -242,7 +252,7 @@ tab2 %>%
 
 ```{r test-reg-subset-2}
 test_subset <- lm_test$
-  fit_sub(age_cut = 40, scale = 100)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100)$
   get_est() %>%
   arrange(male, desc(young))
 
@@ -303,7 +313,7 @@ lm_reply <- rct_clone$
 
 ```{r reply-lm}
 lm_reply$
-  fit_all(scale = 100)$
+  fit(scale = 100)$
   kable(
     title = "Linear Probability Model of Response",
     notes = "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
@@ -322,7 +332,7 @@ logit_reply$
 
 ```{r reply-reg-subset}
 lm_reply$
-  fit_sub(age_cut = 30, scale = 100)$
+  fit_subset_by_gender_age(age_cut = 30, scale = 100)$
   kable(
     title = "Heterogeneous Effects of Message on Response (Age cutoff: 30)",
     notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
@@ -332,7 +342,7 @@ lm_reply$
 
 ```{r reply-reg-subset-2}
 lm_reply$
-  fit_sub(age_cut = 40, scale = 100)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100)$
   kable(
     title = "Heterogeneous Effects of Message on Response (Age cutoff: 40)",
     notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
@@ -413,8 +423,8 @@ coordinate <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   lm(id3, sample_drop = FALSE)
 
-full_coordinate <- coordinate$fit_all(scale = 100)
-subset_coordinate <- coordinate$fit_sub(age_cut = 30, scale = 100)
+full_coordinate <- coordinate$fit(scale = 100)
+subset_coordinate <- coordinate$fit_subset_by_gender_age(age_cut = 30, scale = 100)
 ```
 
 ```{r coordinate-reg}
@@ -449,7 +459,7 @@ logit_coordinate$
 
 ```{r coordinate-reg-subset-2}
 coordinate$
-  fit_sub(age_cut = 40, scale = 100)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100)$
   kable(
     title = "Subsample Analysis for Coordination Process (Age Cutoff: 40)",
     notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of the treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",

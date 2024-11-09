@@ -201,7 +201,8 @@ covs <- c(
   "Number of past coordination" = "coordinate",
   "Number of listed hospitals" = "hospital_per_area",
   "Number of hospitals listed with PBSC collection" = "PB_per_area",
-  "Number of hospitals listed with BM collection" = "BM_per_area"
+  "Number of hospitals listed with BM collection" = "BM_per_area",
+  "Number of holidays in the assigned week" = "holidays"
 )
 
 rct <- rawdt$RCT()
@@ -260,7 +261,7 @@ reason_clasify <- rct$data %>%
 
 In this subsection, we estimated the message effects on the probability that a matched donor reaches CT. This effect is critical because physicians select the optimal donor for transplantation to the patient from matched donors who have completed the CT. We used a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control arm, only `r sprintf("$%1.2f$%%", mean_test["1"])` of matched donors underwent CT.
 
-CTへの到達確率が低い理由は二つあると考えられる。第一に、コントロール群の`r sprintf("$%1.2f$%%", mean_positive["1"])`しか提供する意向を示していないことである。第二に、提供意向を示した人の`r sprintf("$%1.2f$%%", positive_clasify["1", "0"])`しかCTに到達していないことである。CTへ至らなかった理由の大多数はドナー側の理由である（`r sprintf("$%1.2f$%%", reason_clasify["0"])`）。我々のデータはドナー側の詳細な理由を検証できない。しかしながら、@Hirakawa2018 によれば、ドナー側の理由の上位3つは健康上の理由・都合がつかない・家族の同意なしである。我々の介入メッセージは提供意向の向上と返信からCT間の脱落の防止を通じて、CTへの到達確率を高めると期待される。
+<!-- CTへの到達確率が低い理由は二つあると考えられる。第一に、コントロール群の`r sprintf("$%1.2f$%%", mean_positive["1"])`しか提供する意向を示していないことである。第二に、提供意向を示した人の`r sprintf("$%1.2f$%%", positive_clasify["1", "0"])`しかCTに到達していないことである。CTへ至らなかった理由の大多数はドナー側の理由である（`r sprintf("$%1.2f$%%", reason_clasify["0"])`）。我々のデータはドナー側の詳細な理由を検証できない。しかしながら、@Hirakawa2018 によれば、ドナー側の理由の上位3つは健康上の理由・都合がつかない・家族の同意なしである。我々の介入メッセージは提供意向の向上と返信からCT間の脱落の防止を通じて、CTへの到達確率を高めると期待される。 -->
 
 ```{r setup-test-analysis, include=FALSE}
 id <- which(names(endpoint) %in% c("test"))
@@ -269,8 +270,33 @@ test <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   lm(id, sample_drop = FALSE)
 
-full_test <- test$fit_all(scale = 100)
-subset_test <- test$fit_sub(age_cut = 30, scale = 100)
+full_test <- test$fit(scale = 100)
+subset_test <- test$fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)
+interaction_test <- test$fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+```
+
+```{r}
+reg <- test$data %>%
+  mutate(
+    value = value * 100,
+    RCTweek_fe = if_else(month == 12 | month == 1, RCTweek, 0)
+  ) %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(fit = map(
+    data,
+    ~ lm_robust(
+      value ~ treat + male + age_demean + I(age_demean^2) + coordinate + holidays + hospital_per_area + PB_per_area + BM_per_area,
+      data = .,
+      se_type = "stata"
+    )
+  ))
+
+reg %>%
+  pull(fit) %>%
+  modelsummary(
+    stars = c("***" = .01, "**" = .05, "*" = .1)
+  )
 ```
 
 ```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
@@ -291,7 +317,7 @@ We show sample proporting of reaching the CT by experimental arms in Figure \@re
 
 <!-- These results suggest that the probability message prevents donor dropout. In the control arm, the attrition rate between responses with positive intentions and the CT is approximately 60% ($=1 - 22.2/54.9$). In contrast, the attrition rate for experimental arms B and D is approximately 56% ($=1 - 25.4/57.2$ for experimental arm B). Thus, the probability message, which is included in experimental arms B and D, increases donors reaching the CT stage because these messages help maintain donors' intentions to donate rather than increasing the number of donors willing to donate. -->
 
-```{r decompose-ct}
+```{r decompose-ct, eval=FALSE}
 rct$
   decompose_ct()$
   estimate(B = 100)$
@@ -300,7 +326,7 @@ rct$
   )
 ```
 
-これらのメッセージ効果は提供意向の向上と提供からCTまでの脱落の防止によって生じている。
+<!-- これらのメッセージ効果は提供意向の向上と提供からCTまでの脱落の防止によって生じている。
 メッセージ効果のチャンネルを検証するために、CTへの効果を5つに分解した。
 チャンネル(A)と(B)は提供からCTまでの脱落の防止による貢献を示している。
 チャンネル(C)は提供意向の向上による貢献を示している。
@@ -314,7 +340,21 @@ rct$
 これは統計的に10%水準で有意である。
 対して、実験群(D)は提供の意向を持つ確率を統計的有意に高めていない。
 実験群(B)と(D)は主に提供からCTまでの脱落の防止を通じてCTへの到達可能性を高めている。
-実験群Bは提供意向の向上を通じてCTへの到達可能性を高めているかもしれない。
+実験群Bは提供意向の向上を通じてCTへの到達可能性を高めているかもしれない。 -->
+
+```{r reg-interaction}
+interaction_test$kable_reg(
+  title = "Heterogenous Message Effects by Gender and Age",
+  escape = FALSE
+)
+```
+
+```{r reg-interaction-lh}
+interaction_test$kable_lh(
+  "CT",
+  title = "Message Effects for Subgroup by Gender and Age"
+)
+```
 
 ```{r test-reg-subset}
 est <- subset_test$get_est() %>%
@@ -323,7 +363,7 @@ est <- subset_test$get_est() %>%
 add_tab <- data.frame(
   rbind(
     c("Control average", str_remove(est$avg, "Ctrl Avg = ")),
-    c("Covariates", rep("X", 4))
+    c("Covariates", est$covariates)
   )
 )
 
@@ -344,10 +384,10 @@ est$fit %>%
     fmt = 2
   ) %>%
   kable_styling(font_size = 9) %>%
-  add_header_above(
-    c("Age:", "$< 30$", "$30 \\\\le$", "$< 30$", "$30 \\\\le$"),
-    escape = FALSE
-  ) %>%
+  # add_header_above(
+  #   c("Age:", "$< 30$", "$30 \\\\le$", "$< 30$", "$30 \\\\le$"),
+  #   escape = FALSE
+  # ) %>%
   add_header_above(c("Gender:", "Female" = 2, "Male" = 2)) %>%
   column_spec(1, width = "3cm") %>%
   column_spec(2:5, width = "2cm") %>%
@@ -441,8 +481,8 @@ coordinate <- rct_clone$
   add_covariate(c("Squared age" = "I(age^2)"))$
   lm(id3, sample_drop = FALSE)
 
-full_coordinate <- coordinate$fit_all(scale = 100)
-subset_coordinate <- coordinate$fit_sub(age_cut = 30, scale = 100)
+full_coordinate <- coordinate$fit(scale = 100)
+subset_coordinate <- coordinate$fit_subset_by_gender_age(age_cut = 30, scale = 100)
 ```
 
 Finally, we examined the impact of messages on each step of the coordination process after the CT. As explained in Section \@ref(background), the coordination process comprises three stages: candidate selection, final consent, and collection (donation). For the outcome variable, we used a dummy variable that takes the value of 1 if a matched donor has reached each stage. We examined the influence on the post-candidate selection process, acknowledging the involvement of demand-side effects and emphasizing the need for caution in interpretation. In the control arm, $6.2$% became candidates, and $4.5$% ultimately donated.
