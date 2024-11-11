@@ -11,13 +11,10 @@ Flow <- R6::R6Class("Flow",
                           cluster,
                           fe) {
       self$data <- reply_data
-      rhs <- c("treat", covariate)
 
-      if (!missing(fe)) {
-        rhs <- append(rhs, sapply(fe, function(x) paste0("factor(", x, ")")))
-      }
-
-      private$model <- reformulate(rhs, "value")
+      private$model <- value ~ treat + male +
+        age_demean + I(age_demean^2) + coordinate +
+        holidays + hospital_per_area + PB_per_area + BM_per_area
       private$rhs <- rhs
       private$se_type <- se
     },
@@ -26,10 +23,10 @@ Flow <- R6::R6Class("Flow",
                     xlim = c(0, 40),
                     ylab = "Cumulative response rate (%)",
                     base_size = 15) {
-      
+
       dt <- self$data %>%
         select(treat, days_reply, value)
-      
+
       if (!missing(...)) {
         cond <- enquos(...)
         for (i in 1:length(cond)) {
@@ -60,7 +57,7 @@ Flow <- R6::R6Class("Flow",
             fraq
           )
         )
-      
+
       out <- plotdt %>%
         ggplot(aes(x = days_reply, y = fraq, linetype = treat, group = treat)) +
         geom_line(linewidth = 1) +
@@ -68,7 +65,7 @@ Flow <- R6::R6Class("Flow",
         coord_cartesian(xlim = xlim, ylim = c(0, 100)) +
         scale_x_continuous(breaks = seq(0, 40, 5)) +
         scale_y_continuous(breaks = seq(0, 100, 10))
-      
+
       if (!missing(...)) {
         wrap_formula <- reformulate(names(dt)[str_detect(names(dt), "cond")])
         out <- out +
@@ -93,14 +90,14 @@ Flow <- R6::R6Class("Flow",
 
       if (!missing(...)) {
         cond <- enquos(...)
-        
+
         pat_sep <- c()
         for (i in seq(length(cond))) {
           col_label <- paste0("cond", i)
           dt[, col_label] <- eval_tidy(cond[[i]], dt)
           pat_sep <- append(pat_sep, all.vars(cond[[i]]))
         }
-        
+
         pat <- paste(pat_sep, collapse = "|")
         remove_vars <- private$rhs[str_detect(private$rhs, pat)]
         remove_formula <- paste0(". ~ . -", paste(remove_vars, collapse = "-"))
@@ -128,7 +125,7 @@ Flow <- R6::R6Class("Flow",
             )
         }) %>%
         reduce(bind_rows)
-      
+
       plotdt <- est %>%
         mutate(
           tidy = map(fit, tidy),
@@ -140,7 +137,7 @@ Flow <- R6::R6Class("Flow",
         mutate(
           term = str_replace(term, "treat", "Experimental Arm ")
         )
-      
+
       FlowFit$new(plotdt)
     }
   ),

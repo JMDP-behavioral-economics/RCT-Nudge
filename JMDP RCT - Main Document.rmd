@@ -340,61 +340,6 @@ For other gender and age groups, excluding young males, experimental arm B, cont
 
 [^age-cutoff-40]: Table A4 in the Online Supplementary Material A presents the subsample analysis with an age cutoff set at 40. The effect of the probability message (experimental arm B) on young males slightly weakened, while it slightly strengthened for older males. This suggests that in males, the effect of the probability message seems to follow a convex function of age. However, there is no change in our overall conclusion.
 
-## Response Speed to Notification {#reply-speed}
-
-```{r flow-setup, include=FALSE}
-flow <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  flow(outcome = "reply", sample_drop = FALSE)
-
-flow_fit <- flow$fit(
-  1:40,
-  scale = 100,
-  male = male == 1,
-  old = age >= 30
-)
-```
-
-The early coordination message stated that early coordination increases the patient's transplantation rate. Therefore, this message may encourage early responses to the HLA match letter. As the letter recommends responding within 7 days, we define "early response" as responding within 7 days. To verify whether the intervention messages increase this early response, we estimated the change of intervention effects over time, using dummy variables indicating response by a certain day as the outcomes. We expect that the early coordination message will promote responses within 7 days.
-
-Figure A1 in the Online Supplementary Material A shows the cumulative response rate up to 40 days after the letter was sent. In the 5--10 days after the letter was sent, the cumulative response rate for all treatment groups was slightly lower than the control arm, which is statistically significant (see Figure A2 in the Online Supplementary Material A). Subsequently, the cumulative response rate for treatment groups B (dashed line) and D (dotted line) was slightly higher than the control arm, which is statistically insignificant for most periods, except for some. Therefore, the early coordination message does not increase the overall response speed.
-
-Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focused on the heterogeneity of the effect on quick responses. Figure A3 in the Online Supplementary Material A shows the cumulative response rate by gender and age groups (age cutoff is 30).
-
-```{r young-male-flow, fig.cap = 'Effect on Response Speed of Young Males.\\newline \\emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidential interval). The unit of the treatment effect is a percentage point. We used males younger than 30 for the analysis sample. Further, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
-
-flow_fit$plot(
-  ylab = "Estimated Effects (95%CI)\nfor Young Males",
-  ylim = c(-25, 20),
-  ybreaks = 5,
-  base_size = 20,
-  male = TRUE,
-  old = FALSE
-)
-```
-
-While no significant differences were observed in the pattern of cumulative response rates for males and females aged 30 and older, some notable results were evident for males and females under 30.[^speed-older] In the group of males in their 20s, 15 days after the letter was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \@ref(fig:young-male-flow)).[^flow-analysis] Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message was added, was almost the same as that in the control arm; hence, it cannot be said that the early coordination message encourages early responses in this group.
-
-[^speed-older]: For males and females aged 30 and older, the cumulative response rate for each day differed little between the experimental arms, except for certain periods, and is not statistically significant. See Figure A4 and A5 in Online Supplementary Material A.
-
-[^flow-analysis]: In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within $d$ days as the outcome variable. If the potential donor responded after $d$ days or did not respond, the outcome variable was 0.
-
-```{r young-female-flow, fig.cap='Effect on Response Speed of Young Females.\\newline \\emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidential interval). The unit of treatment effect is a percentage point. We used females younger than 30 for the analysis sample. Additionally, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.'}
-
-flow_fit$plot(
-  ylab = "Estimated Effects (95%CI)\nfor Young Females",
-  ylim = c(-25, 20),
-  ybreaks = 5,
-  base_size = 20,
-  male = FALSE,
-  old = FALSE
-)
-```
-
-Compared with the control arm, the responses of experimental arms C and D increased in the group of females in their 20s, within four days of sending the compatibility message. Consequently, the cumulative response rates of the two experimental arms are statistically significantly higher than those of the control arm (see Figure \@ref(fig:young-female-flow)). This result suggests that the early coordination message encourages females in their 20s to respond quickly.[^flow-intention]
-
-[^flow-intention]: We decomposed the effect of message C on responses within four days (early responses) into two parts in terms of intentions and found that it increased positive and negative intentions to the same extent.
-
 ## Effects on the Coordination Process {#process}
 
 ```{r setup-coordinate, include=FALSE}
