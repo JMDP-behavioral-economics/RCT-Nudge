@@ -100,21 +100,9 @@ endpoint <- list(
   donate = "Donation"
 )
 
-covs <- c(
-  "Male (= 1)" = "male",
-  "Age" = "age",
-  "Number of past coordination" = "coordinate",
-  "Number of listed hospitals" = "hospital_per_area",
-  "Number of hospitals listed with PBSC collection" = "PB_per_area",
-  "Number of hospitals listed with BM collection" = "BM_per_area",
-  "Number of holidays in the assigned week" = "holidays"
-)
-
 rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
-rct$add_covariate(covs)
-if (params$is_fe) rct$add_fixed_effect(c("month", "week"))
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
 rct$set_default_se_type(params$se_type)
 ```

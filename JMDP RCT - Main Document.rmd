@@ -25,7 +25,6 @@ output:
 base-strech: 2
 fontsize: 12pt
 params:
-  is_fe: TRUE
   is_cluster: FALSE
   se_type: stata
 ---
@@ -208,8 +207,6 @@ covs <- c(
 rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
-rct$add_covariate(covs)
-if (params$is_fe) rct$add_fixed_effect(c("month", "week"))
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
 rct$set_default_se_type(params$se_type)
 ```
@@ -402,12 +399,8 @@ Compared with the control arm, the responses of experimental arms C and D increa
 
 ```{r setup-coordinate, include=FALSE}
 id3 <- which(names(endpoint) %in% c("candidate", "consent", "donate"))
-coordinate <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(id3, sample_drop = FALSE)
-
+coordinate <- rct$lm(id3, sample_drop = FALSE)
 full_coordinate <- coordinate$fit(scale = 100)
-subset_coordinate <- coordinate$fit_subset_by_gender_age(age_cut = 30, scale = 100)
 ```
 
 Finally, we examined the impact of messages on each step of the coordination process after the CT. As explained in Section \@ref(background), the coordination process comprises three stages: candidate selection, final consent, and collection (donation). For the outcome variable, we used a dummy variable that takes the value of 1 if a matched donor has reached each stage. We examined the influence on the post-candidate selection process, acknowledging the involvement of demand-side effects and emphasizing the need for caution in interpretation. In the control arm, $6.2$% became candidates, and $4.5$% ultimately donated.
@@ -431,14 +424,6 @@ summary(est)
 ```
 
 We show sample averages of each outcome by treatment in Figure \@ref(fig:coordinate-diff-mean). No experimental arm affected the post-candidate selection process. Similar results were obtained with linear probability models and logistic regressions controlling for covariates (see Table A5 and A6 in Online Supplementary Material A). This result should be interpreted with caution. Given that our intervention does not affect demand (number of patients), if our intervention increases the number of people who reach the CT, it should increase the number of people who are not selected as candidates for exogenous reasons. Particularly, compared to the control arm, experimental arm B increased the probability of donors who reached CT not being selected because of patient-related reasons or donor health conditions by $4.3$ percentage points. This difference is marginally statistically significant ($p = 0.095$). Thus, intervention effects are annulled because of demand-side factors.
-
-```{r coordinate-reg-subset}
-subset_coordinate$
-  kable(
-    title = "Subsample Analysis for Coordination Process (Age Cutoff: 30)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-  )
-```
 
 Table \@ref(tab:coordinate-reg-subset) divides the sample into four subsets by gender and age (under 30 or not) and estimates the message effect in each subset. The results show that experimental arm B may have increased donations among males in their 20s by 4 percentage points, which is statistically significant at the 10% level. However, the effect on candidate selection and final consent is not statistically significant. As noted earlier, this effect may reflect not only the effect of our intervention but also the demand for stem cell transplants. Because younger males have better transplant outcomes, the demand for stem cell transplants may be higher in this generation than in other genders and ages. Indeed, in the control arm, the selection probability of young male donors who reached CT was $33.3$ ($=7.76/23.27$) %, which was higher than other groups.[^cal3] In addition, experimental arm C, which encouraged early responses from females in their 20s, had no statistically significant effect on the post-candidate selection process of females in their 20s.[^age-cutoff-40-2]
 

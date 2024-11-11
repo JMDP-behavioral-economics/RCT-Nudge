@@ -18,18 +18,6 @@ RCT <- R6Class("RCT",
       print(private$intervention)
       invisible(self)
     },
-    add_covariate = function(add) {
-      private$covariate <- append(private$covariate, add)
-      private$covariate <- private$covariate[!duplicated(private$covariate)]
-      print(private$covariate)
-      invisible(self)
-    },
-    add_fixed_effect = function(add) {
-      private$fe <- append(private$fe, add)
-      private$fe <- private$fe[!duplicated(private$fe)]
-      print(private$fe)
-      invisible(self)
-    },
     add_outcome = function(add) {
       private$outcome <- append(private$endpoint, add) #add = list(colname = label)
       print(private$outcome)
@@ -47,7 +35,6 @@ RCT <- R6Class("RCT",
     },
     reset_setup = function() {
       private$intervention <- list()
-      private$covariate <- c()
       private$outcome <- list()
       private$se_type <- ""
       private$cluster <- NULL
@@ -128,8 +115,6 @@ RCT <- R6Class("RCT",
   ),
   private = list(
     intervention = list(),
-    covariate = c(),
-    fe = NULL,
     outcome = list(),
     se_type = "",
     cluster = NULL,

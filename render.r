@@ -2,7 +2,6 @@ library(here)
 library(rmarkdown)
 
 render_with_inference_opt <- function(  input,
-                                        fe = TRUE,
                                         cluster = TRUE,
                                         se_type = "CR2",
                                         output = NULL)
@@ -11,7 +10,7 @@ render_with_inference_opt <- function(  input,
 
   if (is.null(out)) {
     out <- paste0(
-      "body_fe-", fe,
+      "body",
       "_cluster-", cluster,
       "_se-", se_type,
       ".docx"
@@ -22,7 +21,6 @@ render_with_inference_opt <- function(  input,
     input,
     output_file = out,
     params = list(
-      is_fe = fe,
       is_cluster = cluster,
       se_type = se_type
     ),
