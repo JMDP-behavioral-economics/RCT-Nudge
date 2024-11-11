@@ -265,38 +265,9 @@ In this subsection, we estimated the message effects on the probability that a m
 
 ```{r setup-test-analysis, include=FALSE}
 id <- which(names(endpoint) %in% c("test"))
-rct_clone <- rct$clone()
-test <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(id, sample_drop = FALSE)
-
+test <- rct$lm(id, sample_drop = FALSE)
 full_test <- test$fit(scale = 100)
-subset_test <- test$fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)
 interaction_test <- test$fit_interaction_of_gender_age(age_cut = 30, scale = 100)
-```
-
-```{r}
-reg <- test$data %>%
-  mutate(
-    value = value * 100,
-    RCTweek_fe = if_else(month == 12 | month == 1, RCTweek, 0)
-  ) %>%
-  group_by(outcome) %>%
-  nest() %>%
-  mutate(fit = map(
-    data,
-    ~ lm_robust(
-      value ~ treat + male + age_demean + I(age_demean^2) + coordinate + holidays + hospital_per_area + PB_per_area + BM_per_area,
-      data = .,
-      se_type = "stata"
-    )
-  ))
-
-reg %>%
-  pull(fit) %>%
-  modelsummary(
-    stars = c("***" = .01, "**" = .05, "*" = .1)
-  )
 ```
 
 ```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
@@ -354,52 +325,6 @@ interaction_test$kable_lh(
   "CT",
   title = "Message Effects for Subgroup by Gender and Age"
 )
-```
-
-```{r test-reg-subset}
-est <- subset_test$get_est() %>%
-  arrange(male, desc(young))
-
-add_tab <- data.frame(
-  rbind(
-    c("Control average", str_remove(est$avg, "Ctrl Avg = ")),
-    c("Covariates", est$covariates)
-  )
-)
-
-attr(add_tab, "position") <- 7:8
-
-est$fit %>%
-  modelsummary(
-    title = "Heterogeneous Effects of Message on CT (Age cutoff: 30)",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = add_tab,
-    align = "lcccc",
-    fmt = 2
-  ) %>%
-  kable_styling(font_size = 9) %>%
-  # add_header_above(
-  #   c("Age:", "$< 30$", "$30 \\\\le$", "$< 30$", "$30 \\\\le$"),
-  #   escape = FALSE
-  # ) %>%
-  add_header_above(c("Gender:", "Female" = 2, "Male" = 2)) %>%
-  column_spec(1, width = "3cm") %>%
-  column_spec(2:5, width = "2cm") %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
-  )
 ```
 
 The most important intervention is the one that changes the behavior of young males, who have good transplant outcomes but are prone to interrupting coordination. However, the probability message that increases the probability of reaching the CT may negatively impact the probability that young males reach the CT. Conversely, even if the probability message is most effective in young males, it may have negative impacts on other genders and age groups. Therefore, a policy that uniformly assigns the probability message regardless of gender and age may be problematic. An analysis using only the full sample cannot address this point. Therefore, we divided the sample into four subsets by gender and age (under 30 or not) and estimated the message effects in each subset.

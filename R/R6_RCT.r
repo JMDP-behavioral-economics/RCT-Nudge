@@ -81,9 +81,9 @@ RCT <- R6Class("RCT",
 
       if (missing(cluster)) cluster <- private$cluster
       if (is.null(cluster)) {
-        Lm$new(use, private$covariate, se, private$fe)
+        Lm$new(use, se)
       } else {
-        LmCluster$new(use, private$covariate, se, cluster, private$fe)
+        LmCluster$new(use, se, cluster)
       }
     },
     logit = function(outcome_id, sample_drop = TRUE) {
