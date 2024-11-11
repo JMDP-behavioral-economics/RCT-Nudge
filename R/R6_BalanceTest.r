@@ -10,12 +10,24 @@ BalanceTest <- R6::R6Class("BalanceTest",
                           se,
                           cluster = NULL) 
     {
+      dt <- data %>%
+        select(
+          treat,
+          "Male (= 1)" = male,
+          "Age" = age,
+          "Number of past coordination" = coordinate,
+          "Number of listed hospitals" = hospital_per_area,
+          "Number of hospitals listed with PBSC collection" = PB_per_area,
+          "Number of hospitals listed with BM collection" = BM_per_area,
+          "Number of holidays in the assigned week" = holidays,
+        )
+
       panelA <- reduce(intervention, bind_rows)
       panelA <- bind_cols(term = names(intervention), panelA)
       panelA <- bind_cols(panelA, p.value = "")
       panelA <- bind_cols(panelA, panel = "A. Interventions")
 
-      panelB <- data %>%
+      panelB <- dt %>%
         group_by(treat) %>%
         summarize(n = n()) %>%
         pivot_wider(names_from = treat, values_from = n) %>%
@@ -23,23 +35,22 @@ BalanceTest <- R6::R6Class("BalanceTest",
       panelB <- bind_cols(term = "N", panelB)
       panelB <- bind_cols(panelB, panel = "B. Sample Size")
 
-      panelC <- data %>%
-        select(!!!covariate, treat) %>%
+      panelC <- dt %>%
         group_by(treat) %>%
         summarize_all(mean) %>%
         pivot_longer(-treat, names_to = "term") %>%
         pivot_wider(names_from = treat, values_from = value) %>%
         mutate_at(vars(-term), list(~ sprintf("%1.3f", .)))
-      
-      args <- list(data = data, se_type = se)
+
+      args <- list(formula = value ~ treat, se_type = se)
       if (!is.null(cluster)) {
         g <- self$data[, cluster, drop = TRUE]
         args <- append(args, list(cluster = g))
       }
 
-      p <- sapply(covariate, function(y) {
-        mod <- reformulate("treat", y)
-        args <- append(args, list(formula = mod))
+      p <- sapply(names(dt)[-1], function(y) {
+        d <- select(dt, treat, value = all_of(y))
+        args <- append(args, list(data = d))
         est <- do.call(lm_robust, args)
         f <- summary(est)$fstatistic
         sprintf("%1.3f", pf(f[1], f[2], f[3], lower.tail = FALSE))
@@ -59,7 +70,7 @@ BalanceTest <- R6::R6Class("BalanceTest",
       tab <- private$table
       panel_len <- rle(tab$panel)$lengths
       start_pos <- c(2, panel_len[1] + 2 + 1, sum(panel_len[1:2]) + 3 + 1)
-      
+
       tab %>%
         as_grouped_data("panel") %>%
         as_flextable(hide_grouplabel = TRUE) %>%
@@ -99,7 +110,7 @@ BalanceTest <- R6::R6Class("BalanceTest",
           booktabs = TRUE,
           linesep = ""
         )
-      
+
       if (hold) {
         kbl <- kbl %>% kable_styling(font_size = font_size, latex_options = "HOLD_position")
       } else {
@@ -128,7 +139,16 @@ SmdBalanceTest <- R6::R6Class("SmdBalanceTest",
   public = list(
     initialize = function(data, covariate) {
       statistics <- data %>%
-        select(!!!covariate, treat) %>%
+        select(
+          "Male (= 1)" = male,
+          "Age" = age,
+          "Number of past coordination" = coordinate,
+          "Number of listed hospitals" = hospital_per_area,
+          "Number of hospitals listed with PBSC collection" = PB_per_area,
+          "Number of hospitals listed with BM collection" = BM_per_area,
+          "Number of holidays in the assigned week" = holidays,
+          treat
+        ) %>%
         pivot_longer(-treat, names_to = "vars") %>%
         group_by(treat, vars) %>%
         summarize(
