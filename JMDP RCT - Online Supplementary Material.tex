@@ -27,6 +27,7 @@
 \usepackage{longtable, booktabs, array}
 \usepackage{threeparttable, threeparttablex, multirow}
 % \newcolumntype{d}{S[input-symbols = ()]}
+\usepackage{lscape}
 
 % ------------------------------- figures
 \usepackage[labelfont=bf, labelsep=period, justification=justified]{caption}
@@ -97,7 +98,7 @@
 
 \caption{\label{tab:assignment}Assignment Schedule}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
@@ -114,7 +115,7 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item Notes: See Table 1 in the main manuscrpit for a detailed description of the intervention of each experimental arm. The control arm is experimental arm A. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday.
+\item \emph{Note}: See Table 1 in the main manuscrpit for a detailed description of the intervention of each experimental arm. The control arm is experimental arm A. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -123,7 +124,7 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 
 \caption{\label{tab:smd-balance}Assessing Balance by Standaridized Mean Difference}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
 \begin{tabular}[t]{lccc}
 \toprule
@@ -135,7 +136,7 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \midrule
 Age & -0.026 & -0.096 & -0.041\\
 Male (= 1) & 0.019 & 0.016 & -0.031\\
-Number of holidays in the assigned week & 0.071 & 0.104 & 0.315\\
+Number of holidays in the assigned week & 0.462 & -0.129 & 0.317\\
 Number of hospitals listed with BM collection & 0.028 & 0.023 & 0.013\\
 Number of hospitals listed with PBSC collection & 0.023 & 0.019 & 0.011\\
 Number of listed hospitals & 0.024 & 0.019 & 0.015\\
@@ -143,95 +144,73 @@ Number of past coordination & -0.019 & 0.015 & -0.045\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item 
+\item \emph{Note}: These values represent the standardized mean differences (SMD) with the control arm (experimental arm A). Generally, covariates between two groups are balanced if the SMD is less than $0.1$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:response-speed-CT}Relationship between Response Speed and Coordination}
+\caption{\label{tab:test-lm}Linear Probability Model of the CT}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcc}
+\begin{tabular}[t]{lccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{1 = CT} & \multicolumn{1}{c}{1 = Exogenous interruption before CT} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3}
-  & (1) & (2)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
 \midrule
-Response speed (day) & \num{-2.44}*** & \num{0.46}***\\
- & (\num{0.11}) & (\num{0.08})\\
+Treatment B & \num{3.10}*** & \num{2.91}** & \num{3.06}**\\
+ & (\num{1.14}) & (\num{1.15}) & (\num{1.51})\\
+Treatment C & \num{1.19} & \num{0.93} & \num{0.57}\\
+ & (\num{1.16}) & (\num{1.15}) & (\num{1.50})\\
+Treatment D & \num{2.39}** & \num{2.49}** & \num{3.74}***\\
+ & (\num{1.17}) & (\num{1.16}) & (\num{1.43})\\
 \midrule
-Num.Obs. & \num{6142} & \num{6142}\\
+Control average & 22.25 & 22.25 & 22.25\\
+Individual-level covariates &  & X & X\\
+Week-level covariates &  & X & X\\
+Prefecture-level covariates &  & X & X\\
+Region$\times$Week (in Dec. and Jan.) FE &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. This table shows the estimation results of linear probability models. The robust standard errors are in parentheses. The unit of coefficient is a percentage point. We used those who responded to the HLA match letter with a positive intention to donate. We controlled for treatment dummies, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-reg}Linear Probability and Logit Model of CT}
+\caption{\label{tab:test-logit}Logit Model of the CT}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}}
+\begin{tabular}[t]{lccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Linear Probability Model} & \multicolumn{2}{c}{Logit Model} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
- & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
 \midrule
-Treatment B & 3.10*** & 3.04*** & 1.19*** & 1.19***\\
- & (1.14) & (1.16) &  & \\
- &  &  & {}[1.05, 1.34] & {}[1.05, 1.35]\\
-Treatment C & 1.19 & 1.07 & 1.07 & 1.07\\
- & (1.16) & (1.21) &  & \\
- &  &  & {}[0.94, 1.22] & {}[0.93, 1.22]\\
-Treatment D & 2.39** & 2.58** & 1.14** & 1.16**\\
- & (1.17) & (1.20) &  & \\
- &  &  & {}[1.01, 1.30] & {}[1.01, 1.32]\\
-Covariates &  & X &  & X\\
-Log.Lik. &  &  & -6083.783 & -5942.249\\
-Num.Obs. & 11049 & 11049 & 11049 & 11049\\
+Treatment B & \num{1.19} & \num{1.18} & \num{1.19}\\
+ & {}[\num{1.05}, \num{1.34}] & {}[\num{1.04}, \num{1.34}] & {}[\num{1.01}, \num{1.40}]\\
+Treatment C & \num{1.07} & \num{1.06} & \num{1.04}\\
+ & {}[\num{0.94}, \num{1.22}] & {}[\num{0.93}, \num{1.21}] & {}[\num{0.87}, \num{1.23}]\\
+Treatment D & \num{1.14} & \num{1.15} & \num{1.23}\\
+ & {}[\num{1.01}, \num{1.30}] & {}[\num{1.01}, \num{1.31}] & {}[\num{1.05}, \num{1.44}]\\
+\midrule
+Individual-level covariates &  & X & X\\
+Week-level covariates &  & X & X\\
+Prefecture-level covariates &  & X & X\\
+Region$\times$Week (in Dec. and Jan.) FE &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
+Log.Lik. & \num{-6083.783} & \num{-5953.275} & \num{-5822.603}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Column (1) and (2) shows estimation results of linear probability model. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Column (3) and (4) shows estimation results of logit model. In these columns, we show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:test-reg-subset-2}Heterogeneous Effects of Message on CT (Age cutoff: 40)}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}}
-\toprule
-\multicolumn{1}{c}{Gender:} & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} \\
-\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{Age:} & \multicolumn{1}{c}{$< 40$} & \multicolumn{1}{c}{$40 \le$} & \multicolumn{1}{c}{$< 40$} & \multicolumn{1}{c}{$40 \le$} \\
-\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
-\midrule
-Treatment B & \num{2.12} & \num{2.58} & \num{4.10}* & \num{2.20}\\
- & (\num{2.52}) & (\num{2.62}) & (\num{2.18}) & (\num{2.11})\\
-Treatment C & \num{2.17} & \num{-0.01} & \num{0.84} & \num{0.73}\\
- & (\num{2.59}) & (\num{2.80}) & (\num{2.18}) & (\num{2.26})\\
-Treatment D & \num{5.57}** & \num{4.14} & \num{-0.52} & \num{2.36}\\
- & (\num{2.63}) & (\num{2.71}) & (\num{2.20}) & (\num{2.22})\\
-\midrule
-Control average & 19.72 & 19.05 & 24.70 & 23.33\\
-Covariates & X & X & X & X\\
-Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -240,267 +219,135 @@ Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
 
 \caption{\label{tab:reply-lm}Linear Probability Model of Response}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Response} & \multicolumn{2}{c}{Positive intention} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Response} & \multicolumn{3}{c}{Positive intention} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.27} & \num{1.63}* & \num{2.31}* & \num{2.30}*\\
- & (\num{0.86}) & (\num{0.88}) & (\num{1.33}) & (\num{1.35})\\
-Treatment C & \num{-0.42} & \num{0.42} & \num{-0.44} & \num{-0.10}\\
- & (\num{0.91}) & (\num{0.95}) & (\num{1.37}) & (\num{1.43})\\
-Treatment D & \num{0.79} & \num{0.74} & \num{0.59} & \num{0.78}\\
- & (\num{0.89}) & (\num{0.91}) & (\num{1.37}) & (\num{1.39})\\
+Treatment B & \num{1.27} & \num{1.28} & \num{0.12} & \num{2.31}* & \num{2.41}* & \num{0.29}\\
+ & (\num{0.86}) & (\num{0.86}) & (\num{1.13}) & (\num{1.33}) & (\num{1.33}) & (\num{1.74})\\
+Treatment C & \num{-0.42} & \num{0.10} & \num{-0.09} & \num{-0.44} & \num{0.19} & \num{-1.64}\\
+ & (\num{0.91}) & (\num{0.90}) & (\num{1.14}) & (\num{1.37}) & (\num{1.36}) & (\num{1.75})\\
+Treatment D & \num{0.79} & \num{0.80} & \num{1.00} & \num{0.59} & \num{0.85} & \num{0.11}\\
+ & (\num{0.89}) & (\num{0.89}) & (\num{1.06}) & (\num{1.37}) & (\num{1.36}) & (\num{1.65})\\
 \midrule
-Control average & 87.69 & 87.69 & 54.91 & 54.91\\
-Covariates &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Control average & 87.69 & 87.69 & 87.69 & 54.91 & 54.91 & 54.91\\
+Individual-level covariates &  & X & X &  & X & X\\
+Week-level covariates &  & X & X &  & X & X\\
+Prefecture-level covariates &  & X & X &  & X & X\\
+Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-\begin{table}[H]
+\begin{landscape}\begin{table}[H]
 
 \caption{\label{tab:reply-logit}Logit Model of Response}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Response} & \multicolumn{2}{c}{Positive intention} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Response} & \multicolumn{3}{c}{Positive intention} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.131} & \num{1.171} & \num{1.098} & \num{1.101}\\
- & {}[\num{0.960}, \num{1.333}] & {}[\num{0.987}, \num{1.389}] & {}[\num{0.988}, \num{1.221}] & {}[\num{0.985}, \num{1.230}]\\
-Treatment C & \num{0.962} & \num{1.039} & \num{0.983} & \num{0.995}\\
- & {}[\num{0.817}, \num{1.133}] & {}[\num{0.872}, \num{1.237}] & {}[\num{0.881}, \num{1.095}] & {}[\num{0.886}, \num{1.118}]\\
-Treatment D & \num{1.078} & \num{1.073} & \num{1.024} & \num{1.033}\\
- & {}[\num{0.913}, \num{1.274}] & {}[\num{0.901}, \num{1.279}] & {}[\num{0.919}, \num{1.142}] & {}[\num{0.921}, \num{1.158}]\\
+Treatment B & \num{1.13} & \num{1.13} & \num{1.01} & \num{1.10} & \num{1.11} & \num{1.01}\\
+ & {}[\num{0.96}, \num{1.33}] & {}[\num{0.96}, \num{1.34}] & {}[\num{0.81}, \num{1.26}] & {}[\num{0.99}, \num{1.22}] & {}[\num{0.99}, \num{1.23}] & {}[\num{0.88}, \num{1.17}]\\
+Treatment C & \num{0.96} & \num{1.01} & \num{0.99} & \num{0.98} & \num{1.01} & \num{0.93}\\
+ & {}[\num{0.82}, \num{1.13}] & {}[\num{0.86}, \num{1.20}] & {}[\num{0.79}, \num{1.24}] & {}[\num{0.88}, \num{1.10}] & {}[\num{0.90}, \num{1.13}] & {}[\num{0.81}, \num{1.08}]\\
+Treatment D & \num{1.08} & \num{1.08} & \num{1.10} & \num{1.02} & \num{1.04} & \num{1.01}\\
+ & {}[\num{0.91}, \num{1.27}] & {}[\num{0.91}, \num{1.28}] & {}[\num{0.89}, \num{1.36}] & {}[\num{0.92}, \num{1.14}] & {}[\num{0.93}, \num{1.16}] & {}[\num{0.88}, \num{1.15}]\\
 \midrule
-Covariates &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-4022.045} & \num{-3848.018} & \num{-7586.840} & \num{-7415.520}\\
+Individual-level covariates &  & X & X &  & X & X\\
+Week-level covariates &  & X & X &  & X & X\\
+Prefecture-level covariates &  & X & X &  & X & X\\
+Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Log.Lik. & \num{-4022.045} & \num{-3850.164} & \num{-3698.637} & \num{-7586.840} & \num{-7419.753} & \num{-7259.347}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:reply-reg-subset}Heterogeneous Effects of Message on Response (Age cutoff: 30)}
-\centering
-\begin{threeparttable}
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lcc}
-\toprule
- & Response & Positive intention\\
-\midrule
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Young females (N = 1132)}}\\
-\hspace{1em}Treatment B & 1.08 (3.32) & -0.31 (4.51)\\
-\hspace{1em}Treatment C & 4.43 (3.22) & 3.33 (4.59)\\
-\hspace{1em}Treatment D & -0.72 (3.24) & -3.59 (4.41)\\
-\hspace{1em}Control average & 86.00 & 50.80\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Older females (N = 3018)}}\\
-\hspace{1em}Treatment B & -0.68 (1.26) & -1.03 (2.59)\\
-\hspace{1em}Treatment C & -1.33 (1.36) & -2.84 (2.78)\\
-\hspace{1em}Treatment D & -0.99 (1.24) & -0.61 (2.67)\\
-\hspace{1em}Control average & 94.32 & 58.66\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Young males (N = 1566)}}\\
-\hspace{1em}Treatment B & 6.52** (3.10) & 9.34*** (3.61)\\
-\hspace{1em}Treatment C & 2.45 (3.23) & 2.48 (3.63)\\
-\hspace{1em}Treatment D & 6.24* (3.23) & 2.88 (3.64)\\
-\hspace{1em}Control average & 74.24 & 38.50\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Older males (N = 5333)}}\\
-\hspace{1em}Treatment B & 1.59 (1.25) & 2.18 (1.95)\\
-\hspace{1em}Treatment C & -0.51 (1.37) & -1.37 (2.07)\\
-\hspace{1em}Treatment D & 0.17 (1.32) & 1.25 (2.03)\\
-\hspace{1em}Control average & 88.20 & 58.44\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:reply-reg-subset-2}Heterogeneous Effects of Message on Response (Age cutoff: 40)}
-\centering
-\begin{threeparttable}
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lcc}
-\toprule
- & Response & Positive intention\\
-\midrule
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Young females (N = 2268)}}\\
-\hspace{1em}Treatment B & -0.81 (1.96) & -2.78 (3.12)\\
-\hspace{1em}Treatment C & 0.37 (1.97) & -2.92 (3.22)\\
-\hspace{1em}Treatment D & -2.29 (2.01) & -3.64 (3.17)\\
-\hspace{1em}Control average & 90.45 & 53.05\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Older females (N = 1882)}}\\
-\hspace{1em}Treatment B & 0.45 (1.58) & 2.38 (3.22)\\
-\hspace{1em}Treatment C & -0.12 (1.72) & 2.11 (3.51)\\
-\hspace{1em}Treatment D & 0.59 (1.48) & 1.67 (3.28)\\
-\hspace{1em}Control average & 93.94 & 60.39\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Young males (N = 3445)}}\\
-\hspace{1em}Treatment B & 3.34* (1.96) & 5.52** (2.49)\\
-\hspace{1em}Treatment C & -0.07 (2.06) & -0.29 (2.53)\\
-\hspace{1em}Treatment D & 3.11 (2.07) & 1.41 (2.57)\\
-\hspace{1em}Control average & 79.76 & 46.02\\
-\addlinespace[0.3em]
-\multicolumn{3}{l}{\textbf{Older males (N = 3454)}}\\
-\hspace{1em}Treatment B & 2.94** (1.41) & 2.83 (2.35)\\
-\hspace{1em}Treatment C & 1.85 (1.56) & 1.15 (2.53)\\
-\hspace{1em}Treatment D & 0.94 (1.49) & 2.83 (2.43)\\
-\hspace{1em}Control average & 89.64 & 60.83\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/cumulative-response-rate-1} \caption{Cumulative Response Rates by Treatments}\label{fig:cumulative-response-rate}
-\end{figure}
-
-\begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/flow-1} \caption{Effect on Response Speed. \newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of treatment effect is a percentage point. Additionally, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:flow}
-\end{figure}
-
-\begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/cumulative-response-rate-subset-1} \caption{Cumulative Response Rates by Treatments, Gender and Age Group (Age Cutoff: 30).}\label{fig:cumulative-response-rate-subset}
-\end{figure}
-
-\begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/old-male-flow-1} \caption{Effect on Response Speed of Older Males.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used males older than 30 for the analysis sample. Furthermore,  we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-male-flow}
-\end{figure}
-
-\begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/old-female-flow-1} \caption{Effect on Response Speed of Older Females.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidence interval). The unit of the treatment effect is a percentage point. We used females over 30 for the analysis sample. Moreover, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:old-female-flow}
-\end{figure}
+\end{landscape}
 
 \begin{table}[H]
 
 \caption{\label{tab:coordinate-reg}Linear Probability Model of Coordination}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
+\begin{tabular}[t]{lccccccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Candidate selection} & \multicolumn{3}{c}{Final consent} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{0.16} & \num{-0.09} & \num{0.26} & \num{-0.02} & \num{0.12} & \num{-0.12}\\
- & (\num{0.65}) & (\num{0.67}) & (\num{0.62}) & (\num{0.63}) & (\num{0.56}) & (\num{0.58})\\
-Treatment C & \num{-0.07} & \num{-0.39} & \num{0.06} & \num{-0.27} & \num{0.02} & \num{-0.28}\\
- & (\num{0.66}) & (\num{0.70}) & (\num{0.63}) & (\num{0.67}) & (\num{0.57}) & (\num{0.61})\\
-Treatment D & \num{0.50} & \num{0.42} & \num{0.63} & \num{0.54} & \num{0.07} & \num{-0.02}\\
- & (\num{0.68}) & (\num{0.71}) & (\num{0.64}) & (\num{0.68}) & (\num{0.57}) & (\num{0.61})\\
+Treatment B & \num{0.16} & \num{0.03} & \num{-0.76} & \num{0.26} & \num{0.12} & \num{-0.50} & \num{0.12} & \num{0.01} & \num{-0.31}\\
+ & (\num{0.65}) & (\num{0.66}) & (\num{0.88}) & (\num{0.62}) & (\num{0.63}) & (\num{0.83}) & (\num{0.56}) & (\num{0.57}) & (\num{0.76})\\
+Treatment C & \num{-0.07} & \num{-0.22} & \num{-0.49} & \num{0.06} & \num{-0.06} & \num{-0.43} & \num{0.02} & \num{-0.07} & \num{-0.27}\\
+ & (\num{0.66}) & (\num{0.66}) & (\num{0.89}) & (\num{0.63}) & (\num{0.63}) & (\num{0.84}) & (\num{0.57}) & (\num{0.57}) & (\num{0.77})\\
+Treatment D & \num{0.50} & \num{0.52} & \num{0.54} & \num{0.63} & \num{0.63} & \num{0.46} & \num{0.07} & \num{0.06} & \num{-0.25}\\
+ & (\num{0.68}) & (\num{0.68}) & (\num{0.86}) & (\num{0.64}) & (\num{0.65}) & (\num{0.82}) & (\num{0.57}) & (\num{0.58}) & (\num{0.73})\\
 \midrule
-Control average & 6.19 & 6.19 & 5.44 & 5.44 & 4.50 & 4.50\\
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Control average & 6.19 & 6.19 & 6.19 & 5.44 & 5.44 & 5.44 & 4.50 & 4.50 & 4.50\\
+Individual-level covariates &  & X & X &  & X & X &  & X & X\\
+Week-level covariates &  & X & X &  & X & X &  & X & X\\
+Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
+Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-\begin{table}[H]
+\begin{landscape}\begin{table}[H]
 
 \caption{\label{tab:coordinate-logit}Logit Model of Coordination}
 \centering
-\fontsize{9}{11}\selectfont
+\fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
+\begin{tabular}[t]{lccccccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Candidate selection} & \multicolumn{3}{c}{Final consent} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{1.03} & \num{0.99} & \num{1.05} & \num{1.00} & \num{1.03} & \num{0.98}\\
- & {}[\num{0.83}, \num{1.28}] & {}[\num{0.79}, \num{1.24}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.79}, \num{1.27}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.75}, \num{1.27}]\\
-Treatment C & \num{0.99} & \num{0.94} & \num{1.01} & \num{0.96} & \num{1.00} & \num{0.95}\\
- & {}[\num{0.79}, \num{1.24}] & {}[\num{0.74}, \num{1.19}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.75}, \num{1.23}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.72}, \num{1.25}]\\
-Treatment D & \num{1.09} & \num{1.08} & \num{1.12} & \num{1.11} & \num{1.02} & \num{1.00}\\
- & {}[\num{0.87}, \num{1.35}] & {}[\num{0.86}, \num{1.36}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.88}, \num{1.42}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.77}, \num{1.31}]\\
+Treatment B & \num{1.03} & \num{1.01} & \num{0.89} & \num{1.05} & \num{1.03} & \num{0.92} & \num{1.03} & \num{1.01} & \num{0.94}\\
+ & {}[\num{0.83}, \num{1.28}] & {}[\num{0.81}, \num{1.26}] & {}[\num{0.67}, \num{1.18}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.81}, \num{1.30}] & {}[\num{0.68}, \num{1.24}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.78}, \num{1.30}] & {}[\num{0.68}, \num{1.30}]\\
+Treatment C & \num{0.99} & \num{0.97} & \num{0.93} & \num{1.01} & \num{1.00} & \num{0.94} & \num{1.00} & \num{0.99} & \num{0.95}\\
+ & {}[\num{0.79}, \num{1.24}] & {}[\num{0.77}, \num{1.22}] & {}[\num{0.70}, \num{1.24}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.78}, \num{1.27}] & {}[\num{0.69}, \num{1.27}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.76}, \num{1.28}] & {}[\num{0.68}, \num{1.32}]\\
+Treatment D & \num{1.09} & \num{1.09} & \num{1.09} & \num{1.12} & \num{1.13} & \num{1.09} & \num{1.02} & \num{1.02} & \num{0.95}\\
+ & {}[\num{0.87}, \num{1.35}] & {}[\num{0.87}, \num{1.37}] & {}[\num{0.84}, \num{1.42}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.89}, \num{1.43}] & {}[\num{0.82}, \num{1.44}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.69}, \num{1.29}]\\
 \midrule
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-2610.914} & \num{-2547.778} & \num{-2410.035} & \num{-2348.079} & \num{-2045.363} & \num{-2001.819}\\
+Individual-level covariates &  & X & X &  & X & X &  & X & X\\
+Week-level covariates &  & X & X &  & X & X &  & X & X\\
+Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
+Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Log.Lik. & \num{-2610.914} & \num{-2555.909} & \num{-2459.914} & \num{-2410.035} & \num{-2357.330} & \num{-2265.325} & \num{-2045.363} & \num{-2011.056} & \num{-1924.783}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. We show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:coordinate-reg-subset-2}Subsample Analysis for Coordination Process (Age Cutoff: 40)}
-\centering
-\begin{threeparttable}
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lccc}
-\toprule
- & Candidate selection & Final consent & Donation\\
-\midrule
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Young females (N = 2268)}}\\
-\hspace{1em}Treatment B & -1.61 (1.18) & -1.64 (1.10) & -0.77 (1.06)\\
-\hspace{1em}Treatment C & 1.25 (1.38) & 1.10 (1.30) & 0.98 (1.19)\\
-\hspace{1em}Treatment D & -0.16 (1.30) & -0.51 (1.22) & -0.39 (1.11)\\
-\hspace{1em}Control average & 4.88 & 4.27 & 3.46\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Older females (N = 1882)}}\\
-\hspace{1em}Treatment B & -0.76 (1.22) & -0.06 (1.14) & -0.20 (1.08)\\
-\hspace{1em}Treatment C & -0.90 (1.36) & -0.29 (1.27) & -0.69 (1.17)\\
-\hspace{1em}Treatment D & 0.26 (1.34) & 0.65 (1.20) & -0.30 (1.06)\\
-\hspace{1em}Control average & 3.90 & 3.03 & 2.81\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Young males (N = 3445)}}\\
-\hspace{1em}Treatment B & 0.95 (1.40) & 0.69 (1.34) & 0.49 (1.22)\\
-\hspace{1em}Treatment C & -1.22 (1.36) & -1.33 (1.29) & -0.71 (1.20)\\
-\hspace{1em}Treatment D & -0.09 (1.47) & 0.36 (1.42) & -0.20 (1.29)\\
-\hspace{1em}Control average & 8.23 & 7.29 & 5.94\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Older males (N = 3454)}}\\
-\hspace{1em}Treatment B & 0.27 (1.27) & 0.36 (1.22) & -0.32 (1.11)\\
-\hspace{1em}Treatment C & -0.17 (1.37) & -0.02 (1.32) & -0.51 (1.20)\\
-\hspace{1em}Treatment D & 1.45 (1.38) & 1.38 (1.33) & 0.51 (1.20)\\
-\hspace{1em}Control average & 6.43 & 5.83 & 4.76\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of the treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+\end{landscape}
 
 \clearpage
 

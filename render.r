@@ -31,7 +31,6 @@ render_with_inference_opt <- function(  input,
 # Main manuscript
 render_with_inference_opt(
   here("JMDP RCT - Main Document.rmd"),
-  fe = TRUE,
   cluster = FALSE,
   se_type = "stata",
   output = "JMDP RCT - Main Document.pdf"
@@ -40,7 +39,6 @@ render_with_inference_opt(
 # Main manuscript (Robust analysis)
 render_with_inference_opt(
   here("JMDP RCT - Main Document.rmd"),
-  fe = TRUE,
   cluster = TRUE,
   se_type = "stata",
   output = "JMDP RCT - Main Document (cluster se).pdf"
@@ -49,7 +47,6 @@ render_with_inference_opt(
 # Online Supplementary Material
 render_with_inference_opt(
   here("JMDP RCT - Online Supplementary Material.rmd"),
-  fe = TRUE,
   cluster = FALSE,
   se_type = "stata",
   output = "JMDP RCT - Online Supplementary Material.pdf"
@@ -58,7 +55,6 @@ render_with_inference_opt(
 # Online Supplementary Material (Robust analysis with cluster)
 render_with_inference_opt(
   here("JMDP RCT - Online Supplementary Material.rmd"),
-  fe = TRUE,
   cluster = TRUE,
   se_type = "stata",
   output = "JMDP RCT - Online Supplementary Material (cluster se).pdf"

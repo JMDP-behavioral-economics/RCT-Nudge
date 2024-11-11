@@ -69,9 +69,10 @@ schedule <- Schedule$new(here(data_root, "RCT-schedule.csv"))
 schedule$kable(
   title = "Assignment Schedule",
   notes = paste(
-    "Notes: See Table 1 in the main manuscrpit for a detailed description of the intervention of each experimental arm. The control arm is experimental arm A. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday."
+    "\\\\emph{Note}: See Table 1 in the main manuscrpit for a detailed description of the intervention of each experimental arm. The control arm is experimental arm A. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday."
   ),
-  hold = TRUE
+  hold = TRUE,
+  font_size = 8
 )
 ```
 
@@ -112,11 +113,13 @@ rct$
   smd_balance()$
   kable(
     title = "Assessing Balance by Standaridized Mean Difference",
-    hold = TRUE
+    notes = "\\\\emph{Note}: These values represent the standardized mean differences (SMD) with the control arm (experimental arm A). Generally, covariates between two groups are balanced if the SMD is less than $0.1$.",
+    hold = TRUE,
+    font_size = 8
   )
 ```
 
-```{r response-speed-CT}
+```{r response-speed-CT, eval=FALSE}
 respond <- subset(rct$data, positive == 1)
 
 add_vars <- c("treat", "factor(month)", "factor(week)")
@@ -152,151 +155,37 @@ est_mods %>%
 
 ```{r set-test-reg-class, include=FALSE}
 id <- which(names(endpoint) %in% c("test"))
-rct_clone <- rct$clone()
-logit_test <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  logit(id, sample_drop = FALSE)$
-  fit_all()
-
-lm_test <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(id, sample_drop = FALSE)
+lm_test <- rct$lm(id, sample_drop = FALSE)
+logit_test <- rct$logit(id, sample_drop = FALSE)
 ```
 
-```{r test-reg}
-lm_tab <- lm_test$
+```{r test-lm}
+lm_test$
   fit(scale = 100)$
-  get_est()$fit %>%
-  modelsummary(
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    fmt = 2,
-    output = "data.frame"
-  )
-
-logit_tab <- logit_test$get_est()$fit %>%
-  modelsummary(
-    estimate = "{or}{stars}",
-    statistic = "[{lower.or}, {upper.or}]",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
-    gof_omit = "R2|AIC|BIC|RMSE|Std|FE|se_type",
-    fmt = 2,
-    output = "data.frame"
-  )
-
-add_tab <- tribble(
-  ~term, ~"(1).x", ~"(2).x", ~"(1).y", ~"(2).y",
-  "Covariates", "", "X", "", "X"
-)
-
-tab <- lm_tab %>%
-  full_join(logit_tab, by = c("part", "term", "statistic")) %>%
-  mutate(statistic = factor(
-    statistic,
-    levels = c("estimate", "std.error", "[{lower.or}, {upper.or}]")
-  )) %>%
-  arrange(part, term, statistic)
-
-tab2 <- bind_rows(
-  subset(tab, part == "estimates"),
-  add_tab,
-  subset(tab, part == "gof")
-)
-
-tab2 %>%
-  mutate(term = if_else(statistic %in% c("std.error", "[{lower.or}, {upper.or}]"), NA, term)) %>%
-  select(-part, -statistic) %>%
-  knitr::kable(
-    caption = "Linear Probability and Logit Model of CT",
-    col.names = c("", paste0("(", 1:4, ")")),
-    align = "lcccc",
-    booktabs = TRUE,
-    linesep = ""
-  ) %>%
-  kable_styling(font_size = 9, latex_options = "HOLD_position") %>%
-  add_header_above(c(" ", "Linear Probability Model" = 2, "Logit Model" = 2)) %>%
-  column_spec(1, width = "3cm") %>%
-  column_spec(2:5, width = "2cm") %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Column (1) and (2) shows estimation results of linear probability model. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Column (3) and (4) shows estimation results of logit model. In these columns, we show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
+  kable(
+    title = "Linear Probability Model of the CT",
+    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    hold = TRUE,
+    font_size = 8
   )
 ```
 
-```{r test-reg-subset-2}
-test_subset <- lm_test$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100)$
-  get_est() %>%
-  arrange(male, desc(young))
-
-add_tab <- data.frame(
-  rbind(
-    c("Control average", str_remove(test_subset$avg, "Ctrl Avg = ")),
-    c("Covariates", rep("X", 4))
-  )
-)
-
-attr(add_tab, "position") <- 7:8
-
-test_subset$fit %>%
-  modelsummary(
-    title = "Heterogeneous Effects of Message on CT (Age cutoff: 40)",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    add_rows = add_tab,
-    align = "lcccc",
-    fmt = 2
-  ) %>%
-  kable_styling(font_size = 9, latex_options = "HOLD_position") %>%
-  add_header_above(
-    c("Age:", "$< 40$", "$40 \\\\le$", "$< 40$", "$40 \\\\le$"),
-    escape = FALSE
-  ) %>%
-  add_header_above(c("Gender:", "Female" = 2, "Male" = 2)) %>%
-  column_spec(1, width = "3cm") %>%
-  column_spec(2:5, width = "2cm") %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
+```{r test-logit}
+logit_test$
+  fit()$
+  kable(
+    title = "Logit Model of the CT",
+    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
   )
 ```
 
 ```{r set-reply-class, include=FALSE}
 id_reply <- which(names(endpoint) %in% c("reply", "positive"))
-rct_clone <- rct$clone()
-logit_reply <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  logit(id_reply, sample_drop = FALSE)$
-  fit_all()
-
-lm_reply <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(id_reply, sample_drop = FALSE)
+lm_reply <- rct$lm(id_reply, sample_drop = FALSE)
+logit_reply <- rct$logit(id_reply, sample_drop = FALSE)
 ```
 
 ```{r reply-lm}
@@ -304,88 +193,53 @@ lm_reply$
   fit(scale = 100)$
   kable(
     title = "Linear Probability Model of Response",
-    notes = "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordination, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
-    hold = TRUE
+    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    hold = TRUE,
+    font_size = 8
   )
 ```
 
 ```{r reply-logit}
 logit_reply$
+  fit()$
   kable(
     title = "Logit Model of Response",
-    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
-    hold = TRUE
-  )
-```
-
-```{r reply-reg-subset}
-lm_reply$
-  fit_subset_by_gender_age(age_cut = 30, scale = 100)$
-  kable(
-    title = "Heterogeneous Effects of Message on Response (Age cutoff: 30)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
-    hold = TRUE
-  )
-```
-
-```{r reply-reg-subset-2}
-lm_reply$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100)$
-  kable(
-    title = "Heterogeneous Effects of Message on Response (Age cutoff: 40)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
-    hold = TRUE
-  )
+    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
+  ) %>%
+  kableExtra::landscape()
 ```
 
 ```{r set-lm-class-coordination, include=FALSE}
-id3 <- which(names(endpoint) %in% c("candidate", "consent", "donate"))
-coordinate <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  lm(id3, sample_drop = FALSE)
-
-full_coordinate <- coordinate$fit(scale = 100)
-subset_coordinate <- coordinate$fit_subset_by_gender_age(age_cut = 30, scale = 100)
+id_coordinate <- which(names(endpoint) %in% c("candidate", "consent", "donate"))
+lm_coordinate <- rct$lm(id_coordinate, sample_drop = FALSE)
+logit_coordinate <- rct$logit(id_coordinate, sample_drop = FALSE)
 ```
 
 ```{r coordinate-reg}
-full_coordinate$
+lm_coordinate$
+  fit(scale = 100)$
   kable(
     title = "Linear Probability Model of Coordination",
-    notes = paste(
-      "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    hold = TRUE
+    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    hold = TRUE,
+    font_size = 8
   )
-```
-
-```{r setup-logit-coordination, include=FALSE}
-logit_coordinate <- rct_clone$
-  add_covariate(c("Squared age" = "I(age^2)"))$
-  logit(id3, sample_drop = FALSE)$
-  fit_all()
 ```
 
 ```{r coordinate-logit}
 logit_coordinate$
+  fit()$
   kable(
     title = "Logit Model of Coordination",
-    notes = paste(
-      "We show odds ratios and associated 95 percent confidence intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    fmt = 2,
-    hold = TRUE
-  )
-```
-
-```{r coordinate-reg-subset-2}
-coordinate$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100)$
-  kable(
-    title = "Subsample Analysis for Coordination Process (Age Cutoff: 40)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of the treatment effect is a percentage point. The age category is defined as under 40 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.",
-    hold = TRUE
-  )
+    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
+  ) %>%
+  kableExtra::landscape()
 ```
 
 <!---
