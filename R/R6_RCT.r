@@ -76,7 +76,7 @@ RCT <- R6Class("RCT",
     logit = function(outcome_id, sample_drop = TRUE) {
       use <- private$create_analysis_data(sample_drop)
       if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
-      Logit$new(use, private$covariate, private$fe)
+      Logit$new(use)
     },
     rcf = function(outcome, sample_drop = TRUE) {
       if (length(private$covariate) == 0) stop("Specify covariate by add_covariate()")

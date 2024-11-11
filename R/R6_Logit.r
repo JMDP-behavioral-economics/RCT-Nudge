@@ -6,24 +6,35 @@ source(here("R/misc.r"))
 Logit <- R6::R6Class("Logit",
   public = list(
     data = NULL,
-    initialize = function(data, covariate, fe) {
-      ctrl <- levels(data$treat)[1]
-
-      rhs <- list(
-        unctrl = "treat",
-        ctrl = c("treat", covariate)
-      )
-
-      if (!is.null(fe)) {
-        rhs$ctrl <- append(
-          rhs$ctrl,
-          sapply(fe, function(x) paste0("factor(", x, ")"))
-        )
-      }
-
-      private$model <- lapply(rhs, function(m) reformulate(m, "value"))
+    initialize = function(data) {
       private$ctrl_arm <- levels(data$treat)[1]
-      self$data <- data
+
+      self$data <- data %>%
+        mutate(
+          RCTweek_fe = if_else(month == 12 | month == 1, RCTweek, 0),
+          tiiki = case_when(
+            str_detect(prefecture, "^(青森|岩手|秋田|宮城|山形|福島)") ~ "東北",
+            str_detect(prefecture, "^(茨城|栃木|群馬)") ~ "北関東",
+            str_detect(prefecture, "^(埼玉|千葉)") ~ "南関東",
+            str_detect(prefecture, "^(新潟|富山|石川|福井)") ~ "北陸",
+            str_detect(prefecture, "^(山梨|長野)") ~ "中央高地",
+            str_detect(prefecture, "^(静岡|岐阜|三重)") ~ "東海",
+            str_detect(prefecture, "^(滋賀|京都|奈良|和歌山|兵庫)") ~ "近畿",
+            str_detect(prefecture, "^(鳥取|島根|岡山|広島|山口)") ~ "中国",
+            str_detect(prefecture, "^(徳島|香川|愛媛|高知)") ~ "四国",
+            str_detect(prefecture, "^(福岡|長崎|佐賀|大分|熊本|宮崎|鹿児島)") ~ "九州",
+            TRUE ~ prefecture
+          ),
+          tiiki_week = paste0(tiiki, "_", RCTweek_fe)
+        )
+
+      private$model <- list(
+        unctrl = value ~ treat,
+        ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
+          holidays + hospital_per_area + PB_per_area + BM_per_area,
+        ctrl2 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
+          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(tiiki_week)
+      )
 
       cat("\n")
       cat("Options for binary regression (Logit)\n")
@@ -32,31 +43,38 @@ Logit <- R6::R6Class("Logit",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit_all = function() {
+    fit = function() {
       est <- self$data %>%
         group_by(outcome) %>%
         nest() %>%
         mutate(
-          fit1 = map(data, ~ glm(private$model$unctrl, data = ., family = binomial())),
-          fit2 = map(data, ~ glm(private$model$ctrl, data = ., family = binomial()))
+          fit1 = private$call_glm(private$model$unctrl, data),
+          fit2 = private$call_glm(private$model$ctrl1, data),
+          fit3 = private$call_glm(private$model$ctrl2, data)
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit2,
+          fit1:fit3,
           names_prefix = "fit",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        select(-data) %>%
-        rename(covs = model) %>%
-        mutate(covs = if_else(covs == "2", "X", ""))
+        mutate(
+          covs_i = if_else(model != "1", "X", ""),
+          covs_p = if_else(model != "1", "X", ""),
+          covs_w = if_else(model != "1", "X", ""),
+          covs_fe = if_else(model == "3", "X", "")
+        )
 
       LogitAll$new(est)
     }
   ),
   private = list(
     ctrl_arm = "",
-    model = list()
+    model = list(),
+    call_glm = function(model, data) {
+      map(data, ~ glm(model, data = ., family = binomial()))
+    }
   )
 )
 
@@ -162,8 +180,15 @@ LogitAll <- R6::R6Class("LogitAll",
       stars <- c("***" = .01, "**" = .05, "*" = .1)
       gof_omit <- "R2|AIC|BIC|RMSE|Std|FE|se_type"
       align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
-      add_tab <- data.frame(rbind(c("Covariates", private$est$covs)))
-      attr(add_tab, "position") <- 7
+      add_tab <- data.frame(
+        rbind(
+          c("Individual-level covariates", private$est$covs_i),
+          c("Week-level covariates", private$est$covs_w),
+          c("Prefecture-level covariates", private$est$covs_p),
+          c("Region$\\times$Week (in Dec. and Jan.) FE", private$est$covs_fe)
+        )
+      )
+      attr(add_tab, "position") <- 7:10
 
       args <- list(
         models = fit,
