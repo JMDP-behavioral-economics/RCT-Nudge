@@ -27,6 +27,7 @@
 \usepackage{longtable, booktabs, array}
 \usepackage{threeparttable, threeparttablex, multirow}
 % \newcolumntype{d}{S[input-symbols = ()]}
+\usepackage{lscape}
 
 % ------------------------------- figures
 \usepackage[labelfont=bf, labelsep=period, justification=justified]{caption}
@@ -64,8 +65,7 @@
   
 
 % ------------------------------ paper information
-\title{Only You:
-Field Experiment Using Text Messages to Prevent Free-riding in the Japan Marrow Donor Program\thanks{We would like to thank the Japan Marrow Donor Program Office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04). Declarations of interest: none. Funding: This work was supported by the Japan Society for the Promotion of Science {[}grant number 20H05632{]} and the Ministry of Health, Labour and Welfare {[}grant number 19FF1001{]}.}}
+\title{Field experiment Using Text Messages to Promote Stem Cell Donation in Japan Marrow Donor Program\thanks{We would like to thank the Japan Marrow Donor Program Office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04). Declarations of interest: none. Funding: This work was supported by the Japan Society for the Promotion of Science {[}grant number 20H05632{]} and the Ministry of Health, Labour and Welfare {[}grant number 19FF1001{]}.}}
 \author{}
 \date{}
 
@@ -234,45 +234,48 @@ We show sample proporting of reaching the CT by experimental arms in Figure \ref
 \centering
 \fontsize{9}{11}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcc}
+\begin{tabular}[t]{lccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
 \midrule
-Treatment B & \num{3.87} & \num{2.49}\\
- & (\num{3.58}) & (\num{3.57})\\
-Treatment C & \num{4.37} & \num{3.24}\\
- & (\num{3.63}) & (\num{3.59})\\
-Treatment D & \num{5.21} & \num{4.27}\\
- & (\num{3.62}) & (\num{3.59})\\
-Older female & \num{-1.91} & \num{-4.01}\\
- & (\num{2.96}) & (\num{2.98})\\
-Young male & \num{2.47} & \num{1.41}\\
- & (\num{3.40}) & (\num{3.38})\\
-Older male & \num{3.38} & \num{-0.69}\\
- & (\num{2.85}) & (\num{2.85})\\
-Treatment B $\times$ Older female & \num{-1.57} & \num{-0.88}\\
- & (\num{4.13}) & (\num{4.10})\\
-Treatment C $\times$ Older female & \num{-3.93} & \num{-2.92}\\
- & (\num{4.19}) & (\num{4.13})\\
-Treatment D $\times$ Older female & \num{-0.46} & \num{0.41}\\
- & (\num{4.20}) & (\num{4.17})\\
-Treatment B $\times$ Young male & \num{1.27} & \num{2.65}\\
- & (\num{4.76}) & (\num{4.71})\\
-Treatment C $\times$ Young male & \num{-6.91} & \num{-5.35}\\
- & (\num{4.71}) & (\num{4.63})\\
-Treatment D $\times$ Young male & \num{-7.74} & \num{-6.86}\\
- & (\num{4.74}) & (\num{4.67})\\
-Covariates &  & X\\
-Treatment B $\times$ Older male & \num{-1.15} & \num{0.41}\\
- & (\num{3.95}) & (\num{3.92})\\
-Treatment C $\times$ Older male & \num{-2.39} & \num{-0.87}\\
- & (\num{4.02}) & (\num{3.95})\\
-Treatment D $\times$ Older male & \num{-3.33} & \num{-2.04}\\
- & (\num{4.01}) & (\num{3.97})\\
+Treatment B & \num{3.87} & \num{3.04} & \num{2.38}\\
+ & (\num{3.58}) & (\num{3.55}) & (\num{3.69})\\
+Treatment C & \num{4.37} & \num{3.41} & \num{2.02}\\
+ & (\num{3.63}) & (\num{3.57}) & (\num{3.71})\\
+Treatment D & \num{5.21} & \num{4.75} & \num{5.13}\\
+ & (\num{3.62}) & (\num{3.57}) & (\num{3.66})\\
+Older female & \num{-1.91} & \num{-3.69} & \num{-4.94}*\\
+ & (\num{2.96}) & (\num{2.97}) & (\num{2.98})\\
+Young male & \num{2.47} & \num{1.59} & \num{1.36}\\
+ & (\num{3.40}) & (\num{3.38}) & (\num{3.39})\\
+Older male & \num{3.38} & \num{-0.27} & \num{-1.64}\\
+ & (\num{2.85}) & (\num{2.85}) & (\num{2.85})\\
+Treatment B $\times$ Older female & \num{-1.57} & \num{-1.15} & \num{-0.41}\\
+ & (\num{4.13}) & (\num{4.10}) & (\num{4.11})\\
+Treatment C $\times$ Older female & \num{-3.93} & \num{-3.29} & \num{-2.28}\\
+ & (\num{4.19}) & (\num{4.13}) & (\num{4.15})\\
+Treatment D $\times$ Older female & \num{-0.46} & \num{0.07} & \num{0.80}\\
+ & (\num{4.20}) & (\num{4.16}) & (\num{4.16})\\
+Treatment B $\times$ Young male & \num{1.27} & \num{2.18} & \num{2.97}\\
+ & (\num{4.76}) & (\num{4.71}) & (\num{4.72})\\
+Treatment C $\times$ Young male & \num{-6.91} & \num{-5.77} & \num{-4.71}\\
+ & (\num{4.71}) & (\num{4.63}) & (\num{4.64})\\
+Treatment D $\times$ Young male & \num{-7.74} & \num{-7.31} & \num{-6.68}\\
+ & (\num{4.74}) & (\num{4.66}) & (\num{4.68})\\
+Treatment B $\times$ Older male & \num{-1.15} & \num{-0.09} & \num{1.09}\\
+ & (\num{3.95}) & (\num{3.92}) & (\num{3.91})\\
+Treatment C $\times$ Older male & \num{-2.39} & \num{-1.33} & \num{-0.05}\\
+ & (\num{4.02}) & (\num{3.95}) & (\num{3.96})\\
+Treatment D $\times$ Older male & \num{-3.33} & \num{-2.59} & \num{-1.39}\\
+ & (\num{4.01}) & (\num{3.96}) & (\num{3.95})\\
 \midrule
-Num.Obs. & \num{11049} & \num{11049}\\
+Individual-level covariates &  & X & X\\
+Week-level covariates &  & X & X\\
+Prefecture-level covariates &  & X & X\\
+Region$\times$Week (in Dec. and Jan.) FE &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -297,7 +300,7 @@ Num.Obs. & \num{11049} & \num{11049}\\
 \midrule
 Control average & 20.80 & 18.89 & 23.27 & 24.18\\
 \addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Without control variables}}\\
+\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
 \hspace{1em}B & 3.87 & 2.30 & 5.13 & 2.72\\
 \hspace{1em} & (3.58) & (2.05) & (3.13) & (1.68)\\
 \hspace{1em}C & 4.37 & 0.44 & -2.54 & 1.98\\
@@ -305,47 +308,25 @@ Control average & 20.80 & 18.89 & 23.27 & 24.18\\
 \hspace{1em}D & 5.21 & 4.75** & -2.52 & 1.89\\
 \hspace{1em} & (3.62) & (2.12) & (3.05) & (1.73)\\
 \addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{With control variables}}\\
-\hspace{1em}B & 2.49 & 1.61 & 5.14* & 2.90*\\
-\hspace{1em} & (3.57) & (2.07) & (3.11) & (1.70)\\
-\hspace{1em}C & 3.24 & 0.32 & -2.11 & 2.37\\
-\hspace{1em} & (3.59) & (2.12) & (2.97) & (1.74)\\
-\hspace{1em}D & 4.27 & 4.68** & -2.60 & 2.22\\
-\hspace{1em} & (3.59) & (2.15) & (3.00) & (1.74)\\
+\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
+\hspace{1em}B & 3.04 & 1.89 & 5.22* & 2.95*\\
+\hspace{1em} & (3.55) & (2.05) & (3.10) & (1.67)\\
+\hspace{1em}C & 3.41 & 0.12 & -2.36 & 2.08\\
+\hspace{1em} & (3.57) & (2.09) & (2.95) & (1.70)\\
+\hspace{1em}D & 4.75 & 4.82** & -2.56 & 2.16\\
+\hspace{1em} & (3.57) & (2.13) & (2.99) & (1.72)\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Model (3): Including covariates and FE}}\\
+\hspace{1em}B & 2.38 & 1.96 & 5.35 & 3.46*\\
+\hspace{1em} & (3.69) & (2.28) & (3.30) & (1.93)\\
+\hspace{1em}C & 2.02 & -0.26 & -2.69 & 1.97\\
+\hspace{1em} & (3.71) & (2.30) & (3.14) & (1.96)\\
+\hspace{1em}D & 5.13 & 5.93*** & -1.55 & 3.74**\\
+\hspace{1em} & (3.66) & (2.30) & (3.15) & (1.90)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
 \item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. 
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}
-
-\caption{\label{tab:test-reg-subset}Heterogeneous Effects of Message on CT (Age cutoff: 30)}
-\centering
-\fontsize{9}{11}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}>{\centering\arraybackslash}p{2cm}}
-\toprule
-\multicolumn{1}{c}{Gender:} & \multicolumn{2}{c}{Female} & \multicolumn{2}{c}{Male} \\
-\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-  & (1) & (2) & (3) & (4)\\
-\midrule
-Treatment B & \num{3.87} & \num{2.30} & \num{5.13} & \num{2.72}\\
- & (\num{3.58}) & (\num{2.05}) & (\num{3.13}) & (\num{1.67})\\
-Treatment C & \num{4.37} & \num{0.44} & \num{-2.54} & \num{1.98}\\
- & (\num{3.64}) & (\num{2.09}) & (\num{3.00}) & (\num{1.73})\\
-Treatment D & \num{5.21} & \num{4.75}** & \num{-2.52} & \num{1.89}\\
- & (\num{3.62}) & (\num{2.12}) & (\num{3.06}) & (\num{1.73})\\
-\midrule
-Control average & 20.80 & 18.89 & 23.27 & 24.18\\
-Covariates & X & X & X & X\\
-Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -360,27 +341,6 @@ These results suggest that the probability message suppresses responses with neg
 
 For other gender and age groups, excluding young males, experimental arm B, containing only the probability message, had no statistically significant effect on the CT reach probability. Experimental arm D, containing both the probability message and the early coordination message, enhanced the CT reach probability for older female groups while having no statistically significant effect on the CT reach probability for other gender and age groups, including young males. Considering these results, the probability message enhances young male donors with favorable transplantation outcomes to reach the CT stage without negatively impacting other groups. Presenting both the probability message and the early coordination message increases older female donors who reach the CT stage without negatively affecting other groups. Therefore, it can be concluded that there is no downside to uniformly assigning only the probability message.\footnote{Table A4 in the Online Supplementary Material A presents the subsample analysis with an age cutoff set at 40. The effect of the probability message (experimental arm B) on young males slightly weakened, while it slightly strengthened for older males. This suggests that in males, the effect of the probability message seems to follow a convex function of age. However, there is no change in our overall conclusion.}
 
-\hypertarget{reply-speed}{%
-\subsection{Response Speed to Notification}\label{reply-speed}}
-
-The early coordination message stated that early coordination increases the patient's transplantation rate. Therefore, this message may encourage early responses to the HLA match letter. As the letter recommends responding within 7 days, we define ``early response'' as responding within 7 days. To verify whether the intervention messages increase this early response, we estimated the change of intervention effects over time, using dummy variables indicating response by a certain day as the outcomes. We expect that the early coordination message will promote responses within 7 days.
-
-Figure A1 in the Online Supplementary Material A shows the cumulative response rate up to 40 days after the letter was sent. In the 5--10 days after the letter was sent, the cumulative response rate for all treatment groups was slightly lower than the control arm, which is statistically significant (see Figure A2 in the Online Supplementary Material A). Subsequently, the cumulative response rate for treatment groups B (dashed line) and D (dotted line) was slightly higher than the control arm, which is statistically insignificant for most periods, except for some. Therefore, the early coordination message does not increase the overall response speed.
-
-Given that the effect on responses is heterogeneous by gender and age, as shown in the previous results, we also split the subsample by gender and age and focused on the heterogeneity of the effect on quick responses. Figure A3 in the Online Supplementary Material A shows the cumulative response rate by gender and age groups (age cutoff is 30).
-
-\begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-male-flow-1} \caption{Effect on Response Speed of Young Males.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidential interval). The unit of the treatment effect is a percentage point. We used males younger than 30 for the analysis sample. Further, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-male-flow}
-\end{figure}
-
-While no significant differences were observed in the pattern of cumulative response rates for males and females aged 30 and older, some notable results were evident for males and females under 30.\footnote{For males and females aged 30 and older, the cumulative response rate for each day differed little between the experimental arms, except for certain periods, and is not statistically significant. See Figure A4 and A5 in Online Supplementary Material A.} In the group of males in their 20s, 15 days after the letter was sent, the responses of experimental arms B and D began to increase relative to those of the controls. Consequently, the cumulative response rate of the two experimental arms is statistically significantly higher than that of the control arm (see Figure \ref{fig:young-male-flow}).\footnote{In the regression analysis, we created a dummy variable that takes 1 if the potential donor responded within \(d\) days as the outcome variable. If the potential donor responded after \(d\) days or did not respond, the outcome variable was 0.} Thus, although experimental arms B and D increased the ultimate response rate among males in their 20s, they did not encourage early responses. This result is natural because the probability message is not intended to encourage early responses. In addition, the trend in experimental arm C, where only the early coordination message was added, was almost the same as that in the control arm; hence, it cannot be said that the early coordination message encourages early responses in this group.
-
-\begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/young-female-flow-1} \caption{Effect on Response Speed of Young Females.\newline \emph{Note}: These plots show the difference in cumulative responses on a specific day between the treated and the control arm (and the associated 95 percent confidential interval). The unit of treatment effect is a percentage point. We used females younger than 30 for the analysis sample. Additionally, we used robust standard errors. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.}\label{fig:young-female-flow}
-\end{figure}
-
-Compared with the control arm, the responses of experimental arms C and D increased in the group of females in their 20s, within four days of sending the compatibility message. Consequently, the cumulative response rates of the two experimental arms are statistically significantly higher than those of the control arm (see Figure \ref{fig:young-female-flow}). This result suggests that the early coordination message encourages females in their 20s to respond quickly.\footnote{We decomposed the effect of message C on responses within four days (early responses) into two parts in terms of intentions and found that it increased positive and negative intentions to the same extent.}
-
 \hypertarget{process}{%
 \subsection{Effects on the Coordination Process}\label{process}}
 
@@ -391,48 +351,6 @@ Finally, we examined the impact of messages on each step of the coordination pro
 \end{figure}
 
 We show sample averages of each outcome by treatment in Figure \ref{fig:coordinate-diff-mean}. No experimental arm affected the post-candidate selection process. Similar results were obtained with linear probability models and logistic regressions controlling for covariates (see Table A5 and A6 in Online Supplementary Material A). This result should be interpreted with caution. Given that our intervention does not affect demand (number of patients), if our intervention increases the number of people who reach the CT, it should increase the number of people who are not selected as candidates for exogenous reasons. Particularly, compared to the control arm, experimental arm B increased the probability of donors who reached CT not being selected because of patient-related reasons or donor health conditions by \(4.3\) percentage points. This difference is marginally statistically significant (\(p = 0.095\)). Thus, intervention effects are annulled because of demand-side factors.
-
-\begin{table}
-
-\caption{\label{tab:coordinate-reg-subset}Subsample Analysis for Coordination Process (Age Cutoff: 30)}
-\centering
-\begin{threeparttable}
-\fontsize{9}{11}\selectfont
-\begin{tabular}[t]{lccc}
-\toprule
- & Candidate selection & Final consent & Donation\\
-\midrule
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Young females (N = 1132)}}\\
-\hspace{1em}Treatment B & -3.13 (1.93) & -2.27 (1.79) & -1.07 (1.66)\\
-\hspace{1em}Treatment C & -0.16 (2.17) & 0.34 (2.02) & 0.84 (1.85)\\
-\hspace{1em}Treatment D & -1.73 (2.04) & -1.21 (1.88) & -0.68 (1.70)\\
-\hspace{1em}Control average & 6.80 & 5.60 & 4.40\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Older females (N = 3018)}}\\
-\hspace{1em}Treatment B & -0.51 (0.92) & -0.43 (0.85) & -0.26 (0.81)\\
-\hspace{1em}Treatment C & 0.48 (1.01) & 0.63 (0.95) & -0.06 (0.86)\\
-\hspace{1em}Treatment D & 0.71 (1.01) & 0.51 (0.92) & -0.37 (0.82)\\
-\hspace{1em}Control average & 3.55 & 2.98 & 2.70\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Young males (N = 1566)}}\\
-\hspace{1em}Treatment B & 2.03 (2.02) & 1.74 (1.85) & 2.69 (1.70)\\
-\hspace{1em}Treatment C & -1.66 (1.84) & -0.76 (1.72) & 0.17 (1.54)\\
-\hspace{1em}Treatment D & 0.75 (2.02) & 1.61 (1.90) & 1.41 (1.67)\\
-\hspace{1em}Control average & 7.76 & 6.37 & 4.71\\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Older males (N = 5333)}}\\
-\hspace{1em}Treatment B & 0.60 (1.01) & 0.65 (0.97) & -0.20 (0.87)\\
-\hspace{1em}Treatment C & 0.04 (1.03) & -0.15 (0.98) & -0.23 (0.90)\\
-\hspace{1em}Treatment D & 0.86 (1.06) & 0.89 (1.02) & 0.17 (0.92)\\
-\hspace{1em}Control average & 7.13 & 6.56 & 5.49\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The age category is defined as under 30 years old or older. We controlled for the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
 
 Table \ref{tab:coordinate-reg-subset} divides the sample into four subsets by gender and age (under 30 or not) and estimates the message effect in each subset. The results show that experimental arm B may have increased donations among males in their 20s by 4 percentage points, which is statistically significant at the 10\% level. However, the effect on candidate selection and final consent is not statistically significant. As noted earlier, this effect may reflect not only the effect of our intervention but also the demand for stem cell transplants. Because younger males have better transplant outcomes, the demand for stem cell transplants may be higher in this generation than in other genders and ages. Indeed, in the control arm, the selection probability of young male donors who reached CT was \(33.3\) (\(=7.76/23.27\)) \%, which was higher than other groups.\footnote{For females in their 20s, \(32.7\) (\(=6.80 / 20.80\)) \%; for females over 30, \(18.8\) (\(=3.55 / 18.89\)) \%; for males over 30, \(29.5\) (\(=7.13/24.18\))\%.} In addition, experimental arm C, which encouraged early responses from females in their 20s, had no statistically significant effect on the post-candidate selection process of females in their 20s.\footnote{Table A7 in the Online Supplementary Material A presents the subsample analysis with an age cutoff set at 40. We confirmed that the results did not change.}
 

@@ -1002,17 +1002,17 @@ LmInteraction <- R6::R6Class("LmInteraction",
       }
 
       col_lab <- names(tbl)[2:5]
-      # label1 <- ifelse(
-      #   str_detect(col_lab, "Young"),
-      #   paste0("$\\\\text{Age} < ", private$age_cut, "$"),
-      #   paste0("$", private$age_cut, " \\\\le \\\\text{Age}$")
-      # )
-      # label1 <- c(" ", label1)
-      # label1_structure <- rle(label1)
-      # label1_rle <- label1_structure$lengths
-      # names(label1_rle) <- label1_structure$values
+      label1 <- ifelse(
+        str_detect(col_lab, "Young"),
+        paste0("$\\\\text{Age} < ", private$age_cut, "$"),
+        paste0("$", private$age_cut, " \\\\le \\\\text{Age}$")
+      )
+      label1 <- c(" ", label1)
+      label1_structure <- rle(label1)
+      label1_rle <- label1_structure$lengths
+      names(label1_rle) <- label1_structure$values
 
-      # kbl <- kbl %>% kableExtra::add_header_above(label1_rle, escape = FALSE)
+      kbl <- kbl %>% kableExtra::add_header_above(label1_rle, escape = FALSE)
 
       label2 <- ifelse(str_detect(col_lab, "Female"), "Females", "Males")
       label2 <- c(" ", label2)
