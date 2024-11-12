@@ -242,6 +242,79 @@ logit_coordinate$
   kableExtra::landscape()
 ```
 
+
+\clearpage
+# Analysis Limited to Initial Matched Candidates
+
+```{r set-class-initial-matched, include=FALSE}
+rawdt2 <- rawdt$clone()
+rawdt2$add_cond_study_sample("ongoing == 0")
+rawdt2$add_cond_study_sample("coordinate == 1")
+rct_initial <- rawdt2$RCT()
+rct_initial$add_intervention(intervention)
+rct_initial$add_outcome(endpoint)
+if (params$is_cluster) rct_initial$set_default_cluster("RCTweek")
+rct_initial$set_default_se_type(params$se_type)
+```
+
+```{r reg-reply-test-initial-matched, include=FALSE}
+lm_initial_1 <- rct_initial$lm(c(id_reply, id), sample_drop = FALSE)
+logit_initial_1 <- rct_initial$logit(c(id_reply, id), sample_drop = FALSE)
+```
+
+```{r lm-reply-test-initial-matched}
+lm_initial_1$
+  fit(scale = 100)$
+  kable(
+    title = "Linear Probability Model of the CT (Only Initial Matched Candidates)",
+    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r logit-reply-test-initial-matched}
+logit_initial_1$
+  fit()$
+  kable(
+    title = "Logit Model of the CT (Only Initial Matched Candidates)",
+    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
+  ) %>%
+  kableExtra::landscape()
+```
+
+```{r reg-coordinate-initial-matched, include=FALSE}
+lm_initial_2 <- rct_initial$lm(id_coordinate, sample_drop = FALSE)
+logit_initial_2 <- rct_initial$logit(id_coordinate, sample_drop = FALSE)
+```
+
+```{r lm-coordinate-initial-matched}
+lm_initial_2$
+  fit(scale = 100)$
+  kable(
+    title = "Linear Probability Model of Coordination (Only Initial Matched Candidates)",
+    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r logit-coordinate-initial-matched}
+logit_initial_2$
+  fit()$
+  kable(
+    title = "Logit Model of Coordination (Only Initial Matched Candidates)",
+    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
+  ) %>%
+  kableExtra::landscape()
+```
+
 <!---
 # Economic Models for Predictions
 
