@@ -109,8 +109,8 @@ RCT <- R6Class("RCT",
       if (missing(cluster)) cluster <- private$cluster
       Flow$new(use, private$covariate, se, cluster, private$fe)
     },
-    decompose_ct = function() {
-      DecomposeCT$new(self$data)
+    decompose_effect = function() {
+      Decompose$new(self$data, private$outcome)
     }
   ),
   private = list(

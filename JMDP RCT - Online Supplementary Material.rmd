@@ -93,11 +93,10 @@ intervention <- list(
 
 endpoint <- list(
   reply = "Response",
-  positive = "Positive intention",
-  negative = "Negative intention",
+  positive = "Positive Intention",
   test = "CT",
-  candidate = "Candidate selection",
-  consent = "Final consent",
+  candidate = "Candidate Selection",
+  consent = "Final Consent",
   donate = "Donation"
 )
 
@@ -313,6 +312,31 @@ logit_initial_2$
     font_size = 8
   ) %>%
   kableExtra::landscape()
+```
+
+\clearpage
+# Decomposing Message Effects
+
+```{r decompose-ct}
+rct$
+  decompose_effect()$
+  estimate("test", B = 100)$
+  kable(
+    title = "Decomposing Message Effects on The CT",
+    font_size = 8,
+    hold = TRUE
+  )
+```
+
+```{r decompose-candidate}
+rct$
+  decompose_effect()$
+  estimate("candidate", B = 100)$
+  kable(
+    title = "Decomposing Message Effects on Candidate Selection",
+    font_size = 8,
+    hold = TRUE
+  )
 ```
 
 <!---

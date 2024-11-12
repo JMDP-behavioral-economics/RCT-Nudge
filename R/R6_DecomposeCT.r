@@ -1,19 +1,28 @@
 library(R6)
 source("R/misc.r")
 
-DecomposeCT <- R6::R6Class("DecomposeCT",
+Decompose <- R6::R6Class("Decompose",
   public = list(
-    initialize = function(data) {
+    initialize = function(data, outcome) {
       private$data <- data
+      private$outcome <- outcome
     },
     get_data = function() private$data,
     get_result = function() private$result,
-    estimate = function(B = 500) {
-      res <- private$decompose_effect(private$data)
+    estimate = function(outcome, B = 500) {
+      endpoints <- private$outcome
+      before <- names(endpoints)[which(names(endpoints) == outcome) - 1]
+
+      private$stage_label <- list(
+        outcome = private$outcome[[outcome]],
+        before = private$outcome[[before]]
+      )
+
+      res <- private$decompose_effect(outcome, before, private$data)
 
       boot <- private$data %>%
         modelr::bootstrap(B) %>%
-        mutate(decompose = map(strap, ~ private$decompose_effect(as.data.frame(.))))
+        mutate(decompose = map(strap, ~ private$decompose_effect(outcome, before, as.data.frame(.))))
 
       imax <- nrow(res)
       jmax <- ncol(res)
@@ -36,15 +45,23 @@ DecomposeCT <- R6::R6Class("DecomposeCT",
       invisible(self)
     },
     kable = function(title = "", notes = "", font_size = 9, hold = FALSE){
+      t_label <- levels(private$data$treat)[-1]
       res <- private$result
+      colnames(res) <- t_label
+      s_label <- private$stage_label
+      s_label$before <- ifelse(
+        s_label$before == "CT",
+        "CT",
+        str_to_lower(s_label$before)
+      )
 
       term_lab <- c(
-        "Effect on CT: (A) + (B) + (C) + (D) + (E)",
+        paste0("Effect on ", s_label$outcome, ": (A) + (B) + (C) + (D) + (E)"),
         rep(
           c(
-            "(A) channel through preventing attrition due to patient reasons",
-            "(B) channel through preventing attrition due to donor reasons",
-            "(C) channel through increasing positive intention to donate",
+            "(A) Channel through preventing attrition due to exogenous reasons",
+            "(B) Channel through preventing attrition due to endogenous reasons",
+            paste("(C) Channel through increasing", s_label$before),
             "(D) Interaction of channel (A) and (C)",
             "(E) Interaction of channel (B) and (C)"
           ),
@@ -64,13 +81,11 @@ DecomposeCT <- R6::R6Class("DecomposeCT",
         ) %>%
         select(-stat)
 
-      label <- LETTERS[2:4]
-
       kbl <- out_tibbled %>%
         knitr::kable(
           caption = title,
-          col.names = c("", label),
-          align = paste(c("l", rep("c", length(label))), collapse = ""),
+          col.names = c("", t_label),
+          align = paste(c("l", rep("c", length(t_label))), collapse = ""),
           booktabs = TRUE,
           linesep = ""
         )
@@ -82,7 +97,7 @@ DecomposeCT <- R6::R6Class("DecomposeCT",
       }
 
       kbl %>%
-        add_header_above(c(" " = 1, "Experimental Arms" = length(label))) %>%
+        add_header_above(c(" " = 1, "Experimental Arms" = length(t_label))) %>%
         kableExtra::footnote(
           general_title = "",
           general = notes,
@@ -94,42 +109,52 @@ DecomposeCT <- R6::R6Class("DecomposeCT",
   private = list(
     result = NULL,
     data = NULL,
-    decompose_effect = function(data) {
-      ctrl <- subset(data, treat == "A")
+    outcome = NULL,
+    stage_label = NULL,
+    decompose_effect = function(point, before, data) {
+      exg_stop_point <- paste0("exg_stop_", point)
+
+      ctrl_dt1 <- subset(data, treat == levels(data$treat)[1])
+      ctrl_dt2 <- ctrl_dt1[ctrl_dt1[, before, drop = TRUE] == 1, ]
+
       ctrl_avg <- list(
-        positive = with(ctrl, mean(positive)),
-        exg_stop = with(subset(ctrl, positive == 1), mean(exg_stop_test))
-      )
-      ctrl_avg <- append(
-        ctrl_avg,
-        c("end_stop" = 1 - with(subset(ctrl, positive == 1), mean(test)) - ctrl_avg$exg_stop)
+        before = mean(ctrl_dt1[, before, drop = TRUE]),
+        exg_stop = mean(ctrl_dt2[, exg_stop_point, drop = TRUE]),
+        end_stop = 1 -
+          mean(ctrl_dt2[, point, drop = TRUE]) -
+          mean(ctrl_dt2[, exg_stop_point, drop = TRUE])
       )
 
-      mods <- list(
-        positive = positive ~ treat,
-        exg_stop = I(test == 0 & exg_stop_test == 1) ~ treat,
-        end_stop = I(test == 0 & exg_stop_test == 0) ~ treat
+      outcome <- list(
+        before = before,
+        exg_stop = paste0("I(", point, " == 0 & ", exg_stop_point, "== 1)"),
+        end_stop = paste0("I(", point, " == 0 & ", exg_stop_point, "== 0)")
       )
+
+      mods <- outcome %>%
+        lapply(function(x) reformulate("treat", x))
 
       est_mods <- mods
       est_mods[[1]] <- lm_robust(mods[[1]], data = data)
+
+      estdt2 <- data[data[, before, drop = TRUE] == 1, ]
       est_mods[2:3] <- mods[2:3] %>%
-        map(~ lm_robust(., data = subset(data, positive == 1)))
+        map(~ lm_robust(., data = estdt2))
 
       est_mods <- est_mods %>%
         map(~ broom::tidy(.))
 
-      coef_mat <- LETTERS[2:4] %>%
+      coef_mat <- levels(data$treat)[-1] %>%
         map(~ c(
           -coef_from_tidy(est_mods$exg_stop, .),
           -coef_from_tidy(est_mods$end_stop, .),
-          coef_from_tidy(est_mods$positive, .),
-          -coef_from_tidy(est_mods$positive, .) * coef_from_tidy(est_mods$exg_stop, .),
-          -coef_from_tidy(est_mods$positive, .) * coef_from_tidy(est_mods$end_stop, .)
+          coef_from_tidy(est_mods$before, .),
+          -coef_from_tidy(est_mods$before, .) * coef_from_tidy(est_mods$exg_stop, .),
+          -coef_from_tidy(est_mods$before, .) * coef_from_tidy(est_mods$end_stop, .)
         )) %>%
         reduce(cbind)
 
-      coef_mat[1:2, ] <- coef_mat[1:2, ] * ctrl_avg$positive
+      coef_mat[1:2, ] <- coef_mat[1:2, ] * ctrl_avg$before
       coef_mat[3, ] <- coef_mat[3, ] * (1 - ctrl_avg$exg_stop - ctrl_avg$end_stop)
       coef_mat <- coef_mat * 100
 

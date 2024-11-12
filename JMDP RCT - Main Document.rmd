@@ -187,7 +187,6 @@ intervention <- list(
 endpoint <- list(
   reply = "Response",
   positive = "Positive intention",
-  negative = "Negative intention",
   test = "CT",
   candidate = "Candidate selection",
   consent = "Final consent",
@@ -285,14 +284,6 @@ We show sample proporting of reaching the CT by experimental arms in Figure \@re
 
 <!-- These results suggest that the probability message prevents donor dropout. In the control arm, the attrition rate between responses with positive intentions and the CT is approximately 60% ($=1 - 22.2/54.9$). In contrast, the attrition rate for experimental arms B and D is approximately 56% ($=1 - 25.4/57.2$ for experimental arm B). Thus, the probability message, which is included in experimental arms B and D, increases donors reaching the CT stage because these messages help maintain donors' intentions to donate rather than increasing the number of donors willing to donate. -->
 
-```{r decompose-ct, eval=FALSE}
-rct$
-  decompose_ct()$
-  estimate(B = 100)$
-  kable(
-    title = "Decomposition of Message Effects on CT"
-  )
-```
 
 <!-- これらのメッセージ効果は提供意向の向上と提供からCTまでの脱落の防止によって生じている。
 メッセージ効果のチャンネルを検証するために、CTへの効果を5つに分解した。
