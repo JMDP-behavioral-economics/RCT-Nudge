@@ -1,7 +1,7 @@
 ---
 title: |
   Online Supplementary Material
-  "Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program"
+  "Field experiment Using Text Messages to Promote Stem Cell Donation in Japan Marrow Donor Program"
 bibliography: biblio.bib
 biblio-style: agsm
 output:

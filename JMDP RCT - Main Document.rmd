@@ -1,7 +1,6 @@
 ---
 title: |
-  Only You:
-  Field Experiment Using Text Messages to Prevent Free-riding in the Japan Marrow Donor Program
+  Field experiment Using Text Messages to Promote Stem Cell Donation in Japan Marrow Donor Program
 thanks: |
   We would like to thank the Japan Marrow Donor Program Office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04). Declarations of interest: none. Funding: This work was supported by the Japan Society for the Promotion of Science [grant number 20H05632] and the Ministry of Health, Labour and Welfare [grant number 19FF1001].
 abstract: |
