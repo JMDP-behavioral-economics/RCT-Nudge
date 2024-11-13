@@ -130,14 +130,14 @@ Lm <- R6::R6Class("Lm",
         "treatD + treatD:groupOlder male"
       )
 
-      interaction_mod <- lapply(
-        private$model,
-        function(x) {
-          update(
-            x,
-            . ~ . + group + treat:group - male - age_demean - I(age_demean^2)
-          )
-        }
+      interaction_mod <- list(
+        unctrl = value ~ treat * group,
+        ctrl1 = value ~ treat * group + coordinate:group +
+          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
+          factor(month):group + factor(week):group,
+        ctrl2 = value ~ treat * group + coordinate:group +
+          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
+          factor(tiiki_week)
       )
 
       est <- self$data %>%
@@ -182,10 +182,9 @@ Lm <- R6::R6Class("Lm",
           values_to = "fit"
         ) %>%
         mutate(
-          covs_i = if_else(model != "1", "X", ""),
-          covs_p = if_else(model != "1", "X", ""),
-          covs_w = if_else(model != "1", "X", ""),
-          covs_fe = if_else(model == "3", "X", "")
+          covs = if_else(model != "1", "X", ""),
+          fe_m_w = if_else(model == "2", "X", ""),
+          fe_p_w = if_else(model == "3", "X", "")
         )
 
       LmInteraction$new(est, age_cut)
@@ -328,14 +327,14 @@ LmCluster <- R6::R6Class("LmCluster",
         "treatD + treatD:groupOlder male"
       )
 
-      interaction_mod <- lapply(
-        private$model,
-        function(x) {
-          update(
-            x,
-            . ~ . + group + treat:group - male - age_demean - I(age_demean^2)
-          )
-        }
+      interaction_mod <- list(
+        unctrl = value ~ treat * group,
+        ctrl1 = value ~ treat * group + coordinate:group +
+          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
+          factor(month):group + factor(week):group,
+        ctrl2 = value ~ treat * group + coordinate:group +
+          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
+          factor(tiiki_week)
       )
 
       est <- self$data %>%
@@ -386,10 +385,9 @@ LmCluster <- R6::R6Class("LmCluster",
           values_to = "fit"
         ) %>%
         mutate(
-          covs_i = if_else(model != "1", "X", ""),
-          covs_p = if_else(model != "1", "X", ""),
-          covs_w = if_else(model != "1", "X", ""),
-          covs_fe = if_else(model == "3", "X", "")
+          covs = if_else(model != "1", "X", ""),
+          fe_m_w = if_else(model == "2", "X", ""),
+          fe_p_w = if_else(model == "3", "X", "")
         )
 
       LmInteraction$new(est, age_cut)
@@ -1016,30 +1014,27 @@ LmInteraction <- R6::R6Class("LmInteraction",
         select(subset, treat, statistic, "(1)") %>%
         pivot_wider(names_from = subset, values_from = "(1)") %>%
         mutate(
-          covs_i = private$est$covs_i[1],
-          covs_w = private$est$covs_w[1],
-          covs_p = private$est$covs_p[1],
-          covs_fe = private$est$covs_fe[1]
+          covs = private$est$covs[1],
+          fe_m_w = private$est$fe_m_w[1],
+          fe_p_w = private$est$fe_p_w[1]
         )
 
       mtab_wide2 <- mtab %>%
         select(subset, treat, statistic, "(2)") %>%
         pivot_wider(names_from = subset, values_from = "(2)") %>%
         mutate(
-          covs_i = private$est$covs_i[2],
-          covs_w = private$est$covs_w[2],
-          covs_p = private$est$covs_p[2],
-          covs_fe = private$est$covs_fe[2]
+          covs = private$est$covs[2],
+          fe_m_w = private$est$fe_m_w[2],
+          fe_p_w = private$est$fe_p_w[2]
         )
 
       mtab_wide3 <- mtab %>%
         select(subset, treat, statistic, "(3)") %>%
         pivot_wider(names_from = subset, values_from = "(3)") %>%
         mutate(
-          covs_i = private$est$covs_i[3],
-          covs_w = private$est$covs_w[2],
-          covs_p = private$est$covs_p[3],
-          covs_fe = private$est$covs_fe[3]
+          covs = private$est$covs[3],
+          fe_m_w = private$est$fe_m_w[3],
+          fe_p_w = private$est$fe_p_w[3]
         )
 
       avg_format <- paste0("%1.", digits, "f")
@@ -1066,21 +1061,21 @@ LmInteraction <- R6::R6Class("LmInteraction",
         mutate(
           treat = if_else(statistic == "std.error", "", treat),
           model = case_when(
-            is.na(covs_i) ~ NA_character_,
-            covs_i == "" ~ "Model (1): No covariates",
-            covs_fe == "X" ~ "Model (3): Including covariates and FE",
-            TRUE ~ "Model (2): Including covariates"
+            is.na(covs) ~ NA_character_,
+            covs == "" ~ "Model (1): No covariates",
+            fe_m_w == "X" ~ "Model (2): Including covariates and month and week FE",
+            TRUE ~ "Model (3): Including covariates and controlling winter holidays"
           )
         ) %>%
         select(-statistic) %>%
         select(treat, everything())
 
       kbl <- tbl %>%
-        select(-covs_i, -covs_p, -covs_w, -covs_fe, -model) %>%
+        select(-covs, -fe_m_w, -fe_p_w, -model) %>%
         knitr::kable(
           caption = title,
-          col.names = c("", paste0("(", seq(ncol(tbl) - 6), ")")),
-          align = paste(c("l", rep("c", ncol(tbl) - 6)), collapse = ""),
+          col.names = c("", paste0("(", seq(ncol(tbl) - 5), ")")),
+          align = paste(c("l", rep("c", ncol(tbl) - 5)), collapse = ""),
           booktabs = TRUE,
           linesep = ""
         )
@@ -1094,17 +1089,17 @@ LmInteraction <- R6::R6Class("LmInteraction",
       }
 
       col_lab <- names(tbl)[2:5]
-      # label1 <- ifelse(
-      #   str_detect(col_lab, "Young"),
-      #   paste0("$\\\\text{Age} < ", private$age_cut, "$"),
-      #   paste0("$", private$age_cut, " \\\\le \\\\text{Age}$")
-      # )
-      # label1 <- c(" ", label1)
-      # label1_structure <- rle(label1)
-      # label1_rle <- label1_structure$lengths
-      # names(label1_rle) <- label1_structure$values
+      label1 <- ifelse(
+        str_detect(col_lab, "Young"),
+        paste0("$\\\\text{Age} < ", private$age_cut, "$"),
+        paste0("$", private$age_cut, " \\\\le \\\\text{Age}$")
+      )
+      label1 <- c(" ", label1)
+      label1_structure <- rle(label1)
+      label1_rle <- label1_structure$lengths
+      names(label1_rle) <- label1_structure$values
 
-      # kbl <- kbl %>% kableExtra::add_header_above(label1_rle, escape = FALSE)
+      kbl <- kbl %>% kableExtra::add_header_above(label1_rle, escape = FALSE)
 
       label2 <- ifelse(str_detect(col_lab, "Female"), "Females", "Males")
       label2 <- c(" ", label2)
@@ -1171,10 +1166,9 @@ LmInteraction <- R6::R6Class("LmInteraction",
 
       add_tab <- data.frame(
         rbind(
-          c("Individual-level covariates", private$est$covs_i),
-          c("Week-level covariates", private$est$covs_w),
-          c("Prefecture-level covariates", private$est$covs_p),
-          c("Region$\\times$Week (in Dec. and Jan.) FE", private$est$covs_fe)
+          c("Covariates", private$est$covs),
+          c("Month and week FE", private$est$fe_m_w),
+          c("Controlling winter holidays", private$est$fe_p_w)
         )
       )
       attr(add_tab, "position") <- 31:34
