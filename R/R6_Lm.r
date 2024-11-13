@@ -81,11 +81,19 @@ Lm <- R6::R6Class("Lm",
 
       LmAll$new(est)
     },
-    fit_subset_by_gender_age = function(age_cut = 30, scale = 1, covariates = TRUE) {
-      model <- if (covariates) {
-        update(private$model$ctrl, . ~ . - male - age_demean - I(age_demean^2))
-      } else {
+    fit_subset_by_gender_age = function(age_cut = 30,
+                                        scale = 1,
+                                        covariates = TRUE,
+                                        month_week_fe = TRUE)
+    {
+      model <- if (!covariates) {
         private$model$unctrl
+      } else {
+        if (month_week_fe) {
+          update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
+        } else {
+          update(private$model$ctrl2, . ~ . - male - age_demean - I(age_demean^2))
+        }
       }
 
       est <- self$data %>%
@@ -101,8 +109,7 @@ Lm <- R6::R6Class("Lm",
               subset(., treat == private$ctrl_arm),
               sprintf("Ctrl Avg = %1.2f", mean(value))
             )
-          ),
-          covariates = if_else(covariates, "X", "")
+          )
         )
 
       LmSubset$new(est, age_cut)
@@ -272,11 +279,19 @@ LmCluster <- R6::R6Class("LmCluster",
 
       LmAll$new(est)
     },
-    fit_subset_by_gender_age = function(age_cut = 30, scale = 1, covariates = TRUE) {
-      model <- if (covariates) {
-        update(private$model$ctrl, . ~ . - male - age_demean - I(age_demean^2))
-      } else {
+    fit_subset_by_gender_age = function(age_cut = 30,
+                                        scale = 1,
+                                        covariates = TRUE,
+                                        month_week_fe = TRUE)
+    {
+      model <- if (!covariates) {
         private$model$unctrl
+      } else {
+        if (month_week_fe) {
+          update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
+        } else {
+          update(private$model$ctrl2, . ~ . - male - age_demean - I(age_demean^2))
+        }
       }
 
       est <- self$data %>%
@@ -670,18 +685,97 @@ LmSubset <- R6::R6Class("LmSubset",
       )
       names(lev) <- labs
       private$subset_labels <- lev
+      private$age_cut <- age_cut
 
     },
     get_est = function() private$est,
     kable = function( title = "",
                       notes = "",
                       font_size = 9,
-                      digit = 2,
+                      digits = 2,
                       hold = FALSE,
+                      debug = FALSE,
                       ...)
     {
+      if (debug) {
+        young_label <- "Young"
+        older_label <- "Older"
+      } else {
+        young_label <- paste0("$\\\\text{Age} < ", private$age_cut, "$")
+        older_label <- paste0("$", private$age_cut, " \\\\le \\\\text{Age}$")
+      }
+
+      est <- private$est %>%
+        arrange(male, desc(young)) %>%
+        mutate(
+          male = if_else(male == 1, "Males", "Females"),
+          young = if_else(young == 1, young_label, older_label)
+        )
+
+      addtab <- data.frame(
+        rbind(c("Control average", str_remove(est$avg, "Ctrl Avg = ")))
+      )
+
+      attr(addtab, "position") <- 7
+
+      kbl <- est %>%
+        pull(fit) %>%
+        modelsummary(
+          coef_map = c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D"
+          ),
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+          align = paste(c("l", rep("c", nrow(est))), collapse = ""),
+          add_rows = addtab,
+          fmt = digits
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- list(
+        y = rle(c(" ", as.character(est$outcome))),
+        gender = rle(c(" ", est$male)),
+        young = rle(c(" ", est$young))
+      )
+
+      label <- label %>%
+        map(function(x) {
+          vec <- x$lengths
+          names(vec) <- x$values
+          return(vec)
+        })
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(label$young) %>%
+        kableExtra::add_header_above(label$gender) %>%
+        kableExtra::add_header_above(label$y)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste("\\\\emph{Note}:", notes),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    },
+    stack_kable = function( title = "",
+                            notes = "",
+                            font_size = 9,
+                            digit = 2,
+                            hold = FALSE,
+                            ...)
+    {
       est <- private$est
-      tbl <- private$reg_table(est, digit)
+      tbl <- private$stack_reg_table(est, digit)
 
       outcome_labels <- unique(est$outcome)
 
@@ -801,7 +895,8 @@ LmSubset <- R6::R6Class("LmSubset",
   private = list(
     est = NULL,
     subset_labels = NULL,
-    reg_table = function(x, digit = 2) {
+    age_cut = NULL,
+    stack_reg_table = function(x, digit = 2) {
       ctrl_avg <- private$est %>%
         arrange(male, desc(young), outcome) %>%
         ungroup() %>%
