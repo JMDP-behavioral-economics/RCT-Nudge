@@ -36,7 +36,7 @@ Lm <- R6::R6Class("Lm",
       private$model <- list(
         unctrl = value ~ treat,
         ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area,
+          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week),
         ctrl2 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
           holidays + hospital_per_area + PB_per_area + BM_per_area + factor(tiiki_week)
       )
@@ -74,10 +74,9 @@ Lm <- R6::R6Class("Lm",
           values_to = "fit"
         ) %>%
         mutate(
-          covs_i = if_else(model != "1", "X", ""),
-          covs_p = if_else(model != "1", "X", ""),
-          covs_w = if_else(model != "1", "X", ""),
-          covs_fe = if_else(model == "3", "X", "")
+          covs = if_else(model != "1", "X", ""),
+          fe_m_w = if_else(model == "2", "X", ""),
+          fe_p_w = if_else(model == "3", "X", "")
         )
 
       LmAll$new(est)
@@ -226,7 +225,7 @@ LmCluster <- R6::R6Class("LmCluster",
       private$model <- list(
         unctrl = value ~ treat,
         ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area,
+          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week),
         ctrl2 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
           holidays + factor(tiiki_week)
       )
@@ -266,10 +265,9 @@ LmCluster <- R6::R6Class("LmCluster",
           values_to = "fit"
         ) %>%
         mutate(
-          covs_i = if_else(model != "1", "X", ""),
-          covs_p = if_else(model != "1", "X", ""),
-          covs_w = if_else(model != "1", "X", ""),
-          covs_fe = if_else(model == "3", "X", "")
+          covs = if_else(model != "1", "X", ""),
+          fe_m_w = if_else(model == "2", "X", ""),
+          fe_p_w = if_else(model == "3", "X", "")
         )
 
       LmAll$new(est)
@@ -630,10 +628,9 @@ LmAll <- R6::R6Class("LmAll",
       add_tab <- data.frame(
         rbind(
           c("Control average", sprintf(avg_format, private$est$avg)),
-          c("Individual-level covariates", private$est$covs_i),
-          c("Week-level covariates", private$est$covs_w),
-          c("Prefecture-level covariates", private$est$covs_p),
-          c("Region$\\times$Week (in Dec. and Jan.) FE", private$est$covs_fe)
+          c("Covariates", private$est$covs),
+          c("Month and week FE", private$est$fe_m_w),
+          c("Controlling winter holidays", private$est$fe_p_w)
         )
       )
       attr(add_tab, "position") <- 7:12
