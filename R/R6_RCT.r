@@ -7,6 +7,7 @@ source(here("R/R6_Logit.r"))
 source(here("R/R6_RCF.r"))
 source(here("R/R6_Flow.r"))
 source(here("R/R6_DecomposeCT.r"))
+source(here("R/R6_MultipleHypotheses.r"))
 
 RCT <- R6Class("RCT",
   public = list(
@@ -111,6 +112,9 @@ RCT <- R6Class("RCT",
     },
     decompose_effect = function() {
       Decompose$new(self$data, private$outcome)
+    },
+    multiple_hypotheses_adjust = function(outcome, age_cut = 30) {
+      MultipleHypothesis$new(self$data, outcome, age_cut)
     }
   ),
   private = list(
