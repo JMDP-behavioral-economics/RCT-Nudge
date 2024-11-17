@@ -163,7 +163,7 @@ lm_test$
   fit(scale = 100)$
   kable(
     title = "Linear Probability Model of the CT",
-    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    notes = "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies which is the products of these region and week indicators.",
     hold = TRUE,
     font_size = 8
   )
@@ -174,8 +174,141 @@ logit_test$
   fit()$
   kable(
     title = "Logit Model of the CT",
-    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
+    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
     fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-lm-interaction, include=FALSE}
+lm_int_test <- lm_test$
+  fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+```
+
+```{r test-lm-interaction-reg}
+lm_int_test$
+  kable_reg(
+    title = "Heterogenous Message Effects on CT",
+    notes = "This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-lm-interaction-lh}
+lm_int_test$
+  kable_lh(
+    "CT",
+    title = "Linear Combination Test: Message Effects on CT for Specific Gender-Age Group",
+    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-lm-subset1}
+library(xfun)
+
+reg <- lm_test$
+  fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)$
+  get_est() %>%
+  arrange(male, desc(young))
+
+mha <- cache_rds({
+  rct$
+    multiple_hypotheses_adjust("test")$
+    estimate(scale = 100, B = 3000)$
+    get_result()
+})
+
+mha_tab <- mha %>%
+  select(Subgroup.id, Treated.id, List.p) %>%
+  mutate(
+    Treated.id = paste("Treatment", Treated.id),
+    List.p = sprintf("%1.3f", List.p)
+  ) %>%
+  pivot_wider(names_from = Subgroup.id, values_from = List.p)
+
+addtab <- data.frame(
+  rbind(
+    c("Control average", str_remove(reg$avg, "Ctrl Avg = ")),
+    mha_tab
+  )
+)
+
+attr(addtab, "position") <- 7:10
+
+reg %>%
+  pull(fit) %>%
+  modelsummary(
+    title = "Subset Regression without Covariates",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    align = paste(c("l", rep("c", nrow(reg))), collapse = ""),
+    add_rows = addtab,
+    fmt = 2
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(
+    c(
+      " ",
+      "$\\\\text{Age} < 30$",
+      "$30 \\\\le \\\\text{Age}$",
+      "$\\\\text{Age} < 30$",
+      "$30 \\\\le \\\\text{Age}$"
+    ),
+    escape = FALSE
+  ) %>%
+  kableExtra::add_header_above(c(" " = 1, "Females" = 2, "Males" = 2)) %>%
+  kableExtra::add_header_above(c(" " = 1, "CT" = 4)) %>%
+  kableExtra::group_rows(
+    "Multiplicity-adjusted p-values", 8, 10,
+    bold = FALSE, italic = TRUE
+  ) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = paste(
+      "\\\\emph{Note}:",
+      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by List et al. (2016)."
+    ),
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+```{r test-lm-subset2}
+lm_test$
+  fit_subset_by_gender_age(
+    age_cut = 30,
+    scale = 100,
+    covariates = TRUE,
+    month_week_fe = TRUE
+  )$
+  kable(
+    title = "Subset Regression with Covariates and Month and Week FE",
+    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-lm-subset3}
+lm_test$
+  fit_subset_by_gender_age(
+    age_cut = 30,
+    scale = 100,
+    covariates = TRUE,
+    month_week_fe = FALSE
+  )$
+  kable(
+    title = "Subset Regression Controlling Covariates and Winter Holidays",
+    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
     hold = TRUE,
     font_size = 8
   )

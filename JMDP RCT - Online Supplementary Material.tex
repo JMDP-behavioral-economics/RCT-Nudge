@@ -66,7 +66,7 @@
 
 % ------------------------------ paper information
 \title{Online Supplementary Material
-``Only You: A Field Experiment of Text Message to Prevent Free-riding in Japan Marrow Donor Program''}
+``Field experiment Using Text Messages to Promote Stem Cell Donation in Japan Marrow Donor Program''}
 \author{}
 \date{}
 
@@ -161,23 +161,22 @@ Number of past coordination & -0.019 & 0.015 & -0.045\\
 \cmidrule(l{3pt}r{3pt}){2-4}
   & (1) & (2) & (3)\\
 \midrule
-Treatment B & \num{3.10}*** & \num{2.91}** & \num{3.06}**\\
- & (\num{1.14}) & (\num{1.15}) & (\num{1.51})\\
-Treatment C & \num{1.19} & \num{0.93} & \num{0.57}\\
- & (\num{1.16}) & (\num{1.15}) & (\num{1.50})\\
-Treatment D & \num{2.39}** & \num{2.49}** & \num{3.74}***\\
- & (\num{1.17}) & (\num{1.16}) & (\num{1.43})\\
+Treatment B & \num{3.10}*** & \num{2.72}** & \num{3.06}**\\
+ & (\num{1.14}) & (\num{1.18}) & (\num{1.51})\\
+Treatment C & \num{1.19} & \num{1.14} & \num{0.57}\\
+ & (\num{1.16}) & (\num{1.20}) & (\num{1.50})\\
+Treatment D & \num{2.39}** & \num{2.42}** & \num{3.74}***\\
+ & (\num{1.17}) & (\num{1.20}) & (\num{1.43})\\
 \midrule
 Control average & 22.25 & 22.25 & 22.25\\
-Individual-level covariates &  & X & X\\
-Week-level covariates &  & X & X\\
-Prefecture-level covariates &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X\\
+Covariates &  & X & X\\
+Month and week FE &  & X & \\
+Controlling winter holidays &  &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies which is the products of these region and week indicators.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -194,23 +193,228 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-4}
   & (1) & (2) & (3)\\
 \midrule
-Treatment B & \num{1.19} & \num{1.18} & \num{1.19}\\
- & {}[\num{1.05}, \num{1.34}] & {}[\num{1.04}, \num{1.34}] & {}[\num{1.01}, \num{1.40}]\\
-Treatment C & \num{1.07} & \num{1.06} & \num{1.04}\\
- & {}[\num{0.94}, \num{1.22}] & {}[\num{0.93}, \num{1.21}] & {}[\num{0.87}, \num{1.23}]\\
+Treatment B & \num{1.19} & \num{1.17} & \num{1.19}\\
+ & {}[\num{1.05}, \num{1.34}] & {}[\num{1.03}, \num{1.33}] & {}[\num{1.01}, \num{1.40}]\\
+Treatment C & \num{1.07} & \num{1.07} & \num{1.04}\\
+ & {}[\num{0.94}, \num{1.22}] & {}[\num{0.94}, \num{1.23}] & {}[\num{0.87}, \num{1.23}]\\
 Treatment D & \num{1.14} & \num{1.15} & \num{1.23}\\
- & {}[\num{1.01}, \num{1.30}] & {}[\num{1.01}, \num{1.31}] & {}[\num{1.05}, \num{1.44}]\\
+ & {}[\num{1.01}, \num{1.30}] & {}[\num{1.00}, \num{1.31}] & {}[\num{1.05}, \num{1.44}]\\
 \midrule
-Individual-level covariates &  & X & X\\
-Week-level covariates &  & X & X\\
-Prefecture-level covariates &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X\\
+Covariates &  & X & X\\
+Month and week FE &  & X & \\
+Controlling winter holidays &  &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-6083.783} & \num{-5953.275} & \num{-5822.603}\\
+Log.Lik. & \num{-6083.783} & \num{-5941.170} & \num{-5822.603}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:test-lm-interaction-reg}Heterogenous Message Effects on CT}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
+\midrule
+Treatment B & \num{3.87} & \num{3.98} & \num{2.72}\\
+ & (\num{3.58}) & (\num{3.58}) & (\num{3.66})\\
+Treatment C & \num{4.37} & \num{4.02} & \num{0.72}\\
+ & (\num{3.63}) & (\num{3.64}) & (\num{3.64})\\
+Treatment D & \num{5.21} & \num{6.33}* & \num{6.01}*\\
+ & (\num{3.62}) & (\num{3.56}) & (\num{3.63})\\
+Older female & \num{-1.91} & \num{1.74} & \num{2.83}\\
+ & (\num{2.96}) & (\num{12.30}) & (\num{10.97})\\
+Young male & \num{2.47} & \num{-23.98}* & \num{-23.22}*\\
+ & (\num{3.40}) & (\num{13.93}) & (\num{12.41})\\
+Older male & \num{3.38} & \num{0.39} & \num{-1.02}\\
+ & (\num{2.85}) & (\num{11.75}) & (\num{10.47})\\
+Treatment B $\times$ Older female & \num{-1.57} & \num{-2.28} & \num{-0.49}\\
+ & (\num{4.13}) & (\num{4.16}) & (\num{4.09})\\
+Treatment C $\times$ Older female & \num{-3.93} & \num{-3.87} & \num{-0.91}\\
+ & (\num{4.19}) & (\num{4.25}) & (\num{4.07})\\
+Treatment D $\times$ Older female & \num{-0.46} & \num{-1.76} & \num{-0.08}\\
+ & (\num{4.20}) & (\num{4.20}) & (\num{4.14})\\
+Treatment B $\times$ Young male & \num{1.27} & \num{1.32} & \num{1.92}\\
+ & (\num{4.76}) & (\num{4.81}) & (\num{4.71})\\
+Treatment C $\times$ Young male & \num{-6.91} & \num{-4.47} & \num{-2.70}\\
+ & (\num{4.71}) & (\num{4.76}) & (\num{4.58})\\
+Treatment D $\times$ Young male & \num{-7.74} & \num{-9.18}** & \num{-7.87}*\\
+ & (\num{4.74}) & (\num{4.68}) & (\num{4.63})\\
+Treatment B $\times$ Older male & \num{-1.15} & \num{-1.82} & \num{0.69}\\
+ & (\num{3.95}) & (\num{3.99}) & (\num{3.90})\\
+Treatment C $\times$ Older male & \num{-2.39} & \num{-2.47} & \num{1.38}\\
+ & (\num{4.02}) & (\num{4.05}) & (\num{3.88})\\
+Treatment D $\times$ Older male & \num{-3.33} & \num{-4.43} & \num{-2.40}\\
+ & (\num{4.01}) & (\num{3.98}) & (\num{3.93})\\
+\midrule
+Covariates &  & X & X\\
+Month and week FE &  & X & \\
+Controlling winter holidays &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:test-lm-interaction-lh}Linear Combination Test: Message Effects on CT for Specific Gender-Age Group}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+ & (1) & (2) & (3) & (4)\\
+\midrule
+Control average & 20.80 & 18.89 & 23.27 & 24.18\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
+\hspace{1em}B & 3.87 & 2.30 & 5.13 & 2.72\\
+\hspace{1em} & (3.58) & (2.05) & (3.13) & (1.68)\\
+\hspace{1em}C & 4.37 & 0.44 & -2.54 & 1.98\\
+\hspace{1em} & (3.63) & (2.09) & (2.99) & (1.73)\\
+\hspace{1em}D & 5.21 & 4.75** & -2.52 & 1.89\\
+\hspace{1em} & (3.62) & (2.12) & (3.05) & (1.73)\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Model (2): Including covariates and month and week FE}}\\
+\hspace{1em}B & 3.98 & 1.70 & 5.30* & 2.16\\
+\hspace{1em} & (3.58) & (2.12) & (3.21) & (1.77)\\
+\hspace{1em}C & 4.02 & 0.15 & -0.44 & 1.55\\
+\hspace{1em} & (3.64) & (2.19) & (3.08) & (1.79)\\
+\hspace{1em}D & 6.33* & 4.56** & -2.85 & 1.90\\
+\hspace{1em} & (3.56) & (2.22) & (3.03) & (1.78)\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Model (3): Including covariates and controlling winter holidays}}\\
+\hspace{1em}B & 2.72 & 2.23 & 4.64 & 3.42*\\
+\hspace{1em} & (3.66) & (2.30) & (3.33) & (1.95)\\
+\hspace{1em}C & 0.72 & -0.19 & -1.98 & 2.10\\
+\hspace{1em} & (3.64) & (2.29) & (3.15) & (1.96)\\
+\hspace{1em}D & 6.01* & 5.93** & -1.86 & 3.61*\\
+\hspace{1em} & (3.63) & (2.31) & (3.11) & (1.91)\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:test-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:test-lm-subset1}Subset Regression without Covariates}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{3.87} & \num{2.30} & \num{5.13} & \num{2.72}\\
+ & (\num{3.58}) & (\num{2.05}) & (\num{3.13}) & (\num{1.67})\\
+Treatment C & \num{4.37} & \num{0.44} & \num{-2.54} & \num{1.98}\\
+ & (\num{3.64}) & (\num{2.09}) & (\num{3.00}) & (\num{1.73})\\
+Treatment D & \num{5.21} & \num{4.75}** & \num{-2.52} & \num{1.89}\\
+ & (\num{3.62}) & (\num{2.12}) & (\num{3.06}) & (\num{1.73})\\
+\midrule
+Control average & 20.80 & 18.89 & 23.27 & 24.18\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textit{Multiplicity-adjusted p-values}}\\
+\hspace{1em}Treatment B & 0.777 & 0.825 & 0.624 & 0.617\\
+\hspace{1em}Treatment C & 0.858 & 0.826 & 0.728 & 0.842\\
+\hspace{1em}Treatment D & 0.736 & 0.262 & 0.647 & 0.696\\
+Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by List et al. (2016).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:test-lm-subset2}Subset Regression with Covariates and Month and Week FE}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{3.98} & \num{1.70} & \num{5.30}* & \num{2.16}\\
+ & (\num{3.59}) & (\num{2.12}) & (\num{3.22}) & (\num{1.76})\\
+Treatment C & \num{4.02} & \num{0.15} & \num{-0.44} & \num{1.55}\\
+ & (\num{3.65}) & (\num{2.19}) & (\num{3.08}) & (\num{1.79})\\
+Treatment D & \num{6.33}* & \num{4.56}** & \num{-2.85} & \num{1.90}\\
+ & (\num{3.58}) & (\num{2.22}) & (\num{3.04}) & (\num{1.78})\\
+\midrule
+Control average & 20.80 & 18.89 & 23.27 & 24.18\\
+Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:test-lm-subset3}Subset Regression Controlling Covariates and Winter Holidays}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{-1.17} & \num{2.51} & \num{5.81} & \num{3.50}\\
+ & (\num{5.20}) & (\num{2.77}) & (\num{4.48}) & (\num{2.21})\\
+Treatment C & \num{1.88} & \num{0.25} & \num{-1.09} & \num{1.28}\\
+ & (\num{5.13}) & (\num{2.77}) & (\num{4.15}) & (\num{2.22})\\
+Treatment D & \num{7.27} & \num{6.98}*** & \num{-0.14} & \num{2.41}\\
+ & (\num{4.67}) & (\num{2.70}) & (\num{3.81}) & (\num{2.11})\\
+\midrule
+Control average & 20.80 & 18.89 & 23.27 & 24.18\\
+Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -227,18 +431,17 @@ Log.Lik. & \num{-6083.783} & \num{-5953.275} & \num{-5822.603}\\
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.27} & \num{1.28} & \num{0.12} & \num{2.31}* & \num{2.41}* & \num{0.29}\\
- & (\num{0.86}) & (\num{0.86}) & (\num{1.13}) & (\num{1.33}) & (\num{1.33}) & (\num{1.74})\\
-Treatment C & \num{-0.42} & \num{0.10} & \num{-0.09} & \num{-0.44} & \num{0.19} & \num{-1.64}\\
- & (\num{0.91}) & (\num{0.90}) & (\num{1.14}) & (\num{1.37}) & (\num{1.36}) & (\num{1.75})\\
-Treatment D & \num{0.79} & \num{0.80} & \num{1.00} & \num{0.59} & \num{0.85} & \num{0.11}\\
- & (\num{0.89}) & (\num{0.89}) & (\num{1.06}) & (\num{1.37}) & (\num{1.36}) & (\num{1.65})\\
+Treatment B & \num{1.27} & \num{1.50}* & \num{0.12} & \num{2.31}* & \num{2.06} & \num{0.29}\\
+ & (\num{0.86}) & (\num{0.90}) & (\num{1.13}) & (\num{1.33}) & (\num{1.38}) & (\num{1.74})\\
+Treatment C & \num{-0.42} & \num{0.47} & \num{-0.09} & \num{-0.44} & \num{-0.16} & \num{-1.64}\\
+ & (\num{0.91}) & (\num{0.94}) & (\num{1.14}) & (\num{1.37}) & (\num{1.42}) & (\num{1.75})\\
+Treatment D & \num{0.79} & \num{0.71} & \num{1.00} & \num{0.59} & \num{0.57} & \num{0.11}\\
+ & (\num{0.89}) & (\num{0.91}) & (\num{1.06}) & (\num{1.37}) & (\num{1.39}) & (\num{1.65})\\
 \midrule
 Control average & 87.69 & 87.69 & 87.69 & 54.91 & 54.91 & 54.91\\
-Individual-level covariates &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
@@ -260,19 +463,18 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.13} & \num{1.13} & \num{1.01} & \num{1.10} & \num{1.11} & \num{1.01}\\
- & {}[\num{0.96}, \num{1.33}] & {}[\num{0.96}, \num{1.34}] & {}[\num{0.81}, \num{1.26}] & {}[\num{0.99}, \num{1.22}] & {}[\num{0.99}, \num{1.23}] & {}[\num{0.88}, \num{1.17}]\\
-Treatment C & \num{0.96} & \num{1.01} & \num{0.99} & \num{0.98} & \num{1.01} & \num{0.93}\\
- & {}[\num{0.82}, \num{1.13}] & {}[\num{0.86}, \num{1.20}] & {}[\num{0.79}, \num{1.24}] & {}[\num{0.88}, \num{1.10}] & {}[\num{0.90}, \num{1.13}] & {}[\num{0.81}, \num{1.08}]\\
-Treatment D & \num{1.08} & \num{1.08} & \num{1.10} & \num{1.02} & \num{1.04} & \num{1.01}\\
- & {}[\num{0.91}, \num{1.27}] & {}[\num{0.91}, \num{1.28}] & {}[\num{0.89}, \num{1.36}] & {}[\num{0.92}, \num{1.14}] & {}[\num{0.93}, \num{1.16}] & {}[\num{0.88}, \num{1.15}]\\
+Treatment B & \num{1.13} & \num{1.15} & \num{1.01} & \num{1.10} & \num{1.09} & \num{1.01}\\
+ & {}[\num{0.96}, \num{1.33}] & {}[\num{0.97}, \num{1.37}] & {}[\num{0.81}, \num{1.26}] & {}[\num{0.99}, \num{1.22}] & {}[\num{0.97}, \num{1.22}] & {}[\num{0.88}, \num{1.17}]\\
+Treatment C & \num{0.96} & \num{1.05} & \num{0.99} & \num{0.98} & \num{0.99} & \num{0.93}\\
+ & {}[\num{0.82}, \num{1.13}] & {}[\num{0.88}, \num{1.24}] & {}[\num{0.79}, \num{1.24}] & {}[\num{0.88}, \num{1.10}] & {}[\num{0.88}, \num{1.11}] & {}[\num{0.81}, \num{1.08}]\\
+Treatment D & \num{1.08} & \num{1.07} & \num{1.10} & \num{1.02} & \num{1.02} & \num{1.01}\\
+ & {}[\num{0.91}, \num{1.27}] & {}[\num{0.90}, \num{1.27}] & {}[\num{0.89}, \num{1.36}] & {}[\num{0.92}, \num{1.14}] & {}[\num{0.91}, \num{1.15}] & {}[\num{0.88}, \num{1.15}]\\
 \midrule
-Individual-level covariates &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-4022.045} & \num{-3850.164} & \num{-3698.637} & \num{-7586.840} & \num{-7419.753} & \num{-7259.347}\\
+Log.Lik. & \num{-4022.045} & \num{-3847.708} & \num{-3698.637} & \num{-7586.840} & \num{-7415.377} & \num{-7259.347}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -294,18 +496,17 @@ Log.Lik. & \num{-4022.045} & \num{-3850.164} & \num{-3698.637} & \num{-7586.840}
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{0.16} & \num{0.03} & \num{-0.76} & \num{0.26} & \num{0.12} & \num{-0.50} & \num{0.12} & \num{0.01} & \num{-0.31}\\
- & (\num{0.65}) & (\num{0.66}) & (\num{0.88}) & (\num{0.62}) & (\num{0.63}) & (\num{0.83}) & (\num{0.56}) & (\num{0.57}) & (\num{0.76})\\
-Treatment C & \num{-0.07} & \num{-0.22} & \num{-0.49} & \num{0.06} & \num{-0.06} & \num{-0.43} & \num{0.02} & \num{-0.07} & \num{-0.27}\\
- & (\num{0.66}) & (\num{0.66}) & (\num{0.89}) & (\num{0.63}) & (\num{0.63}) & (\num{0.84}) & (\num{0.57}) & (\num{0.57}) & (\num{0.77})\\
-Treatment D & \num{0.50} & \num{0.52} & \num{0.54} & \num{0.63} & \num{0.63} & \num{0.46} & \num{0.07} & \num{0.06} & \num{-0.25}\\
- & (\num{0.68}) & (\num{0.68}) & (\num{0.86}) & (\num{0.64}) & (\num{0.65}) & (\num{0.82}) & (\num{0.57}) & (\num{0.58}) & (\num{0.73})\\
+Treatment B & \num{0.16} & \num{-0.25} & \num{-0.76} & \num{0.26} & \num{-0.22} & \num{-0.50} & \num{0.12} & \num{-0.29} & \num{-0.31}\\
+ & (\num{0.65}) & (\num{0.68}) & (\num{0.88}) & (\num{0.62}) & (\num{0.65}) & (\num{0.83}) & (\num{0.56}) & (\num{0.59}) & (\num{0.76})\\
+Treatment C & \num{-0.07} & \num{-0.33} & \num{-0.49} & \num{0.06} & \num{-0.22} & \num{-0.43} & \num{0.02} & \num{-0.23} & \num{-0.27}\\
+ & (\num{0.66}) & (\num{0.69}) & (\num{0.89}) & (\num{0.63}) & (\num{0.66}) & (\num{0.84}) & (\num{0.57}) & (\num{0.60}) & (\num{0.77})\\
+Treatment D & \num{0.50} & \num{0.38} & \num{0.54} & \num{0.63} & \num{0.46} & \num{0.46} & \num{0.07} & \num{-0.08} & \num{-0.25}\\
+ & (\num{0.68}) & (\num{0.70}) & (\num{0.86}) & (\num{0.64}) & (\num{0.67}) & (\num{0.82}) & (\num{0.57}) & (\num{0.60}) & (\num{0.73})\\
 \midrule
 Control average & 6.19 & 6.19 & 6.19 & 5.44 & 5.44 & 5.44 & 4.50 & 4.50 & 4.50\\
-Individual-level covariates &  & X & X &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X &  &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
@@ -327,19 +528,18 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{1.03} & \num{1.01} & \num{0.89} & \num{1.05} & \num{1.03} & \num{0.92} & \num{1.03} & \num{1.01} & \num{0.94}\\
- & {}[\num{0.83}, \num{1.28}] & {}[\num{0.81}, \num{1.26}] & {}[\num{0.67}, \num{1.18}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.81}, \num{1.30}] & {}[\num{0.68}, \num{1.24}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.78}, \num{1.30}] & {}[\num{0.68}, \num{1.30}]\\
-Treatment C & \num{0.99} & \num{0.97} & \num{0.93} & \num{1.01} & \num{1.00} & \num{0.94} & \num{1.00} & \num{0.99} & \num{0.95}\\
- & {}[\num{0.79}, \num{1.24}] & {}[\num{0.77}, \num{1.22}] & {}[\num{0.70}, \num{1.24}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.78}, \num{1.27}] & {}[\num{0.69}, \num{1.27}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.76}, \num{1.28}] & {}[\num{0.68}, \num{1.32}]\\
-Treatment D & \num{1.09} & \num{1.09} & \num{1.09} & \num{1.12} & \num{1.13} & \num{1.09} & \num{1.02} & \num{1.02} & \num{0.95}\\
- & {}[\num{0.87}, \num{1.35}] & {}[\num{0.87}, \num{1.37}] & {}[\num{0.84}, \num{1.42}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.89}, \num{1.43}] & {}[\num{0.82}, \num{1.44}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.69}, \num{1.29}]\\
+Treatment B & \num{1.03} & \num{0.96} & \num{0.89} & \num{1.05} & \num{0.97} & \num{0.92} & \num{1.03} & \num{0.95} & \num{0.94}\\
+ & {}[\num{0.83}, \num{1.28}] & {}[\num{0.77}, \num{1.21}] & {}[\num{0.67}, \num{1.18}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.76}, \num{1.23}] & {}[\num{0.68}, \num{1.24}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.73}, \num{1.23}] & {}[\num{0.68}, \num{1.30}]\\
+Treatment C & \num{0.99} & \num{0.95} & \num{0.93} & \num{1.01} & \num{0.97} & \num{0.94} & \num{1.00} & \num{0.96} & \num{0.95}\\
+ & {}[\num{0.79}, \num{1.24}] & {}[\num{0.75}, \num{1.20}] & {}[\num{0.70}, \num{1.24}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.76}, \num{1.25}] & {}[\num{0.69}, \num{1.27}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.73}, \num{1.26}] & {}[\num{0.68}, \num{1.32}]\\
+Treatment D & \num{1.09} & \num{1.07} & \num{1.09} & \num{1.12} & \num{1.10} & \num{1.09} & \num{1.02} & \num{0.99} & \num{0.95}\\
+ & {}[\num{0.87}, \num{1.35}] & {}[\num{0.85}, \num{1.34}] & {}[\num{0.84}, \num{1.42}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.86}, \num{1.39}] & {}[\num{0.82}, \num{1.44}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.75}, \num{1.29}] & {}[\num{0.69}, \num{1.29}]\\
 \midrule
-Individual-level covariates &  & X & X &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X &  &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-2610.914} & \num{-2555.909} & \num{-2459.914} & \num{-2410.035} & \num{-2357.330} & \num{-2265.325} & \num{-2045.363} & \num{-2011.056} & \num{-1924.783}\\
+Log.Lik. & \num{-2610.914} & \num{-2547.069} & \num{-2459.914} & \num{-2410.035} & \num{-2346.770} & \num{-2265.325} & \num{-2045.363} & \num{-2000.735} & \num{-1924.783}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -366,18 +566,17 @@ Log.Lik. & \num{-2610.914} & \num{-2555.909} & \num{-2459.914} & \num{-2410.035}
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{1.56} & \num{1.35} & \num{0.37} & \num{2.95}* & \num{2.55} & \num{0.39} & \num{2.51}* & \num{1.90} & \num{2.88}\\
- & (\num{1.06}) & (\num{1.05}) & (\num{1.38}) & (\num{1.68}) & (\num{1.68}) & (\num{2.22}) & (\num{1.34}) & (\num{1.37}) & (\num{1.80})\\
-Treatment C & \num{-0.43} & \num{0.05} & \num{-0.32} & \num{-1.79} & \num{-1.10} & \num{-2.64} & \num{-0.83} & \num{-0.85} & \num{0.06}\\
- & (\num{1.13}) & (\num{1.11}) & (\num{1.42}) & (\num{1.74}) & (\num{1.72}) & (\num{2.22}) & (\num{1.35}) & (\num{1.35}) & (\num{1.76})\\
-Treatment D & \num{1.01} & \num{0.85} & \num{1.04} & \num{-0.44} & \num{-0.41} & \num{-0.11} & \num{1.94} & \num{1.64} & \num{3.31}*\\
- & (\num{1.09}) & (\num{1.07}) & (\num{1.29}) & (\num{1.72}) & (\num{1.69}) & (\num{2.06}) & (\num{1.36}) & (\num{1.37}) & (\num{1.69})\\
+Treatment B & \num{1.56} & \num{1.61} & \num{0.37} & \num{2.95}* & \num{2.49} & \num{0.39} & \num{2.51}* & \num{1.96} & \num{2.88}\\
+ & (\num{1.06}) & (\num{1.10}) & (\num{1.38}) & (\num{1.68}) & (\num{1.74}) & (\num{2.22}) & (\num{1.34}) & (\num{1.42}) & (\num{1.80})\\
+Treatment C & \num{-0.43} & \num{0.32} & \num{-0.32} & \num{-1.79} & \num{-1.04} & \num{-2.64} & \num{-0.83} & \num{-0.45} & \num{0.06}\\
+ & (\num{1.13}) & (\num{1.16}) & (\num{1.42}) & (\num{1.74}) & (\num{1.80}) & (\num{2.22}) & (\num{1.35}) & (\num{1.42}) & (\num{1.76})\\
+Treatment D & \num{1.01} & \num{0.57} & \num{1.04} & \num{-0.44} & \num{-0.60} & \num{-0.11} & \num{1.94} & \num{1.38} & \num{3.31}*\\
+ & (\num{1.09}) & (\num{1.10}) & (\num{1.29}) & (\num{1.72}) & (\num{1.74}) & (\num{2.06}) & (\num{1.36}) & (\num{1.41}) & (\num{1.69})\\
 \midrule
 Control average & 88.24 & 88.24 & 88.24 & 53.52 & 53.52 & 53.52 & 18.67 & 18.67 & 18.67\\
-Individual-level covariates &  & X & X &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X &  &  & X\\
 Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016}\\
 \bottomrule
 \end{tabular}
@@ -399,19 +598,18 @@ Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{1.17} & \num{1.15} & \num{1.03} & \num{1.13} & \num{1.11} & \num{1.02} & \num{1.17} & \num{1.13} & \num{1.20}\\
- & {}[\num{0.95}, \num{1.45}] & {}[\num{0.92}, \num{1.43}] & {}[\num{0.77}, \num{1.39}] & {}[\num{0.99}, \num{1.29}] & {}[\num{0.97}, \num{1.28}] & {}[\num{0.85}, \num{1.22}] & {}[\num{0.99}, \num{1.38}] & {}[\num{0.95}, \num{1.34}] & {}[\num{0.96}, \num{1.50}]\\
-Treatment C & \num{0.96} & \num{1.01} & \num{0.97} & \num{0.93} & \num{0.96} & \num{0.90} & \num{0.95} & \num{0.94} & \num{1.00}\\
- & {}[\num{0.78}, \num{1.19}] & {}[\num{0.81}, \num{1.25}] & {}[\num{0.73}, \num{1.29}] & {}[\num{0.81}, \num{1.07}] & {}[\num{0.83}, \num{1.10}] & {}[\num{0.75}, \num{1.07}] & {}[\num{0.79}, \num{1.13}] & {}[\num{0.79}, \num{1.13}] & {}[\num{0.80}, \num{1.26}]\\
-Treatment D & \num{1.11} & \num{1.10} & \num{1.11} & \num{0.98} & \num{0.98} & \num{1.00} & \num{1.13} & \num{1.11} & \num{1.23}\\
- & {}[\num{0.89}, \num{1.37}] & {}[\num{0.88}, \num{1.36}] & {}[\num{0.85}, \num{1.46}] & {}[\num{0.86}, \num{1.12}] & {}[\num{0.86}, \num{1.13}] & {}[\num{0.84}, \num{1.18}] & {}[\num{0.95}, \num{1.34}] & {}[\num{0.94}, \num{1.32}] & {}[\num{1.00}, \num{1.52}]\\
+Treatment B & \num{1.17} & \num{1.17} & \num{1.03} & \num{1.13} & \num{1.11} & \num{1.02} & \num{1.17} & \num{1.14} & \num{1.20}\\
+ & {}[\num{0.95}, \num{1.45}] & {}[\num{0.94}, \num{1.47}] & {}[\num{0.77}, \num{1.39}] & {}[\num{0.99}, \num{1.29}] & {}[\num{0.96}, \num{1.28}] & {}[\num{0.85}, \num{1.22}] & {}[\num{0.99}, \num{1.38}] & {}[\num{0.96}, \num{1.36}] & {}[\num{0.96}, \num{1.50}]\\
+Treatment C & \num{0.96} & \num{1.03} & \num{0.97} & \num{0.93} & \num{0.96} & \num{0.90} & \num{0.95} & \num{0.97} & \num{1.00}\\
+ & {}[\num{0.78}, \num{1.19}] & {}[\num{0.82}, \num{1.29}] & {}[\num{0.73}, \num{1.29}] & {}[\num{0.81}, \num{1.07}] & {}[\num{0.83}, \num{1.11}] & {}[\num{0.75}, \num{1.07}] & {}[\num{0.79}, \num{1.13}] & {}[\num{0.81}, \num{1.17}] & {}[\num{0.80}, \num{1.26}]\\
+Treatment D & \num{1.11} & \num{1.06} & \num{1.11} & \num{0.98} & \num{0.98} & \num{1.00} & \num{1.13} & \num{1.09} & \num{1.23}\\
+ & {}[\num{0.89}, \num{1.37}] & {}[\num{0.85}, \num{1.33}] & {}[\num{0.85}, \num{1.46}] & {}[\num{0.86}, \num{1.12}] & {}[\num{0.85}, \num{1.13}] & {}[\num{0.84}, \num{1.18}] & {}[\num{0.95}, \num{1.34}] & {}[\num{0.92}, \num{1.30}] & {}[\num{1.00}, \num{1.52}]\\
 \midrule
-Individual-level covariates &  & X & X &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X &  &  & X\\
 Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016}\\
-Log.Lik. & \num{-2454.396} & \num{-2322.988} & \num{-2201.396} & \num{-4838.480} & \num{-4709.363} & \num{-4557.857} & \num{-3472.809} & \num{-3459.216} & \num{-3339.844}\\
+Log.Lik. & \num{-2454.396} & \num{-2320.616} & \num{-2201.396} & \num{-4838.480} & \num{-4707.722} & \num{-4557.857} & \num{-3472.809} & \num{-3452.056} & \num{-3339.844}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -433,18 +631,17 @@ Log.Lik. & \num{-2454.396} & \num{-2322.988} & \num{-2201.396} & \num{-4838.480}
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{0.13} & \num{-0.24} & \num{-0.61} & \num{0.19} & \num{-0.18} & \num{-0.50} & \num{0.27} & \num{-0.08} & \num{-0.60}\\
- & (\num{0.75}) & (\num{0.77}) & (\num{0.98}) & (\num{0.71}) & (\num{0.73}) & (\num{0.93}) & (\num{0.65}) & (\num{0.68}) & (\num{0.85})\\
-Treatment C & \num{-0.41} & \num{-0.52} & \num{-0.48} & \num{-0.26} & \num{-0.35} & \num{-0.38} & \num{-0.05} & \num{-0.12} & \num{-0.39}\\
- & (\num{0.76}) & (\num{0.76}) & (\num{1.00}) & (\num{0.72}) & (\num{0.72}) & (\num{0.95}) & (\num{0.66}) & (\num{0.66}) & (\num{0.87})\\
-Treatment D & \num{0.32} & \num{0.12} & \num{0.50} & \num{0.49} & \num{0.31} & \num{0.67} & \num{0.01} & \num{-0.17} & \num{-0.35}\\
- & (\num{0.78}) & (\num{0.78}) & (\num{1.00}) & (\num{0.74}) & (\num{0.74}) & (\num{0.95}) & (\num{0.66}) & (\num{0.66}) & (\num{0.86})\\
+Treatment B & \num{0.13} & \num{-0.44} & \num{-0.61} & \num{0.19} & \num{-0.35} & \num{-0.50} & \num{0.27} & \num{-0.31} & \num{-0.60}\\
+ & (\num{0.75}) & (\num{0.79}) & (\num{0.98}) & (\num{0.71}) & (\num{0.75}) & (\num{0.93}) & (\num{0.65}) & (\num{0.70}) & (\num{0.85})\\
+Treatment C & \num{-0.41} & \num{-0.44} & \num{-0.48} & \num{-0.26} & \num{-0.29} & \num{-0.38} & \num{-0.05} & \num{-0.13} & \num{-0.39}\\
+ & (\num{0.76}) & (\num{0.81}) & (\num{1.00}) & (\num{0.72}) & (\num{0.77}) & (\num{0.95}) & (\num{0.66}) & (\num{0.72}) & (\num{0.87})\\
+Treatment D & \num{0.32} & \num{-0.14} & \num{0.50} & \num{0.49} & \num{0.03} & \num{0.67} & \num{0.01} & \num{-0.34} & \num{-0.35}\\
+ & (\num{0.78}) & (\num{0.82}) & (\num{1.00}) & (\num{0.74}) & (\num{0.77}) & (\num{0.95}) & (\num{0.66}) & (\num{0.70}) & (\num{0.86})\\
 \midrule
 Control average & 5.23 & 5.23 & 5.23 & 4.60 & 4.60 & 4.60 & 3.80 & 3.80 & 3.80\\
-Individual-level covariates &  & X & X &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X &  &  & X\\
 Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016}\\
 \bottomrule
 \end{tabular}
@@ -466,19 +663,18 @@ Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-Treatment B & \num{1.03} & \num{0.96} & \num{0.88} & \num{1.04} & \num{0.97} & \num{0.89} & \num{1.08} & \num{0.99} & \num{0.85}\\
- & {}[\num{0.76}, \num{1.38}] & {}[\num{0.71}, \num{1.29}] & {}[\num{0.59}, \num{1.32}] & {}[\num{0.76}, \num{1.43}] & {}[\num{0.70}, \num{1.33}] & {}[\num{0.58}, \num{1.36}] & {}[\num{0.76}, \num{1.51}] & {}[\num{0.70}, \num{1.39}] & {}[\num{0.54}, \num{1.35}]\\
-Treatment C & \num{0.92} & \num{0.90} & \num{0.91} & \num{0.94} & \num{0.93} & \num{0.92} & \num{0.99} & \num{0.97} & \num{0.91}\\
- & {}[\num{0.67}, \num{1.25}] & {}[\num{0.66}, \num{1.23}] & {}[\num{0.61}, \num{1.36}] & {}[\num{0.68}, \num{1.31}] & {}[\num{0.66}, \num{1.29}] & {}[\num{0.61}, \num{1.40}] & {}[\num{0.69}, \num{1.41}] & {}[\num{0.68}, \num{1.40}] & {}[\num{0.58}, \num{1.44}]\\
-Treatment D & \num{1.06} & \num{1.03} & \num{1.09} & \num{1.11} & \num{1.07} & \num{1.13} & \num{1.00} & \num{0.95} & \num{0.91}\\
- & {}[\num{0.79}, \num{1.43}] & {}[\num{0.76}, \num{1.39}] & {}[\num{0.76}, \num{1.55}] & {}[\num{0.81}, \num{1.52}] & {}[\num{0.78}, \num{1.47}] & {}[\num{0.78}, \num{1.65}] & {}[\num{0.71}, \num{1.43}] & {}[\num{0.67}, \num{1.36}] & {}[\num{0.60}, \num{1.37}]\\
+Treatment B & \num{1.03} & \num{0.94} & \num{0.88} & \num{1.04} & \num{0.96} & \num{0.89} & \num{1.08} & \num{0.95} & \num{0.85}\\
+ & {}[\num{0.76}, \num{1.38}] & {}[\num{0.69}, \num{1.30}] & {}[\num{0.59}, \num{1.32}] & {}[\num{0.76}, \num{1.43}] & {}[\num{0.69}, \num{1.35}] & {}[\num{0.58}, \num{1.36}] & {}[\num{0.76}, \num{1.51}] & {}[\num{0.66}, \num{1.38}] & {}[\num{0.54}, \num{1.35}]\\
+Treatment C & \num{0.92} & \num{0.93} & \num{0.91} & \num{0.94} & \num{0.96} & \num{0.92} & \num{0.99} & \num{1.00} & \num{0.91}\\
+ & {}[\num{0.67}, \num{1.25}] & {}[\num{0.67}, \num{1.29}] & {}[\num{0.61}, \num{1.36}] & {}[\num{0.68}, \num{1.31}] & {}[\num{0.68}, \num{1.36}] & {}[\num{0.61}, \num{1.40}] & {}[\num{0.69}, \num{1.41}] & {}[\num{0.68}, \num{1.46}] & {}[\num{0.58}, \num{1.44}]\\
+Treatment D & \num{1.06} & \num{0.98} & \num{1.09} & \num{1.11} & \num{1.02} & \num{1.13} & \num{1.00} & \num{0.92} & \num{0.91}\\
+ & {}[\num{0.79}, \num{1.43}] & {}[\num{0.72}, \num{1.34}] & {}[\num{0.76}, \num{1.55}] & {}[\num{0.81}, \num{1.52}] & {}[\num{0.74}, \num{1.41}] & {}[\num{0.78}, \num{1.65}] & {}[\num{0.71}, \num{1.43}] & {}[\num{0.64}, \num{1.32}] & {}[\num{0.60}, \num{1.37}]\\
 \midrule
-Individual-level covariates &  & X & X &  & X & X &  & X & X\\
-Week-level covariates &  & X & X &  & X & X &  & X & X\\
-Prefecture-level covariates &  & X & X &  & X & X &  & X & X\\
-Region$\times$Week (in Dec. and Jan.) FE &  &  & X &  &  & X &  &  & X\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month and week FE &  & X &  &  & X &  &  & X & \\
+Controlling winter holidays &  &  & X &  &  & X &  &  & X\\
 Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016}\\
-Log.Lik. & \num{-1442.488} & \num{-1417.857} & \num{-1328.069} & \num{-1333.299} & \num{-1306.944} & \num{-1217.905} & \num{-1147.326} & \num{-1122.514} & \num{-1040.438}\\
+Log.Lik. & \num{-1442.488} & \num{-1405.857} & \num{-1328.069} & \num{-1333.299} & \num{-1296.038} & \num{-1217.905} & \num{-1147.326} & \num{-1113.501} & \num{-1040.438}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -507,15 +703,15 @@ Log.Lik. & \num{-1442.488} & \num{-1417.857} & \num{-1328.069} & \num{-1333.299}
 \midrule
 Effect on CT: (A) + (B) + (C) + (D) + (E) & 3.104 & 1.192 & 2.358\\
 (A) Channel through preventing attrition due to exogenous reasons & 0.018 & -0.971 & -0.452\\
- & (0.496) & (0.571) & (0.574)\\
+ & (0.529) & (0.571) & (0.572)\\
 (B) Channel through preventing attrition due to endogenous reasons & 2.061 & 2.351 & 2.548\\
- & (0.930) & (0.965) & (1.031)\\
+ & (1.079) & (1.037) & (1.076)\\
 (C) Channel through increasing positive intention & 0.936 & -0.177 & 0.240\\
- & (0.527) & (0.555) & (0.530)\\
+ & (0.588) & (0.549) & (0.637)\\
 (D) Interaction of channel (A) and (C) & 0.001 & 0.008 & -0.005\\
- & (0.022) & (0.027) & (0.018)\\
+ & (0.025) & (0.029) & (0.020)\\
 (E) Interaction of channel (B) and (C) & 0.087 & -0.019 & 0.027\\
- & (0.058) & (0.057) & (0.060)\\
+ & (0.076) & (0.068) & (0.084)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -538,15 +734,15 @@ Effect on CT: (A) + (B) + (C) + (D) + (E) & 3.104 & 1.192 & 2.358\\
 \midrule
 Effect on Candidate Selection: (A) + (B) + (C) + (D) + (E) & 0.096 & -0.067 & 0.498\\
 (A) Channel through preventing attrition due to exogenous reasons & -0.795 & -0.272 & -0.096\\
- & (0.505) & (0.484) & (0.464)\\
+ & (0.558) & (0.568) & (0.543)\\
 (B) Channel through preventing attrition due to endogenous reasons & 0.120 & -0.107 & -0.056\\
- & (0.216) & (0.295) & (0.235)\\
+ & (0.239) & (0.281) & (0.262)\\
 (C) Channel through increasing CT & 0.864 & 0.332 & 0.667\\
- & (0.275) & (0.311) & (0.315)\\
+ & (0.308) & (0.327) & (0.348)\\
 (D) Interaction of channel (A) and (C) & -0.111 & -0.015 & -0.010\\
- & (0.086) & (0.037) & (0.052)\\
+ & (0.080) & (0.038) & (0.064)\\
 (E) Interaction of channel (B) and (C) & 0.017 & -0.006 & -0.006\\
- & (0.034) & (0.022) & (0.029)\\
+ & (0.037) & (0.020) & (0.032)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
