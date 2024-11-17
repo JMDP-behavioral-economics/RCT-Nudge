@@ -719,6 +719,7 @@ LmSubset <- R6::R6Class("LmSubset",
       kbl <- est %>%
         pull(fit) %>%
         modelsummary(
+          title = title,
           coef_map = c(
             "treatB" = "Treatment B",
             "treatC" = "Treatment C",
@@ -753,7 +754,7 @@ LmSubset <- R6::R6Class("LmSubset",
         })
 
       kbl <- kbl %>%
-        kableExtra::add_header_above(label$young) %>%
+        kableExtra::add_header_above(label$young, escape = FALSE) %>%
         kableExtra::add_header_above(label$gender) %>%
         kableExtra::add_header_above(label$y)
 
@@ -971,7 +972,7 @@ LmInteraction <- R6::R6Class("LmInteraction",
                           hold = FALSE,
                           ...)
     {
-      kbl <- private$reg_msummary("kableExtra", digit = digit, title = title, ...)
+      kbl <- private$reg_msummary("kableExtra", digit = digit, title = title, escape = FALSE, ...)
 
       if (hold) {
         kbl <- kbl %>%
