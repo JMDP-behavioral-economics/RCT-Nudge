@@ -33,12 +33,37 @@ Lm <- R6::R6Class("Lm",
           tiiki_week = paste0(tiiki, "_", RCTweek_fe)
         )
 
+      use_x <- self$data %>%
+        select(
+          male,
+          age_demean,
+          coordinate,
+          holidays,
+          hospital_per_area,
+          PB_per_area,
+          BM_per_area
+        ) %>%
+        summarize_all(~ var(.)) %>%
+        pivot_longer(everything()) %>%
+        filter(value != 0) %>%
+        pull(name)
+
+      if (any(use_x %in% "age_demean")) {
+        use_x <- c(use_x, "I(age_demean^2)")
+      }
+
+      private$covariates <- use_x
+
       private$model <- list(
-        unctrl = value ~ treat,
-        ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week),
-        ctrl2 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(tiiki_week)
+        unctrl = reformulate("treat", "value"),
+        ctrl1 = reformulate(
+          c("treat", use_x, "factor(month)", "factor(week)"),
+          "value"
+        ),
+        ctrl2 = reformulate(
+          c("treat", use_x, "factor(tiiki_week)"),
+          "value"
+        )
       )
 
       private$se_type <- se
@@ -130,14 +155,20 @@ Lm <- R6::R6Class("Lm",
         "treatD + treatD:groupOlder male"
       )
 
+      use_x <- private$covariates
+      use_x_2 <- use_x[!str_detect(use_x, "male|age")]
+      use_x_2_int <- paste0(use_x_2, ":group")
+
       interaction_mod <- list(
-        unctrl = value ~ treat * group,
-        ctrl1 = value ~ treat * group + coordinate:group +
-          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
-          factor(month):group + factor(week):group,
-        ctrl2 = value ~ treat * group + coordinate:group +
-          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
-          factor(tiiki_week)
+        unctrl = reformulate("treat * group", "value"),
+        ctrl1 = reformulate(
+          c("treat * group", use_x_2_int, "factor(month):group", "factor(week):group"),
+          "value"
+        ),
+        ctrl2 = reformulate(
+          c("treat * group", use_x_2_int, "factor(tiiki_week)"),
+          "value"
+        )
       )
 
       est <- self$data %>%
@@ -194,6 +225,7 @@ Lm <- R6::R6Class("Lm",
     ctrl_arm = "",
     model = list(),
     se_type = "",
+    covariates = "",
     call_lm = function(data, model, se) {
       map(data, ~ lm_robust(model, data = ., se_type = se))
     },
