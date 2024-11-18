@@ -755,6 +755,212 @@ Log.Lik. & \num{-2610.914} & \num{-2547.069} & \num{-2459.914} & \num{-2410.035}
 \end{table}
 \end{landscape}
 
+\begin{table}[H]
+
+\caption{\label{tab:consent-lm-interaction-reg}Heterogenous Message Effects on Final Consent}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Final Consent} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
+\midrule
+Treatment B & \num{-2.27} & \num{-1.50} & \num{-3.08}*\\
+ & (\num{1.79}) & (\num{1.80}) & (\num{1.86})\\
+Treatment C & \num{0.34} & \num{1.02} & \num{-0.59}\\
+ & (\num{2.02}) & (\num{2.06}) & (\num{2.10})\\
+Treatment D & \num{-1.21} & \num{-0.95} & \num{-1.33}\\
+ & (\num{1.88}) & (\num{1.84}) & (\num{1.91})\\
+Older female & \num{-2.62}* & \num{-5.42} & \num{-7.14}\\
+ & (\num{1.59}) & (\num{5.86}) & (\num{5.44})\\
+Young male & \num{0.77} & \num{-9.22} & \num{-12.09}*\\
+ & (\num{1.94}) & (\num{7.79}) & (\num{7.03})\\
+Older male & \num{0.96} & \num{-3.84} & \num{-5.75}\\
+ & (\num{1.62}) & (\num{6.16}) & (\num{5.53})\\
+Treatment B $\times$ Older female & \num{1.84} & \num{0.60} & \num{1.83}\\
+ & (\num{1.98}) & (\num{2.00}) & (\num{1.97})\\
+Treatment C $\times$ Older female & \num{0.29} & \num{-0.78} & \num{0.44}\\
+ & (\num{2.23}) & (\num{2.28}) & (\num{2.26})\\
+Treatment D $\times$ Older female & \num{1.71} & \num{1.23} & \num{1.50}\\
+ & (\num{2.09}) & (\num{2.08}) & (\num{2.10})\\
+Treatment B $\times$ Young male & \num{4.01} & \num{2.94} & \num{3.98}\\
+ & (\num{2.57}) & (\num{2.61}) & (\num{2.57})\\
+Treatment C $\times$ Young male & \num{-1.11} & \num{-1.55} & \num{-0.17}\\
+ & (\num{2.65}) & (\num{2.74}) & (\num{2.67})\\
+Treatment D $\times$ Young male & \num{2.82} & \num{2.24} & \num{2.52}\\
+ & (\num{2.67}) & (\num{2.69}) & (\num{2.67})\\
+Treatment B $\times$ Older male & \num{2.91} & \num{1.59} & \num{3.18}\\
+ & (\num{2.03}) & (\num{2.09}) & (\num{2.04})\\
+Treatment C $\times$ Older male & \num{-0.49} & \num{-1.40} & \num{0.19}\\
+ & (\num{2.24}) & (\num{2.30}) & (\num{2.26})\\
+Treatment D $\times$ Older male & \num{2.10} & \num{1.74} & \num{2.11}\\
+ & (\num{2.14}) & (\num{2.13}) & (\num{2.13})\\
+\midrule
+Covariates &  & X & X\\
+Month and week FE &  & X & \\
+Controlling winter holidays &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:consent-lm-interaction-lh}Linear Combination Test: Message Effects on Final Consent for Specific Gender-Age Group}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+ & (1) & (2) & (3) & (4)\\
+\midrule
+Control average & 5.60 & 2.98 & 6.37 & 6.56\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
+\hspace{1em}B & -2.27 & -0.43 & 1.74 & 0.65\\
+\hspace{1em} & (1.79) & (0.85) & (1.85) & (0.97)\\
+\hspace{1em}C & 0.34 & 0.63 & -0.76 & -0.15\\
+\hspace{1em} & (2.02) & (0.95) & (1.72) & (0.98)\\
+\hspace{1em}D & -1.21 & 0.51 & 1.61 & 0.89\\
+\hspace{1em} & (1.88) & (0.92) & (1.90) & (1.02)\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Model (2): Including covariates and month and week FE}}\\
+\hspace{1em}B & -1.50 & -0.90 & 1.44 & 0.10\\
+\hspace{1em} & (1.80) & (0.87) & (1.89) & (1.06)\\
+\hspace{1em}C & 1.02 & 0.24 & -0.53 & -0.38\\
+\hspace{1em} & (2.06) & (0.99) & (1.82) & (1.03)\\
+\hspace{1em}D & -0.95 & 0.28 & 1.29 & 0.78\\
+\hspace{1em} & (1.84) & (0.96) & (1.96) & (1.07)\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Model (3): Including covariates and controlling winter holidays}}\\
+\hspace{1em}B & -3.08* & -1.26 & 0.90 & 0.10\\
+\hspace{1em} & (1.86) & (1.01) & (1.97) & (1.15)\\
+\hspace{1em}C & -0.59 & -0.15 & -0.76 & -0.40\\
+\hspace{1em} & (2.10) & (1.11) & (1.86) & (1.12)\\
+\hspace{1em}D & -1.33 & 0.17 & 1.19 & 0.77\\
+\hspace{1em} & (1.91) & (1.09) & (2.01) & (1.14)\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:consent-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:consent-lm-subset1}Subset Regression of Final Consent without Covariates}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{-2.27} & \num{-0.43} & \num{1.74} & \num{0.65}\\
+ & (\num{1.79}) & (\num{0.85}) & (\num{1.85}) & (\num{0.97})\\
+Treatment C & \num{0.34} & \num{0.63} & \num{-0.76} & \num{-0.15}\\
+ & (\num{2.02}) & (\num{0.95}) & (\num{1.72}) & (\num{0.98})\\
+Treatment D & \num{-1.21} & \num{0.51} & \num{1.61} & \num{0.89}\\
+ & (\num{1.88}) & (\num{0.92}) & (\num{1.90}) & (\num{1.02})\\
+\midrule
+Control average & 5.60 & 2.98 & 6.37 & 6.56\\
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textit{Multiplicity-adjusted p-values}}\\
+\hspace{1em}Treatment B & 0.882 & 0.974 & 0.982 & 0.994\\
+\hspace{1em}Treatment C & 0.873 & 0.990 & 0.957 & 0.982\\
+\hspace{1em}Treatment D & 0.984 & 0.987 & 0.982 & 0.979\\
+Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by List et al. (2016).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:consent-lm-subset2}Subset Regression of Final Consent with Covariates and Month and Week FE}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Final Consent} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{-1.50} & \num{-0.90} & \num{1.44} & \num{0.10}\\
+ & (\num{1.81}) & (\num{0.87}) & (\num{1.89}) & (\num{1.06})\\
+Treatment C & \num{1.02} & \num{0.24} & \num{-0.53} & \num{-0.38}\\
+ & (\num{2.07}) & (\num{0.99}) & (\num{1.82}) & (\num{1.03})\\
+Treatment D & \num{-0.95} & \num{0.28} & \num{1.29} & \num{0.78}\\
+ & (\num{1.85}) & (\num{0.96}) & (\num{1.96}) & (\num{1.07})\\
+\midrule
+Control average & 5.60 & 2.98 & 6.37 & 6.56\\
+Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:consent-lm-subset3}Subset Regression of Final Consent Controlling Covariates and Winter Holidays}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Final Consent} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
+\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{-2.70} & \num{-1.67} & \num{-2.02} & \num{0.79}\\
+ & (\num{2.61}) & (\num{1.17}) & (\num{2.70}) & (\num{1.30})\\
+Treatment C & \num{0.63} & \num{0.17} & \num{-2.58} & \num{-0.36}\\
+ & (\num{2.78}) & (\num{1.30}) & (\num{2.63}) & (\num{1.29})\\
+Treatment D & \num{-0.32} & \num{0.59} & \num{0.84} & \num{0.45}\\
+ & (\num{2.34}) & (\num{1.25}) & (\num{2.52}) & (\num{1.28})\\
+\midrule
+Control average & 5.60 & 2.98 & 6.37 & 6.56\\
+Num.Obs. & \num{1132} & \num{3018} & \num{1566} & \num{5333}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 \clearpage
 
 \hypertarget{analysis-limited-to-initial-matched-candidates}{%
