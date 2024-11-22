@@ -31,9 +31,7 @@ Logit <- R6::R6Class("Logit",
       private$model <- list(
         unctrl = value ~ treat,
         ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week),
-        ctrl2 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(tiiki_week)
+          holidays + hospital_per_area + PB_per_area + BM_per_area
       )
 
       cat("\n")
@@ -49,21 +47,16 @@ Logit <- R6::R6Class("Logit",
         nest() %>%
         mutate(
           fit1 = private$call_glm(private$model$unctrl, data),
-          fit2 = private$call_glm(private$model$ctrl1, data),
-          fit3 = private$call_glm(private$model$ctrl2, data)
+          fit2 = private$call_glm(private$model$ctrl1, data)
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit3,
+          fit1:fit2,
           names_prefix = "fit",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        mutate(
-          covs = if_else(model != "1", "X", ""),
-          fe_m_w = if_else(model == "2", "X", ""),
-          fe_p_w = if_else(model == "3", "X", "")
-        )
+        mutate(covs = if_else(model != "1", "X", ""))
 
       LogitAll$new(est)
     }
@@ -181,12 +174,10 @@ LogitAll <- R6::R6Class("LogitAll",
       align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
       add_tab <- data.frame(
         rbind(
-          c("Covariates", private$est$covs),
-          c("Month and week FE", private$est$fe_m_w),
-          c("Controlling winter holidays", private$est$fe_p_w)
+          c("Covariates", private$est$covs)
         )
       )
-      attr(add_tab, "position") <- 7:10
+      attr(add_tab, "position") <- 7
 
       args <- list(
         models = fit,

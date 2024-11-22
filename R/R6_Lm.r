@@ -57,11 +57,7 @@ Lm <- R6::R6Class("Lm",
       private$model <- list(
         unctrl = reformulate("treat", "value"),
         ctrl1 = reformulate(
-          c("treat", use_x, "factor(month)", "factor(week)"),
-          "value"
-        ),
-        ctrl2 = reformulate(
-          c("treat", use_x, "factor(tiiki_week)"),
+          c("treat", use_x),
           "value"
         )
       )
@@ -85,7 +81,6 @@ Lm <- R6::R6Class("Lm",
         mutate(
           fit1 = private$call_lm(data, private$model$unctrl, private$se_type),
           fit2 = private$call_lm(data, private$model$ctrl1, private$se_type),
-          fit3 = private$call_lm(data, private$model$ctrl2, private$se_type),
           avg = map_dbl(
             data,
             ~ mean(subset(., treat == private$ctrl_arm)$value)
@@ -93,32 +88,23 @@ Lm <- R6::R6Class("Lm",
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit3,
+          fit1:fit2,
           names_prefix = "fit",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        mutate(
-          covs = if_else(model != "1", "X", ""),
-          fe_m_w = if_else(model == "2", "X", ""),
-          fe_p_w = if_else(model == "3", "X", "")
-        )
+        mutate(covs = if_else(model != "1", "X", ""))
 
       LmAll$new(est)
     },
     fit_subset_by_gender_age = function(age_cut = 30,
                                         scale = 1,
-                                        covariates = TRUE,
-                                        month_week_fe = TRUE)
+                                        covariates = TRUE)
     {
       model <- if (!covariates) {
         private$model$unctrl
       } else {
-        if (month_week_fe) {
-          update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
-        } else {
-          update(private$model$ctrl2, . ~ . - male - age_demean - I(age_demean^2))
-        }
+        update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
       }
 
       est <- self$data %>%
@@ -162,11 +148,7 @@ Lm <- R6::R6Class("Lm",
       interaction_mod <- list(
         unctrl = reformulate("treat * group", "value"),
         ctrl1 = reformulate(
-          c("treat * group", use_x_2_int, "factor(month):group", "factor(week):group"),
-          "value"
-        ),
-        ctrl2 = reformulate(
-          c("treat * group", use_x_2_int, "factor(tiiki_week)"),
+          c("treat * group", use_x_2_int),
           "value"
         )
       )
@@ -197,25 +179,17 @@ Lm <- R6::R6Class("Lm",
             interaction_mod$ctrl1,
             private$se_type,
             lh_null
-          ),
-          fit3 = private$call_lh(
-            data,
-            interaction_mod$ctrl2,
-            private$se_type,
-            lh_null
           )
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit3,
+          fit1:fit2,
           names_prefix = "fit",
           names_to = "model",
           values_to = "fit"
         ) %>%
         mutate(
-          covs = if_else(model != "1", "X", ""),
-          fe_m_w = if_else(model == "2", "X", ""),
-          fe_p_w = if_else(model == "3", "X", "")
+          covs = if_else(model != "1", "X", "")
         )
 
       LmInteraction$new(est, age_cut)
@@ -263,9 +237,7 @@ LmCluster <- R6::R6Class("LmCluster",
       private$model <- list(
         unctrl = value ~ treat,
         ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area + factor(month) + factor(week),
-        ctrl2 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + factor(tiiki_week)
+          holidays + hospital_per_area + PB_per_area + BM_per_area
       )
 
       private$se_type <- se
@@ -289,7 +261,6 @@ LmCluster <- R6::R6Class("LmCluster",
         mutate(
           fit1 = private$call_lm(data, private$model$unctrl, private$se_type, private$cluster),
           fit2 = private$call_lm(data, private$model$ctrl1, private$se_type, private$cluster),
-          fit3 = private$call_lm(data, private$model$ctrl2, private$se_type, private$cluster),
           avg = map_dbl(
             data,
             ~ mean(subset(., treat == private$ctrl_arm)$value)
@@ -297,32 +268,25 @@ LmCluster <- R6::R6Class("LmCluster",
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit3,
+          fit1:fit2,
           names_prefix = "fit",
           names_to = "model",
           values_to = "fit"
         ) %>%
         mutate(
-          covs = if_else(model != "1", "X", ""),
-          fe_m_w = if_else(model == "2", "X", ""),
-          fe_p_w = if_else(model == "3", "X", "")
+          covs = if_else(model != "1", "X", "")
         )
 
       LmAll$new(est)
     },
     fit_subset_by_gender_age = function(age_cut = 30,
                                         scale = 1,
-                                        covariates = TRUE,
-                                        month_week_fe = TRUE)
+                                        covariates = TRUE)
     {
       model <- if (!covariates) {
         private$model$unctrl
       } else {
-        if (month_week_fe) {
-          update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
-        } else {
-          update(private$model$ctrl2, . ~ . - male - age_demean - I(age_demean^2))
-        }
+        update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
       }
 
       est <- self$data %>%
@@ -362,11 +326,7 @@ LmCluster <- R6::R6Class("LmCluster",
       interaction_mod <- list(
         unctrl = value ~ treat * group,
         ctrl1 = value ~ treat * group + coordinate:group +
-          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
-          factor(month):group + factor(week):group,
-        ctrl2 = value ~ treat * group + coordinate:group +
-          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group +
-          factor(tiiki_week)
+          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group
       )
 
       est <- self$data %>%
@@ -400,26 +360,17 @@ LmCluster <- R6::R6Class("LmCluster",
             private$se_type,
             private$cluster,
             lh_null
-          ),
-          fit3 = private$call_lh(
-            data,
-            interaction_mod$ctrl2,
-            private$se_type,
-            private$cluster,
-            lh_null
           )
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit3,
+          fit1:fit2,
           names_prefix = "fit",
           names_to = "model",
           values_to = "fit"
         ) %>%
         mutate(
-          covs = if_else(model != "1", "X", ""),
-          fe_m_w = if_else(model == "2", "X", ""),
-          fe_p_w = if_else(model == "3", "X", "")
+          covs = if_else(model != "1", "X", "")
         )
 
       LmInteraction$new(est, age_cut)
@@ -673,12 +624,10 @@ LmAll <- R6::R6Class("LmAll",
       add_tab <- data.frame(
         rbind(
           c("Control average", sprintf(avg_format, private$est$avg)),
-          c("Covariates", private$est$covs),
-          c("Month and week FE", private$est$fe_m_w),
-          c("Controlling winter holidays", private$est$fe_p_w)
+          c("Covariates", private$est$covs)
         )
       )
-      attr(add_tab, "position") <- 7:12
+      attr(add_tab, "position") <- 7:8
 
       args <- list(
         models = fit,
@@ -1047,27 +996,14 @@ LmInteraction <- R6::R6Class("LmInteraction",
         select(subset, treat, statistic, "(1)") %>%
         pivot_wider(names_from = subset, values_from = "(1)") %>%
         mutate(
-          covs = private$est$covs[1],
-          fe_m_w = private$est$fe_m_w[1],
-          fe_p_w = private$est$fe_p_w[1]
+          covs = private$est$covs[1]
         )
 
       mtab_wide2 <- mtab %>%
         select(subset, treat, statistic, "(2)") %>%
         pivot_wider(names_from = subset, values_from = "(2)") %>%
         mutate(
-          covs = private$est$covs[2],
-          fe_m_w = private$est$fe_m_w[2],
-          fe_p_w = private$est$fe_p_w[2]
-        )
-
-      mtab_wide3 <- mtab %>%
-        select(subset, treat, statistic, "(3)") %>%
-        pivot_wider(names_from = subset, values_from = "(3)") %>%
-        mutate(
-          covs = private$est$covs[3],
-          fe_m_w = private$est$fe_m_w[3],
-          fe_p_w = private$est$fe_p_w[3]
+          covs = private$est$covs[2]
         )
 
       avg_format <- paste0("%1.", digits, "f")
@@ -1090,25 +1026,24 @@ LmInteraction <- R6::R6Class("LmInteraction",
         pivot_wider(names_from = group, values_from = value) %>%
         mutate(treat = statistic, statistic = "gof")
 
-      tbl <- bind_rows(statistic, mtab_wide1, mtab_wide2, mtab_wide3) %>%
+      tbl <- bind_rows(statistic, mtab_wide1, mtab_wide2) %>%
         mutate(
           treat = if_else(statistic == "std.error", "", treat),
           model = case_when(
             is.na(covs) ~ NA_character_,
             covs == "" ~ "Model (1): No covariates",
-            fe_m_w == "X" ~ "Model (2): Including covariates and month and week FE",
-            TRUE ~ "Model (3): Including covariates and controlling winter holidays"
+            TRUE ~ "Model (2): Including covariates"
           )
         ) %>%
         select(-statistic) %>%
         select(treat, everything())
 
       kbl <- tbl %>%
-        select(-covs, -fe_m_w, -fe_p_w, -model) %>%
+        select(-covs, -model) %>%
         knitr::kable(
           caption = title,
-          col.names = c("", paste0("(", seq(ncol(tbl) - 5), ")")),
-          align = paste(c("l", rep("c", ncol(tbl) - 5)), collapse = ""),
+          col.names = c("", paste0("(", seq(ncol(tbl) - 3), ")")),
+          align = paste(c("l", rep("c", ncol(tbl) - 3)), collapse = ""),
           booktabs = TRUE,
           linesep = ""
         )
@@ -1199,12 +1134,10 @@ LmInteraction <- R6::R6Class("LmInteraction",
 
       add_tab <- data.frame(
         rbind(
-          c("Covariates", private$est$covs),
-          c("Month and week FE", private$est$fe_m_w),
-          c("Controlling winter holidays", private$est$fe_p_w)
+          c("Covariates", private$est$covs)
         )
       )
-      attr(add_tab, "position") <- 31:34
+      attr(add_tab, "position") <- 31
 
       args <- list(
         models = fit,

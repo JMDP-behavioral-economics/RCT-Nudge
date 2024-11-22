@@ -122,13 +122,19 @@ rct$
 ```
 
 ```{r response-speed-CT, eval=FALSE}
+with(rawdt$data, table(days_reply, coordinate, useNA = "always"))
+
 respond <- subset(rct$data, positive == 1)
 
-add_vars <- c("treat", "factor(month)", "factor(week)")
+add_vars <- c(
+  "days_reply", "male", "age_demean", "I(age_demean^2)", "coordinate",
+  "holidays", "hospital_per_area", "PB_per_area", "BM_per_area", "treat",
+  "factor(month)", "factor(week)"
+)
 
 mods <- list(
-  reformulate(c("days_reply", add_vars, covs), "I(test * 100)"),
-  reformulate(c("days_reply", add_vars, covs), "I(exg_stop_test * 100)")
+  reformulate(add_vars, "I(test * 100)"),
+  reformulate(add_vars, "I(exg_stop_test * 100)")
 )
 
 est_mods <- lapply(mods, function(x) lm_robust(x, respond, se_type = "stata"))
@@ -152,6 +158,36 @@ est_mods %>%
     ),
     threeparttable = TRUE,
     escape = FALSE
+  )
+```
+
+```{r eval = FALSE}
+with(rct$data, table(days_reply, positive, useNA = "always"))
+
+lm_robust(
+  days_reply ~ treat + male + age_demean + I(age_demean^2) +
+    coordinate + holidays + hospital_per_area + PB_per_area + BM_per_area,
+  data = subset(rct$data, positive == 1 & days_reply > 0),
+  se_type = "stata"
+)
+
+rct$data %>%
+  # filter(reply == 1) %>%
+  mutate(short_reply = case_when(
+    reply == 0 ~ 0,
+    days_reply <= 7 ~ positive * 100,
+    TRUE ~ 0
+  )) %>%
+  # filter(reply == 0 | days_reply > 0) %>%
+  lm_robust(
+    short_reply ~ treat + male + age_demean + I(age_demean^2) +
+      coordinate + holidays + hospital_per_area + PB_per_area + BM_per_area +
+      factor(month) + factor(week),
+    data = .,
+    se_type = "stata"
+  ) %>%
+  modelsummary(
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1)
   )
 ```
 
@@ -293,8 +329,7 @@ lm_test$
   fit_subset_by_gender_age(
     age_cut = 30,
     scale = 100,
-    covariates = TRUE,
-    month_week_fe = TRUE
+    covariates = TRUE
   )$
   kable(
     title = "Subset Regression of CT with Covariates and Month and Week FE",
@@ -304,7 +339,7 @@ lm_test$
   )
 ```
 
-```{r test-lm-subset3}
+```{r test-lm-subset3, eval=FALSE}
 lm_test$
   fit_subset_by_gender_age(
     age_cut = 30,
@@ -462,8 +497,7 @@ lm_int$
   fit_subset_by_gender_age(
     age_cut = 30,
     scale = 100,
-    covariates = TRUE,
-    month_week_fe = TRUE
+    covariates = TRUE
   )$
   kable(
     title = "Subset Regression of Intention to Donate with Covariates and Month and Week FE",
@@ -473,7 +507,7 @@ lm_int$
   )
 ```
 
-```{r int-lm-subset3}
+```{r int-lm-subset3, eval=FALSE}
 lm_int$
   fit_subset_by_gender_age(
     age_cut = 30,
@@ -631,8 +665,7 @@ lm_consent$
   fit_subset_by_gender_age(
     age_cut = 30,
     scale = 100,
-    covariates = TRUE,
-    month_week_fe = TRUE
+    covariates = TRUE
   )$
   kable(
     title = "Subset Regression of Final Consent with Covariates and Month and Week FE",
@@ -642,7 +675,7 @@ lm_consent$
   )
 ```
 
-```{r consent-lm-subset3}
+```{r consent-lm-subset3, eval=FALSE}
 lm_consent$
   fit_subset_by_gender_age(
     age_cut = 30,
@@ -815,8 +848,7 @@ lm_test_init$
   fit_subset_by_gender_age(
     age_cut = 30,
     scale = 100,
-    covariates = TRUE,
-    month_week_fe = TRUE
+    covariates = TRUE
   )$
   kable(
     title = "Subset Regression of CT with Covariates and Month and Week FE (Only Initially Matched Candidates)",
@@ -826,7 +858,7 @@ lm_test_init$
   )
 ```
 
-```{r lm-test-subset3-init}
+```{r lm-test-subset3-init, eval=FALSE}
 lm_test_init$
   fit_subset_by_gender_age(
     age_cut = 30,
@@ -954,8 +986,7 @@ lm_positive_init$
   fit_subset_by_gender_age(
     age_cut = 30,
     scale = 100,
-    covariates = TRUE,
-    month_week_fe = TRUE
+    covariates = TRUE
   )$
   kable(
     title = "Subset Regression of Intention to Donate with Covariates and Month and Week FE (Only Initially Matched Candidates)",
@@ -965,7 +996,7 @@ lm_positive_init$
   )
 ```
 
-```{r lm-positive-subset3-init}
+```{r lm-positive-subset3-init, eval=FALSE}
 lm_positive_init$
   fit_subset_by_gender_age(
     age_cut = 30,
@@ -1122,8 +1153,7 @@ lm_consent_init$
   fit_subset_by_gender_age(
     age_cut = 30,
     scale = 100,
-    covariates = TRUE,
-    month_week_fe = TRUE
+    covariates = TRUE
   )$
   kable(
     title = "Subset Regression of Final Consent with Covariates and Month and Week FE (Only Initially Matched Candidates)",
@@ -1133,7 +1163,7 @@ lm_consent_init$
   )
 ```
 
-```{r lm-consent-subset3-init}
+```{r lm-consent-subset3-init, eval=FALSE}
 lm_consent_init$
   fit_subset_by_gender_age(
     age_cut = 30,
@@ -1152,7 +1182,7 @@ lm_consent_init$
 <!-- \clearpage
 # Decomposing Message Effects -->
 
-```{r decompose-ct}
+```{r decompose-ct, eval=FALSE}
 rct$
   decompose_effect()$
   estimate("test", B = 100)$
@@ -1163,7 +1193,7 @@ rct$
   )
 ```
 
-```{r decompose-candidate}
+```{r decompose-candidate, eval=FALSE}
 rct$
   decompose_effect()$
   estimate("candidate", B = 100)$
