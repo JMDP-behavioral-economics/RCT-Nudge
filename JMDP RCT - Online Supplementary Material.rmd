@@ -222,7 +222,7 @@ logit_test$
 
 ```{r test-lm-interaction, include=FALSE}
 lm_int_test <- lm_test$
-  fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
 ```{r test-lm-interaction-reg}
@@ -250,7 +250,7 @@ lm_int_test$
 library(xfun)
 
 reg <- lm_test$
-  fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
   get_est() %>%
   arrange(male, desc(young))
 
@@ -327,7 +327,7 @@ reg %>%
 ```{r test-lm-subset2}
 lm_test$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE
   )$
@@ -342,7 +342,7 @@ lm_test$
 ```{r test-lm-subset3, eval=FALSE}
 lm_test$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE,
     month_week_fe = FALSE
@@ -390,7 +390,7 @@ lm_int <- rct$
   lm(which(names(endpoint)  == "positive"), sample_drop = FALSE)
 
 lm_int_int <- lm_int$
-  fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
 ```{r int-lm-interaction-reg}
@@ -418,7 +418,7 @@ lm_int_int$
 library(xfun)
 
 reg <- lm_int$
-  fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
   get_est() %>%
   arrange(male, desc(young))
 
@@ -495,7 +495,7 @@ reg %>%
 ```{r int-lm-subset2}
 lm_int$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE
   )$
@@ -510,7 +510,7 @@ lm_int$
 ```{r int-lm-subset3, eval=FALSE}
 lm_int$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE,
     month_week_fe = FALSE
@@ -558,7 +558,7 @@ lm_consent <- rct$
   lm(which(names(endpoint)  == "consent"), sample_drop = FALSE)
 
 lm_consent_int <- lm_consent$
-  fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
 ```{r consent-lm-interaction-reg}
@@ -586,7 +586,7 @@ lm_consent_int$
 library(xfun)
 
 reg <- lm_consent$
-  fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
   get_est() %>%
   arrange(male, desc(young))
 
@@ -663,7 +663,7 @@ reg %>%
 ```{r consent-lm-subset2}
 lm_consent$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE
   )$
@@ -678,7 +678,7 @@ lm_consent$
 ```{r consent-lm-subset3, eval=FALSE}
 lm_consent$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE,
     month_week_fe = FALSE
@@ -741,7 +741,7 @@ lm_test_init <- rct_initial$
   lm(id, sample_drop = FALSE)
 
 lm_int_test_init <- lm_test_init$
-  fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
 ```{r lm-test-interaction-init-reg}
@@ -769,7 +769,7 @@ lm_int_test_init$
 library(xfun)
 
 reg <- lm_test_init$
-  fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
   get_est() %>%
   arrange(male, desc(young))
 
@@ -846,7 +846,7 @@ reg %>%
 ```{r lm-test-subset2-init}
 lm_test_init$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE
   )$
@@ -861,7 +861,7 @@ lm_test_init$
 ```{r lm-test-subset3-init, eval=FALSE}
 lm_test_init$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE,
     month_week_fe = FALSE
@@ -879,7 +879,7 @@ lm_positive_init <- rct_initial$
   lm(which(names(endpoint) == "positive"), sample_drop = FALSE)
 
 lm_int_positive_init <- lm_positive_init$
-  fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
 ```{r lm-positive-interaction-init-reg}
@@ -907,7 +907,7 @@ lm_int_positive_init$
 library(xfun)
 
 reg <- lm_positive_init$
-  fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
   get_est() %>%
   arrange(male, desc(young))
 
@@ -984,7 +984,7 @@ reg %>%
 ```{r lm-positive-subset2-init}
 lm_positive_init$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE
   )$
@@ -999,7 +999,7 @@ lm_positive_init$
 ```{r lm-positive-subset3-init, eval=FALSE}
 lm_positive_init$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE,
     month_week_fe = FALSE
@@ -1046,7 +1046,7 @@ lm_consent_init <- rct_initial$
   lm(which(names(endpoint) == "consent"), sample_drop = FALSE)
 
 lm_int_consent_init <- lm_consent_init$
-  fit_interaction_of_gender_age(age_cut = 30, scale = 100)
+  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
 ```{r lm-consent-interaction-init-reg}
@@ -1074,7 +1074,7 @@ lm_int_consent_init$
 library(xfun)
 
 reg <- lm_consent_init$
-  fit_subset_by_gender_age(age_cut = 30, scale = 100, covariates = FALSE)$
+  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
   get_est() %>%
   arrange(male, desc(young))
 
@@ -1151,7 +1151,7 @@ reg %>%
 ```{r lm-consent-subset2-init}
 lm_consent_init$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE
   )$
@@ -1166,7 +1166,7 @@ lm_consent_init$
 ```{r lm-consent-subset3-init, eval=FALSE}
 lm_consent_init$
   fit_subset_by_gender_age(
-    age_cut = 30,
+    age_cut = 40,
     scale = 100,
     covariates = TRUE,
     month_week_fe = FALSE
