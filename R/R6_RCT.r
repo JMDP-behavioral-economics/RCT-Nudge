@@ -110,8 +110,11 @@ RCT <- R6Class("RCT",
       if (missing(cluster)) cluster <- private$cluster
       Flow$new(use, private$covariate, se, cluster, private$fe)
     },
-    decompose_effect = function() {
-      Decompose$new(self$data, private$outcome)
+    decompose_effect = function(endpoint, se) {
+      if (missing(se)) se <- private$se_type
+      if (se == "") stop("Specify se_type by set_default_se_type()")
+
+      DecomposeLm$new(self$data, private$outcome, endpoint, se)
     },
     multiple_hypotheses_adjust = function(outcome, age_cut = 30) {
       MultipleHypothesis$new(self$data, outcome, age_cut)
