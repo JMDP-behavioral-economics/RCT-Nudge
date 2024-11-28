@@ -6,16 +6,13 @@ Flow <- R6::R6Class("Flow",
   public = list(
     data = NULL,
     initialize = function(reply_data,
-                          covariate,
                           se,
-                          cluster,
-                          fe) {
+                          cluster) {
       self$data <- reply_data
 
       private$model <- value ~ treat + male +
         age_demean + I(age_demean^2) + coordinate +
         holidays + hospital_per_area + PB_per_area + BM_per_area
-      private$rhs <- rhs
       private$se_type <- se
     },
     plot = function(...,
@@ -89,6 +86,7 @@ Flow <- R6::R6Class("Flow",
       model <- private$model
 
       if (!missing(...)) {
+        rhs <- labels(terms(model))
         cond <- enquos(...)
 
         pat_sep <- c()
@@ -99,7 +97,7 @@ Flow <- R6::R6Class("Flow",
         }
 
         pat <- paste(pat_sep, collapse = "|")
-        remove_vars <- private$rhs[str_detect(private$rhs, pat)]
+        remove_vars <- rhs[str_detect(rhs, pat)]
         remove_formula <- paste0(". ~ . -", paste(remove_vars, collapse = "-"))
         model <- update(model, as.formula(remove_formula))
       }
@@ -143,7 +141,6 @@ Flow <- R6::R6Class("Flow",
   ),
   private = list(
     model = NULL,
-    rhs = NULL,
     se_type = NULL,
     cluster = NULL,
     call_lm = function(data, model) {
