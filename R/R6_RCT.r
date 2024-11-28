@@ -110,11 +110,40 @@ RCT <- R6Class("RCT",
       if (missing(cluster)) cluster <- private$cluster
       Flow$new(use, private$covariate, se, cluster, private$fe)
     },
-    decompose_effect = function(endpoint, se) {
+    decompose_effect = function(endpoint, se, cluster) {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
 
-      DecomposeLm$new(self$data, private$outcome, endpoint, se)
+      previous_endpoint <- names(private$outcome)[which(names(private$outcome) == endpoint) - 1]
+
+      dt <- self$data
+      dt$exg_stop <- dt[, paste0("exg_stop_", endpoint), drop = TRUE]
+      dt$endpoint <- dt[, endpoint, drop = TRUE]
+      dt$before_endpoint <- dt[, previous_endpoint, drop = TRUE]
+      dt$exg_attr <- ifelse(dt$before_endpoint == 1 & dt$endpoint == 0 & dt$exg_stop == 1, 0, 1)
+      dt$end_attr <- ifelse(dt$before_endpoint == 1 & dt$endpoint == 0 & dt$exg_stop == 0, 0, 1)
+
+      use <- dt %>%
+        select(-exg_stop, -endpoint) %>%
+        pivot_longer(before_endpoint:end_attr, names_to = "outcome") %>%
+        mutate(
+          outcome = factor(
+            outcome,
+            levels = c("before_endpoint", "end_attr", "exg_attr"),
+            labels = c(
+              private$outcome[[previous_endpoint]],
+              "No endogenous attrition",
+              "No exogenous attrition"
+            )
+          )
+        )
+
+      if (missing(cluster)) cluster <- private$cluster
+      if (is.null(cluster)) {
+        Lm$new(use, se)
+      } else {
+        LmCluster$new(use, se, cluster)
+      }
     },
     multiple_hypotheses_adjust = function(outcome, age_cut = 30) {
       MultipleHypothesis$new(self$data, outcome, age_cut)
