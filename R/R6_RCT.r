@@ -6,7 +6,6 @@ source(here("R/R6_Lm.r"))
 source(here("R/R6_Logit.r"))
 source(here("R/R6_RCF.r"))
 source(here("R/R6_Flow.r"))
-source(here("R/R6_DecomposeCT.r"))
 source(here("R/R6_MultipleHypotheses.r"))
 
 RCT <- R6Class("RCT",
