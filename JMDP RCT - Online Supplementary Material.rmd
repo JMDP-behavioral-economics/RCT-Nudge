@@ -64,7 +64,7 @@ options(
   modelsummary_stars_note = FALSE
 )
 
-data_root <- "E:/JMDPフィールド実験"
+data_root <- "D:/JMDPフィールド実験"
 ```
 
 ```{r assignment}
@@ -107,7 +107,7 @@ rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
-rct$set_default_se_type(params$se_type)
+rct$set_default_se_type("stata")
 ```
 
 ```{r smd-balance}
@@ -121,47 +121,75 @@ rct$
   )
 ```
 
-```{r response-speed-CT, eval=FALSE}
-with(rawdt$data, table(days_reply, coordinate, useNA = "always"))
+```{r response-speed-CT, fig.cap = "Binned Scatter Plot of CT (or Reply with Positive Intention) vs. Response Days."}
+reply_dt <- rct$data %>%
+  filter(reply == 1 & 0 < days_reply & treat == "A")
 
-respond <- subset(rct$data, positive == 1)
-
-add_vars <- c(
-  "days_reply", "male", "age_demean", "I(age_demean^2)", "coordinate",
-  "holidays", "hospital_per_area", "PB_per_area", "BM_per_area", "treat",
-  "factor(month)", "factor(week)"
-)
-
-mods <- list(
-  reformulate(add_vars, "I(test * 100)"),
-  reformulate(add_vars, "I(exg_stop_test * 100)")
-)
-
-est_mods <- lapply(mods, function(x) lm_robust(x, respond, se_type = "stata"))
-
-est_mods %>%
-  modelsummary(
-    title = "Relationship between Response Speed and Coordination",
-    coef_map = c("days_reply" = "Response speed (day)"),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "RMSE|R2|AIC|BIC|Log|Std|FE|se_type",
-    fmt = 2
+plotdt <- reply_dt %>%
+  mutate(ntile = ntile(days_reply, 20)) %>%
+  group_by(ntile) %>%
+  summarize(
+    median_day = (max(days_reply) + min(days_reply)) / 2,
+    mean_intention = mean(positive),
+    mean_ct = mean(test)
   ) %>%
-  kable_styling(font_size = 9, latex_options = "HOLD_position") %>%
-  add_header_above(
-    c(" " = 1, "1 = CT" = 1, "1 = Exogenous interruption before CT" = 1)
+  pivot_longer(
+    mean_intention:mean_ct,
+    names_to = "outcome",
+    names_prefix = "mean_",
+    values_to = "mean"
   ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. This table shows the estimation results of linear probability models. The robust standard errors are in parentheses. The unit of coefficient is a percentage point. We used those who responded to the HLA match letter with a positive intention to donate. We controlled for treatment dummies, the number of past coordinations, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, month dummies, and week dummies."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
+  mutate(
+    outcome = factor(
+      outcome,
+      levels = c("intention", "ct"),
+      labels = c("Positive intention", "CT")
+    )
   )
+
+plotdt %>%
+  ggplot(aes(x = median_day, y = mean)) +
+    geom_point(aes(shape = outcome), color = "grey40", size = 3) +
+    geom_smooth(
+      aes(x = days_reply, y = positive),
+      data = reply_dt,
+      method = "glm",
+      method.args = list(family = "binomial"),
+      se = TRUE,
+      alpha = 0.2,
+      color = "black",
+      linetype = 2
+    ) +
+    geom_smooth(
+      aes(x = days_reply, y = test),
+      data = reply_dt,
+      method = "glm",
+      method.args = list(family = "binomial"),
+      se = TRUE,
+      alpha = 0.2,
+      color = "black",
+      linetype = 1
+    ) +
+    labs(x = "Response days", y = "Proportion", shape = "Outcome") +
+    my_theme_classic(size = 20) +
+    theme(legend.position = "bottom")
 ```
 
 ```{r eval = FALSE}
+rct$
+  flow(outcome = "positive", sample_drop = FALSE)$
+  fit(days = 1:15, scale = 100)$
+  plot(ylim = c(-7, 7), ybreaks = 5)
+
+model <- value ~ treat + male +
+  age_demean + I(age_demean^2) + coordinate +
+  holidays + hospital_per_area + PB_per_area + BM_per_area
+
+rhs <- labels(terms(model))
+rhs[str_detect(rhs, "age|male")]
+
+
+
 with(rct$data, table(days_reply, positive, useNA = "always"))
 
 lm_robust(
