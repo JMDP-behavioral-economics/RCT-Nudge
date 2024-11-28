@@ -64,7 +64,7 @@ options(
   modelsummary_stars_note = FALSE
 )
 
-data_root <- "D:/JMDPフィールド実験"
+data_root <- "E:/JMDPフィールド実験"
 ```
 
 ```{r assignment}
@@ -210,29 +210,6 @@ rct$data %>%
 id <- which(names(endpoint) %in% c("test"))
 lm_test <- rct$lm(id, sample_drop = FALSE)
 logit_test <- rct$logit(id, sample_drop = FALSE)
-```
-
-```{r}
-rct$data %>%
-  mutate(
-    attr = if_else(positive == 1 & test == 0, 100, 0),
-    exg_attr = if_else(attr == 100 & exg_stop_test == 1, 100, 0),
-    end_attr = if_else(attr == 100 & exg_stop_test == 0, 100, 0)
-  ) %>%
-  lh_robust(
-    I(test * 100) ~ treat * male + age_demean:male + I(age_demean^2):male +
-      coordinate:male + holidays:male + hospital_per_area:male + PB_per_area:male + BM_per_area:male,
-    data = .,
-    se_type = "stata",
-    linear_hypothesis = c(
-      "treatB + treatB:male",
-      "treatC + treatC:male",
-      "treatD + treatD:male"
-    )
-  )
-
-names(rct$data)
-with(rct$data, table(positive, exg_stop_test))
 ```
 
 ```{r test-lm}
@@ -393,13 +370,61 @@ lm_test$
   )
 ```
 
-```{r set-reply-class, include=FALSE}
+```{r set-test-decompose-class, include=FALSE}
+lm_test_decompose <- rct$decompose_effect("test")
+lm_test_decompose_int <- lm_test_decompose$fit_interaction_of_gender_age(age_cut = 40, scale = 100)
+```
+
+```{r test-decompose}
+lm_test_decompose$
+  fit(scale = 100)$
+  kable(
+    title = "Decompose Effect on the CT",
+    notes = "The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-decompose-interaction-reg}
+lm_test_decompose_int$
+  kable_reg(
+    title = "Heterogenity of Decomposing Effect on the CT",
+    notes = "We created two age classes (Younger/Older) based on age 40. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-decompose-interaction-lh1}
+lm_test_decompose_int$
+  kable_lh(
+    "Positive Intention",
+    title = "Linear Combination Test: Message Effects on Reply with Positive Intention for Specific Gender-Age Group",
+    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-decompose-interaction-lh2}
+lm_test_decompose_int$
+  kable_lh(
+    "No endogenous attrition",
+    title = "Linear Combination Test: Message Effects on No Endogenous Attrition between Reply with Positive Intention and CT for Specific Gender-Age Group",
+    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r set-reply-class, include=FALSE, eval=FALSE}
 id_reply <- which(names(endpoint) %in% c("reply", "positive"))
 lm_reply <- rct$lm(id_reply, sample_drop = FALSE)
 logit_reply <- rct$logit(id_reply, sample_drop = FALSE)
 ```
 
-```{r reply-lm}
+```{r reply-lm, eval=FALSE}
 lm_reply$
   fit(scale = 100)$
   kable(
@@ -410,7 +435,7 @@ lm_reply$
   )
 ```
 
-```{r reply-logit}
+```{r reply-logit, eval=FALSE}
 logit_reply$
   fit()$
   kable(
@@ -423,7 +448,7 @@ logit_reply$
   kableExtra::landscape()
 ```
 
-```{r int-lm-interaction, include=FALSE}
+```{r int-lm-interaction, include=FALSE, eval=FALSE}
 lm_int <- rct$
   lm(which(names(endpoint)  == "positive"), sample_drop = FALSE)
 
@@ -431,7 +456,7 @@ lm_int_int <- lm_int$
   fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
-```{r int-lm-interaction-reg}
+```{r int-lm-interaction-reg, eval=FALSE}
 lm_int_int$
   kable_reg(
     title = "Heterogenous Message Effects on Intention to Donate",
@@ -441,7 +466,7 @@ lm_int_int$
   )
 ```
 
-```{r int-lm-interaction-lh}
+```{r int-lm-interaction-lh, eval=FALSE}
 lm_int_int$
   kable_lh(
     "Positive Intention",
@@ -452,7 +477,7 @@ lm_int_int$
   )
 ```
 
-```{r int-lm-subset1}
+```{r int-lm-subset1, eval=FALSE}
 library(xfun)
 
 reg <- lm_int$
@@ -530,7 +555,7 @@ reg %>%
   )
 ```
 
-```{r int-lm-subset2}
+```{r int-lm-subset2, eval=FALSE}
 lm_int$
   fit_subset_by_gender_age(
     age_cut = 40,
@@ -745,12 +770,12 @@ if (params$is_cluster) rct_initial$set_default_cluster("RCTweek")
 rct_initial$set_default_se_type(params$se_type)
 ```
 
-```{r reg-reply-test-initial-matched, include=FALSE}
-lm_initial_1 <- rct_initial$lm(c(id_reply, id), sample_drop = FALSE)
-logit_initial_1 <- rct_initial$logit(c(id_reply, id), sample_drop = FALSE)
+```{r reg-test-initial-matched, include=FALSE}
+lm_initial_1 <- rct_initial$lm(id, sample_drop = FALSE)
+logit_initial_1 <- rct_initial$logit(id, sample_drop = FALSE)
 ```
 
-```{r lm-reply-test-initial-matched}
+```{r lm-test-initial-matched}
 lm_initial_1$
   fit(scale = 100)$
   kable(
@@ -761,7 +786,7 @@ lm_initial_1$
   )
 ```
 
-```{r logit-reply-test-initial-matched}
+```{r logit-test-initial-matched}
 logit_initial_1$
   fit()$
   kable(
@@ -912,7 +937,55 @@ lm_test_init$
   )
 ```
 
-```{r lm-positive-interaction-init, include=FALSE}
+```{r lm-test-decompose-init, include=FALSE}
+lm_test_decompose_init <- rct_initial$decompose_effect("test")
+lm_int_test_decompose_init <- lm_test_decompose_init$fit_interaction_of_gender_age(age_cut = 40, scale = 100)
+```
+
+```{r test-decompose-init}
+lm_test_decompose_init$
+  fit(scale = 100)$
+  kable(
+    title = "Decompose Effect on the CT (Only Intially Matched Candidates)",
+    notes = "The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-decompose-interaction-reg-init}
+lm_int_test_decompose_init$
+  kable_reg(
+    title = "Heterogenity of Decomposing Effect on the CT (Only Initially Matched Candidate)",
+    notes = "We created two age classes (Younger/Older) based on age 40. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-decompose-interaction-lh1-init}
+lm_int_test_decompose_init$
+  kable_lh(
+    "Positive Intention",
+    title = "Linear Combination Test: Message Effects on Reply with Positive Intention for Specific Gender-Age Group (Only Initially Matched Candidate)",
+    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg-init}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r test-decompose-interaction-lh2-init}
+lm_int_test_decompose_init$
+  kable_lh(
+    "No endogenous attrition",
+    title = "Linear Combination Test: Message Effects on No Endogenous Attrition between Reply with Positive Intention and CT for Specific Gender-Age Group (Only Initially Matched Candidate)",
+    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg-init}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lm-positive-interaction-init, include=FALSE, eval=FALSE}
 lm_positive_init <- rct_initial$
   lm(which(names(endpoint) == "positive"), sample_drop = FALSE)
 
@@ -920,7 +993,7 @@ lm_int_positive_init <- lm_positive_init$
   fit_interaction_of_gender_age(age_cut = 40, scale = 100)
 ```
 
-```{r lm-positive-interaction-init-reg}
+```{r lm-positive-interaction-init-reg, eval=FALSE}
 lm_int_positive_init$
   kable_reg(
     title = "Heterogenous Message Effects on Intention to Donate (Only Initially Matched Candidates)",
@@ -930,7 +1003,7 @@ lm_int_positive_init$
   )
 ```
 
-```{r lm-positive-interaction-init-lh}
+```{r lm-positive-interaction-init-lh, eval=FALSE}
 lm_int_positive_init$
   kable_lh(
     "Positive Intention",
@@ -941,7 +1014,7 @@ lm_int_positive_init$
   )
 ```
 
-```{r lm-positive-subset1-init}
+```{r lm-positive-subset1-init, eval=FALSE}
 library(xfun)
 
 reg <- lm_positive_init$
@@ -1019,7 +1092,7 @@ reg %>%
   )
 ```
 
-```{r lm-positive-subset2-init}
+```{r lm-positive-subset2-init, eval=FALSE}
 lm_positive_init$
   fit_subset_by_gender_age(
     age_cut = 40,
@@ -1217,30 +1290,6 @@ lm_consent_init$
   )
 ```
 
-<!-- \clearpage
-# Decomposing Message Effects -->
-
-```{r decompose-ct, eval=FALSE}
-rct$
-  decompose_effect()$
-  estimate("test", B = 100)$
-  kable(
-    title = "Decomposing Message Effects on The CT",
-    font_size = 8,
-    hold = TRUE
-  )
-```
-
-```{r decompose-candidate, eval=FALSE}
-rct$
-  decompose_effect()$
-  estimate("candidate", B = 100)$
-  kable(
-    title = "Decomposing Message Effects on Candidate Selection",
-    font_size = 8,
-    hold = TRUE
-  )
-```
 
 <!---
 # Economic Models for Predictions
