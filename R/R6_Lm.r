@@ -217,6 +217,53 @@ Lm <- R6::R6Class("Lm",
         )
 
       LmInteraction$new(est, age_cut)
+    },
+    fit_interaction_of_gender = function(scale = 1) {
+      lh_null <- c(
+        "treatB",
+        "treatC",
+        "treatD",
+        "treatB + treatB:male",
+        "treatC + treatC:male",
+        "treatD + treatD:male"
+      )
+
+      interaction_mod <- list(
+        unctrl = value ~ treat * male,
+        ctrl1 = value ~ treat * male + age_demean:male + I(age_demean^2):male + coordinate:male +
+          holidays:male + hospital_per_area:male + PB_per_area:male + BM_per_area:male
+      )
+
+      est <- self$data %>%
+        mutate(value = value * scale) %>%
+        group_by(outcome) %>%
+        nest() %>%
+        mutate(
+          fit1 = private$call_lh(
+            data,
+            interaction_mod$unctrl,
+            private$se_type,
+            lh_null
+          ),
+          fit2 = private$call_lh(
+            data,
+            interaction_mod$ctrl1,
+            private$se_type,
+            lh_null
+          )
+        ) %>%
+        ungroup() %>%
+        pivot_longer(
+          fit1:fit2,
+          names_prefix = "fit",
+          names_to = "model",
+          values_to = "fit"
+        ) %>%
+        mutate(
+          covs = if_else(model != "1", "X", "")
+        )
+
+      LmInteractionGender$new(est)
     }
   ),
   private = list(
@@ -422,6 +469,55 @@ LmCluster <- R6::R6Class("LmCluster",
         )
 
       LmInteraction$new(est, age_cut)
+    },
+    fit_interaction_of_gender = function(scale = 1) {
+      lh_null <- c(
+        "treatB",
+        "treatC",
+        "treatD",
+        "treatB + treatB:male",
+        "treatC + treatC:male",
+        "treatD + treatD:male"
+      )
+
+      interaction_mod <- list(
+        unctrl = value ~ treat * male,
+        ctrl1 = value ~ treat * male + age_demean:male + I(age_demean^2):male + coordinate:male +
+          holidays:male + hospital_per_area:male + PB_per_area:male + BM_per_area:male
+      )
+
+      est <- self$data %>%
+        mutate(value = value * scale) %>%
+        group_by(outcome) %>%
+        nest() %>%
+        mutate(
+          fit1 = private$call_lh(
+            data,
+            interaction_mod$unctrl,
+            private$se_type,
+            private$cluster,
+            lh_null
+          ),
+          fit2 = private$call_lh(
+            data,
+            interaction_mod$ctrl1,
+            private$se_type,
+            private$cluster,
+            lh_null
+          )
+        ) %>%
+        ungroup() %>%
+        pivot_longer(
+          fit1:fit2,
+          names_prefix = "fit",
+          names_to = "model",
+          values_to = "fit"
+        ) %>%
+        mutate(
+          covs = if_else(model != "1", "X", "")
+        )
+
+      LmInteractionGender$new(est)
     }
   ),
   private = list(
@@ -1303,6 +1399,256 @@ LmInteraction <- R6::R6Class("LmInteraction",
             "treatB + treatB:groupOlder male" = "B_OlderMale",
             "treatC + treatC:groupOlder male" = "C_OlderMale",
             "treatD + treatD:groupOlder male" = "D_OlderMale"
+          ),
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          output = "data.frame",
+          fmt = digit
+        ) %>%
+        filter(part == "estimates") %>%
+        mutate(
+          treat = str_extract(term, "^[^_]+"),
+          subset = str_extract(term, "(?<=_)[^_]+$")
+        ) %>%
+        select(-term, -part)
+    }
+  )
+)
+
+LmInteractionGender <- R6::R6Class("LmInteractionGender",
+  public = list(
+    initialize = function(est) private$est <- est,
+    get_est = function() private$est,
+    kable_reg = function( title = "",
+                          notes = "",
+                          font_size = 9,
+                          digit = 2,
+                          hold = FALSE,
+                          ...) {
+      kbl <- private$reg_msummary(
+        "kableExtra",
+        digit = digit,
+        title = title,
+        escape = FALSE,
+        ...
+      )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- c(" ", as.character(private$est$outcome))
+      label_structure <- rle(label)
+      lab1 <- label_structure$lengths
+      names(lab1) <- label_structure$values
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(lab1)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    },
+    kable_lh = function(title = "",
+                        notes = "",
+                        font_size = 9,
+                        digits = 2,
+                        hold = FALSE,
+                        ...)
+    {
+      mtab <- private$lh_msummary(digits)
+
+      mod_no_cov <- paste0("(", which(private$est$covs == ""), ")")
+
+      mtab_wide1 <- mtab %>%
+        select(subset, treat, statistic, all_of(mod_no_cov)) %>%
+        pivot_wider(names_from = subset, values_from = mod_no_cov) %>%
+        mutate(covs = "")
+
+      dt_label <- c("treat", "statistic")
+      for (i in seq(length(mod_no_cov))) {
+        dt_label <- append(
+          dt_label,
+          paste0(c("Female", "Male"), "_", i, sep = "")
+        )
+      }
+      dt_label <- append(dt_label, "covs")
+
+      names(mtab_wide1) <- dt_label
+
+      mod_cov <- paste0("(", which(private$est$covs == "X"), ")")
+
+      mtab_wide2 <- mtab %>%
+        select(subset, treat, statistic, all_of(mod_cov)) %>%
+        pivot_wider(names_from = subset, values_from = mod_cov) %>%
+        mutate(covs = "X")
+
+      names(mtab_wide2) <- dt_label
+
+      avg_format <- paste0("%1.", digits, "f")
+
+      statistic <- private$est %>%
+        filter(model == "1") %>%
+        mutate(
+          base = map_chr(data, ~ levels(.$treat)[1]),
+          avg = map(
+            data,
+            ~ subset(., treat == base) %>%
+              group_by(male) %>%
+              summarize(mean = sprintf(avg_format, mean(value)))
+          )
+        ) %>%
+        select(outcome, avg) %>%
+        unnest(cols = c(avg)) %>%
+        mutate(male = if_else(male == 0, "Female", "Male")) %>%
+        pivot_wider(names_from = outcome:male, values_from = mean) %>%
+        mutate(treat = "Control average", statistic = "gof") %>%
+        select(treat, statistic, everything())
+
+      names(statistic) <- dt_label[-length(dt_label)]
+
+      tbl <- bind_rows(statistic, mtab_wide1, mtab_wide2) %>%
+        mutate(
+          treat = if_else(statistic == "std.error", "", treat),
+          model = case_when(
+            is.na(covs) ~ NA_character_,
+            covs == "" ~ "Model (1): No covariates",
+            TRUE ~ "Model (2): Including covariates"
+          )
+        ) %>%
+        select(-statistic) %>%
+        select(treat, everything())
+
+      model_seq <- tbl$model
+
+      tbl2 <- tbl %>%
+        select(-covs, -model)
+
+      kbl <- tbl2 %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", paste0("(", seq(ncol(tbl2) - 1), ")")),
+          align = paste(c("l", rep("c", ncol(tbl2) - 1)), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- case_when(
+        str_detect(names(tbl2), "treat") ~ " ",
+        str_detect(names(tbl2), "Female") ~ "Females",
+        TRUE ~ "Males"
+      )
+      label_structure <- rle(label)
+      label_rle <- label_structure$lengths
+      names(label_rle) <- label_structure$values
+
+      kbl <- kbl %>% kableExtra::add_header_above(label_rle)
+
+      label2_structure <- rle(c(" ", as.character(private$est$outcome)))
+      label2_rle <- label2_structure$lengths
+      names(label2_rle) <- label2_structure$values
+
+      kbl <- kbl %>% kableExtra::add_header_above(label2_rle)
+
+      mod <- unique(model_seq)
+
+      for (i in mod) {
+        if (is.na(i)) next
+        row_mod <- which(model_seq == i)
+        min_row_mod <- min(row_mod)
+        max_row_mod <- max(row_mod)
+
+        kbl <- kbl %>%
+          group_rows(
+            i,
+            start_row = min_row_mod,
+            end_row = max_row_mod
+          )
+      }
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
+  ),
+  private = list(
+    est = NULL,
+    reg_msummary = function(output, digit = 2, ...) {
+      fit <- pull(private$est, fit) %>% map(~ .$lm_robust)
+      coef_map <- c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D",
+        "male" = "Male",
+        "treatB:male" = "Treatment B $\\times$ Male",
+        "treatC:male" = "Treatment C $\\times$ Male",
+        "treatD:male" = "Treatment D $\\times$ Male"
+      )
+      stars <- c("***" = .01, "**" = .05, "*" = .1)
+      gof_omit <- "R2|AIC|BIC|Log|Std|FE|se_type"
+      align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
+
+      add_tab <- data.frame(
+        rbind(
+          c("Covariates", private$est$covs)
+        )
+      )
+      attr(add_tab, "position") <- 15
+
+      args <- list(
+        models = fit,
+        output = output,
+        coef_map = coef_map,
+        stars = stars,
+        gof_omit = gof_omit,
+        align = align,
+        add_rows = add_tab,
+        fmt = digit
+      )
+
+      if (!missing(...)) args <- append(args, list(...))
+      do.call("modelsummary", args)
+    },
+    lh_msummary = function(digit = 2) {
+      fit <- pull(private$est, fit) %>%
+        map(~ .$lh)
+
+      fit %>%
+        modelsummary(
+          coef_map = c(
+            "treatB" = "B_Female",
+            "treatC" = "C_Female",
+            "treatD" = "D_Female",
+            "treatB + treatB:male" = "B_Male",
+            "treatC + treatC:male" = "C_Male",
+            "treatD + treatD:male" = "D_Male"
           ),
           stars = c("***" = .01, "**" = .05, "*" = .1),
           output = "data.frame",
