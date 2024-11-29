@@ -59,7 +59,12 @@ RCT <- R6Class("RCT",
         private$covariate
       )
     },
-    lm = function(outcome_id, sample_drop = TRUE, se, cluster) {
+    lm = function(outcome_id,
+                  sample_drop = TRUE,
+                  demean_covariate = TRUE,
+                  se,
+                  cluster)
+    {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
 
@@ -68,15 +73,18 @@ RCT <- R6Class("RCT",
 
       if (missing(cluster)) cluster <- private$cluster
       if (is.null(cluster)) {
-        Lm$new(use, se)
+        Lm$new(use, demean_covariate, se)
       } else {
-        LmCluster$new(use, se, cluster)
+        LmCluster$new(use, demean_covariate, se, cluster)
       }
     },
-    logit = function(outcome_id, sample_drop = TRUE) {
+    logit = function( outcome_id,
+                      sample_drop = TRUE,
+                      demean_covariate = TRUE)
+    {
       use <- private$create_analysis_data(sample_drop)
       if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
-      Logit$new(use)
+      Logit$new(use, demean_covariate)
     },
     rcf = function(outcome, sample_drop = TRUE) {
       if (length(private$covariate) == 0) stop("Specify covariate by add_covariate()")
@@ -109,7 +117,11 @@ RCT <- R6Class("RCT",
       if (missing(cluster)) cluster <- private$cluster
       Flow$new(use, se, cluster)
     },
-    decompose_effect = function(endpoint, se, cluster) {
+    decompose_effect = function(endpoint,
+                                demean_covariate = TRUE,
+                                se,
+                                cluster)
+    {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
 
@@ -139,9 +151,9 @@ RCT <- R6Class("RCT",
 
       if (missing(cluster)) cluster <- private$cluster
       if (is.null(cluster)) {
-        Lm$new(use, se)
+        Lm$new(use, demean_covariate, se)
       } else {
-        LmCluster$new(use, se, cluster)
+        LmCluster$new(use, demean_covariate, se, cluster)
       }
     },
     multiple_hypotheses_adjust = function(outcome, age_cut = 30) {

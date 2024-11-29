@@ -11,10 +11,10 @@ source(here("R/misc.r"))
 Lm <- R6::R6Class("Lm",
   public = list(
     data = NULL,
-    initialize = function(data, se) {
+    initialize = function(data, demean_covariate, se) {
       private$ctrl_arm <- levels(data$treat)[1]
 
-      self$data <- data %>%
+      dt <- data %>%
         mutate(
           RCTweek_fe = if_else(month == 12 | month == 1, RCTweek, 0),
           tiiki = case_when(
@@ -33,10 +33,25 @@ Lm <- R6::R6Class("Lm",
           tiiki_week = paste0(tiiki, "_", RCTweek_fe)
         )
 
+      if (demean_covariate) {
+        private$mean_age <- mean(data$age)
+
+        dt <- dt %>%
+          mutate_at(
+            vars(
+              age, coordinate, holidays,
+              hospital_per_area, PB_per_area, BM_per_area
+            ),
+            list(~ . - mean(.))
+          )
+      }
+
+      self$data <- dt
+
       use_x <- self$data %>%
         select(
           male,
-          age_demean,
+          age,
           coordinate,
           holidays,
           hospital_per_area,
@@ -48,8 +63,8 @@ Lm <- R6::R6Class("Lm",
         filter(value != 0) %>%
         pull(name)
 
-      if (any(use_x %in% "age_demean")) {
-        use_x <- c(use_x, "I(age_demean^2)")
+      if (any(use_x %in% "age")) {
+        use_x <- c(use_x, "I(age^2)")
       }
 
       private$covariates <- use_x
@@ -128,12 +143,14 @@ Lm <- R6::R6Class("Lm",
       model <- if (!covariates) {
         private$model$unctrl
       } else {
-        update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
+        update(private$model$ctrl1, . ~ . - male - age - I(age^2))
       }
+
+      mean_age <- private$mean_age
 
       est <- self$data %>%
         mutate(value = value * scale) %>%
-        mutate(young = if_else(age < age_cut, 1, 0)) %>%
+        mutate(young = if_else(age < age_cut - mean_age, 1, 0)) %>%
         group_by(outcome, male, young) %>%
         nest() %>%
         mutate(
@@ -177,10 +194,12 @@ Lm <- R6::R6Class("Lm",
         )
       )
 
+      mean_age <- private$mean_age
+
       est <- self$data %>%
         mutate(
           value = value * scale,
-          young = if_else(age < age_cut, 1, 0),
+          young = if_else(age < age_cut - mean_age, 1, 0),
           group = case_when(
             male == 0 & young == 1 ~ 1,
             male == 0 & young == 0 ~ 2,
@@ -228,10 +247,16 @@ Lm <- R6::R6Class("Lm",
         "treatD + treatD:male"
       )
 
+      use_x <- private$covariates
+      use_x_2 <- use_x[!str_detect(use_x, "male")]
+      use_x_2_int <- paste0(use_x_2, ":male")
+
       interaction_mod <- list(
-        unctrl = value ~ treat * male,
-        ctrl1 = value ~ treat * male + age_demean:male + I(age_demean^2):male + coordinate:male +
-          holidays:male + hospital_per_area:male + PB_per_area:male + BM_per_area:male
+        unctrl = reformulate("treat * male", "value"),
+        ctrl1 = reformulate(
+          c("treat * male", use_x_2_int),
+          "value"
+        )
       )
 
       est <- self$data %>%
@@ -271,6 +296,7 @@ Lm <- R6::R6Class("Lm",
     model = list(),
     se_type = "",
     covariates = "",
+    mean_age = 0,
     call_lm = function(data, model, se) {
       map(data, ~ lm_robust(model, data = ., se_type = se))
     },
@@ -283,10 +309,10 @@ Lm <- R6::R6Class("Lm",
 LmCluster <- R6::R6Class("LmCluster",
   public = list(
     data = NULL,
-    initialize = function(data, se, cluster) {
+    initialize = function(data, demean_covariate, se, cluster) {
       private$ctrl_arm <- levels(data$treat)[1]
 
-      self$data <- data %>%
+      dt <- data %>%
         mutate(
           RCTweek_fe = if_else(month == 12 | month == 1, RCTweek, 0),
           tiiki = case_when(
@@ -305,10 +331,48 @@ LmCluster <- R6::R6Class("LmCluster",
           tiiki_week = paste0(tiiki, "_", RCTweek_fe)
         )
 
+      if (demean_covariate) {
+        private$mean_age <- mean(data$age)
+
+        dt <- dt %>%
+          mutate_at(
+            vars(
+              age, coordinate, holidays,
+              hospital_per_area, PB_per_area, BM_per_area
+            ),
+            list(~ . - mean(.))
+          )
+      }
+
+      self$data <- dt
+
+      use_x <- self$data %>%
+        select(
+          male,
+          age,
+          coordinate,
+          holidays,
+          hospital_per_area,
+          PB_per_area,
+          BM_per_area
+        ) %>%
+        summarize_all(~ var(.)) %>%
+        pivot_longer(everything()) %>%
+        filter(value != 0) %>%
+        pull(name)
+
+      if (any(use_x %in% "age")) {
+        use_x <- c(use_x, "I(age^2)")
+      }
+
+      private$covariates <- use_x
+
       private$model <- list(
-        unctrl = value ~ treat,
-        ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area
+        unctrl = reformulate("treat", "value"),
+        ctrl1 = reformulate(
+          c("treat", use_x),
+          "value"
+        )
       )
 
       private$se_type <- se
@@ -381,12 +445,14 @@ LmCluster <- R6::R6Class("LmCluster",
       model <- if (!covariates) {
         private$model$unctrl
       } else {
-        update(private$model$ctrl1, . ~ . - male - age_demean - I(age_demean^2))
+        update(private$model$ctrl1, . ~ . - male - age - I(age^2))
       }
+
+      mean_age <- private$mean_age
 
       est <- self$data %>%
         mutate(value = value * scale) %>%
-        mutate(young = if_else(age < age_cut, 1, 0)) %>%
+        mutate(young = if_else(age < age_cut - mean_age, 1, 0)) %>%
         group_by(outcome, male, young) %>%
         nest() %>%
         mutate(
@@ -418,16 +484,24 @@ LmCluster <- R6::R6Class("LmCluster",
         "treatD + treatD:groupOlder male"
       )
 
+      use_x <- private$covariates
+      use_x_2 <- use_x[!str_detect(use_x, "male|age")]
+      use_x_2_int <- paste0(use_x_2, ":group")
+
       interaction_mod <- list(
-        unctrl = value ~ treat * group,
-        ctrl1 = value ~ treat * group + coordinate:group +
-          holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group
+        unctrl = reformulate("treat * group", "value"),
+        ctrl1 = reformulate(
+          c("treat * group", use_x_2_int),
+          "value"
+        )
       )
+
+      mean_age <- private$mean_age
 
       est <- self$data %>%
         mutate(
           value = value * scale,
-          young = if_else(age < age_cut, 1, 0),
+          young = if_else(age < age_cut - mean_age, 1, 0),
           group = case_when(
             male == 0 & young == 1 ~ 1,
             male == 0 & young == 0 ~ 2,
@@ -480,10 +554,16 @@ LmCluster <- R6::R6Class("LmCluster",
         "treatD + treatD:male"
       )
 
+      use_x <- private$covariates
+      use_x_2 <- use_x[!str_detect(use_x, "male")]
+      use_x_2_int <- paste0(use_x_2, ":male")
+
       interaction_mod <- list(
-        unctrl = value ~ treat * male,
-        ctrl1 = value ~ treat * male + age_demean:male + I(age_demean^2):male + coordinate:male +
-          holidays:male + hospital_per_area:male + PB_per_area:male + BM_per_area:male
+        unctrl = reformulate("treat * male", "value"),
+        ctrl1 = reformulate(
+          c("treat * male", use_x_2_int),
+          "value"
+        )
       )
 
       est <- self$data %>%
@@ -525,6 +605,7 @@ LmCluster <- R6::R6Class("LmCluster",
     model = list(),
     se_type = "",
     cluster = NULL,
+    mean_age = 0,
     call_lm = function(data, model, se, cluster) {
       map(
         data,

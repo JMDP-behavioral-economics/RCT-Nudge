@@ -6,10 +6,10 @@ source(here("R/misc.r"))
 Logit <- R6::R6Class("Logit",
   public = list(
     data = NULL,
-    initialize = function(data) {
+    initialize = function(data, demean_covariate) {
       private$ctrl_arm <- levels(data$treat)[1]
 
-      self$data <- data %>%
+      dt <- data %>%
         mutate(
           RCTweek_fe = if_else(month == 12 | month == 1, RCTweek, 0),
           tiiki = case_when(
@@ -28,10 +28,46 @@ Logit <- R6::R6Class("Logit",
           tiiki_week = paste0(tiiki, "_", RCTweek_fe)
         )
 
+      if (demean_covariate) {
+        dt <- dt %>%
+          mutate_at(
+            vars(
+              age, coordinate, holidays,
+              hospital_per_area, PB_per_area, BM_per_area
+            ),
+            list(~ . - mean(.))
+          )
+      }
+
+      self$data <- dt
+
+      use_x <- self$data %>%
+        select(
+          male,
+          age,
+          coordinate,
+          holidays,
+          hospital_per_area,
+          PB_per_area,
+          BM_per_area
+        ) %>%
+        summarize_all(~ var(.)) %>%
+        pivot_longer(everything()) %>%
+        filter(value != 0) %>%
+        pull(name)
+
+      if (any(use_x %in% "age")) {
+        use_x <- c(use_x, "I(age^2)")
+      }
+
+      private$covariates <- use_x
+
       private$model <- list(
-        unctrl = value ~ treat,
-        ctrl1 = value ~ treat + male + age_demean + I(age_demean^2) + coordinate +
-          holidays + hospital_per_area + PB_per_area + BM_per_area
+        unctrl = reformulate("treat", "value"),
+        ctrl1 = reformulate(
+          c("treat", use_x),
+          "value"
+        )
       )
 
       cat("\n")
@@ -63,6 +99,7 @@ Logit <- R6::R6Class("Logit",
   ),
   private = list(
     ctrl_arm = "",
+    covariates = NULL,
     model = list(),
     call_glm = function(model, data) {
       map(data, ~ glm(model, data = ., family = binomial()))
