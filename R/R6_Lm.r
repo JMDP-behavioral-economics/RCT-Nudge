@@ -97,6 +97,30 @@ Lm <- R6::R6Class("Lm",
 
       LmAll$new(est)
     },
+    fit_subset_by_gender = function(scale = 1, covariates = TRUE) {
+      model <- if (!covariates) {
+        private$model$unctrl
+      } else {
+        update(private$model$ctrl1, . ~ . - male)
+      }
+
+      est <- self$data %>%
+        mutate(value = value * scale) %>%
+        group_by(outcome, male) %>%
+        nest() %>%
+        mutate(
+          fit = private$call_lm(data, model, private$se_type),
+          avg = map_chr(
+            data,
+            ~ with(
+              subset(., treat == private$ctrl_arm),
+              sprintf("Ctrl Avg = %1.2f", mean(value))
+            )
+          )
+        )
+
+      LmSubsetGender$new(est)
+    },
     fit_subset_by_gender_age = function(age_cut = 30,
                                         scale = 1,
                                         covariates = TRUE)
@@ -278,6 +302,30 @@ LmCluster <- R6::R6Class("LmCluster",
         )
 
       LmAll$new(est)
+    },
+    fit_subset_by_gender = function(scale = 1, covariates = TRUE) {
+      model <- if (!covariates) {
+        private$model$unctrl
+      } else {
+        update(private$model$ctrl1, . ~ . - male)
+      }
+
+      est <- self$data %>%
+        mutate(value = value * scale) %>%
+        group_by(outcome, male) %>%
+        nest() %>%
+        mutate(
+          fit = private$call_lm(data, model, private$se_type, private$cluster),
+          avg = map_chr(
+            data,
+            ~ with(
+              subset(., treat == private$ctrl_arm),
+              sprintf("Ctrl Avg = %1.2f", mean(value))
+            )
+          )
+        )
+
+      LmSubsetGender$new(est)
     },
     fit_subset_by_gender_age = function(age_cut = 30,
                                         scale = 1,
@@ -936,6 +984,80 @@ LmSubset <- R6::R6Class("LmSubset",
 
       stack_tab
     }
+  )
+)
+
+LmSubsetGender <- R6::R6Class("LmSubsetGender",
+  public = list(
+    initialize = function(est) private$est <- est,
+    get_est = function() private$est,
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      digits = 2,
+                      hold = FALSE)
+    {
+      est <- private$est %>%
+        arrange(outcome, male) %>%
+        mutate(male = if_else(male == 1, "Males", "Females"))
+
+      addtab <- data.frame(
+        rbind(c("Control average", str_remove(est$avg, "Ctrl Avg = ")))
+      )
+
+      attr(addtab, "position") <- 7
+
+      kbl <- est %>%
+        pull(fit) %>%
+        modelsummary(
+          title = title,
+          coef_map = c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D"
+          ),
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+          align = paste(c("l", rep("c", nrow(est))), collapse = ""),
+          add_rows = addtab,
+          fmt = digits
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- list(
+        y = rle(c(" ", as.character(est$outcome))),
+        gender = rle(c(" ", est$male))
+      )
+
+      label <- label %>%
+        map(function(x) {
+          vec <- x$lengths
+          names(vec) <- x$values
+          return(vec)
+        })
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(label$gender) %>%
+        kableExtra::add_header_above(label$y)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste("\\\\emph{Note}:", notes),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
+  ),
+  private = list(
+    est = NULL
   )
 )
 
