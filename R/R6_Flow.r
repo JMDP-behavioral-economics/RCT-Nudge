@@ -183,7 +183,7 @@ Flow <- R6::R6Class("Flow",
           my_theme_classic(size = base_size) +
           theme(legend.position = "bottom")
     },
-    fit = function(days, scale = 1, ...) {
+    fit_cumulative = function(days, scale = 1, ...) {
       dt <- self$data
       model <- private$model
 
@@ -238,7 +238,7 @@ Flow <- R6::R6Class("Flow",
           term = str_replace(term, "treat", "Experimental Arm ")
         )
 
-      FlowFit$new(plotdt)
+      FlowFitCumulative$new(plotdt)
     }
   ),
   private = list(
@@ -259,7 +259,7 @@ Flow <- R6::R6Class("Flow",
   )
 )
 
-FlowFit <- R6::R6Class("FlowFit",
+FlowFitCumulative <- R6::R6Class("FlowFitCumulative",
   public = list(
     data = NULL,
     initialize = function(data) self$data <- data,
