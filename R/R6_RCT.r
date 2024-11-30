@@ -103,19 +103,22 @@ RCT <- R6Class("RCT",
 
       RCF$new(Y, D, X, private$covariate)
     },
-    flow = function(se, cluster, outcome, sample_drop = TRUE) {
+    flow = function(se,
+                    cluster,
+                    outcome,
+                    demean_covariate = TRUE,
+                    sample_drop = TRUE)
+    {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
-      if (!(outcome %in% c("reply", "positive", "negative"))) {
-        stop("Please specify outcomes related with response: 'reply', 'positive', 'negative'")
-      }
+      if (length(outcome) > 1) stop("Specify only one outcome")
 
       dt <- private$create_analysis_data(sample_drop)
       outcome_id <- which(names(private$outcome) == outcome)
       use <- private$subset_by_outcome(dt, outcome_id)
 
       if (missing(cluster)) cluster <- private$cluster
-      Flow$new(use, se, cluster)
+      Flow$new(use, demean_covariate, se, cluster)
     },
     decompose_effect = function(endpoint,
                                 demean_covariate = TRUE,
