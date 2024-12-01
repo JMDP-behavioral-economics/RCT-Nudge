@@ -49,11 +49,8 @@ Flow <- R6::R6Class("Flow",
       private$covariates <- use_x
 
       private$model <- list(
-        unctrl = reformulate("treat", "value"),
-        ctrl1 = reformulate(
-          c("treat", use_x),
-          "value"
-        )
+        unctrl = reformulate("treat", "flow_value"),
+        ctrl = reformulate(c("treat", use_x), "flow_value")
       )
 
       private$se_type <- se
@@ -185,7 +182,7 @@ Flow <- R6::R6Class("Flow",
     },
     fit_cumulative = function(days, scale = 1, ...) {
       dt <- self$data
-      model <- private$model
+      model <- private$model$ctrl
 
       if (!missing(...)) {
         rhs <- labels(terms(model))
@@ -212,7 +209,7 @@ Flow <- R6::R6Class("Flow",
       est <- days %>%
         map(function(x) {
           dt %>%
-            mutate(value = case_when(
+            mutate(flow_value = case_when(
               value == 0 ~ 0,
               days_reply > x ~ 0,
               TRUE ~ 1 * scale
@@ -239,6 +236,61 @@ Flow <- R6::R6Class("Flow",
         )
 
       FlowFitCumulative$new(plotdt)
+    },
+    fit_segment = function(cut_days = c(7, 11), scale = 1) {
+      est <- self$data %>%
+        mutate(
+          period_1 = case_when(
+            is.na(days_reply) ~ 0,
+            days_reply <= cut_days[1] ~ value * scale,
+            TRUE ~ 0
+          ),
+          period_2 = case_when(
+            is.na(days_reply) ~ 0,
+            days_reply <= cut_days[1] ~ 0,
+            days_reply <= cut_days[2] ~ value * scale,
+            TRUE ~ 0
+          ),
+          period_3 = case_when(
+            is.na(days_reply) ~ 0,
+            days_reply <= cut_days[2] ~ 0,
+            TRUE ~ value * scale
+          )
+        ) %>%
+        pivot_longer(
+          period_1:period_3,
+          names_to = "period",
+          names_prefix = "period_",
+          values_to = "flow_value"
+        ) %>%
+        group_by(period) %>%
+        nest() %>%
+        mutate(
+          min_days = map_dbl(data, ~ with(., min(days_reply, na.rm = TRUE))),
+          max_days = map_dbl(data, ~ with(., max(days_reply, na.rm = TRUE))),
+          start_days = case_when(
+            period == "1" ~ min_days,
+            period == "2" ~ cut_days[1] + 1,
+            period == "3" ~ cut_days[2] + 1
+          ),
+          end_days = case_when(
+            period == "1" ~ cut_days[1],
+            period == "2" ~ cut_days[2],
+            period == "3" ~ max_days
+          ),
+          avg = map_dbl(
+            data,
+            ~ with(
+              subset(., treat == private$ctrl_arm),
+              mean(flow_value)
+            )
+          ),
+          fit_1 = map(data, ~ private$call_lm(., private$model$unctrl)),
+          fit_2 = map(data, ~ private$call_lm(., private$model$ctrl))
+        ) %>%
+        select(-min_days, -max_days)
+
+      FlowFitSegment$new(est)
     }
   ),
   private = list(
@@ -298,4 +350,89 @@ FlowFitCumulative <- R6::R6Class("FlowFitCumulative",
     }
   ),
   private = list()
+)
+
+FlowFitSegment <- R6::R6Class("FlowFitSegment",
+  public = list(
+    initialize = function(est) private$est <- est,
+    get_est = function() private$est,
+    kable = function( title = "",
+                      notes = "",
+                      font_size = 9,
+                      digit = 2,
+                      hold = FALSE)
+    {
+      res <- private$est %>%
+        pivot_longer(
+          fit_1:fit_2,
+          names_to = "model",
+          names_prefix = "fit_",
+          values_to = "fit"
+        ) %>%
+        mutate(
+          covariate = if_else(model == "2", "X", ""),
+          range_days = paste0(start_days, "--", end_days, " days")
+        )
+
+      avg_format <- paste0("%1.", digit, "f")
+
+      add_tab <- data.frame(
+        rbind(
+          c("Control average", sprintf(avg_format, res$avg)),
+          c("Covariates", res$covariate)
+        )
+      )
+
+      attr(add_tab, "position") <- 7:8
+
+      kbl <- res %>%
+        pull(fit) %>%
+        modelsummary(
+          title = title,
+          coef_map = c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D"
+          ),
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+          align = paste(c("l", rep("c", nrow(res))), collapse = ""),
+          add_rows = add_tab,
+          fmt = digit
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- c(" ", res$range_days)
+      label_structure <- rle(label)
+      lab1 <- label_structure$lengths
+      names(lab1) <- label_structure$values
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(lab1)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+
+      kbl
+    }
+  ),
+  private = list(
+    est = NULL
+  )
 )
