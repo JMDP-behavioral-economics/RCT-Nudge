@@ -218,7 +218,7 @@ Flow <- R6::R6Class("Flow",
             nest() %>%
             mutate(
               day = x,
-              fit = map(data, ~ private$call_lm(., model))
+              fit = map(data, ~ private$call_lh(., model))
             )
         }) %>%
         reduce(bind_rows)
@@ -237,8 +237,13 @@ Flow <- R6::R6Class("Flow",
 
       FlowFitCumulative$new(plotdt)
     },
-    fit_segment = function(cut_days = c(7, 11), scale = 1) {
-      est <- self$data %>%
+    fit_segment = function( cut_days = c(7, 11),
+                            interaction_of_gender = FALSE,
+                            interaction_of_gender_age = FALSE,
+                            age_cut = 30,
+                            scale = 1)
+    {
+      est_dt <- self$data %>%
         mutate(
           period_1 = case_when(
             is.na(days_reply) ~ 0,
@@ -262,7 +267,84 @@ Flow <- R6::R6Class("Flow",
           names_to = "period",
           names_prefix = "period_",
           values_to = "flow_value"
-        ) %>%
+        )
+
+      if (interaction_of_gender_age) {
+        mean_age <- private$mean_age
+
+        est_dt <- est_dt %>%
+          mutate(
+            young = if_else(age < age_cut - mean_age, 1, 0),
+            group = case_when(
+              male == 0 & young == 1 ~ 1,
+              male == 0 & young == 0 ~ 2,
+              male == 1 & young == 1 ~ 3,
+              male == 1 & young == 0 ~ 4
+            ),
+            group = factor(
+              group,
+              labels = c(
+                "Young female", "Older female",
+                "Young male", "Older male"
+              )
+            )
+          )
+      }
+
+      if (interaction_of_gender) {
+        lh <- c(
+          "treatB",
+          "treatC",
+          "treatD",
+          "treatB + treatB:male",
+          "treatC + treatC:male",
+          "treatD + treatD:male"
+        )
+
+        use_x <- private$covariates
+        use_x_2 <- use_x[!str_detect(use_x, "male")]
+        use_x_2_int <- paste0(use_x_2, ":male")
+
+        model <- list(
+          unctrl = reformulate("treat * male", "flow_value"),
+          ctrl = reformulate(
+            c("treat * male", use_x_2, use_x_2_int),
+            "flow_value"
+          )
+        )
+      } else if (interaction_of_gender_age) {
+        lh <- c(
+          "treatB",
+          "treatC",
+          "treatD",
+          "treatB + treatB:groupOlder female",
+          "treatC + treatC:groupOlder female",
+          "treatD + treatD:groupOlder female",
+          "treatB + treatB:groupYoung male",
+          "treatC + treatC:groupYoung male",
+          "treatD + treatD:groupYoung male",
+          "treatB + treatB:groupOlder male",
+          "treatC + treatC:groupOlder male",
+          "treatD + treatD:groupOlder male"
+        )
+
+        use_x <- private$covariates
+        use_x_2 <- use_x[!str_detect(use_x, "male|age")]
+        use_x_2_int <- paste0(use_x_2, ":group")
+
+        model <- list(
+          unctrl = reformulate("treat * group", "flow_value"),
+          ctrl = reformulate(
+            c("treat * group", use_x_2, use_x_2_int),
+            "flow_value"
+          )
+        )
+      } else {
+        lh <- NULL
+        model <- private$model
+      }
+
+      est <- est_dt %>%
         group_by(period) %>%
         nest() %>%
         mutate(
@@ -280,13 +362,10 @@ Flow <- R6::R6Class("Flow",
           ),
           avg = map_dbl(
             data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              mean(flow_value)
-            )
+            ~ private$ref_ctrl_avg(., interaction_of_gender, interaction_of_gender_age)
           ),
-          fit_1 = map(data, ~ private$call_lm(., private$model$unctrl)),
-          fit_2 = map(data, ~ private$call_lm(., private$model$ctrl))
+          fit_1 = map(data, ~ private$call_lh(., model$unctrl, lh)),
+          fit_2 = map(data, ~ private$call_lh(., model$ctrl, lh))
         ) %>%
         select(-min_days, -max_days)
 
@@ -300,12 +379,38 @@ Flow <- R6::R6Class("Flow",
     cluster = NULL,
     ctrl_arm = NULL,
     mean_age = 0,
-    call_lm = function(data, model) {
+    call_lh = function(data, model, lh = NULL) {
       if (is.null(private$cluster)) {
-        lm_robust(model, data, se_type = private$se_type)
+        if (is.null(lh)) {
+          lm_robust(model, data = data, se_type = private$se_type)
+        } else {
+          lh_robust(model, data = data, se_type = private$se_type, linear_hypothesis = lh)
+        }
       } else {
-        g <- data[, cluster, drop = TRUE]
-        lm_robust(model, data, clusters = g, se_type = private$se_type)
+        g <- data[, private$cluster, drop = TRUE]
+        if (is.null(lh)) {
+          lm_robust(model, data = data, se_type = private$se_type, clusters = g)
+        } else {
+          lh_robust(model, data = data, se_type = private$se_type, clusters = g, linear_hypothesis = lh)
+        }
+      }
+    },
+    ref_ctrl_avg = function(data, interaction_of_gender, interaction_of_gender_age) {
+      if (interaction_of_gender) {
+        with(
+          subset(data, treat == private$ctrl_arm & male == 0),
+          mean(flow_value)
+        )
+      } else if (interaction_of_gender_age) {
+        with(
+          subset(data, treat == private$ctrl_arm & group == levels(data$group)[1]),
+          mean(flow_value)
+        )
+      } else {
+        with(
+          subset(data, treat == private$ctrl),
+          mean(flow_value)
+        )
       }
     }
   )
