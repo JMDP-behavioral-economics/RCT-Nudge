@@ -9,8 +9,8 @@ Flow <- R6::R6Class("Flow",
                           se,
                           cluster)
     {
+      self$data <- data
       private$ctrl_arm <- levels(data$treat)[1]
-      self$data <- dt
       private$se_type <- se
       private$cluster <- cluster
     },
@@ -98,15 +98,13 @@ Flow <- R6::R6Class("Flow",
             group = factor(group, labels = c("Females", "Males"))
           )
       } else if (subset_by_gender_age) {
-        mean_age <- private$mean_age
-
         dt <- self$data %>%
           mutate(
             group = case_when(
-              male == 0 & age < age_cut - mean_age ~ 1,
-              male == 0 & age >= age_cut - mean_age ~ 2,
-              male == 1 & age < age_cut - mean_age ~ 3,
-              male == 1 & age >= age_cut - mean_age ~ 4
+              male == 0 & age < age_cut ~ 1,
+              male == 0 & age >= age_cut ~ 2,
+              male == 1 & age < age_cut ~ 3,
+              male == 1 & age >= age_cut ~ 4
             ),
             group = factor(
               group,
