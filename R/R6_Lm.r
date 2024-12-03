@@ -512,27 +512,27 @@ LmFit <- R6::R6Class("LmFit",
       }
       private$coef_map_lh <- if (model_type == "hetero-gender") {
         c(
-          "treatB" = "Treatment B_Females",
-          "treatC" = "Treatment C_Females",
-          "treatD" = "Treatment D_Females",
-          "treatB + treatB:groupMale" = "Treatment B_Males",
-          "treatC + treatC:groupMale" = "Treatment C_Males",
-          "treatD + treatD:groupMale" = "Treatment D_Males"
+          "treatB" = "Treatment B_Female",
+          "treatC" = "Treatment C_Female",
+          "treatD" = "Treatment D_Female",
+          "treatB + treatB:groupMale" = "Treatment B_Male",
+          "treatC + treatC:groupMale" = "Treatment C_Male",
+          "treatD + treatD:groupMale" = "Treatment D_Male"
         )
       } else {
         c(
-          "treatB" = "Treatment B_Young Females",
-          "treatC" = "Treatment C_Young Females",
-          "treatD" = "Treatment D_Young Females",
-          "treatB + treatB:groupOlder female" = "Treatment B_Older Females",
-          "treatC + treatC:groupOlder female" = "Treatment C_Older Females",
-          "treatD + treatD:groupOlder female" = "Treatment D_Older Females",
-          "treatB + treatB:groupYoung male" = "Treatment B_Young Males",
-          "treatC + treatC:groupYoung male" = "Treatment C_Young Males",
-          "treatD + treatD:groupYoung male" = "Treatment D_Young Males",
-          "treatB + treatB:groupOlder male" = "Treatment B_Older Males",
-          "treatC + treatC:groupOlder male" = "Treatment C_Older Males",
-          "treatD + treatD:groupOlder male" = "Treatment D_Older Males"
+          "treatB" = "Treatment B_Young Female",
+          "treatC" = "Treatment C_Young Female",
+          "treatD" = "Treatment D_Young Female",
+          "treatB + treatB:groupOlder female" = "Treatment B_Older Female",
+          "treatC + treatC:groupOlder female" = "Treatment C_Older Female",
+          "treatD + treatD:groupOlder female" = "Treatment D_Older Female",
+          "treatB + treatB:groupYoung male" = "Treatment B_Young Male",
+          "treatC + treatC:groupYoung male" = "Treatment C_Young Male",
+          "treatD + treatD:groupYoung male" = "Treatment D_Young Male",
+          "treatB + treatB:groupOlder male" = "Treatment B_Older Male",
+          "treatC + treatC:groupOlder male" = "Treatment C_Older Male",
+          "treatD + treatD:groupOlder male" = "Treatment D_Older Male"
         )
       }
     },
