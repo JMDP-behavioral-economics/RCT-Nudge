@@ -590,6 +590,113 @@ LmFit <- R6::R6Class("LmFit",
           threeparttable = TRUE,
           escape = FALSE
         )
+    },
+    kable_lh = function(title = "",
+                        notes = "",
+                        font_size = 9,
+                        digit = 2,
+                        hold = FALSE)
+    {
+      if (private$type == "ate") stop("No linear combination test!")
+
+      res <- private$est
+
+      coef_map <- if (private$type == "hetero-gender") {
+        c(
+          "treatB" = "Treatment B_Females",
+          "treatC" = "Treatment C_Females",
+          "treatD" = "Treatment D_Females",
+          "treatB + treatB:male" = "Treatment B_Males",
+          "treatC + treatC:male" = "Treatment C_Males",
+          "treatD + treatD:male" = "Treatment D_Males"
+        )
+      } else {
+        c(
+          "treatB" = "Treatment B_Young Females",
+          "treatC" = "Treatment C_Young Females",
+          "treatD" = "Treatment D_Young Females",
+          "treatB + treatB:groupOlder female" = "Treatment B_Older Females",
+          "treatC + treatC:groupOlder female" = "Treatment C_Older Females",
+          "treatD + treatD:groupOlder female" = "Treatment D_Older Females",
+          "treatB + treatB:groupYoung male" = "Treatment B_Young Males",
+          "treatC + treatC:groupYoung male" = "Treatment C_Young Males",
+          "treatD + treatD:groupYoung male" = "Treatment D_Young Males",
+          "treatB + treatB:groupOlder male" = "Treatment B_Older Males",
+          "treatC + treatC:groupOlder male" = "Treatment C_Older Males",
+          "treatD + treatD:groupOlder male" = "Treatment D_Older Males"
+        )
+      }
+
+      add_tab <- data.frame(rbind(c("", "Covariates", res$covariate)))
+      names(add_tab) <- c("group", "term", paste0("(", seq(length(res$covariate)), ")"))
+
+      attr(add_tab, "position") <- seq(
+        length(coef_map) * 2 + 1,
+        length.out = nrow(add_tab)
+      )
+
+      fit <- res %>%
+        pull(fit) %>%
+        map(~ .$lh)
+
+      tbl <- fit %>%
+        modelsummary(
+          coef_map = coef_map,
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          fmt = digit,
+          output = "data.frame"
+        ) %>%
+        filter(part == "estimates") %>%
+        select(-part)
+
+      tbl2 <- tbl %>%
+        mutate(
+          group = str_split(term, "_", simplify = TRUE)[, 2],
+          group = if_else(str_detect(term, "Treatment B") & statistic == "estimate", group, ""),
+          term = str_split(term, "_", simplify = TRUE)[, 1],
+          term = if_else(statistic == "estimate", str_remove(term, "_.*"), "")
+        ) %>%
+        select(-statistic) %>%
+        select(group, term, everything()) %>%
+        bind_rows(add_tab)
+
+      kbl <- tbl2 %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("Group", "Treatment", names(tbl)[-c(1:2)]),
+          align = paste(c("ll", rep("c", nrow(res))), collapse = "")
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- c(" ", " ", as.character(res$outcome))
+      label_structure <- rle(label)
+      lab1 <- label_structure$lengths
+      names(lab1) <- label_structure$values
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(lab1)
+
+      kbl <- kbl %>%
+        kableExtra::row_spec(nrow(tbl), hline_after = TRUE)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
     }
   ),
   private = list(
