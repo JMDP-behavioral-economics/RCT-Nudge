@@ -132,59 +132,55 @@ Lm <- R6::R6Class("Lm",
               )
             )
           )
+      } else if (model_type == "hetero-gender") {
+        est_dt <- est_dt %>%
+          mutate(
+            group = male,
+            group = factor(group, labels = c("Female", "Male"))
+          )
       }
 
-      if (model_type == "hetero-gender") {
-        lh <- c(
-          "treatB",
-          "treatC",
-          "treatD",
-          "treatB + treatB:male",
-          "treatC + treatC:male",
-          "treatD + treatD:male"
-        )
-
-        use_x <- private$covariates
-        use_x_2 <- use_x[!str_detect(use_x, "male")]
-        use_x_2_int <- paste0(use_x_2, ":male")
-
-        model <- list(
-          unctrl = reformulate("treat * male", "value"),
-          ctrl = reformulate(
-            c("treat * male", use_x_2, use_x_2_int),
-            "value"
+      if (model_type == "ate") {
+        lh <- NULL
+        model <- private$model
+      } else {
+        if (model_type == "hetero-gender") {
+          lh <- c(
+            "treatB",
+            "treatC",
+            "treatD",
+            "treatB + treatB:groupMale",
+            "treatC + treatC:groupMale",
+            "treatD + treatD:groupMale"
           )
-        )
-      } else if (model_type == "hetero-gender-age") {
-        lh <- c(
-          "treatB",
-          "treatC",
-          "treatD",
-          "treatB + treatB:groupOlder female",
-          "treatC + treatC:groupOlder female",
-          "treatD + treatD:groupOlder female",
-          "treatB + treatB:groupYoung male",
-          "treatC + treatC:groupYoung male",
-          "treatD + treatD:groupYoung male",
-          "treatB + treatB:groupOlder male",
-          "treatC + treatC:groupOlder male",
-          "treatD + treatD:groupOlder male"
-        )
 
-        use_x <- private$covariates
-        use_x_2 <- use_x[!str_detect(use_x, "male|age")]
+          use_x <- private$covariates
+          use_x_2 <- use_x[!str_detect(use_x, "male")]
+        } else {
+          lh <- c(
+            "treatB",
+            "treatC",
+            "treatD",
+            "treatB + treatB:groupOlder female",
+            "treatC + treatC:groupOlder female",
+            "treatD + treatD:groupOlder female",
+            "treatB + treatB:groupYoung male",
+            "treatC + treatC:groupYoung male",
+            "treatD + treatD:groupYoung male",
+            "treatB + treatB:groupOlder male",
+            "treatC + treatC:groupOlder male",
+            "treatD + treatD:groupOlder male"
+          )
+
+          use_x <- private$covariates
+          use_x_2 <- use_x[!str_detect(use_x, "male|age")]
+        }
         use_x_2_int <- paste0(use_x_2, ":group")
 
         model <- list(
           unctrl = reformulate("treat * group", "value"),
-          ctrl = reformulate(
-            c("treat * group", use_x_2, use_x_2_int),
-            "value"
-          )
+          ctrl = reformulate(c("treat * group", use_x_2, use_x_2_int), "value")
         )
-      } else {
-        lh <- NULL
-        model <- private$model
       }
 
       est <- est_dt %>%
@@ -516,9 +512,9 @@ LmFit <- R6::R6Class("LmFit",
             "treatC" = "Treatment C",
             "treatD" = "Treatment D",
             "male" = "Male",
-            "treatB:male" = "Treatment B $\\times$ Male",
-            "treatC:male" = "Treatment C $\\times$ Male",
-            "treatD:male" = "Treatment D $\\times$ Male"
+            "treatB:groupMale" = "Treatment B $\\times$ Male",
+            "treatC:groupMale" = "Treatment C $\\times$ Male",
+            "treatD:groupMale" = "Treatment D $\\times$ Male"
           )
         } else {
           c(
@@ -606,9 +602,9 @@ LmFit <- R6::R6Class("LmFit",
           "treatB" = "Treatment B_Females",
           "treatC" = "Treatment C_Females",
           "treatD" = "Treatment D_Females",
-          "treatB + treatB:male" = "Treatment B_Males",
-          "treatC + treatC:male" = "Treatment C_Males",
-          "treatD + treatD:male" = "Treatment D_Males"
+          "treatB + treatB:groupMale" = "Treatment B_Males",
+          "treatC + treatC:groupMale" = "Treatment C_Males",
+          "treatD + treatD:groupMale" = "Treatment D_Males"
         )
       } else {
         c(
