@@ -521,18 +521,18 @@ LmFit <- R6::R6Class("LmFit",
         )
       } else {
         c(
-          "treatB" = "Treatment B_Young Female",
-          "treatC" = "Treatment C_Young Female",
-          "treatD" = "Treatment D_Young Female",
-          "treatB + treatB:groupOlder female" = "Treatment B_Older Female",
-          "treatC + treatC:groupOlder female" = "Treatment C_Older Female",
-          "treatD + treatD:groupOlder female" = "Treatment D_Older Female",
-          "treatB + treatB:groupYoung male" = "Treatment B_Young Male",
-          "treatC + treatC:groupYoung male" = "Treatment C_Young Male",
-          "treatD + treatD:groupYoung male" = "Treatment D_Young Male",
-          "treatB + treatB:groupOlder male" = "Treatment B_Older Male",
-          "treatC + treatC:groupOlder male" = "Treatment C_Older Male",
-          "treatD + treatD:groupOlder male" = "Treatment D_Older Male"
+          "treatB" = "Treatment B_Young female",
+          "treatC" = "Treatment C_Young female",
+          "treatD" = "Treatment D_Young female",
+          "treatB + treatB:groupOlder female" = "Treatment B_Older female",
+          "treatC + treatC:groupOlder female" = "Treatment C_Older female",
+          "treatD + treatD:groupOlder female" = "Treatment D_Older female",
+          "treatB + treatB:groupYoung male" = "Treatment B_Young male",
+          "treatC + treatC:groupYoung male" = "Treatment C_Young male",
+          "treatD + treatD:groupYoung male" = "Treatment D_Young male",
+          "treatB + treatB:groupOlder male" = "Treatment B_Older male",
+          "treatC + treatC:groupOlder male" = "Treatment C_Older male",
+          "treatD + treatD:groupOlder male" = "Treatment D_Older male"
         )
       }
     },
@@ -706,27 +706,50 @@ LmFit <- R6::R6Class("LmFit",
                         ybreaks = seq(0, 100, by = 10),
                         base_size = 15)
     {
-      if (private$type != "ate") stop("This function uses a model without interaction!")
-
       wocov <- subset(private$est, covariate == "")
 
-      est <- wocov %>%
-        mutate(
-          tidy = map(fit, broom::tidy),
-          tidy = map(tidy, ~ subset(., str_detect(term, "treat"))),
-          tidy = map(tidy, ~ select(., -outcome))
-        ) %>%
-        select(outcome, tidy) %>%
-        unnest(tidy) %>%
-        mutate(treat = str_remove(term, "treat")) %>%
-        select(outcome, treat, p.value)
+      if (private$type == "ate") {
+        est <- wocov %>%
+          mutate(
+            tidy = map(fit, broom::tidy),
+            tidy = map(tidy, ~ subset(., str_detect(term, "treat"))),
+            tidy = map(tidy, ~ select(., -outcome))
+          ) %>%
+          select(outcome, tidy) %>%
+          unnest(tidy) %>%
+          mutate(
+            treat = str_remove(term, "treat"),
+            group = "Full sample"
+          ) %>%
+          select(outcome, group, treat, p.value)
+      } else {
+        est <- wocov %>%
+          mutate(
+            fit = map(fit, ~ .$lh),
+            tidy = map(fit, broom::tidy),
+            tidy = map(tidy, ~ select(., -outcome))
+          ) %>%
+          select(outcome, tidy) %>%
+          unnest(tidy) %>%
+          mutate(
+            term = dplyr::recode(term, !!!private$coef_map_lh),
+            treat = str_remove(str_split(term, "_", simplify = TRUE)[, 1], "Treatment "),
+            group = str_split(term, "_", simplify = TRUE)[, 2]
+          ) %>%
+          select(outcome, group, treat, p.value)
+      }
+
+      if (private$type == "ate") {
+        wocov <- wocov %>%
+          mutate(data = map(data, ~ mutate(., group = "Full sample")))
+      }
 
       mu <- wocov %>%
         select(outcome, data) %>%
         mutate(avg = map(
           data,
           function(x) {
-            group_by(x, treat) %>%
+            group_by(x, treat, group) %>%
               summarize(mu = mean(value), se = se(value))
           }
         )) %>%
@@ -734,17 +757,17 @@ LmFit <- R6::R6Class("LmFit",
         unnest(avg)
 
       plotdt <- mu %>%
-        dplyr::left_join(est, by = c("outcome", "treat"), keep = TRUE) %>%
-        select(-outcome.y, -treat.y) %>%
-        rename(treat = treat.x, outcome = outcome.x)
+        dplyr::left_join(est, by = c("outcome", "group", "treat"), keep = TRUE) %>%
+        select(-outcome.y, -treat.y, -group.y) %>%
+        rename(treat = treat.x, outcome = outcome.x, group = group.x)
 
       mu_ctrl <- plotdt %>%
         dplyr::filter(is.na(p.value)) %>%
-        select(outcome, ctrl_mu = mu)
+        select(outcome, group, ctrl_mu = mu)
 
       plotdt <- plotdt %>%
-        dplyr::left_join(mu_ctrl, by = "outcome") %>%
-        group_by(outcome) %>%
+        dplyr::left_join(mu_ctrl, by = c("outcome", "group")) %>%
+        group_by(outcome, group) %>%
         mutate(x_start = 1, x_end = 1:n()) %>%
         rowwise() %>%
         mutate(
@@ -761,7 +784,7 @@ LmFit <- R6::R6Class("LmFit",
       avg_format <- paste0("%1.", avg_digit, "f")
       if (avg_percent) avg_format <- paste0(avg_format, "%%")
 
-      ggplot(plotdt, aes(x = treat, y = mu)) +
+      plt <- ggplot(plotdt, aes(x = treat, y = mu)) +
         geom_bar(stat = "identity", fill = "grey90", color = "black") +
         geom_errorbar(aes(ymin = mu - se, ymax = mu + se), width = 0.25) +
         geom_text(
@@ -789,9 +812,14 @@ LmFit <- R6::R6Class("LmFit",
           hjust = 0, color = "black", size = p_text_size
         ) +
         scale_y_continuous(limits = ylim, breaks = ybreaks) +
-        facet_wrap(~outcome) +
         labs(x = "Treatment", y = "Sample average") +
         my_theme_classic(size = base_size, strip_hjust = 0.5)
+
+      if (private$type == "ate") {
+        plt + facet_wrap(~ outcome)
+      } else {
+        plt + facet_grid(group ~ outcome)
+      }
     }
   ),
   private = list(
