@@ -149,10 +149,10 @@ Lm <- R6::R6Class("Lm",
         use_x_2_int <- paste0(use_x_2, ":male")
 
         model <- list(
-          unctrl = reformulate("treat * male", "flow_value"),
+          unctrl = reformulate("treat * male", "value"),
           ctrl = reformulate(
             c("treat * male", use_x_2, use_x_2_int),
-            "flow_value"
+            "value"
           )
         )
       } else if (model_type == "hetero-gender-age") {
@@ -176,10 +176,10 @@ Lm <- R6::R6Class("Lm",
         use_x_2_int <- paste0(use_x_2, ":group")
 
         model <- list(
-          unctrl = reformulate("treat * group", "flow_value"),
+          unctrl = reformulate("treat * group", "value"),
           ctrl = reformulate(
             c("treat * group", use_x_2, use_x_2_int),
-            "flow_value"
+            "value"
           )
         )
       } else {
