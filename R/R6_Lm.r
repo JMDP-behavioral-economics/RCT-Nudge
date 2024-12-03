@@ -187,7 +187,7 @@ Lm <- R6::R6Class("Lm",
         model <- private$model
       }
 
-      est <- self$data %>%
+      est <- est_dt %>%
         group_by(outcome) %>%
         nest() %>%
         mutate(
