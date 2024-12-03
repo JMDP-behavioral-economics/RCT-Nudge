@@ -6,7 +6,7 @@ source(here("R/misc.r"))
 Logit <- R6::R6Class("Logit",
   public = list(
     data = NULL,
-    initialize = function(data, demean_covariate) {
+    initialize = function(data, demean_covariate, hide_message) {
       private$ctrl_arm <- levels(data$treat)[1]
 
       dt <- data %>%
@@ -70,12 +70,14 @@ Logit <- R6::R6Class("Logit",
         )
       )
 
-      cat("\n")
-      cat("Options for binary regression (Logit)\n")
-      cat("- Control arm:", private$ctrl_arm, "\n")
-      cat("Regression models\n")
-      for (i in 1:length(private$model)) print(private$model[[i]])
-      cat("\n")
+      if (!hide_message) {
+        cat("\n")
+        cat("Options for binary regression (Logit)\n")
+        cat("- Control arm:", private$ctrl_arm, "\n")
+        cat("Regression models\n")
+        for (i in 1:length(private$model)) print(private$model[[i]])
+        cat("\n")
+      }
     },
     fit = function() {
       est <- self$data %>%
