@@ -202,59 +202,61 @@ Lm <- R6::R6Class("Lm",
 
       LmFit$new(est, model_type)
     },
-    fit_subset_by_gender = function(scale = 1, covariates = TRUE) {
-      model <- if (!covariates) {
-        private$model$unctrl
-      } else {
-        update(private$model$ctrl1, . ~ . - male)
-      }
-
-      est <- self$data %>%
-        mutate(value = value * scale) %>%
-        group_by(outcome, male) %>%
-        nest() %>%
-        mutate(
-          fit = private$call_lm(data, model, private$se_type),
-          avg = map_chr(
-            data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.2f", mean(value))
-            )
-          )
-        )
-
-      LmSubsetGender$new(est)
-    },
-    fit_subset_by_gender_age = function(age_cut = 30,
-                                        scale = 1,
-                                        covariates = TRUE)
+    fit_subset = function(scale = 1,
+                          gender_age = FALSE,
+                          age_cut = 30,
+                          covariates = TRUE)
     {
       model <- if (!covariates) {
         private$model$unctrl
       } else {
-        update(private$model$ctrl1, . ~ . - male - age - I(age^2))
+        if (!gender_age) {
+          update(private$model$ctrl, . ~ . - male)
+        } else {
+          update(private$model$ctrl, . ~ . - male - age - I(age^2))
+        }
       }
 
-      mean_age <- private$mean_age
+      est_dt <- self$data %>%
+        mutate(value = value * scale)
 
-      est <- self$data %>%
-        mutate(value = value * scale) %>%
-        mutate(young = if_else(age < age_cut - mean_age, 1, 0)) %>%
-        group_by(outcome, male, young) %>%
-        nest() %>%
-        mutate(
-          fit = private$call_lm(data, model, private$se_type),
-          avg = map_chr(
-            data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.2f", mean(value))
+      if (!gender_age) {
+        est_dt <- est_dt %>%
+          mutate(
+            group = male,
+            group = factor(group, labels = c("Female", "Male"))
+          )
+      } else {
+        mean_age <- private$mean_age
+
+        est_dt <- est_dt %>%
+          mutate(
+            young = if_else(age < age_cut - mean_age, 1, 0),
+            group = case_when(
+              male == 0 & young == 1 ~ 1,
+              male == 0 & young == 0 ~ 2,
+              male == 1 & young == 1 ~ 3,
+              male == 1 & young == 0 ~ 4
+            ),
+            group = factor(
+              group,
+              labels = c(
+                "Young female", "Older female",
+                "Young male", "Older male"
+              )
             )
           )
+      }
+
+      est <- est_dt %>%
+        group_by(outcome, group) %>%
+        nest() %>%
+        mutate(
+          avg = map_dbl(data, ~ private$ctrl_mean(., "ate")),
+          fit = map(data, ~ private$call_lh(., model))
         )
 
-      LmSubset$new(est, age_cut)
+      LmFitSubset$new(est)
     }
   ),
   private = list(
@@ -297,175 +299,6 @@ Lm <- R6::R6Class("Lm",
           mean(value)
         )
       }
-    }
-  )
-)
-
-LmCluster <- R6::R6Class("LmCluster",
-  public = list(
-    data = NULL,
-    initialize = function(data, demean_covariate, se, cluster) {
-      private$ctrl_arm <- levels(data$treat)[1]
-
-      dt <- data %>%
-        mutate(
-          RCTweek_fe = if_else(month == 12 | month == 1, RCTweek, 0),
-          tiiki = case_when(
-            str_detect(prefecture, "^(青森|岩手|秋田|宮城|山形|福島)") ~ "東北",
-            str_detect(prefecture, "^(茨城|栃木|群馬)") ~ "北関東",
-            str_detect(prefecture, "^(埼玉|千葉)") ~ "南関東",
-            str_detect(prefecture, "^(新潟|富山|石川|福井)") ~ "北陸",
-            str_detect(prefecture, "^(山梨|長野)") ~ "中央高地",
-            str_detect(prefecture, "^(静岡|岐阜|三重)") ~ "東海",
-            str_detect(prefecture, "^(滋賀|京都|奈良|和歌山|兵庫)") ~ "近畿",
-            str_detect(prefecture, "^(鳥取|島根|岡山|広島|山口)") ~ "中国",
-            str_detect(prefecture, "^(徳島|香川|愛媛|高知)") ~ "四国",
-            str_detect(prefecture, "^(福岡|長崎|佐賀|大分|熊本|宮崎|鹿児島)") ~ "九州",
-            TRUE ~ prefecture
-          ),
-          tiiki_week = paste0(tiiki, "_", RCTweek_fe)
-        )
-
-      if (demean_covariate) {
-        private$mean_age <- mean(data$age)
-
-        dt <- dt %>%
-          mutate_at(
-            vars(
-              age, coordinate, holidays,
-              hospital_per_area, PB_per_area, BM_per_area
-            ),
-            list(~ . - mean(.))
-          )
-      }
-
-      self$data <- dt
-
-      use_x <- self$data %>%
-        select(
-          male,
-          age,
-          coordinate,
-          holidays,
-          hospital_per_area,
-          PB_per_area,
-          BM_per_area
-        ) %>%
-        summarize_all(~ var(.)) %>%
-        pivot_longer(everything()) %>%
-        filter(value != 0) %>%
-        pull(name)
-
-      if (any(use_x %in% "age")) {
-        use_x <- c(use_x, "I(age^2)")
-      }
-
-      private$covariates <- use_x
-
-      private$model <- list(
-        unctrl = reformulate("treat", "value"),
-        ctrl1 = reformulate(
-          c("treat", use_x),
-          "value"
-        )
-      )
-
-      private$se_type <- se
-      private$cluster <- cluster
-
-      cat("\n")
-      cat("Options for linear regression\n")
-      cat("- Control arm:", private$ctrl_arm, "\n")
-      cat("- Clustered standard error: TRUE\n")
-      cat("  - Cluster:", private$cluster, "\n")
-      cat("  - Standard error type:", private$se_type, "\n")
-      cat("Regression models\n")
-      for (i in 1:length(private$model)) print(private$model[[i]])
-      cat("\n")
-    },
-    fit_subset_by_gender = function(scale = 1, covariates = TRUE) {
-      model <- if (!covariates) {
-        private$model$unctrl
-      } else {
-        update(private$model$ctrl1, . ~ . - male)
-      }
-
-      est <- self$data %>%
-        mutate(value = value * scale) %>%
-        group_by(outcome, male) %>%
-        nest() %>%
-        mutate(
-          fit = private$call_lm(data, model, private$se_type, private$cluster),
-          avg = map_chr(
-            data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.2f", mean(value))
-            )
-          )
-        )
-
-      LmSubsetGender$new(est)
-    },
-    fit_subset_by_gender_age = function(age_cut = 30,
-                                        scale = 1,
-                                        covariates = TRUE)
-    {
-      model <- if (!covariates) {
-        private$model$unctrl
-      } else {
-        update(private$model$ctrl1, . ~ . - male - age - I(age^2))
-      }
-
-      mean_age <- private$mean_age
-
-      est <- self$data %>%
-        mutate(value = value * scale) %>%
-        mutate(young = if_else(age < age_cut - mean_age, 1, 0)) %>%
-        group_by(outcome, male, young) %>%
-        nest() %>%
-        mutate(
-          fit = private$call_lm(data, model, private$se_type, private$cluster),
-          avg = map_chr(
-            data,
-            ~ with(
-              subset(., treat == private$ctrl_arm),
-              sprintf("Ctrl Avg = %1.2f", mean(value))
-            )
-          )
-        )
-
-      LmSubset$new(est, age_cut)
-    }
-  ),
-  private = list(
-    ctrl_arm = "",
-    model = list(),
-    se_type = "",
-    cluster = NULL,
-    mean_age = 0,
-    call_lm = function(data, model, se, cluster) {
-      map(
-        data,
-        function(d) {
-          g <- d[, cluster, drop = TRUE]
-          lm_robust(
-            model,
-            data = d,
-            clusters = g,
-            se_type = se
-          )
-        }
-      )
-    },
-    call_lh = function(data, model, se, cluster, lh) {
-      map(
-        data,
-        function(d) {
-          g <- d[, cluster, drop = TRUE]
-          lh_robust(model, data = d, clusters = g, se_type = se, linear_hypothesis = lh)
-        }
-      )
     }
   )
 )
@@ -827,6 +660,16 @@ LmFit <- R6::R6Class("LmFit",
     type = NULL,
     coef_map_lm = NULL,
     coef_map_lh = NULL
+  )
+)
+
+LmFitSubset <- R6::R6Class("LmFitSubset",
+  public = list(
+    initialize = function(est) private$est <- est,
+    get_est = function() private$est
+  ),
+  private = list(
+    est = NULL
   )
 )
 
