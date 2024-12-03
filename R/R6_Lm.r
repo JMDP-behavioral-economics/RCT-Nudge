@@ -11,7 +11,7 @@ source(here("R/misc.r"))
 Lm <- R6::R6Class("Lm",
   public = list(
     data = NULL,
-    initialize = function(data, demean_covariate, se) {
+    initialize = function(data, demean_covariate, se, cluster, hide_message = TRUE) {
       private$ctrl_arm <- levels(data$treat)[1]
 
       dt <- data %>%
@@ -78,39 +78,133 @@ Lm <- R6::R6Class("Lm",
       )
 
       private$se_type <- se
+      private$cluster <- cluster
 
-      cat("\n")
-      cat("Options for linear regression\n")
-      cat("- Control arm:", private$ctrl_arm, "\n")
-      cat("- Clustered standard error: FALSE\n")
-      cat("  - Standard error type:", private$se_type, "\n")
-      cat("Regression models\n")
-      for (i in 1:length(private$model)) print(private$model[[i]])
-      cat("\n")
+      if (!hide_message) {
+        cat("\n")
+        cat("Options for linear regression\n")
+        cat("- Control arm:", private$ctrl_arm, "\n")
+        if (is.null(private$cluster)) {
+          cat("- Clustered standard error: FALSE\n")
+        } else {
+          cat("- Clustered standard error: TRUE\n")
+        }
+        cat("  - Cluster:", private$cluster, "\n")
+        cat("  - Standard error type:", private$se_type, "\n")
+        cat("Regression models\n")
+        for (i in 1:length(private$model)) print(private$model[[i]])
+        cat("\n")
+      }
     },
-    fit = function(scale = 1) {
+    fit = function( scale = 1,
+                    interaction_of_gender = FALSE,
+                    interaction_of_gender_age = FALSE,
+                    age_cut = 30)
+    {
+      est_dt <- self$data %>%
+        mutate(value = value * scale)
+
+      model_type <- if (interaction_of_gender) {
+        "hetero-gender"
+      } else if (interaction_of_gender_age) {
+        "hetero-gender-age"
+      } else {
+        "ate"
+      }
+
+      if (model_type == "hetero-gender-age") {
+        mean_age <- private$mean_age
+
+        est_dt <- est_dt %>%
+          mutate(
+            young = if_else(age < age_cut - mean_age, 1, 0),
+            group = case_when(
+              male == 0 & young == 1 ~ 1,
+              male == 0 & young == 0 ~ 2,
+              male == 1 & young == 1 ~ 3,
+              male == 1 & young == 0 ~ 4
+            ),
+            group = factor(
+              group,
+              labels = c(
+                "Young female", "Older female",
+                "Young male", "Older male"
+              )
+            )
+          )
+      }
+
+      if (model_type == "hetero-gender") {
+        lh <- c(
+          "treatB",
+          "treatC",
+          "treatD",
+          "treatB + treatB:male",
+          "treatC + treatC:male",
+          "treatD + treatD:male"
+        )
+
+        use_x <- private$covariates
+        use_x_2 <- use_x[!str_detect(use_x, "male")]
+        use_x_2_int <- paste0(use_x_2, ":male")
+
+        model <- list(
+          unctrl = reformulate("treat * male", "flow_value"),
+          ctrl = reformulate(
+            c("treat * male", use_x_2, use_x_2_int),
+            "flow_value"
+          )
+        )
+      } else if (model_type == "hetero-gender-age") {
+        lh <- c(
+          "treatB",
+          "treatC",
+          "treatD",
+          "treatB + treatB:groupOlder female",
+          "treatC + treatC:groupOlder female",
+          "treatD + treatD:groupOlder female",
+          "treatB + treatB:groupYoung male",
+          "treatC + treatC:groupYoung male",
+          "treatD + treatD:groupYoung male",
+          "treatB + treatB:groupOlder male",
+          "treatC + treatC:groupOlder male",
+          "treatD + treatD:groupOlder male"
+        )
+
+        use_x <- private$covariates
+        use_x_2 <- use_x[!str_detect(use_x, "male|age")]
+        use_x_2_int <- paste0(use_x_2, ":group")
+
+        model <- list(
+          unctrl = reformulate("treat * group", "flow_value"),
+          ctrl = reformulate(
+            c("treat * group", use_x_2, use_x_2_int),
+            "flow_value"
+          )
+        )
+      } else {
+        lh <- NULL
+        model <- private$model
+      }
+
       est <- self$data %>%
-        mutate(value = value * scale) %>%
         group_by(outcome) %>%
         nest() %>%
         mutate(
-          fit1 = private$call_lm(data, private$model$unctrl, private$se_type),
-          fit2 = private$call_lm(data, private$model$ctrl1, private$se_type),
-          avg = map_dbl(
-            data,
-            ~ mean(subset(., treat == private$ctrl_arm)$value)
-          )
+          avg = map_dbl(data, ~ private$ctrl_mean(., model_type)),
+          fit_1 = map(data, ~ private$call_lh(., model$unctrl, lh)),
+          fit_2 = map(data, ~ private$call_lh(., model$ctrl, lh))
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
+          fit_1:fit_2,
+          names_prefix = "fit_",
           names_to = "model",
           values_to = "fit"
         ) %>%
         mutate(covs = if_else(model != "1", "X", ""))
 
-      LmAll$new(est)
+      LmFit$new(est, model_type)
     },
     fit_subset_by_gender = function(scale = 1, covariates = TRUE) {
       model <- if (!covariates) {
@@ -165,143 +259,48 @@ Lm <- R6::R6Class("Lm",
         )
 
       LmSubset$new(est, age_cut)
-    },
-    fit_interaction_of_gender_age = function(age_cut = 30, scale = 1) {
-      lh_null <- c(
-        "treatB",
-        "treatC",
-        "treatD",
-        "treatB + treatB:groupOlder female",
-        "treatC + treatC:groupOlder female",
-        "treatD + treatD:groupOlder female",
-        "treatB + treatB:groupYoung male",
-        "treatC + treatC:groupYoung male",
-        "treatD + treatD:groupYoung male",
-        "treatB + treatB:groupOlder male",
-        "treatC + treatC:groupOlder male",
-        "treatD + treatD:groupOlder male"
-      )
-
-      use_x <- private$covariates
-      use_x_2 <- use_x[!str_detect(use_x, "male|age")]
-      use_x_2_int <- paste0(use_x_2, ":group")
-
-      interaction_mod <- list(
-        unctrl = reformulate("treat * group", "value"),
-        ctrl1 = reformulate(
-          c("treat * group", use_x_2_int),
-          "value"
-        )
-      )
-
-      mean_age <- private$mean_age
-
-      est <- self$data %>%
-        mutate(
-          value = value * scale,
-          young = if_else(age < age_cut - mean_age, 1, 0),
-          group = case_when(
-            male == 0 & young == 1 ~ 1,
-            male == 0 & young == 0 ~ 2,
-            male == 1 & young == 1 ~ 3,
-            male == 1 & young == 0 ~ 4
-          ),
-          group = factor(group, labels = c("Young female", "Older female", "Young male", "Older male"))
-        ) %>%
-        group_by(outcome) %>%
-        nest() %>%
-        mutate(
-          fit1 = private$call_lh(
-            data,
-            interaction_mod$unctrl,
-            private$se_type,
-            lh_null
-          ),
-          fit2 = private$call_lh(
-            data,
-            interaction_mod$ctrl1,
-            private$se_type,
-            lh_null
-          )
-        ) %>%
-        ungroup() %>%
-        pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
-          names_to = "model",
-          values_to = "fit"
-        ) %>%
-        mutate(
-          covs = if_else(model != "1", "X", "")
-        )
-
-      LmInteraction$new(est, age_cut)
-    },
-    fit_interaction_of_gender = function(scale = 1) {
-      lh_null <- c(
-        "treatB",
-        "treatC",
-        "treatD",
-        "treatB + treatB:male",
-        "treatC + treatC:male",
-        "treatD + treatD:male"
-      )
-
-      use_x <- private$covariates
-      use_x_2 <- use_x[!str_detect(use_x, "male")]
-      use_x_2_int <- paste0(use_x_2, ":male")
-
-      interaction_mod <- list(
-        unctrl = reformulate("treat * male", "value"),
-        ctrl1 = reformulate(
-          c("treat * male", use_x_2_int),
-          "value"
-        )
-      )
-
-      est <- self$data %>%
-        mutate(value = value * scale) %>%
-        group_by(outcome) %>%
-        nest() %>%
-        mutate(
-          fit1 = private$call_lh(
-            data,
-            interaction_mod$unctrl,
-            private$se_type,
-            lh_null
-          ),
-          fit2 = private$call_lh(
-            data,
-            interaction_mod$ctrl1,
-            private$se_type,
-            lh_null
-          )
-        ) %>%
-        ungroup() %>%
-        pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
-          names_to = "model",
-          values_to = "fit"
-        ) %>%
-        mutate(
-          covs = if_else(model != "1", "X", "")
-        )
-
-      LmInteractionGender$new(est)
     }
   ),
   private = list(
     ctrl_arm = "",
     model = list(),
     se_type = "",
+    cluster = NULL,
     covariates = "",
     mean_age = 0,
-    call_lm = function(data, model, se) {
-      map(data, ~ lm_robust(model, data = ., se_type = se))
+    call_lh = function(data, model, lh = NULL) {
+      if (is.null(private$cluster)) {
+        if (is.null(lh)) {
+          lm_robust(model, data = data, se_type = private$se_type)
+        } else {
+          lh_robust(model, data = data, se_type = private$se_type, linear_hypothesis = lh)
+        }
+      } else {
+        g <- data[, private$cluster, drop = TRUE]
+        if (is.null(lh)) {
+          lm_robust(model, data = data, se_type = private$se_type, clusters = g)
+        } else {
+          lh_robust(model, data = data, se_type = private$se_type, clusters = g, linear_hypothesis = lh)
+        }
+      }
     },
-    call_lh = function(data, model, se, lh) {
-      map(data, ~ lh_robust(model, data = ., se_type = se, linear_hypothesis = lh))
+    ctrl_mean = function(data, model_type) {
+      if (model_type == "hetero-gender") {
+        with(
+          subset(data, treat == private$ctrl_arm & male == 0),
+          mean(value)
+        )
+      } else if (model_type == "hetero-gender-age") {
+        with(
+          subset(data, treat == private$ctrl_arm & group == levels(data$group)[1]),
+          mean(value)
+        )
+      } else {
+        with(
+          subset(data, treat == private$ctrl_arm),
+          mean(value)
+        )
+      }
     }
   )
 )
@@ -388,32 +387,6 @@ LmCluster <- R6::R6Class("LmCluster",
       for (i in 1:length(private$model)) print(private$model[[i]])
       cat("\n")
     },
-    fit = function(scale = 1) {
-      est <- self$data %>%
-        mutate(value = value * scale) %>%
-        group_by(outcome) %>%
-        nest() %>%
-        mutate(
-          fit1 = private$call_lm(data, private$model$unctrl, private$se_type, private$cluster),
-          fit2 = private$call_lm(data, private$model$ctrl1, private$se_type, private$cluster),
-          avg = map_dbl(
-            data,
-            ~ mean(subset(., treat == private$ctrl_arm)$value)
-          )
-        ) %>%
-        ungroup() %>%
-        pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
-          names_to = "model",
-          values_to = "fit"
-        ) %>%
-        mutate(
-          covs = if_else(model != "1", "X", "")
-        )
-
-      LmAll$new(est)
-    },
     fit_subset_by_gender = function(scale = 1, covariates = TRUE) {
       model <- if (!covariates) {
         private$model$unctrl
@@ -467,137 +440,6 @@ LmCluster <- R6::R6Class("LmCluster",
         )
 
       LmSubset$new(est, age_cut)
-    },
-    fit_interaction_of_gender_age = function(age_cut = 30, scale = 1) {
-      lh_null <- c(
-        "treatB",
-        "treatC",
-        "treatD",
-        "treatB + treatB:groupOlder female",
-        "treatC + treatC:groupOlder female",
-        "treatD + treatD:groupOlder female",
-        "treatB + treatB:groupYoung male",
-        "treatC + treatC:groupYoung male",
-        "treatD + treatD:groupYoung male",
-        "treatB + treatB:groupOlder male",
-        "treatC + treatC:groupOlder male",
-        "treatD + treatD:groupOlder male"
-      )
-
-      use_x <- private$covariates
-      use_x_2 <- use_x[!str_detect(use_x, "male|age")]
-      use_x_2_int <- paste0(use_x_2, ":group")
-
-      interaction_mod <- list(
-        unctrl = reformulate("treat * group", "value"),
-        ctrl1 = reformulate(
-          c("treat * group", use_x_2_int),
-          "value"
-        )
-      )
-
-      mean_age <- private$mean_age
-
-      est <- self$data %>%
-        mutate(
-          value = value * scale,
-          young = if_else(age < age_cut - mean_age, 1, 0),
-          group = case_when(
-            male == 0 & young == 1 ~ 1,
-            male == 0 & young == 0 ~ 2,
-            male == 1 & young == 1 ~ 3,
-            male == 1 & young == 0 ~ 4
-          ),
-          group = factor(
-            group,
-            labels = c("Young female", "Older female", "Young male", "Older male")
-          )
-        ) %>%
-        group_by(outcome) %>%
-        nest() %>%
-        mutate(
-          fit1 = private$call_lh(
-            data,
-            interaction_mod$unctrl,
-            private$se_type,
-            private$cluster,
-            lh_null
-          ),
-          fit2 = private$call_lh(
-            data,
-            interaction_mod$ctrl1,
-            private$se_type,
-            private$cluster,
-            lh_null
-          )
-        ) %>%
-        ungroup() %>%
-        pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
-          names_to = "model",
-          values_to = "fit"
-        ) %>%
-        mutate(
-          covs = if_else(model != "1", "X", "")
-        )
-
-      LmInteraction$new(est, age_cut)
-    },
-    fit_interaction_of_gender = function(scale = 1) {
-      lh_null <- c(
-        "treatB",
-        "treatC",
-        "treatD",
-        "treatB + treatB:male",
-        "treatC + treatC:male",
-        "treatD + treatD:male"
-      )
-
-      use_x <- private$covariates
-      use_x_2 <- use_x[!str_detect(use_x, "male")]
-      use_x_2_int <- paste0(use_x_2, ":male")
-
-      interaction_mod <- list(
-        unctrl = reformulate("treat * male", "value"),
-        ctrl1 = reformulate(
-          c("treat * male", use_x_2_int),
-          "value"
-        )
-      )
-
-      est <- self$data %>%
-        mutate(value = value * scale) %>%
-        group_by(outcome) %>%
-        nest() %>%
-        mutate(
-          fit1 = private$call_lh(
-            data,
-            interaction_mod$unctrl,
-            private$se_type,
-            private$cluster,
-            lh_null
-          ),
-          fit2 = private$call_lh(
-            data,
-            interaction_mod$ctrl1,
-            private$se_type,
-            private$cluster,
-            lh_null
-          )
-        ) %>%
-        ungroup() %>%
-        pivot_longer(
-          fit1:fit2,
-          names_prefix = "fit",
-          names_to = "model",
-          values_to = "fit"
-        ) %>%
-        mutate(
-          covs = if_else(model != "1", "X", "")
-        )
-
-      LmInteractionGender$new(est)
     }
   ),
   private = list(
@@ -629,6 +471,20 @@ LmCluster <- R6::R6Class("LmCluster",
         }
       )
     }
+  )
+)
+
+LmFit <- R6::R6Class("LmFit",
+  public = list(
+    initialize = function(est, model_type) {
+      private$est <- est
+      private$type <- model_type
+    },
+    get_est = function() private$est
+  ),
+  private = list(
+    est = NULL,
+    type = NULL
   )
 )
 
