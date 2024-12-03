@@ -517,7 +517,6 @@ LmFit <- R6::R6Class("LmFit",
           general_title = "",
           general = paste(
             "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
-            "The robust standard errors are in parentheses.",
             notes
           ),
           threeparttable = TRUE,
@@ -666,7 +665,110 @@ LmFit <- R6::R6Class("LmFit",
 LmFitSubset <- R6::R6Class("LmFitSubset",
   public = list(
     initialize = function(est) private$est <- est,
-    get_est = function() private$est
+    get_est = function() private$est,
+    kable = function(title = "",
+                    notes = "",
+                    font_size = 9,
+                    digit = 2,
+                    hold = FALSE)
+    {
+      est <- private$est
+
+      coef_map <- c(
+        "treatB" = "Treatment B",
+        "treatC" = "Treatment C",
+        "treatD" = "Treatment D"
+      )
+
+      avg_format <- paste0("%1.", digit, "f")
+
+      tbl_list <- list()
+
+      for (g in levels(est$group)) {
+        use <- est[est$group == g, ]
+
+        add_tab <- data.frame(
+          rbind(
+            c("Control average", sprintf(avg_format, use$avg))
+          )
+        )
+        names(add_tab) <- c("term", paste0("(", seq(nrow(use)), ")"))
+
+        tbl <- use %>%
+          pull(fit) %>%
+          modelsummary(
+            coef_map = coef_map,
+            stars = c("***" = .01, "**" = .05, "*" = .1),
+            gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+            add_rows = add_tab,
+            fmt = digit,
+            output = "data.frame"
+          )
+
+        tbl_part <- list(
+          estimates = tbl[tbl$part == "estimates", ],
+          manual = tbl[tbl$part == "manual", ],
+          gof = tbl[tbl$part == "gof", ]
+        )
+
+        tbl2 <- tbl_part %>%
+          reduce(bind_rows) %>%
+          mutate(
+            term = if_else(statistic == "std.error", "", term),
+            group = g
+          ) %>%
+          select(-part, -statistic) %>%
+          select(group, everything())
+
+        tbl_list <- append(tbl_list, list(tbl2))
+      }
+
+      tbl3 <- tbl_list %>%
+        reduce(bind_rows)
+
+      kbl <- tbl3 %>%
+        select(-group) %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", names(tbl3)[-c(1:2)]),
+          align = paste(c("l", rep("c", ncol(tbl3) - 2)), collapse = "")
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- c(" ", as.character(unique(est$outcome)))
+      label_structure <- rle(label)
+      lab1 <- label_structure$lengths
+      names(lab1) <- label_structure$values
+
+      kbl <- kbl %>% kableExtra::add_header_above(lab1)
+
+      for (g in levels(est$group)) {
+        pos <- which(tbl3$group == g)
+        start <- min(pos)
+        end <- max(pos)
+
+        kbl <- kbl %>% group_rows(g, start, end)
+      }
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
   ),
   private = list(
     est = NULL
