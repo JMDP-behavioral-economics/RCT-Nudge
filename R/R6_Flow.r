@@ -237,6 +237,56 @@ Flow <- R6::R6Class("Flow",
 
       FlowFitCumulative$new(plotdt)
     },
+    lm_time_segment = function( cut_days = c(7, 11),
+                                demean_covariate = TRUE,
+                                hide_message = TRUE)
+    {
+      dt <- self$data %>%
+        mutate(
+          period_1 = case_when(
+            is.na(days_reply) ~ 0,
+            days_reply <= cut_days[1] ~ value,
+            TRUE ~ 0
+          ),
+          period_2 = case_when(
+            is.na(days_reply) ~ 0,
+            days_reply <= cut_days[1] ~ 0,
+            days_reply <= cut_days[2] ~ value,
+            TRUE ~ 0
+          ),
+          period_3 = case_when(
+            is.na(days_reply) ~ 0,
+            days_reply <= cut_days[2] ~ 0,
+            TRUE ~ value
+          )
+        ) %>%
+        pivot_longer(
+          period_1:period_3,
+          names_to = "period",
+          names_prefix = "period_",
+          values_to = "flow_value"
+        )
+
+      start_days <- c(
+        min(dt2$days_reply, na.rm = TRUE), cut_days[1:2] + 1
+      )
+
+      end_days <- c(
+        cut_days[1:2], max(dt2$days_reply, na.rm = TRUE)
+      )
+
+      range_days <- paste0(start_days, "--", end_days, " days")
+
+      dt2 <- dt %>%
+        mutate(
+          period = as.numeric(period),
+          period = factor(period, labels = range_days)
+        ) %>%
+        select(-outcome, -value) %>%
+        rename(outcome = period, value = flow_value)
+
+      Lm$new(dt2, demean_covariate, private$se, private$cluster, hide_message)
+    },
     fit_segment = function( cut_days = c(7, 11),
                             interaction_of_gender = FALSE,
                             interaction_of_gender_age = FALSE,
@@ -345,7 +395,7 @@ Flow <- R6::R6Class("Flow",
       }
 
       est <- est_dt %>%
-        group_by(period) %>%
+        group_by(period) %>% #!ここをoutcomeに変えたい
         nest() %>%
         mutate(
           min_days = map_dbl(data, ~ with(., min(days_reply, na.rm = TRUE))),
