@@ -59,32 +59,38 @@ RCT <- R6Class("RCT",
         private$covariate
       )
     },
-    lm = function(outcome_id,
-                  sample_drop = TRUE,
-                  demean_covariate = TRUE,
-                  se,
-                  cluster)
+    lm_effect = function( outcome,
+                          sample_drop = TRUE,
+                          demean_covariate = TRUE,
+                          se,
+                          cluster,
+                          hide_message = TRUE)
     {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
 
       use <- private$create_analysis_data(sample_drop)
-      if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
+      if (!missing(outcome)) {
+        outcome_id <- which(names(private$outcome) == outcome)
+        use <- private$subset_by_outcome(use, outcome_id)
+      }
 
       if (missing(cluster)) cluster <- private$cluster
-      if (is.null(cluster)) {
-        Lm$new(use, demean_covariate, se)
-      } else {
-        LmCluster$new(use, demean_covariate, se, cluster)
-      }
+
+      Lm$new(use, demean_covariate, se, cluster, hide_message)
     },
-    logit = function( outcome_id,
-                      sample_drop = TRUE,
-                      demean_covariate = TRUE)
+    logit_effect = function(outcome,
+                            sample_drop = TRUE,
+                            demean_covariate = TRUE,
+                            hide_message = TRUE)
     {
       use <- private$create_analysis_data(sample_drop)
-      if (!missing(outcome_id)) use <- private$subset_by_outcome(use, outcome_id)
-      Logit$new(use, demean_covariate)
+      if (!missing(outcome)) {
+        outcome_id <- which(names(private$outcome) == outcome)
+        use <- private$subset_by_outcome(use, outcome_id)
+      }
+
+      Logit$new(use, demean_covariate, hide_message)
     },
     rcf = function(outcome, sample_drop = TRUE) {
       if (length(private$covariate) == 0) stop("Specify covariate by add_covariate()")
@@ -103,11 +109,10 @@ RCT <- R6Class("RCT",
 
       RCF$new(Y, D, X, private$covariate)
     },
-    flow = function(se,
-                    cluster,
-                    outcome,
-                    demean_covariate = TRUE,
-                    sample_drop = TRUE)
+    flow = function(outcome,
+                    sample_drop = TRUE,
+                    se,
+                    cluster)
     {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
@@ -118,21 +123,22 @@ RCT <- R6Class("RCT",
       use <- private$subset_by_outcome(dt, outcome_id)
 
       if (missing(cluster)) cluster <- private$cluster
-      Flow$new(use, demean_covariate, se, cluster)
+      Flow$new(use, se, cluster)
     },
-    decompose_effect = function(endpoint,
-                                demean_covariate = TRUE,
-                                se,
-                                cluster)
+    lm_decompose_effect = function( outcome,
+                                    demean_covariate = TRUE,
+                                    se,
+                                    cluster,
+                                    hide_message = TRUE)
     {
       if (missing(se)) se <- private$se_type
       if (se == "") stop("Specify se_type by set_default_se_type()")
 
-      previous_endpoint <- names(private$outcome)[which(names(private$outcome) == endpoint) - 1]
+      previous_endpoint <- names(private$outcome)[which(names(private$outcome) == outcome) - 1]
 
       dt <- self$data
-      dt$exg_stop <- dt[, paste0("exg_stop_", endpoint), drop = TRUE]
-      dt$endpoint <- dt[, endpoint, drop = TRUE]
+      dt$exg_stop <- dt[, paste0("exg_stop_", outcome), drop = TRUE]
+      dt$endpoint <- dt[, outcome, drop = TRUE]
       dt$before_endpoint <- dt[, previous_endpoint, drop = TRUE]
       dt$exg_attr <- ifelse(dt$before_endpoint == 1 & dt$endpoint == 0 & dt$exg_stop == 1, 0, 1)
       dt$end_attr <- ifelse(dt$before_endpoint == 1 & dt$endpoint == 0 & dt$exg_stop == 0, 0, 1)
@@ -153,11 +159,8 @@ RCT <- R6Class("RCT",
         )
 
       if (missing(cluster)) cluster <- private$cluster
-      if (is.null(cluster)) {
-        Lm$new(use, demean_covariate, se)
-      } else {
-        LmCluster$new(use, demean_covariate, se, cluster)
-      }
+
+      Lm$new(use, demean_covariate, se, cluster, hide_message)
     },
     multiple_hypotheses_adjust = function(outcome, age_cut = 30) {
       MultipleHypothesis$new(self$data, outcome, age_cut)
