@@ -369,7 +369,15 @@ Flow <- R6::R6Class("Flow",
         ) %>%
         select(-min_days, -max_days)
 
-      FlowFitSegment$new(est)
+      model_label <- if (interaction_of_gender) {
+        "hetero-gender"
+      } else if (interaction_of_gender_age) {
+        "hetero-gender-age"
+      } else {
+        "ate"
+      }
+
+      FlowFitSegment$new(est, model_label)
     }
   ),
   private = list(
@@ -408,7 +416,7 @@ Flow <- R6::R6Class("Flow",
         )
       } else {
         with(
-          subset(data, treat == private$ctrl),
+          subset(data, treat == private$ctrl_arm),
           mean(flow_value)
         )
       }
@@ -459,13 +467,16 @@ FlowFitCumulative <- R6::R6Class("FlowFitCumulative",
 
 FlowFitSegment <- R6::R6Class("FlowFitSegment",
   public = list(
-    initialize = function(est) private$est <- est,
+    initialize = function(est, model) {
+      private$est <- est
+      private$model <- model
+    },
     get_est = function() private$est,
-    kable = function( title = "",
-                      notes = "",
-                      font_size = 9,
-                      digit = 2,
-                      hold = FALSE)
+    kable_reg = function( title = "",
+                          notes = "",
+                          font_size = 9,
+                          digit = 2,
+                          hold = FALSE)
     {
       res <- private$est %>%
         pivot_longer(
@@ -479,26 +490,74 @@ FlowFitSegment <- R6::R6Class("FlowFitSegment",
           range_days = paste0(start_days, "--", end_days, " days")
         )
 
-      avg_format <- paste0("%1.", digit, "f")
-
-      add_tab <- data.frame(
-        rbind(
-          c("Control average", sprintf(avg_format, res$avg)),
-          c("Covariates", res$covariate)
+      if (private$model == "ate") {
+        coef_map <- c(
+          "treatB" = "Treatment B",
+          "treatC" = "Treatment C",
+          "treatD" = "Treatment D"
         )
-      )
 
-      attr(add_tab, "position") <- 7:8
+        avg_format <- paste0("%1.", digit, "f")
 
-      kbl <- res %>%
-        pull(fit) %>%
-        modelsummary(
-          title = title,
-          coef_map = c(
+        add_tab <- data.frame(
+          rbind(
+            c("Control average", sprintf(avg_format, res$avg)),
+            c("Covariates", res$covariate)
+          )
+        )
+
+        attr(add_tab, "position") <- seq(
+          length(coef_map) * 2 + 1,
+          length.out = nrow(add_tab)
+        )
+      } else {
+        coef_map <- if (private$model == "hetero-gender") {
+          c(
             "treatB" = "Treatment B",
             "treatC" = "Treatment C",
-            "treatD" = "Treatment D"
-          ),
+            "treatD" = "Treatment D",
+            "male" = "Male",
+            "treatB:male" = "Treatment B $\\times$ Male",
+            "treatC:male" = "Treatment C $\\times$ Male",
+            "treatD:male" = "Treatment D $\\times$ Male"
+          )
+        } else {
+          c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D",
+            "groupOlder female" = "Older female",
+            "groupYoung male" = "Young male",
+            "groupOlder male" = "Older male",
+            "treatB:groupOlder female" = "Treatment B $\\times$ Older female",
+            "treatC:groupOlder female" = "Treatment C $\\times$ Older female",
+            "treatD:groupOlder female" = "Treatment D $\\times$ Older female",
+            "treatB:groupYoung male" = "Treatment B $\\times$ Young male",
+            "treatC:groupYoung male" = "Treatment C $\\times$ Young male",
+            "treatD:groupYoung male" = "Treatment D $\\times$ Young male",
+            "treatB:groupOlder male" = "Treatment B $\\times$ Older male",
+            "treatC:groupOlder male" = "Treatment C $\\times$ Older male",
+            "treatD:groupOlder male" = "Treatment D $\\times$ Older male"
+          )
+        }
+
+        add_tab <- data.frame(
+          rbind(c("Covariates", res$covariate))
+        )
+
+        attr(add_tab, "position") <- seq(
+          length(coef_map) * 2 + 1,
+          length.out = nrow(add_tab)
+        )
+      }
+
+      fit <- pull(res, fit)
+      if (private$model != "ate") fit <- map(fit, ~ .$lm_robust)
+
+      kbl <- fit %>%
+        modelsummary(
+          title = title,
+          coef_map = coef_map,
           stars = c("***" = .01, "**" = .05, "*" = .1),
           gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
           align = paste(c("l", rep("c", nrow(res))), collapse = ""),
@@ -533,11 +592,116 @@ FlowFitSegment <- R6::R6Class("FlowFitSegment",
           threeparttable = TRUE,
           escape = FALSE
         )
+    },
+    kable_lh = function(title = "",
+                        notes = "",
+                        font_size = 9,
+                        digit = 2,
+                        hold = FALSE)
+    {
+      if (private$model == "ate") stop("No linear combination test!")
 
-      kbl
+      res <- private$est %>%
+        pivot_longer(
+          fit_1:fit_2,
+          names_to = "model",
+          names_prefix = "fit_",
+          values_to = "fit"
+        ) %>%
+        mutate(
+          covariate = if_else(model == "2", "X", ""),
+          range_days = paste0(start_days, "--", end_days, " days")
+        )
+
+      coef_map <- if (private$model == "hetero-gender") {
+        c(
+          "treatB" = "Treatment B_Females",
+          "treatC" = "Treatment C_Females",
+          "treatD" = "Treatment D_Females",
+          "treatB + treatB:male" = "Treatment B_Males",
+          "treatC + treatC:male" = "Treatment C_Males",
+          "treatD + treatD:male" = "Treatment D_Males"
+        )
+      } else {
+        c(
+          "treatB" = "Treatment B_Young Females",
+          "treatC" = "Treatment C_Young Females",
+          "treatD" = "Treatment D_Young Females",
+          "treatB + treatB:groupOlder female" = "Treatment B_Older Females",
+          "treatC + treatC:groupOlder female" = "Treatment C_Older Females",
+          "treatD + treatD:groupOlder female" = "Treatment D_Older Females",
+          "treatB + treatB:groupYoung male" = "Treatment B_Young Males",
+          "treatC + treatC:groupYoung male" = "Treatment C_Young Males",
+          "treatD + treatD:groupYoung male" = "Treatment D_Young Males",
+          "treatB + treatB:groupOlder male" = "Treatment B_Older Males",
+          "treatC + treatC:groupOlder male" = "Treatment C_Older Males",
+          "treatD + treatD:groupOlder male" = "Treatment D_Older Males"
+        )
+      }
+
+      add_tab <- data.frame(
+        rbind(c("Covariates", res$covariate))
+      )
+
+      attr(add_tab, "position") <- seq(
+        length(coef_map) * 2 + 1,
+        length.out = nrow(add_tab)
+      )
+
+      fit <- res %>%
+        pull(fit) %>%
+        map(~ .$lh)
+
+      tbl <- fit %>%
+        modelsummary(
+          coef_map = coef_map,
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          fmt = digit,
+          output = "data.frame"
+        ) %>%
+        filter(part == "estimates") %>%
+        select(-part)
+
+      kbl <- tbl %>%
+        mutate(term = if_else(statistic == "estimate", str_remove(term, "_.*"), "")) %>%
+        select(-statistic) %>%
+        knitr::kable(
+          caption = title,
+          col.names = c("", names(tbl)[-c(1,2)]),
+          align = paste(c("l", rep("c", nrow(res))), collapse = "")
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- c(" ", res$range_days)
+      label_structure <- rle(label)
+      lab1 <- label_structure$lengths
+      names(lab1) <- label_structure$values
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(lab1)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            "The robust standard errors are in parentheses.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
     }
   ),
   private = list(
-    est = NULL
+    est = NULL,
+    model = NULL
   )
 )

@@ -175,63 +175,26 @@ plotdt %>%
     theme(legend.position = "bottom")
 ```
 
-```{r eval = FALSE}
+```{r dist-response-speed, fig.cap = "Density of Number of Days Required for Reply"}
 rct$
-  flow(outcome = "positive", sample_drop = FALSE)$
-  fit(days = 1:15, scale = 100)$
-  plot(ylim = c(-7, 7), ybreaks = 5)
-
-model <- value ~ treat + male +
-  age_demean + I(age_demean^2) + coordinate +
-  holidays + hospital_per_area + PB_per_area + BM_per_area
-
-rhs <- labels(terms(model))
-rhs[str_detect(rhs, "age|male")]
-
-
-
-with(rct$data, table(days_reply, positive, useNA = "always"))
-
-lm_robust(
-  I(test * 100) ~ days_reply,
-  data = subset(rct$data, positive == 1 & treat == "A")
-)
-
-lm_robust(
-  days_reply ~ treat,
-  # days_reply ~ treat * male + age_demean:male + I(age_demean^2):male +
-  #   coordinate:male + holidays:male + hospital_per_area:male + PB_per_area:male + BM_per_area:male,
-  data = subset(rct$data, positive == 1),
-  se_type = "stata"
-)
-
-rct$data %>%
-  # filter(reply == 1) %>%
-  mutate(
-    short_reply = case_when(
-      reply == 0 ~ 0,
-      days_reply > 3 ~ 0,
-      TRUE ~ positive * 100
-    ),
-    young = if_else(age < 30, 1, 0),
-    group = case_when(
-      male == 0 & young == 1 ~ 1,
-      male == 0 & young == 0 ~ 2,
-      male == 1 & young == 1 ~ 3,
-      male == 1 & young == 0 ~ 4
-    ),
-    group = factor(
-      group,
-      labels = c("Young female", "Older female", "Young male", "Older male")
-    )
-  ) %>%
-  filter(reply == 0 | days_reply > 0) %>%
-  lm_robust(
-    short_reply ~ treat * group + age_demean:group + I(age_demean^2):group +
-      coordinate:group + holidays:group + hospital_per_area:group + PB_per_area:group + BM_per_area:group,
-    data = .,
-    se_type = "stata"
+  flow(outcome = c("reply"))$
+  plot_density(
+    upper_days = 50,
+    subset_by_gender_age = TRUE,
+    age_cut = 40,
+    x_breaks = seq(0, 100, by = 4)
   )
+```
+
+```{r}
+FlowFitSegment$debug("kable_lh")
+
+rct$
+  flow(outcome = c("reply"))$
+  fit_segment(scale = 100, interaction_of_gender = TRUE)$
+  kable_lh()
+
+str_split("Treatment B_Young female", "_", simplify = TRUE)[, 1]
 ```
 
 ```{r set-test-reg-class, include=FALSE}
