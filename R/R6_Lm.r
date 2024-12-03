@@ -202,7 +202,7 @@ Lm <- R6::R6Class("Lm",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        mutate(covs = if_else(model != "1", "X", ""))
+        mutate(covariate = if_else(model != "1", "X", ""))
 
       LmFit$new(est, model_type)
     },
@@ -480,7 +480,117 @@ LmFit <- R6::R6Class("LmFit",
       private$est <- est
       private$type <- model_type
     },
-    get_est = function() private$est
+    get_est = function() private$est,
+    kable_reg = function( title = "",
+                          notes = "",
+                          font_size = 9,
+                          digit = 2,
+                          hold = FALSE)
+    {
+      res <- private$est
+
+      if (private$type == "ate") {
+        coef_map <- c(
+          "treatB" = "Treatment B",
+          "treatC" = "Treatment C",
+          "treatD" = "Treatment D"
+        )
+
+        avg_format <- paste0("%1.", digit, "f")
+
+        add_tab <- data.frame(
+          rbind(
+            c("Control average", sprintf(avg_format, res$avg)),
+            c("Covariates", res$covariate)
+          )
+        )
+
+        attr(add_tab, "position") <- seq(
+          length(coef_map) * 2 + 1,
+          length.out = nrow(add_tab)
+        )
+      } else {
+        coef_map <- if (private$type == "hetero-gender") {
+          c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D",
+            "male" = "Male",
+            "treatB:male" = "Treatment B $\\times$ Male",
+            "treatC:male" = "Treatment C $\\times$ Male",
+            "treatD:male" = "Treatment D $\\times$ Male"
+          )
+        } else {
+          c(
+            "treatB" = "Treatment B",
+            "treatC" = "Treatment C",
+            "treatD" = "Treatment D",
+            "groupOlder female" = "Older female",
+            "groupYoung male" = "Young male",
+            "groupOlder male" = "Older male",
+            "treatB:groupOlder female" = "Treatment B $\\times$ Older female",
+            "treatC:groupOlder female" = "Treatment C $\\times$ Older female",
+            "treatD:groupOlder female" = "Treatment D $\\times$ Older female",
+            "treatB:groupYoung male" = "Treatment B $\\times$ Young male",
+            "treatC:groupYoung male" = "Treatment C $\\times$ Young male",
+            "treatD:groupYoung male" = "Treatment D $\\times$ Young male",
+            "treatB:groupOlder male" = "Treatment B $\\times$ Older male",
+            "treatC:groupOlder male" = "Treatment C $\\times$ Older male",
+            "treatD:groupOlder male" = "Treatment D $\\times$ Older male"
+          )
+        }
+
+        add_tab <- data.frame(
+          rbind(c("Covariates", res$covariate))
+        )
+
+        attr(add_tab, "position") <- seq(
+          length(coef_map) * 2 + 1,
+          length.out = nrow(add_tab)
+        )
+      }
+
+      fit <- pull(res, fit)
+      if (private$type != "ate") fit <- map(fit, ~ .$lm_robust)
+
+      kbl <- fit %>%
+        modelsummary(
+          title = title,
+          coef_map = coef_map,
+          stars = c("***" = .01, "**" = .05, "*" = .1),
+          gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+          align = paste(c("l", rep("c", nrow(res))), collapse = ""),
+          add_rows = add_tab,
+          fmt = digit
+        )
+
+      if (hold) {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      } else {
+        kbl <- kbl %>%
+          kableExtra::kable_styling(font_size = font_size)
+      }
+
+      label <- c(" ", as.character(res$outcome))
+      label_structure <- rle(label)
+      lab1 <- label_structure$lengths
+      names(lab1) <- label_structure$values
+
+      kbl <- kbl %>%
+        kableExtra::add_header_above(lab1)
+
+      kbl %>%
+        kableExtra::footnote(
+          general_title = "",
+          general = paste(
+            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+            notes
+          ),
+          threeparttable = TRUE,
+          escape = FALSE
+        )
+    }
   ),
   private = list(
     est = NULL,
