@@ -387,21 +387,16 @@ LmFit <- R6::R6Class("LmFit",
             c("Covariates", res$covariate)
           )
         )
-
-        attr(add_tab, "position") <- seq(
-          length(private$coef_map_lm) + 1,
-          length.out = nrow(add_tab)
-        )
       } else {
         add_tab <- data.frame(
           rbind(c("Covariates", res$covariate))
         )
-
-        attr(add_tab, "position") <- seq(
-          length(private$coef_map_lm) + 1,
-          length.out = nrow(add_tab)
-        )
       }
+
+      attr(add_tab, "position") <- seq(
+        length(private$coef_map_lm) * 2 + 1,
+        length.out = nrow(add_tab)
+      )
 
       fit <- pull(res, fit)
       if (private$type != "ate") fit <- map(fit, ~ .$lm_robust)
@@ -410,8 +405,6 @@ LmFit <- R6::R6Class("LmFit",
         modelsummary(
           title = title,
           coef_map = private$coef_map_lm,
-          estimate = "{estimate} ({std.error}){stars}",
-          statistic = NULL,
           stars = c("***" = .01, "**" = .05, "*" = .1),
           gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
           align = paste(c("l", rep("c", nrow(res))), collapse = ""),
