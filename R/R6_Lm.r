@@ -389,7 +389,7 @@ LmFit <- R6::R6Class("LmFit",
         )
 
         attr(add_tab, "position") <- seq(
-          length(private$coef_map_lm) * 2 + 1,
+          length(private$coef_map_lm) + 1,
           length.out = nrow(add_tab)
         )
       } else {
@@ -398,7 +398,7 @@ LmFit <- R6::R6Class("LmFit",
         )
 
         attr(add_tab, "position") <- seq(
-          length(private$coef_map_lm) * 2 + 1,
+          length(private$coef_map_lm) + 1,
           length.out = nrow(add_tab)
         )
       }
@@ -410,6 +410,8 @@ LmFit <- R6::R6Class("LmFit",
         modelsummary(
           title = title,
           coef_map = private$coef_map_lm,
+          estimate = "{estimate} ({std.error}){stars}",
+          statistic = NULL,
           stars = c("***" = .01, "**" = .05, "*" = .1),
           gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
           align = paste(c("l", rep("c", nrow(res))), collapse = ""),
@@ -468,6 +470,8 @@ LmFit <- R6::R6Class("LmFit",
       tbl <- fit %>%
         modelsummary(
           coef_map = private$coef_map_lh,
+          estimate = "{estimate} ({std.error}){stars}",
+          statistic = NULL,
           stars = c("***" = .01, "**" = .05, "*" = .1),
           fmt = digit,
           output = "data.frame"
@@ -698,6 +702,8 @@ LmFitSubset <- R6::R6Class("LmFitSubset",
           pull(fit) %>%
           modelsummary(
             coef_map = coef_map,
+            estimate = "{estimate} ({std.error}){stars}",
+            statistic = NULL,
             stars = c("***" = .01, "**" = .05, "*" = .1),
             gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
             add_rows = add_tab,
