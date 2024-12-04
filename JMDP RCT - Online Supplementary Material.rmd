@@ -175,7 +175,8 @@ rct$
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
     hold = TRUE,
     font_size = 8
-  )
+  ) %>%
+  column_spec(1, width = "20em")
 ```
 
 ```{r logit-test}
@@ -188,7 +189,8 @@ rct$
     fmt = "%.2f",
     hold = TRUE,
     font_size = 8
-  )
+  ) %>%
+  column_spec(1, width = "20em")
 ```
 
 ```{r lm-test-initial}
@@ -200,7 +202,8 @@ rct_initial$
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We restricted the analysis sample to those who matched the first time. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
     hold = TRUE,
     font_size = 8
-  )
+  ) %>%
+  column_spec(1, width = "20em")
 ```
 
 ```{r lm-test-noskip}
@@ -212,7 +215,8 @@ rct_noskip$
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
     hold = TRUE,
     font_size = 8
-  )
+  ) %>%
+  column_spec(1, width = "20em")
 ```
 
 ### Heterogeneous Treatment Effects
@@ -234,7 +238,8 @@ test_interaction_gender$
     notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
     hold = TRUE,
     font_size = 8
-  )
+  ) %>%
+  column_spec(1, width = "20em")
 ```
 
 ```{r lh-interaction-gender-test}
@@ -244,7 +249,8 @@ test_interaction_gender$
     notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-test}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
     hold = TRUE,
     font_size = 8
-  )
+  ) %>%
+  column_spec(1:2, width = "8em")
 ```
 
 ```{r mh-adjust-gender-test}
@@ -283,11 +289,12 @@ mha_gender_test %>%
 ```{r lm-interaction-gender-age-test}
 test_interaction_gender_age$
   kable_reg(
-  title = "Heterogenous Message Effects on CT by Gender-Age Group",
-  notes = "The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.",
-  hold = TRUE,
-  font_size = 8
-)
+    title = "Heterogenous Message Effects on CT by Gender-Age Group",
+    notes = "The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.",
+    hold = TRUE,
+    font_size = 8
+  ) %>%
+  column_spec(1, width = "20em")
 ```
 
 ```{r lh-interaction-gender-age-test}
@@ -297,7 +304,8 @@ test_interaction_gender_age$
     notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-test}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
     hold = TRUE,
     font_size = 8
-  )
+  ) %>%
+  column_spec(1:2, width = "8em")
 ```
 
 ```{r mh-adjust-gender-age-test}
@@ -461,7 +469,7 @@ plotdt %>%
     theme(legend.position = "bottom")
 ```
 
-```{r dist-response-speed, fig.cap = "Density of Number of Days Required for Response with Positive Intention. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers."}
+```{r dist-response-speed, fig.cap = "Density of Number of Days Required for Response with Positive Intention. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.", fig.pos = "H"}
 rct_noskip$
   flow(outcome = "positive", sample_drop = FALSE)$
   plot_density(
@@ -496,7 +504,7 @@ rct_noskip$
   )
 ```
 
-```{r dist-response-speed-by-gender, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers."}
+```{r dist-response-speed-by-gender, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.", fig.pos = "H"}
 rct_noskip$
   flow(outcome = "positive", sample_drop = FALSE)$
   plot_density(
@@ -538,7 +546,7 @@ int_t_decompose_gender$
   )
 ```
 
-```{r dist-response-speed-by-gender-age, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers."}
+```{r dist-response-speed-by-gender-age, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.", fig.pos = "H"}
 rct_noskip$
   flow(outcome = "positive", sample_drop = FALSE)$
   plot_density(
