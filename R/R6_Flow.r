@@ -168,11 +168,11 @@ Flow <- R6::R6Class("Flow",
         )
 
       start_days <- c(
-        min(dt2$days_reply, na.rm = TRUE), cut_days[1:2] + 1
+        min(dt$days_reply, na.rm = TRUE), cut_days[1:2] + 1
       )
 
       end_days <- c(
-        cut_days[1:2], max(dt2$days_reply, na.rm = TRUE)
+        cut_days[1:2], max(dt$days_reply, na.rm = TRUE)
       )
 
       range_days <- paste0(start_days, "--", end_days, " days")

@@ -5,18 +5,32 @@ source(here("R/misc.r"))
 
 MultipleHypothesis <- R6::R6Class("MultipleHypothesis",
   public = list(
-    initialize = function(data, outcome, age_cut) {
-      private$data <- data %>%
-        mutate(
-          young = if_else(age < age_cut, 1, 0),
-          group = case_when(
-            male == 0 & young == 1 ~ 1,
-            male == 0 & young == 0 ~ 2,
-            male == 1 & young == 1 ~ 3,
-            male == 1 & young == 0 ~ 4
-          ),
-          group = factor(group, labels = c("Young female", "Older female", "Young male", "Older male"))
-        )
+    initialize = function(data, outcome, gender_age, age_cut) {
+      private$data <- if (!gender_age) {
+        data %>%
+          mutate(
+            group = male,
+            group = factor(group, labels = c("Female", "Male"))
+          )
+      } else {
+        data %>%
+          mutate(
+            young = if_else(age < age_cut, 1, 0),
+            group = case_when(
+              male == 0 & young == 1 ~ 1,
+              male == 0 & young == 0 ~ 2,
+              male == 1 & young == 1 ~ 3,
+              male == 1 & young == 0 ~ 4
+            ),
+            group = factor(
+              group,
+              labels = c(
+                "Young female", "Older female",
+                "Young male", "Older male"
+              )
+            )
+          )
+      }
 
       private$outcome <- outcome
     },

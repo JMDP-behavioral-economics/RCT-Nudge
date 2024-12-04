@@ -162,8 +162,8 @@ RCT <- R6Class("RCT",
 
       Lm$new(use, demean_covariate, se, cluster, hide_message)
     },
-    multiple_hypotheses_adjust = function(outcome, age_cut = 30) {
-      MultipleHypothesis$new(self$data, outcome, age_cut)
+    multiple_hypotheses_adjust = function(outcome, gender_age = FALSE, age_cut = 30) {
+      MultipleHypothesis$new(self$data, outcome, gender_age, age_cut)
     }
   ),
   private = list(

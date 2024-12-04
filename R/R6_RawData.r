@@ -30,6 +30,10 @@ RawData <- R6::R6Class("RawData",
       private$filter_cond <- append(private$filter_cond, condition)
       invisible(private$filter_cond)
     },
+    get_cond_study_sample = function() {
+      print(private$filter_cond)
+      invisible(self)
+    },
     balance_attrition = function(cluster = NULL, se = "stata") {
       x <- self$data[, private$treat, drop = TRUE]
       args <- list(se_type = se)
