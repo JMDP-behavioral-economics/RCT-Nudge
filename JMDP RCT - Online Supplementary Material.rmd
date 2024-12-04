@@ -56,6 +56,7 @@ options(
 
 ```{r library, include=FALSE}
 library(here)
+library(xfun)
 source(here("R/R6_RawData.r"))
 source(here("R/R6_Schedule.r"))
 
@@ -64,7 +65,7 @@ options(
   modelsummary_stars_note = FALSE
 )
 
-data_root <- "D:/JMDPフィールド実験"
+data_root <- "E:/JMDPフィールド実験"
 ```
 
 ```{r assignment}
@@ -79,15 +80,26 @@ schedule$kable(
 )
 ```
 
-```{r set-class, include=FALSE}
+```{r data, include=FALSE}
 rawdt <- RawData$new(
   here(data_root, "shape.csv"),
   treat_vars = "treat",
   treat_levels = LETTERS[1:4]
 )
 
+# main sample
 rawdt$add_cond_study_sample("ongoing == 0")
 
+# robust sample (initially matched candidates)
+rawdt_initial <- rawdt$clone()
+rawdt_initial$add_cond_study_sample("coordinate == 1")
+
+# robust sample (remove those who skipped the CT)
+rawdt_noskip <- rawdt$clone()
+rawdt_noskip$add_cond_study_sample("reply == 0 | days_reply > 0")
+```
+
+```{r set-rct-class, include=FALSE}
 intervention <- list(
   "Standard notification" = c(A = "X", B = "X", C = "X", D = "X"),
   "Probability message" = c(A = "", B = "X", C = "", D = "X"),
@@ -103,11 +115,41 @@ endpoint <- list(
   donate = "Donation"
 )
 
+# main sample
 rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
-rct$set_default_se_type("stata")
+rct$set_default_se_type(params$se_type)
+
+# robust sample (initially matched candidate)
+rct_initial <- rawdt_initial$RCT()
+rct_initial$add_intervention(intervention)
+rct_initial$add_outcome(endpoint)
+if (params$is_cluster) rct_initial$set_default_cluster("RCTweek")
+rct_initial$set_default_se_type(params$se_type)
+
+# robust sample (remove those who skipped the CT)
+rct_noskip <- rawdt_noskip$RCT()
+rct_noskip$add_intervention(intervention)
+rct_noskip$add_outcome(endpoint)
+if (params$is_cluster) rct_noskip$set_default_cluster("RCTweek")
+rct_noskip$set_default_se_type(params$se_type)
+```
+
+## Balance Test
+
+```{r summary}
+rct$
+  summary_experiment()$
+  kable(
+  title = "Summary of Field Experiment",
+  notes = paste(
+    "\\\\emph{Note}: For the balance test, we regressed a covariate on treatment dummies and tested the null hypothesis that all coefficients are zero. We used robust standard errors for statistical inference."
+  ),
+  hold = TRUE,
+  font_size = 8
+)
 ```
 
 ```{r smd-balance}
@@ -121,7 +163,251 @@ rct$
   )
 ```
 
-```{r response-speed-CT, fig.cap = "Binned Scatter Plot of CT (or Reply with Positive Intention) vs. Response Days."}
+## Effect on the CT
+### Average Treatment Effects
+
+```{r lm-test}
+rct$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Linear Probability Model of the CT",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r logit-test}
+rct$
+  logit_effect("test", sample_drop = FALSE)$
+  fit()$
+  kable(
+    title = "Logit Model of the CT",
+    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lm-test-initial}
+rct_initial$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Linear Probability Model of the CT (Only First-time Matched Candidates)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We restricted the analysis sample to those who matched the first time. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lm-test-noskip}
+rct_noskip$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Linear Probability Model of the CT (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+### Heterogeneous Treatment Effects
+
+```{r set-lm-interaction-test, include=FALSE}
+test_interaction_gender <- rct$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100, interaction_of_gender = TRUE)
+
+test_interaction_gender_age <- rct$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100, interaction_of_gender_age = TRUE, age_cut = 40)
+```
+
+```{r lm-interaction-gender-test}
+test_interaction_gender$
+  kable_reg(
+    title = "Heterogenous Message Effects on CT by Gender",
+    notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lh-interaction-gender-test}
+test_interaction_gender$
+  kable_lh(
+    title = "Linear Combination Test: Message Effects on the CT for Specific Gender Group",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-test}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r mh-adjust-gender-test}
+mha_gender_test <- cache_rds(
+  {
+    rct$
+      multiple_hypotheses_adjust("test")$
+      estimate(scale = 100, B = 3000)$
+      get_result()
+  },
+  file = "mh-adjust-gender-test.rds"
+)
+
+mha_gender_test %>%
+  select(Subgroup.id, Treated.id, Diff, Single.p, List.p) %>%
+  knitr::kable(
+    caption = "Adjustment of p-values for Multiple Testing of Effect on the CT for Specific Gender Group",
+    col.names = c(
+      "Group", "Treatment", "Diff-in-mean", "Unadjusted", "Adjusted"
+    ),
+    digits = 3,
+    align = "llccc",
+    booktabs = TRUE,
+    linesep = ""
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 3, "p-values" = 2)) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: To adjust p-values for multiple testing, we employed the method proposed by List et al. (2019). For calculation of p-values, we used the bootstrapping with 3,000 boostrap samples.",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+```{r lm-interaction-gender-age-test}
+test_interaction_gender_age$
+  kable_reg(
+  title = "Heterogenous Message Effects on CT by Gender-Age Group",
+  notes = "The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.",
+  hold = TRUE,
+  font_size = 8
+)
+```
+
+```{r lh-interaction-gender-age-test}
+test_interaction_gender_age$
+  kable_lh(
+    title = "Linear Combination Test: Message Effects on CT for Specific Gender-Age Group",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-test}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r mh-adjust-gender-age-test}
+mha_gender_age_test <- cache_rds(
+  {
+    rct$
+      multiple_hypotheses_adjust("test", gender_age = TRUE, age_cut = 40)$
+      estimate(scale = 100, B = 3000)$
+      get_result()
+  },
+  file = "mh-adjust-gender-age-test.rds"
+)
+
+mha_gender_age_test %>%
+  select(Subgroup.id, Treated.id, Diff, Single.p, List.p) %>%
+  knitr::kable(
+    caption = "Adjustment of p-values for Multiple Testing of Effect on the CT for Specific Gender-Age Group",
+    col.names = c(
+      "Group", "Treatment", "Diff-in-mean", "Unadjusted", "Adjusted"
+    ),
+    digits = 3,
+    align = "llccc",
+    booktabs = TRUE,
+    linesep = ""
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 3, "p-values" = 2)) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: To adjust p-values for multiple testing, we employed the method proposed by List et al. (2019). For calculation of p-values, we used the bootstrapping with 3,000 boostrap samples.",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+### Decompose Effects: Intention and Attrition Perspectives
+
+```{r lm-test-decompose}
+rct$
+  lm_decompose_effect("test")$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Decompose Effect on the CT: Intention and Attrition Perspectives",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lm-test-decompose-noskip}
+rct_noskip$
+  lm_decompose_effect("test")$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Decompose Effect on the CT: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r set-lm-interaction-test-decompose-noskip, include=FALSE}
+test_decompose_interaction_gender <- rct_noskip$
+  lm_decompose_effect("test")$
+  fit(scale = 100, interaction_of_gender = TRUE)
+
+test_decompose_interaction_gender_age <- rct_noskip$
+  lm_decompose_effect("test")$
+  fit(scale = 100, interaction_of_gender_age = TRUE, age_cut = 40)
+```
+
+```{r lm-interaction-gender-test-decompose-noskip}
+test_decompose_interaction_gender$
+  kable_reg(
+    title = "Heterogenity of Decomposition of Effect on the CT by Gender: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender."
+  )
+```
+
+```{r lh-interaction-gender-test-decompose-noskip}
+test_decompose_interaction_gender$
+  kable_lh(
+    title = "Linear Combination Test: Decomposition of Effects on CT for Specific Gender Group (Intention and Attrition Perspectives; Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-test-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lm-interaction-gender-age-test-decompose-noskip}
+test_decompose_interaction_gender_age$
+  kable_reg(
+    title = "Heterogenity of Decomposition of Effect on the CT by Gender-Age Groups: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We created two age groups (Younger/Older) based on age 40. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group."
+  )
+```
+
+```{r lh-interaction-gender-age-test-decompose-noskip}
+test_decompose_interaction_gender_age$
+  kable_lh(
+    title = "Linear Combination Test: Decomposition of Effects on CT for Specific Gender-Age Group (Intention and Attrition Perspectives; Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-test-decompose-noskip}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+### Decompose Effects: Response Timing Perspective
+
+```{r response-speed-CT, fig.cap = "Binned Scatter Plot of CT (or Response with Positive Intention) vs. Response Days. \\newline \\emph{Note}: We run logistic regression of the CT (or response with positive intention) on response days. We excluded those who skipped the CT and used control arm. We show the regression lines and its 95 percent confidence interval.", fig.pos = "H"}
 reply_dt <- rct$data %>%
   filter(reply == 1 & 0 < days_reply & treat == "A")
 
@@ -175,9 +461,86 @@ plotdt %>%
     theme(legend.position = "bottom")
 ```
 
-```{r dist-response-speed, fig.cap = "Density of Number of Days Required for Reply"}
-rct$
-  flow(outcome = c("reply"))$
+```{r dist-response-speed, fig.cap = "Density of Number of Days Required for Response with Positive Intention. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers."}
+rct_noskip$
+  flow(outcome = "positive", sample_drop = FALSE)$
+  plot_density(
+    upper_days = 50,
+    x_breaks = seq(0, 100, by = 4)
+  )
+```
+
+```{r lm-positive-time-decompose-noskip}
+rct_noskip$
+  flow(outcome = "positive", sample_drop = FALSE)$
+  lm_time_segment(cut_days = c(4, 9))$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Effect on Speed of Response with Positive Intention (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lm-test-time-decompose-noskip}
+rct_noskip$
+  flow(outcome = "test", sample_drop = FALSE)$
+  lm_time_segment(cut_days = c(4, 9))$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Decomposition of Effect on the CT: Response Speed Perspectives (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing and reached the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r dist-response-speed-by-gender, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers."}
+rct_noskip$
+  flow(outcome = "positive", sample_drop = FALSE)$
+  plot_density(
+    upper_days = 50,
+    subset_by_gender = TRUE,
+    x_breaks = seq(0, 100, by = 4)
+  )
+```
+
+```{r set-lm-interaction-int-time-decompose-noskip,include=FALSE}
+int_t_decompose_gender <- rct_noskip$
+  flow(outcome = "positive", sample_drop = FALSE)$
+  lm_time_segment(cut_days = c(4, 9))$
+  fit(scale = 100, interaction_of_gender = TRUE)
+
+int_t_decompose_gender_age <- rct_noskip$
+  flow(outcome = "positive", sample_drop = FALSE)$
+  lm_time_segment(cut_days = c(4, 9))$
+  fit(scale = 100, interaction_of_gender_age = TRUE, age_cut = 40)
+```
+
+```{r lm-interaction-gender-int-time-decompose-noskip}
+int_t_decompose_gender$
+  kable_reg(
+    title = "Heterogenity of Effect on Speed of Response with Positive Intention by Gender (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and gender dummy.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lh-interaction-gender-int-time-decompose-noskip}
+int_t_decompose_gender$
+  kable_lh(
+    title = "Effect on Speed of Response with Positive Intention for Specific Gender Group (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-int-time-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r dist-response-speed-by-gender-age, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers."}
+rct_noskip$
+  flow(outcome = "positive", sample_drop = FALSE)$
   plot_density(
     upper_days = 50,
     subset_by_gender_age = TRUE,
@@ -186,1101 +549,158 @@ rct$
   )
 ```
 
-```{r}
-FlowFitSegment$debug("kable_lh")
+```{r lm-interaction-gender-age-int-time-decompose-noskip}
+int_t_decompose_gender_age$
+  kable_reg(
+    title = "Heterogenity of Effect on Speed of Response with Positive Intention by Gender and Age (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. We created two age groups (Younger/Older) based on age 40. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and gender-age group dummies.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
 
+```{r lh-interaction-gender-age-int-time-decompose-noskip}
+int_t_decompose_gender_age$
+  kable_lh(
+    title = "Effect on Speed of Response with Positive Intention for Specific Gender-Age Group (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-int-time-decompose-noskip}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r set-lm-interaction-test-time-decompose-noskip, include=FALSE}
+# gender-age groupはRunできない
+
+test_t_decompose_gender <- rct_noskip$
+  flow(outcome = "test", sample_drop = FALSE)$
+  lm_time_segment(cut_days = c(4, 9))$
+  fit(scale = 100, interaction_of_gender = TRUE)
+```
+
+```{r lm-interaction-gender-test-time-decompose-noskip}
+test_t_decompose_gender$
+  kable_reg(
+    title = "Heterogeneity of Decomposition of Effect on the CT: Response Speed Perspectives (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing and reached the CT. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and geder dummy.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+```{r lh-interaction-gender-test-time-decompose-noskip}
+test_t_decompose_gender$
+  kable_lh(
+    title = "Decomposition of Effect on the CT for Specific Gender Group: Response Speed Perspectives (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-test-time-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
+    hold = TRUE,
+    font_size = 8
+  )
+```
+
+## Effect on Remaining Coordination Process
+### Average Treatment Effects
+
+```{r lm-coordinate}
 rct$
-  flow(outcome = c("reply"))$
-  fit_segment(scale = 100, interaction_of_gender = TRUE)$
-  kable_lh()
-
-str_split("Treatment B_Young female", "_", simplify = TRUE)[, 1]
-```
-
-```{r set-test-reg-class, include=FALSE}
-id <- which(names(endpoint) %in% c("test"))
-lm_test <- rct$lm(id, sample_drop = FALSE)
-logit_test <- rct$logit(id, sample_drop = FALSE)
-```
-
-```{r test-lm}
-lm_test$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
   fit(scale = 100)$
-  kable(
-    title = "Linear Probability Model of the CT",
-    notes = "The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies which is the products of these region and week indicators.",
+  kable_reg(
+    title = "Linear Probability Model of Coordination Process After CT",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
     hold = TRUE,
     font_size = 8
   )
 ```
 
-```{r test-logit}
-logit_test$
+```{r logit-coordinate}
+rct$
+  logit_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
   fit()$
   kable(
-    title = "Logit Model of the CT",
-    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
+    title = "Logit Model of Coordination Process After CT",
+    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
     fmt = "%.2f",
     hold = TRUE,
     font_size = 8
   )
 ```
 
-```{r test-lm-interaction, include=FALSE}
-lm_int_test <- lm_test$
-  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r test-lm-interaction-reg}
-lm_int_test$
-  kable_reg(
-    title = "Heterogenous Message Effects on CT",
-    notes = "This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-lm-interaction-lh}
-lm_int_test$
-  kable_lh(
-    "CT",
-    title = "Linear Combination Test: Message Effects on CT for Specific Gender-Age Group",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-lm-subset1}
-library(xfun)
-
-reg <- lm_test$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
-  get_est() %>%
-  arrange(male, desc(young))
-
-mha_ct <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("test")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "multiplicity-adjusted-p-CT.rds"
-)
-
-mha_tab <- mha_ct %>%
-  select(Subgroup.id, Treated.id, List.p) %>%
-  mutate(
-    Treated.id = paste("Treatment", Treated.id),
-    List.p = sprintf("%1.3f", List.p)
-  ) %>%
-  pivot_wider(names_from = Subgroup.id, values_from = List.p)
-
-addtab <- data.frame(
-  rbind(
-    c("Control average", str_remove(reg$avg, "Ctrl Avg = ")),
-    mha_tab
-  )
-)
-
-attr(addtab, "position") <- 7:10
-
-reg %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Subset Regression of CT without Covariates",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    align = paste(c("l", rep("c", nrow(reg))), collapse = ""),
-    add_rows = addtab,
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(
-    c(
-      " ",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$"
-    ),
-    escape = FALSE
-  ) %>%
-  kableExtra::add_header_above(c(" " = 1, "Females" = 2, "Males" = 2)) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 4)) %>%
-  kableExtra::group_rows(
-    "Multiplicity-adjusted p-values", 8, 10,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \\\\cite{List2019}."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r test-lm-subset2}
-lm_test$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE
-  )$
-  kable(
-    title = "Subset Regression of CT with Covariates and Month and Week FE",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-lm-subset3, eval=FALSE}
-lm_test$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE,
-    month_week_fe = FALSE
-  )$
-  kable(
-    title = "Subset Regression of CT Controlling Covariates and Winter Holidays",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r set-test-decompose-class, include=FALSE}
-lm_test_decompose <- rct$decompose_effect("test")
-lm_test_decompose_int <- lm_test_decompose$fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r test-decompose}
-lm_test_decompose$
+```{r lm-coordinate-initial}
+rct_initial$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
   fit(scale = 100)$
-  kable(
-    title = "Decompose Effect on the CT",
-    notes = "The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-decompose-interaction-reg}
-lm_test_decompose_int$
   kable_reg(
-    title = "Heterogenity of Decomposing Effect on the CT",
-    notes = "We created two age classes (Younger/Older) based on age 40. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers.",
+    title = "Linear Probability Model of Coordination Process After CT (Only First-time Matched Candidates)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We restricted the analysis sample to those who matched the first time. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
     hold = TRUE,
     font_size = 8
   )
 ```
 
-```{r test-decompose-interaction-lh1}
-lm_test_decompose_int$
-  kable_lh(
-    "Positive Intention",
-    title = "Linear Combination Test: Message Effects on Reply with Positive Intention for Specific Gender-Age Group",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-decompose-interaction-lh2}
-lm_test_decompose_int$
-  kable_lh(
-    "No endogenous attrition",
-    title = "Linear Combination Test: Message Effects on No Endogenous Attrition between Reply with Positive Intention and CT for Specific Gender-Age Group",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r set-reply-class, include=FALSE, eval=FALSE}
-id_reply <- which(names(endpoint) %in% c("reply", "positive"))
-lm_reply <- rct$lm(id_reply, sample_drop = FALSE)
-logit_reply <- rct$logit(id_reply, sample_drop = FALSE)
-```
-
-```{r reply-lm, eval=FALSE}
-lm_reply$
+```{r lm-coordinate-noskip}
+rct_noskip$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
   fit(scale = 100)$
-  kable(
-    title = "Linear Probability Model of Response",
-    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r reply-logit, eval=FALSE}
-logit_reply$
-  fit()$
-  kable(
-    title = "Logit Model of Response",
-    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    fmt = "%.2f",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  kableExtra::landscape()
-```
-
-```{r int-lm-interaction, include=FALSE, eval=FALSE}
-lm_int <- rct$
-  lm(which(names(endpoint)  == "positive"), sample_drop = FALSE)
-
-lm_int_int <- lm_int$
-  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r int-lm-interaction-reg, eval=FALSE}
-lm_int_int$
   kable_reg(
-    title = "Heterogenous Message Effects on Intention to Donate",
-    notes = "This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
+    title = "Linear Probability Model of Coordination Process After CT (Excluding Those Who Skipped the CT)",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
     hold = TRUE,
     font_size = 8
   )
 ```
 
-```{r int-lm-interaction-lh, eval=FALSE}
-lm_int_int$
-  kable_lh(
-    "Positive Intention",
-    title = "Linear Combination Test: Message Effects on Intention to Donate for Specific Gender-Age Group",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:int-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
+### Heterogenous Treatment Effects
+
+```{r set-lm-interaction-coordinate, include=FALSE}
+coordinate_interaction_gender <- rct$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
+  fit(scale = 100, interaction_of_gender = TRUE)
+
+coordinate_interaction_gender_age <- rct$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
+  fit(scale = 100, interaction_of_gender_age = TRUE)
 ```
 
-```{r int-lm-subset1, eval=FALSE}
-library(xfun)
-
-reg <- lm_int$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
-  get_est() %>%
-  arrange(male, desc(young))
-
-mha_int <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("positive")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "multiplicity-adjusted-p-intention.rds"
-)
-
-mha_tab <- mha_int %>%
-  select(Subgroup.id, Treated.id, List.p) %>%
-  mutate(
-    Treated.id = paste("Treatment", Treated.id),
-    List.p = sprintf("%1.3f", List.p)
-  ) %>%
-  pivot_wider(names_from = Subgroup.id, values_from = List.p)
-
-addtab <- data.frame(
-  rbind(
-    c("Control average", str_remove(reg$avg, "Ctrl Avg = ")),
-    mha_tab
-  )
-)
-
-attr(addtab, "position") <- 7:10
-
-reg %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Subset Regression of Intention to Donate without Covariates",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    align = paste(c("l", rep("c", nrow(reg))), collapse = ""),
-    add_rows = addtab,
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(
-    c(
-      " ",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$"
-    ),
-    escape = FALSE
-  ) %>%
-  kableExtra::add_header_above(c(" " = 1, "Females" = 2, "Males" = 2)) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 4)) %>%
-  kableExtra::group_rows(
-    "Multiplicity-adjusted p-values", 8, 10,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \\\\cite{List2019}."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r int-lm-subset2, eval=FALSE}
-lm_int$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE
-  )$
-  kable(
-    title = "Subset Regression of Intention to Donate with Covariates and Month and Week FE",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r int-lm-subset3, eval=FALSE}
-lm_int$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE,
-    month_week_fe = FALSE
-  )$
-  kable(
-    title = "Subset Regression of Intention to Donate Controlling Covariates and Winter Holidays",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r set-lm-class-coordination, include=FALSE}
-id_coordinate <- which(names(endpoint) %in% c("candidate", "consent", "donate"))
-lm_coordinate <- rct$lm(id_coordinate, sample_drop = FALSE)
-logit_coordinate <- rct$logit(id_coordinate, sample_drop = FALSE)
-```
-
-```{r coordinate-reg}
-lm_coordinate$
-  fit(scale = 100)$
-  kable(
-    title = "Linear Probability Model of Coordination",
-    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r coordinate-logit}
-logit_coordinate$
-  fit()$
-  kable(
-    title = "Logit Model of Coordination",
-    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    fmt = "%.2f",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  kableExtra::landscape()
-```
-
-```{r consent-lm-interaction, include=FALSE}
-lm_consent <- rct$
-  lm(which(names(endpoint)  == "consent"), sample_drop = FALSE)
-
-lm_consent_int <- lm_consent$
-  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r consent-lm-interaction-reg}
-lm_consent_int$
+```{r lm-interaction-gender-coordinate}
+coordinate_interaction_gender$
   kable_reg(
-    title = "Heterogenous Message Effects on Final Consent",
-    notes = "This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
+    title = "Heterogeneity of Message Effects on Coordination Process After CT by Gender",
+    notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
     hold = TRUE,
     font_size = 8
   )
 ```
 
-```{r consent-lm-interaction-lh}
-lm_consent_int$
+```{r lh-interaction-gender-coordinate}
+coordinate_interaction_gender$
   kable_lh(
-    "Final Consent",
-    title = "Linear Combination Test: Message Effects on Final Consent for Specific Gender-Age Group",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:consent-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    title = "Linear Combination Test: Message Effects on Coordination Process After CT for Specific Gender Group",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-coordinate}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
     hold = TRUE,
     font_size = 8
   )
 ```
 
-```{r consent-lm-subset1}
-library(xfun)
-
-reg <- lm_consent$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
-  get_est() %>%
-  arrange(male, desc(young))
-
-mha_consent <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("consent")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "multiplicity-adjusted-p-consent.rds"
-)
-
-mha_tab <- mha_consent %>%
-  select(Subgroup.id, Treated.id, List.p) %>%
-  mutate(
-    Treated.id = paste("Treatment", Treated.id),
-    List.p = sprintf("%1.3f", List.p)
-  ) %>%
-  pivot_wider(names_from = Subgroup.id, values_from = List.p)
-
-addtab <- data.frame(
-  rbind(
-    c("Control average", str_remove(reg$avg, "Ctrl Avg = ")),
-    mha_tab
-  )
-)
-
-attr(addtab, "position") <- 7:10
-
-reg %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Subset Regression of Final Consent without Covariates",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    align = paste(c("l", rep("c", nrow(reg))), collapse = ""),
-    add_rows = addtab,
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(
-    c(
-      " ",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$"
-    ),
-    escape = FALSE
-  ) %>%
-  kableExtra::add_header_above(c(" " = 1, "Females" = 2, "Males" = 2)) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 4)) %>%
-  kableExtra::group_rows(
-    "Multiplicity-adjusted p-values", 8, 10,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \\\\cite{List2019}."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r consent-lm-subset2}
-lm_consent$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE
-  )$
-  kable(
-    title = "Subset Regression of Final Consent with Covariates and Month and Week FE",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r consent-lm-subset3, eval=FALSE}
-lm_consent$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE,
-    month_week_fe = FALSE
-  )$
-  kable(
-    title = "Subset Regression of Final Consent Controlling Covariates and Winter Holidays",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-
-
-<!-- \clearpage
-# Analysis Limited to Initial Matched Candidates -->
-
-```{r set-class-initial-matched, include=FALSE}
-rawdt2 <- rawdt$clone()
-rawdt2$add_cond_study_sample("ongoing == 0")
-rawdt2$add_cond_study_sample("coordinate == 1")
-rct_initial <- rawdt2$RCT()
-rct_initial$add_intervention(intervention)
-rct_initial$add_outcome(endpoint)
-if (params$is_cluster) rct_initial$set_default_cluster("RCTweek")
-rct_initial$set_default_se_type(params$se_type)
-```
-
-```{r reg-test-initial-matched, include=FALSE}
-lm_initial_1 <- rct_initial$lm(id, sample_drop = FALSE)
-logit_initial_1 <- rct_initial$logit(id, sample_drop = FALSE)
-```
-
-```{r lm-test-initial-matched}
-lm_initial_1$
-  fit(scale = 100)$
-  kable(
-    title = "Linear Probability Model of the CT (Only Initial Matched Candidates)",
-    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r logit-test-initial-matched}
-logit_initial_1$
-  fit()$
-  kable(
-    title = "Logit Model of the CT (Only Initial Matched Candidates)",
-    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    fmt = "%.2f",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  kableExtra::landscape()
-```
-
-```{r lm-test-interaction-init, include=FALSE}
-lm_test_init <- rct_initial$
-  lm(id, sample_drop = FALSE)
-
-lm_int_test_init <- lm_test_init$
-  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r lm-test-interaction-init-reg}
-lm_int_test_init$
+```{r lm-interaction-gender-age-coordinate}
+coordinate_interaction_gender_age$
   kable_reg(
-    title = "Heterogenous Message Effects on CT (Only Initially Matched Candidates)",
-    notes = "This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
+    title = "Heterogenous Message Effects on Coordination Process After CT by Gender-Age Group",
+    notes = "The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.",
     hold = TRUE,
     font_size = 8
   )
 ```
 
-```{r lm-test-interaction-init-lh}
-lm_int_test_init$
+```{r lh-interaction-gender-age-coordinate}
+coordinate_interaction_gender_age$
   kable_lh(
-    "CT",
-    title = "Linear Combination Test: Message Effects on CT for Specific Gender-Age Group (Only Initially Matched Candidates)",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-test-interaction-init-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
+    title = "Linear Combination Test: Message Effects on Coordination Process After CT for Specific Gender-Age Group",
+    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-coordinate}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
     hold = TRUE,
     font_size = 8
   )
 ```
-
-```{r lm-test-subset1-init}
-library(xfun)
-
-reg <- lm_test_init$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
-  get_est() %>%
-  arrange(male, desc(young))
-
-mha_ct_init <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("test")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "multiplicity-adjusted-p-CT-initial.rds"
-)
-
-mha_tab <- mha_ct_init %>%
-  select(Subgroup.id, Treated.id, List.p) %>%
-  mutate(
-    Treated.id = paste("Treatment", Treated.id),
-    List.p = sprintf("%1.3f", List.p)
-  ) %>%
-  pivot_wider(names_from = Subgroup.id, values_from = List.p)
-
-addtab <- data.frame(
-  rbind(
-    c("Control average", str_remove(reg$avg, "Ctrl Avg = ")),
-    mha_tab
-  )
-)
-
-attr(addtab, "position") <- 7:10
-
-reg %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Subset Regression of CT without Covariates (Only Initially Matched Candidates)",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    align = paste(c("l", rep("c", nrow(reg))), collapse = ""),
-    add_rows = addtab,
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(
-    c(
-      " ",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$"
-    ),
-    escape = FALSE
-  ) %>%
-  kableExtra::add_header_above(c(" " = 1, "Females" = 2, "Males" = 2)) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 4)) %>%
-  kableExtra::group_rows(
-    "Multiplicity-adjusted p-values", 8, 10,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \\\\cite{List2019}."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r lm-test-subset2-init}
-lm_test_init$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE
-  )$
-  kable(
-    title = "Subset Regression of CT with Covariates and Month and Week FE (Only Initially Matched Candidates)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-test-subset3-init, eval=FALSE}
-lm_test_init$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE,
-    month_week_fe = FALSE
-  )$
-  kable(
-    title = "Subset Regression of CT Controlling Covariates and Winter Holidays (Only Initially Matched Candidates)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-test-decompose-init, include=FALSE}
-lm_test_decompose_init <- rct_initial$decompose_effect("test")
-lm_int_test_decompose_init <- lm_test_decompose_init$fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r test-decompose-init}
-lm_test_decompose_init$
-  fit(scale = 100)$
-  kable(
-    title = "Decompose Effect on the CT (Only Intially Matched Candidates)",
-    notes = "The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-decompose-interaction-reg-init}
-lm_int_test_decompose_init$
-  kable_reg(
-    title = "Heterogenity of Decomposing Effect on the CT (Only Initially Matched Candidate)",
-    notes = "We created two age classes (Younger/Older) based on age 40. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-decompose-interaction-lh1-init}
-lm_int_test_decompose_init$
-  kable_lh(
-    "Positive Intention",
-    title = "Linear Combination Test: Message Effects on Reply with Positive Intention for Specific Gender-Age Group (Only Initially Matched Candidate)",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg-init}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r test-decompose-interaction-lh2-init}
-lm_int_test_decompose_init$
-  kable_lh(
-    "No endogenous attrition",
-    title = "Linear Combination Test: Message Effects on No Endogenous Attrition between Reply with Positive Intention and CT for Specific Gender-Age Group (Only Initially Matched Candidate)",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:test-decompose-interaction-reg-init}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-positive-interaction-init, include=FALSE, eval=FALSE}
-lm_positive_init <- rct_initial$
-  lm(which(names(endpoint) == "positive"), sample_drop = FALSE)
-
-lm_int_positive_init <- lm_positive_init$
-  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r lm-positive-interaction-init-reg, eval=FALSE}
-lm_int_positive_init$
-  kable_reg(
-    title = "Heterogenous Message Effects on Intention to Donate (Only Initially Matched Candidates)",
-    notes = "This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-positive-interaction-init-lh, eval=FALSE}
-lm_int_positive_init$
-  kable_lh(
-    "Positive Intention",
-    title = "Linear Combination Test: Message Effects on Intention to Donate for Specific Gender-Age Group (Only Initially Matched Candidates)",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-positive-interaction-init-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-positive-subset1-init, eval=FALSE}
-library(xfun)
-
-reg <- lm_positive_init$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
-  get_est() %>%
-  arrange(male, desc(young))
-
-mha_positive_init <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("positive")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "multiplicity-adjusted-p-intention-initial.rds"
-)
-
-mha_tab <- mha_positive_init %>%
-  select(Subgroup.id, Treated.id, List.p) %>%
-  mutate(
-    Treated.id = paste("Treatment", Treated.id),
-    List.p = sprintf("%1.3f", List.p)
-  ) %>%
-  pivot_wider(names_from = Subgroup.id, values_from = List.p)
-
-addtab <- data.frame(
-  rbind(
-    c("Control average", str_remove(reg$avg, "Ctrl Avg = ")),
-    mha_tab
-  )
-)
-
-attr(addtab, "position") <- 7:10
-
-reg %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Subset Regression of Intention to Donate without Covariates (Only Initially Matched Candidates)",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    align = paste(c("l", rep("c", nrow(reg))), collapse = ""),
-    add_rows = addtab,
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(
-    c(
-      " ",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$"
-    ),
-    escape = FALSE
-  ) %>%
-  kableExtra::add_header_above(c(" " = 1, "Females" = 2, "Males" = 2)) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 4)) %>%
-  kableExtra::group_rows(
-    "Multiplicity-adjusted p-values", 8, 10,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \\\\cite{List2019}."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r lm-positive-subset2-init, eval=FALSE}
-lm_positive_init$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE
-  )$
-  kable(
-    title = "Subset Regression of Intention to Donate with Covariates and Month and Week FE (Only Initially Matched Candidates)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-positive-subset3-init, eval=FALSE}
-lm_positive_init$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE,
-    month_week_fe = FALSE
-  )$
-  kable(
-    title = "Subset Regression of Intention to Donate Controlling Covariates and Winter Holidays (Only Initially Matched Candidates)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r reg-coordinate-initial-matched, include=FALSE}
-lm_initial_2 <- rct_initial$lm(id_coordinate, sample_drop = FALSE)
-logit_initial_2 <- rct_initial$logit(id_coordinate, sample_drop = FALSE)
-```
-
-```{r lm-coordinate-initial-matched}
-lm_initial_2$
-  fit(scale = 100)$
-  kable(
-    title = "Linear Probability Model of Coordination (Only Initial Matched Candidates)",
-    notes = "The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r logit-coordinate-initial-matched}
-logit_initial_2$
-  fit()$
-  kable(
-    title = "Logit Model of Coordination (Only Initial Matched Candidates)",
-    notes = "Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\\\\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.",
-    fmt = "%.2f",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  kableExtra::landscape()
-```
-
-```{r lm-consent-interaction-init, include=FALSE}
-lm_consent_init <- rct_initial$
-  lm(which(names(endpoint) == "consent"), sample_drop = FALSE)
-
-lm_int_consent_init <- lm_consent_init$
-  fit_interaction_of_gender_age(age_cut = 40, scale = 100)
-```
-
-```{r lm-consent-interaction-init-reg}
-lm_int_consent_init$
-  kable_reg(
-    title = "Heterogenous Message Effects on Final Consent (Only Initially Matched Candidates)",
-    notes = "This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-consent-interaction-init-lh}
-lm_int_consent_init$
-  kable_lh(
-    "Final Consent",
-    title = "Linear Combination Test: Message Effects on Final Consent for Specific Gender-Age Group (Only Initially Matched Candidates)",
-    notes = "We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-consent-interaction-init-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-consent-subset1-init}
-library(xfun)
-
-reg <- lm_consent_init$
-  fit_subset_by_gender_age(age_cut = 40, scale = 100, covariates = FALSE)$
-  get_est() %>%
-  arrange(male, desc(young))
-
-mha_consent_init <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("consent")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "multiplicity-adjusted-p-consent-initial.rds"
-)
-
-mha_tab <- mha_consent_init %>%
-  select(Subgroup.id, Treated.id, List.p) %>%
-  mutate(
-    Treated.id = paste("Treatment", Treated.id),
-    List.p = sprintf("%1.3f", List.p)
-  ) %>%
-  pivot_wider(names_from = Subgroup.id, values_from = List.p)
-
-addtab <- data.frame(
-  rbind(
-    c("Control average", str_remove(reg$avg, "Ctrl Avg = ")),
-    mha_tab
-  )
-)
-
-attr(addtab, "position") <- 7:10
-
-reg %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Subset Regression of Final Consent without Covariates (Only Initially Matched Candidates)",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-    align = paste(c("l", rep("c", nrow(reg))), collapse = ""),
-    add_rows = addtab,
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(
-    c(
-      " ",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$",
-      "$\\\\text{Age} < 30$",
-      "$30 \\\\le \\\\text{Age}$"
-    ),
-    escape = FALSE
-  ) %>%
-  kableExtra::add_header_above(c(" " = 1, "Females" = 2, "Males" = 2)) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 4)) %>%
-  kableExtra::group_rows(
-    "Multiplicity-adjusted p-values", 8, 10,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = paste(
-      "\\\\emph{Note}:",
-      "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \\\\cite{List2019}."
-    ),
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r lm-consent-subset2-init}
-lm_consent_init$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE
-  )$
-  kable(
-    title = "Subset Regression of Final Consent with Covariates and Month and Week FE (Only Initially Matched Candidates)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-consent-subset3-init, eval=FALSE}
-lm_consent_init$
-  fit_subset_by_gender_age(
-    age_cut = 40,
-    scale = 100,
-    covariates = TRUE,
-    month_week_fe = FALSE
-  )$
-  kable(
-    title = "Subset Regression of Final Consent Controlling Covariates and Winter Holidays (Only Initially Matched Candidates)",
-    notes = "* $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. We also controlled winter holidays effect by Region$\\\\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
 
 <!---
 # Economic Models for Predictions

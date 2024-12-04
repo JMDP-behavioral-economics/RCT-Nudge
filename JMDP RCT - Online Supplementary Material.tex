@@ -123,6 +123,46 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \end{threeparttable}
 \end{table}
 
+\hypertarget{balance-test}{%
+\subsection{Balance Test}\label{balance-test}}
+
+\begin{table}[H]
+
+\caption{\label{tab:summary}Summary of Field Experiment}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Experimental Arms} & \multicolumn{1}{c}{ } \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+ & A & B & C & D & F-test, p-value\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{A. Interventions}}\\
+\hspace{1em}Standard notification & X & X & X & X & \\
+\hspace{1em}Probability message &  & X &  & X & \\
+\hspace{1em}Early coordination message &  &  & X & X & \\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{B. Sample Size}}\\
+\hspace{1em}N & 2535 & 3053 & 2726 & 2735 & \\
+\addlinespace[0.3em]
+\multicolumn{6}{l}{\textbf{C. Balance Test}}\\
+\hspace{1em}Male (= 1) & 0.624 & 0.633 & 0.631 & 0.609 & 0.231\\
+\hspace{1em}Age & 38.376 & 38.121 & 37.448 & 37.978 & 0.004\\
+\hspace{1em}Number of past coordination & 1.609 & 1.589 & 1.625 & 1.563 & 0.130\\
+\hspace{1em}Number of listed hospitals & 0.476 & 0.490 & 0.487 & 0.485 & 0.835\\
+\hspace{1em}Number of hospitals listed with PBSC collection & 0.162 & 0.167 & 0.166 & 0.164 & 0.838\\
+\hspace{1em}Number of hospitals listed with BM collection & 0.246 & 0.256 & 0.254 & 0.251 & 0.741\\
+\hspace{1em}Number of holidays in the assigned week & 4.544 & 6.329 & 4.466 & 4.770 & 0.000\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: For the balance test, we regressed a covariate on treatment dummies and tested the null hypothesis that all coefficients are zero. We used robust standard errors for statistical inference.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 \begin{table}[H]
 
 \caption{\label{tab:smd-balance}Assessing Balance by Standaridized Mean Difference}
@@ -152,13 +192,15 @@ Number of past coordination & -0.019 & 0.015 & -0.045\\
 \end{threeparttable}
 \end{table}
 
-\begin{figure}[t]
-\includegraphics{JMDPRC~4/figure-latex/response-speed-CT-1} \caption{Binned Scatter Plot of CT (or Reply with Positive Intention) vs. Response Days.}\label{fig:response-speed-CT}
-\end{figure}
+\hypertarget{effect-on-the-ct}{%
+\subsection{Effect on the CT}\label{effect-on-the-ct}}
+
+\hypertarget{average-treatment-effects}{%
+\subsubsection{Average Treatment Effects}\label{average-treatment-effects}}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-lm}Linear Probability Model of the CT}
+\caption{\label{tab:lm-test}Linear Probability Model of the CT}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -181,14 +223,14 @@ Num.Obs. & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies which is the products of these region and week indicators.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-logit}Logit Model of the CT}
+\caption{\label{tab:logit-test}Logit Model of the CT}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -211,14 +253,168 @@ Log.Lik. & \num{-6083.783} & \num{-5953.670}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-lm-interaction-reg}Heterogenous Message Effects on CT}
+\caption{\label{tab:lm-test-initial}Linear Probability Model of the CT (Only First-time Matched Candidates)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3}
+  & (1) & (2)\\
+\midrule
+Treatment B & \num{2.51}* & \num{1.84}\\
+ & (\num{1.34}) & (\num{1.51})\\
+Treatment C & \num{-0.83} & \num{-0.93}\\
+ & (\num{1.35}) & (\num{1.35})\\
+Treatment D & \num{1.94} & \num{1.93}\\
+ & (\num{1.36}) & (\num{1.37})\\
+\midrule
+Control average & 18.67 & 18.67\\
+Covariates &  & X\\
+Num.Obs. & \num{7016} & \num{7016}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We restricted the analysis sample to those who matched the first time. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-test-noskip}Linear Probability Model of the CT (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3}
+  & (1) & (2)\\
+\midrule
+Treatment B & \num{2.59}** & \num{2.81}**\\
+ & (\num{1.10}) & (\num{1.24})\\
+Treatment C & \num{0.61} & \num{0.49}\\
+ & (\num{1.12}) & (\num{1.11})\\
+Treatment D & \num{1.58} & \num{1.69}\\
+ & (\num{1.13}) & (\num{1.13})\\
+\midrule
+Control average & 19.12 & 19.12\\
+Covariates &  & X\\
+Num.Obs. & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\hypertarget{heterogeneous-treatment-effects}{%
+\subsubsection{Heterogeneous Treatment Effects}\label{heterogeneous-treatment-effects}}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-interaction-gender-test}Heterogenous Message Effects on CT by Gender}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3}
+  & (1) & (2)\\
+\midrule
+Treatment B & \num{2.73} & \num{2.61}\\
+ & (\num{1.78}) & (\num{1.95})\\
+Treatment C & \num{1.60} & \num{0.95}\\
+ & (\num{1.81}) & (\num{1.80})\\
+Treatment D & \num{4.91}*** & \num{4.96}***\\
+ & (\num{1.83}) & (\num{1.83})\\
+Male & \num{4.58}*** & \num{5.63}***\\
+ & (\num{1.67}) & (\num{1.94})\\
+Treatment B $\times$ Male & \num{0.52} & \num{0.91}\\
+ & (\num{2.31}) & (\num{2.56})\\
+Treatment C $\times$ Male & \num{-0.71} & \num{-0.10}\\
+ & (\num{2.35}) & (\num{2.33})\\
+Treatment D $\times$ Male & \num{-4.01}* & \num{-3.87}\\
+ & (\num{2.37}) & (\num{2.36})\\
+\midrule
+Covariates &  & X\\
+Num.Obs. & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lh-interaction-gender-test}Linear Combination Test: Message Effects on the CT for Specific Gender Group}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{llcc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){3-4}
+Group & Treatment & (1) & (2)\\
+\midrule
+Female & B & 2.73 (1.78) & 2.61 (1.95)\\
+ & C & 1.60 (1.81) & 0.95 (1.80)\\
+ & D & 4.91 (1.83)*** & 4.96 (1.83)***\\
+Male & B & 3.25 (1.48)** & 3.52 (1.65)**\\
+ & C & 0.90 (1.50) & 0.85 (1.48)\\
+ & D & 0.89 (1.51) & 1.08 (1.49)\\
+\midrule
+ & Covariates &  & X\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-test}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:mh-adjust-gender-test}Adjustment of p-values for Multiple Testing of Effect on the CT for Specific Gender Group}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{llccc}
+\toprule
+\multicolumn{3}{c}{ } & \multicolumn{2}{c}{p-values} \\
+\cmidrule(l{3pt}r{3pt}){4-5}
+Group & Treatment & Diff-in-mean & Unadjusted & Adjusted\\
+\midrule
+Female & B & 2.731 & 0.124 & 0.380\\
+Female & C & 1.603 & 0.378 & 0.742\\
+Female & D & 4.907 & 0.007 & 0.038\\
+Male & B & 3.254 & 0.027 & 0.119\\
+Male & C & 0.897 & 0.544 & 0.769\\
+Male & D & 0.893 & 0.562 & 0.562\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: To adjust p-values for multiple testing, we employed the method proposed by List et al. (2019). For calculation of p-values, we used the bootstrapping with 3,000 boostrap samples.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-interaction-gender-age-test}Heterogenous Message Effects on CT by Gender-Age Group}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -234,12 +430,12 @@ Treatment C & \num{2.64} & \num{1.57}\\
  & (\num{2.49}) & (\num{2.43})\\
 Treatment D & \num{5.72}** & \num{5.63}**\\
  & (\num{2.55}) & (\num{2.53})\\
-Older female & \num{-0.67} & \num{9.15}\\
- & (\num{2.56}) & (\num{5.89})\\
-Young male & \num{4.98}** & \num{2.01}\\
- & (\num{2.39}) & (\num{5.44})\\
-Older male & \num{3.62} & \num{11.04}**\\
- & (\num{2.31}) & (\num{5.20})\\
+Older female & \num{-0.67} & \num{-3.19}\\
+ & (\num{2.56}) & (\num{2.65})\\
+Young male & \num{4.98}** & \num{3.32}\\
+ & (\num{2.39}) & (\num{2.46})\\
+Older male & \num{3.62} & \num{-0.53}\\
+ & (\num{2.31}) & (\num{2.38})\\
 Treatment B $\times$ Older female & \num{0.09} & \num{0.55}\\
  & (\num{3.57}) & (\num{3.92})\\
 Treatment C $\times$ Older female & \num{-2.59} & \num{-1.74}\\
@@ -264,124 +460,83 @@ Num.Obs. & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-lm-interaction-lh}Linear Combination Test: Message Effects on CT for Specific Gender-Age Group}
+\caption{\label{tab:lh-interaction-gender-age-test}Linear Combination Test: Message Effects on CT for Specific Gender-Age Group}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{llcc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){3-4}
+Group & Treatment & (1) & (2)\\
 \midrule
-Control average & 19.72 & 19.05 & 24.70 & 23.33\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & 2.67 & 2.76 & 3.80* & 2.64\\
-\hspace{1em} & (2.46) & (2.59) & (2.15) & (2.03)\\
-\hspace{1em}C & 2.64 & 0.05 & -0.43 & 2.23\\
-\hspace{1em} & (2.49) & (2.65) & (2.13) & (2.12)\\
-\hspace{1em}D & 5.72** & 3.92 & -1.72 & 3.40\\
-\hspace{1em} & (2.55) & (2.64) & (2.16) & (2.12)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & 2.28 & 2.83 & 2.56 & 4.26*\\
-\hspace{1em} & (2.68) & (2.86) & (2.34) & (2.33)\\
-\hspace{1em}C & 1.57 & -0.17 & -0.31 & 2.17\\
-\hspace{1em} & (2.43) & (2.66) & (2.10) & (2.10)\\
-\hspace{1em}D & 5.63** & 4.11 & -1.37 & 3.78*\\
-\hspace{1em} & (2.53) & (2.65) & (2.12) & (2.10)\\
+Young female & B & 2.67 (2.46) & 2.28 (2.68)\\
+ & C & 2.64 (2.49) & 1.57 (2.43)\\
+ & D & 5.72 (2.55)** & 5.63 (2.53)**\\
+Older female & B & 2.76 (2.59) & 2.83 (2.86)\\
+ & C & 0.05 (2.65) & -0.17 (2.66)\\
+ & D & 3.92 (2.64) & 4.11 (2.65)\\
+Young male & B & 3.80 (2.15)* & 2.56 (2.34)\\
+ & C & -0.43 (2.13) & -0.31 (2.10)\\
+ & D & -1.72 (2.16) & -1.37 (2.12)\\
+Older male & B & 2.64 (2.03) & 4.26 (2.33)*\\
+ & C & 2.23 (2.12) & 2.17 (2.10)\\
+ & D & 3.40 (2.12) & 3.78 (2.10)*\\
+\midrule
+ & Covariates &  & X\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:test-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-age-test}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-lm-subset1}Subset Regression of CT without Covariates}
+\caption{\label{tab:mh-adjust-gender-age-test}Adjustment of p-values for Multiple Testing of Effect on the CT for Specific Gender-Age Group}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{llccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{3}{c}{ } & \multicolumn{2}{c}{p-values} \\
+\cmidrule(l{3pt}r{3pt}){4-5}
+Group & Treatment & Diff-in-mean & Unadjusted & Adjusted\\
 \midrule
-Treatment B & \num{2.67} & \num{2.76} & \num{3.80}* & \num{2.64}\\
- & (\num{2.46}) & (\num{2.59}) & (\num{2.15}) & (\num{2.03})\\
-Treatment C & \num{2.64} & \num{0.05} & \num{-0.43} & \num{2.23}\\
- & (\num{2.49}) & (\num{2.65}) & (\num{2.12}) & (\num{2.12})\\
-Treatment D & \num{5.72}** & \num{3.92} & \num{-1.72} & \num{3.40}\\
- & (\num{2.55}) & (\num{2.64}) & (\num{2.16}) & (\num{2.11})\\
-\midrule
-Control average & 19.72 & 19.05 & 24.70 & 23.33\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textit{Multiplicity-adjusted p-values}}\\
-\hspace{1em}Treatment B & 0.777 & 0.825 & 0.624 & 0.617\\
-\hspace{1em}Treatment C & 0.858 & 0.826 & 0.728 & 0.842\\
-\hspace{1em}Treatment D & 0.736 & 0.262 & 0.647 & 0.696\\
-Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
+Young female & B & 2.670 & 0.275 & 0.865\\
+Young female & C & 2.640 & 0.287 & 0.851\\
+Young female & D & 5.717 & 0.027 & 0.251\\
+Older female & B & 2.760 & 0.299 & 0.718\\
+Older female & C & 0.045 & 0.989 & 0.989\\
+Older female & D & 3.920 & 0.152 & 0.732\\
+Young male & B & 3.801 & 0.072 & 0.517\\
+Young male & C & -0.431 & 0.850 & 0.978\\
+Young male & D & -1.722 & 0.434 & 0.794\\
+Older male & B & 2.642 & 0.183 & 0.765\\
+Older male & C & 2.228 & 0.289 & 0.790\\
+Older male & D & 3.397 & 0.111 & 0.650\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \cite{List2019}.
+\item \emph{Note}: To adjust p-values for multiple testing, we employed the method proposed by List et al. (2019). For calculation of p-values, we used the bootstrapping with 3,000 boostrap samples.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-\begin{table}[H]
-
-\caption{\label{tab:test-lm-subset2}Subset Regression of CT with Covariates and Month and Week FE}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
-\midrule
-Treatment B & \num{2.28} & \num{2.83} & \num{2.56} & \num{4.26}*\\
- & (\num{2.68}) & (\num{2.87}) & (\num{2.34}) & (\num{2.33})\\
-Treatment C & \num{1.57} & \num{-0.17} & \num{-0.31} & \num{2.17}\\
- & (\num{2.44}) & (\num{2.66}) & (\num{2.10}) & (\num{2.09})\\
-Treatment D & \num{5.63}** & \num{4.11} & \num{-1.37} & \num{3.78}*\\
- & (\num{2.53}) & (\num{2.65}) & (\num{2.12}) & (\num{2.10})\\
-\midrule
-Control average & 19.72 & 19.05 & 24.70 & 23.33\\
-Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
+\hypertarget{decompose-effects-intention-and-attrition-perspectives}{%
+\subsubsection{Decompose Effects: Intention and Attrition Perspectives}\label{decompose-effects-intention-and-attrition-perspectives}}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-decompose}Decompose Effect on the CT}
+\caption{\label{tab:lm-test-decompose}Decompose Effect on the CT: Intention and Attrition Perspectives}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -404,14 +559,14 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-decompose-interaction-reg}Heterogenity of Decomposing Effect on the CT}
+\caption{\label{tab:lm-test-decompose-noskip}Decompose Effect on the CT: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -421,128 +576,481 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{-1.90} & \num{-1.45} & \num{1.20} & \num{1.72} & \num{3.38} & \num{2.00}\\
- & (\num{3.03}) & (\num{3.31}) & (\num{1.39}) & (\num{1.43}) & (\num{2.65}) & (\num{2.91})\\
-Treatment C & \num{-0.83} & \num{-2.06} & \num{-0.73} & \num{-0.60} & \num{4.20} & \num{4.22}\\
- & (\num{3.06}) & (\num{3.04}) & (\num{1.50}) & (\num{1.50}) & (\num{2.66}) & (\num{2.64})\\
-Treatment D & \num{-3.05} & \num{-3.08} & \num{2.12} & \num{2.23}* & \num{6.65}** & \num{6.48}**\\
- & (\num{3.07}) & (\num{3.07}) & (\num{1.35}) & (\num{1.35}) & (\num{2.62}) & (\num{2.62})\\
-Older female & \num{7.34}** & \num{9.58} & \num{0.90} & \num{-6.04}* & \num{-8.91}*** & \num{5.61}\\
- & (\num{3.20}) & (\num{7.00}) & (\num{1.49}) & (\num{3.14}) & (\num{3.01}) & (\num{6.38})\\
-Young male & \num{-7.03}** & \num{-10.08} & \num{2.99}** & \num{-2.87} & \num{9.02}*** & \num{14.96}***\\
- & (\num{2.90}) & (\num{6.27}) & (\num{1.25}) & (\num{2.73}) & (\num{2.46}) & (\num{5.06})\\
-Older male & \num{7.78}*** & \num{8.06} & \num{1.45} & \num{2.05} & \num{-5.62}** & \num{0.90}\\
- & (\num{2.81}) & (\num{6.06}) & (\num{1.30}) & (\num{2.74}) & (\num{2.58}) & (\num{5.37})\\
-Treatment B $\times$ Older female & \num{3.99} & \num{2.43} & \num{-0.32} & \num{-2.12} & \num{-3.58} & \num{0.24}\\
- & (\num{4.35}) & (\num{4.80}) & (\num{1.95}) & (\num{2.08}) & (\num{4.07}) & (\num{4.48})\\
-Treatment C $\times$ Older female & \num{3.21} & \num{4.48} & \num{-0.76} & \num{-0.92} & \num{-5.04} & \num{-5.30}\\
- & (\num{4.48}) & (\num{4.48}) & (\num{2.19}) & (\num{2.18}) & (\num{4.20}) & (\num{4.20})\\
-Treatment D $\times$ Older female & \num{5.26} & \num{5.28} & \num{-2.00} & \num{-2.29} & \num{-5.05} & \num{-4.51}\\
- & (\num{4.40}) & (\num{4.40}) & (\num{1.97}) & (\num{1.96}) & (\num{4.06}) & (\num{4.07})\\
-Treatment B $\times$ Young male & \num{7.66}** & \num{6.72} & \num{-2.68} & \num{-3.92}** & \num{-3.85} & \num{-2.51}\\
- & (\num{3.89}) & (\num{4.27}) & (\num{1.67}) & (\num{1.80}) & (\num{3.26}) & (\num{3.59})\\
-Treatment C $\times$ Young male & \num{-0.03} & \num{1.28} & \num{-0.41} & \num{-0.48} & \num{-2.63} & \num{-2.67}\\
- & (\num{3.92}) & (\num{3.91}) & (\num{1.76}) & (\num{1.76}) & (\num{3.25}) & (\num{3.24})\\
-Treatment D $\times$ Young male & \num{2.74} & \num{2.92} & \num{-4.70}*** & \num{-4.86}*** & \num{-5.48}* & \num{-5.05}\\
- & (\num{3.97}) & (\num{3.96}) & (\num{1.70}) & (\num{1.70}) & (\num{3.25}) & (\num{3.25})\\
-Treatment B $\times$ Older male & \num{4.73} & \num{3.06} & \num{-1.58} & \num{-0.75} & \num{-3.17} & \num{-0.32}\\
- & (\num{3.79}) & (\num{4.18}) & (\num{1.72}) & (\num{1.76}) & (\num{3.45}) & (\num{3.82})\\
-Treatment C $\times$ Older male & \num{2.47} & \num{3.87} & \num{0.01} & \num{-0.18} & \num{-2.89} & \num{-3.09}\\
- & (\num{3.89}) & (\num{3.88}) & (\num{1.85}) & (\num{1.84}) & (\num{3.52}) & (\num{3.50})\\
-Treatment D $\times$ Older male & \num{7.01}* & \num{7.13}* & \num{-2.73} & \num{-2.71} & \num{-6.73}* & \num{-6.38}*\\
- & (\num{3.87}) & (\num{3.87}) & (\num{1.72}) & (\num{1.72}) & (\num{3.48}) & (\num{3.48})\\
+Treatment B & \num{2.04} & \num{1.66} & \num{-0.22} & \num{-0.11} & \num{0.77} & \num{1.27}\\
+ & (\num{1.37}) & (\num{1.50}) & (\num{0.59}) & (\num{0.63}) & (\num{1.24}) & (\num{1.36})\\
+Treatment C & \num{-0.83} & \num{-0.03} & \num{-1.01} & \num{-1.03} & \num{2.45}* & \num{1.54}\\
+ & (\num{1.41}) & (\num{1.39}) & (\num{0.63}) & (\num{0.63}) & (\num{1.27}) & (\num{1.25})\\
+Treatment D & \num{0.08} & \num{0.22} & \num{-0.59} & \num{-0.58} & \num{2.05} & \num{2.01}\\
+ & (\num{1.41}) & (\num{1.38}) & (\num{0.62}) & (\num{0.62}) & (\num{1.27}) & (\num{1.25})\\
+\midrule
+Control average & 53.10 & 53.10 & 95.24 & 95.24 & 70.78 & 70.78\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:lm-interaction-gender-test-decompose-noskip}Heterogenity of Decomposition of Effect on the CT by Gender: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive Intention} & \multicolumn{2}{c}{No exogenous attrition} & \multicolumn{2}{c}{No endogenous attrition} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{-0.77} & \num{-0.93} & \num{0.99} & \num{0.73} & \num{1.76} & \num{1.94}\\
+ & (\num{2.21}) & (\num{2.42}) & (\num{1.00}) & (\num{1.06}) & (\num{2.07}) & (\num{2.27})\\
+Treatment C & \num{-1.38} & \num{-1.11} & \num{-1.34} & \num{-1.25} & \num{1.82} & \num{1.27}\\
+ & (\num{2.29}) & (\num{2.27}) & (\num{1.13}) & (\num{1.12}) & (\num{2.13}) & (\num{2.12})\\
+Treatment D & \num{-2.10} & \num{-2.16} & \num{1.07} & \num{1.01} & \num{3.85}* & \num{3.94}*\\
+ & (\num{2.25}) & (\num{2.24}) & (\num{1.01}) & (\num{1.01}) & (\num{2.08}) & (\num{2.07})\\
+Male & \num{-4.42}** & \num{-4.66}* & \num{1.63}* & \num{1.19} & \num{4.72}** & \num{6.69}***\\
+ & (\num{2.07}) & (\num{2.38}) & (\num{0.92}) & (\num{1.06}) & (\num{1.91}) & (\num{2.19})\\
+Treatment B $\times$ Male & \num{4.56} & \num{4.03} & \num{-1.97} & \num{-1.34} & \num{-1.65} & \num{-0.92}\\
+ & (\num{2.82}) & (\num{3.08}) & (\num{1.24}) & (\num{1.32}) & (\num{2.59}) & (\num{2.83})\\
+Treatment C $\times$ Male & \num{0.98} & \num{1.74} & \num{0.48} & \num{0.32} & \num{0.87} & \num{0.46}\\
+ & (\num{2.90}) & (\num{2.87}) & (\num{1.35}) & (\num{1.35}) & (\num{2.65}) & (\num{2.62})\\
+Treatment D $\times$ Male & \num{3.52} & \num{3.86} & \num{-2.70}** & \num{-2.64}** & \num{-2.89} & \num{-3.17}\\
+ & (\num{2.88}) & (\num{2.85}) & (\num{1.28}) & (\num{1.28}) & (\num{2.62}) & (\num{2.60})\\
 \midrule
 Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We created two age classes (Younger/Older) based on age 40. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-decompose-interaction-lh1}Linear Combination Test: Message Effects on Reply with Positive Intention for Specific Gender-Age Group}
+\caption{\label{tab:lh-interaction-gender-test-decompose-noskip}Linear Combination Test: Decomposition of Effects on CT for Specific Gender Group (Intention and Attrition Perspectives; Excluding Those Who Skipped the CT)}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{llcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Positive Intention} & \multicolumn{2}{c}{No exogenous attrition} & \multicolumn{2}{c}{No endogenous attrition} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
+Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Control average & 53.05 & 60.39 & 46.02 & 60.83\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & -1.90 & 2.09 & 5.76** & 2.82\\
-\hspace{1em} & (3.03) & (3.13) & (2.44) & (2.28)\\
-\hspace{1em}C & -0.83 & 2.38 & -0.86 & 1.64\\
-\hspace{1em} & (3.06) & (3.28) & (2.46) & (2.40)\\
-\hspace{1em}D & -3.05 & 2.21 & -0.31 & 3.96*\\
-\hspace{1em} & (3.07) & (3.15) & (2.52) & (2.36)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & -1.45 & 0.99 & 5.27* & 1.61\\
-\hspace{1em} & (3.31) & (3.47) & (2.69) & (2.56)\\
-\hspace{1em}C & -2.06 & 2.42 & -0.77 & 1.82\\
-\hspace{1em} & (3.04) & (3.28) & (2.46) & (2.40)\\
-\hspace{1em}D & -3.08 & 2.20 & -0.16 & 4.04*\\
-\hspace{1em} & (3.07) & (3.16) & (2.50) & (2.36)\\
+Female & B & -0.77 (2.21) & -0.93 (2.42) & 0.99 (1.00) & 0.73 (1.06) & 1.76 (2.07) & 1.94 (2.27)\\
+ & C & -1.38 (2.29) & -1.11 (2.27) & -1.34 (1.13) & -1.25 (1.12) & 1.82 (2.13) & 1.27 (2.12)\\
+ & D & -2.10 (2.25) & -2.16 (2.24) & 1.07 (1.01) & 1.01 (1.01) & 3.85 (2.08)* & 3.94 (2.07)*\\
+Male & B & 3.79 (1.74)** & 3.10 (1.91) & -0.97 (0.73) & -0.61 (0.79) & 0.11 (1.55) & 1.02 (1.69)\\
+ & C & -0.40 (1.79) & 0.63 (1.75) & -0.86 (0.74) & -0.93 (0.74) & 2.69 (1.57)* & 1.73 (1.54)\\
+ & D & 1.42 (1.80) & 1.70 (1.76) & -1.64 (0.78)** & -1.62 (0.78)** & 0.96 (1.60) & 0.76 (1.57)\\
+\midrule
+ & Covariates &  & X &  & X &  & X\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:test-decompose-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-test-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:lm-interaction-gender-age-test-decompose-noskip}Heterogenity of Decomposition of Effect on the CT by Gender-Age Groups: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive Intention} & \multicolumn{2}{c}{No exogenous attrition} & \multicolumn{2}{c}{No endogenous attrition} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{-2.55} & \num{-1.91} & \num{1.17} & \num{1.79} & \num{3.17} & \num{1.72}\\
+ & (\num{3.07}) & (\num{3.37}) & (\num{1.43}) & (\num{1.48}) & (\num{2.71}) & (\num{3.00})\\
+Treatment C & \num{-3.06} & \num{-3.84} & \num{-1.06} & \num{-0.93} & \num{3.24} & \num{3.56}\\
+ & (\num{3.13}) & (\num{3.12}) & (\num{1.57}) & (\num{1.56}) & (\num{2.76}) & (\num{2.75})\\
+Treatment D & \num{-5.20}* & \num{-5.11} & \num{2.01} & \num{2.08} & \num{5.96}** & \num{5.84}**\\
+ & (\num{3.13}) & (\num{3.14}) & (\num{1.40}) & (\num{1.40}) & (\num{2.71}) & (\num{2.72})\\
+Older female & \num{8.08}** & \num{8.78}*** & \num{1.00} & \num{2.09} & \num{-8.63}*** & \num{-10.80}***\\
+ & (\num{3.24}) & (\num{3.33}) & (\num{1.52}) & (\num{1.56}) & (\num{3.05}) & (\num{3.12})\\
+Young male & \num{-8.86}*** & \num{-8.45}*** & \num{2.97}** & \num{3.78}*** & \num{8.69}*** & \num{7.45}***\\
+ & (\num{2.95}) & (\num{3.03}) & (\num{1.29}) & (\num{1.35}) & (\num{2.53}) & (\num{2.58})\\
+Older male & \num{6.90}** & \num{7.76}*** & \num{1.36} & \num{1.66} & \num{-6.67}** & \num{-9.12}***\\
+ & (\num{2.87}) & (\num{2.97}) & (\num{1.34}) & (\num{1.40}) & (\num{2.65}) & (\num{2.72})\\
+Treatment B $\times$ Older female & \num{4.40} & \num{2.46} & \num{-0.31} & \num{-2.24} & \num{-3.63} & \num{0.18}\\
+ & (\num{4.41}) & (\num{4.87}) & (\num{1.99}) & (\num{2.13}) & (\num{4.14}) & (\num{4.57})\\
+Treatment C $\times$ Older female & \num{5.06} & \num{5.89} & \num{-0.52} & \num{-0.66} & \num{-4.50} & \num{-5.01}\\
+ & (\num{4.56}) & (\num{4.56}) & (\num{2.26}) & (\num{2.25}) & (\num{4.29}) & (\num{4.29})\\
+Treatment D $\times$ Older female & \num{6.91} & \num{6.69} & \num{-1.96} & \num{-2.20} & \num{-4.83} & \num{-4.41}\\
+ & (\num{4.47}) & (\num{4.48}) & (\num{2.02}) & (\num{2.01}) & (\num{4.15}) & (\num{4.16})\\
+Treatment B $\times$ Young male & \num{7.74}* & \num{7.02} & \num{-2.82} & \num{-4.18}** & \num{-4.01} & \num{-2.39}\\
+ & (\num{3.97}) & (\num{4.37}) & (\num{1.74}) & (\num{1.87}) & (\num{3.37}) & (\num{3.74})\\
+Treatment C $\times$ Young male & \num{2.84} & \num{3.66} & \num{-0.09} & \num{-0.16} & \num{-1.37} & \num{-1.74}\\
+ & (\num{4.01}) & (\num{4.01}) & (\num{1.84}) & (\num{1.84}) & (\num{3.38}) & (\num{3.38})\\
+Treatment D $\times$ Young male & \num{4.98} & \num{4.76} & \num{-4.72}*** & \num{-4.88}*** & \num{-4.69} & \num{-4.33}\\
+ & (\num{4.05}) & (\num{4.05}) & (\num{1.77}) & (\num{1.77}) & (\num{3.39}) & (\num{3.39})\\
+Treatment B $\times$ Older male & \num{5.68} & \num{3.95} & \num{-1.55} & \num{-0.75} & \num{-2.81} & \num{0.16}\\
+ & (\num{3.88}) & (\num{4.29}) & (\num{1.78}) & (\num{1.82}) & (\num{3.55}) & (\num{3.94})\\
+Treatment C $\times$ Older male & \num{4.79} & \num{5.87} & \num{0.31} & \num{0.09} & \num{-1.85} & \num{-2.36}\\
+ & (\num{4.00}) & (\num{3.99}) & (\num{1.94}) & (\num{1.93}) & (\num{3.65}) & (\num{3.65})\\
+Treatment D $\times$ Older male & \num{9.18}** & \num{9.24}** & \num{-2.67} & \num{-2.63} & \num{-6.22}* & \num{-5.99}*\\
+ & (\num{3.98}) & (\num{3.98}) & (\num{1.79}) & (\num{1.79}) & (\num{3.62}) & (\num{3.62})\\
+\midrule
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We created two age groups (Younger/Older) based on age 40. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:test-decompose-interaction-lh2}Linear Combination Test: Message Effects on No Endogenous Attrition between Reply with Positive Intention and CT for Specific Gender-Age Group}
+\caption{\label{tab:lh-interaction-gender-age-test-decompose-noskip}Linear Combination Test: Decomposition of Effects on CT for Specific Gender-Age Group (Intention and Attrition Perspectives; Excluding Those Who Skipped the CT)}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{llcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Positive Intention} & \multicolumn{2}{c}{No exogenous attrition} & \multicolumn{2}{c}{No endogenous attrition} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
+Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Control average & 53.05 & 60.39 & 46.02 & 60.83\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & 3.38 & -0.20 & -0.47 & 0.21\\
-\hspace{1em} & (2.65) & (3.09) & (1.90) & (2.21)\\
-\hspace{1em}C & 4.20 & -0.85 & 1.57 & 1.31\\
-\hspace{1em} & (2.66) & (3.25) & (1.88) & (2.31)\\
-\hspace{1em}D & 6.65** & 1.59 & 1.17 & -0.08\\
-\hspace{1em} & (2.62) & (3.10) & (1.93) & (2.30)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & 2.00 & 2.24 & -0.51 & 1.68\\
-\hspace{1em} & (2.91) & (3.40) & (2.10) & (2.46)\\
-\hspace{1em}C & 4.22 & -1.08 & 1.55 & 1.14\\
-\hspace{1em} & (2.64) & (3.26) & (1.88) & (2.30)\\
-\hspace{1em}D & 6.48** & 1.97 & 1.43 & 0.10\\
-\hspace{1em} & (2.62) & (3.11) & (1.93) & (2.30)\\
+Young female & B & -2.55 (3.07) & -1.91 (3.37) & 1.17 (1.43) & 1.79 (1.48) & 3.17 (2.71) & 1.72 (3.00)\\
+ & C & -3.06 (3.13) & -3.84 (3.12) & -1.06 (1.57) & -0.93 (1.56) & 3.24 (2.76) & 3.56 (2.75)\\
+ & D & -5.20 (3.13)* & -5.11 (3.14) & 2.01 (1.40) & 2.08 (1.40) & 5.96 (2.71)** & 5.84 (2.72)**\\
+Older female & B & 1.84 (3.16) & 0.55 (3.52) & 0.85 (1.39) & -0.46 (1.54) & -0.46 (3.12) & 1.90 (3.45)\\
+ & C & 1.99 (3.32) & 2.06 (3.32) & -1.58 (1.63) & -1.58 (1.62) & -1.26 (3.29) & -1.45 (3.29)\\
+ & D & 1.71 (3.19) & 1.58 (3.20) & 0.04 (1.46) & -0.12 (1.44) & 1.13 (3.14) & 1.43 (3.15)\\
+Young male & B & 5.19 (2.51)** & 5.11 (2.78)* & -1.66 (0.99)* & -2.39 (1.15)** & -0.84 (2.00) & -0.67 (2.22)\\
+ & C & -0.23 (2.51) & -0.17 (2.51) & -1.15 (0.97) & -1.09 (0.97) & 1.86 (1.96) & 1.82 (1.96)\\
+ & D & -0.22 (2.57) & -0.35 (2.57) & -2.71 (1.08)** & -2.80 (1.08)*** & 1.27 (2.02) & 1.51 (2.03)\\
+Older male & B & 3.12 (2.36) & 2.04 (2.64) & -0.39 (1.06) & 1.03 (1.06) & 0.36 (2.29) & 1.88 (2.56)\\
+ & C & 1.73 (2.49) & 2.03 (2.49) & -0.76 (1.13) & -0.84 (1.13) & 1.38 (2.40) & 1.20 (2.40)\\
+ & D & 3.98 (2.45) & 4.12 (2.44)* & -0.67 (1.12) & -0.55 (1.12) & -0.26 (2.39) & -0.14 (2.40)\\
+\midrule
+ & Covariates &  & X &  & X &  & X\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:test-decompose-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-age-test-decompose-noskip}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\hypertarget{decompose-effects-response-timing-perspective}{%
+\subsubsection{Decompose Effects: Response Timing Perspective}\label{decompose-effects-response-timing-perspective}}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~3/figure-latex/response-speed-CT-1} \caption{Binned Scatter Plot of CT (or Response with Positive Intention) vs. Response Days. \newline \emph{Note}: We run logistic regression of the CT (or response with positive intention) on response days. We excluded those who skipped the CT and used control arm. We show the regression lines and its 95 percent confidence interval.}\label{fig:response-speed-CT}
+\end{figure}
+
+\begin{figure}[t]
+\includegraphics{JMDPRC~3/figure-latex/dist-response-speed-1} \caption{Density of Number of Days Required for Response with Positive Intention. \newline \emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.}\label{fig:dist-response-speed}
+\end{figure}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-positive-time-decompose-noskip}Effect on Speed of Response with Positive Intention (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{0.68}** & \num{0.80}*** & \num{-2.00} & \num{1.07} & \num{3.36}*** & \num{-0.22}\\
+ & (\num{0.27}) & (\num{0.31}) & (\num{1.26}) & (\num{1.40}) & (\num{1.15}) & (\num{1.25})\\
+Treatment C & \num{-0.04} & \num{-0.05} & \num{-1.23} & \num{-0.68} & \num{0.44} & \num{0.70}\\
+ & (\num{0.23}) & (\num{0.23}) & (\num{1.30}) & (\num{1.28}) & (\num{1.16}) & (\num{1.16})\\
+Treatment D & \num{0.15} & \num{0.18} & \num{-2.80}** & \num{-2.24}* & \num{2.72}** & \num{2.28}*\\
+ & (\num{0.25}) & (\num{0.25}) & (\num{1.29}) & (\num{1.27}) & (\num{1.18}) & (\num{1.18})\\
+\midrule
+Control average & 0.70 & 0.70 & 31.27 & 31.27 & 21.13 & 21.13\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:coordinate-reg}Linear Probability Model of Coordination}
+\caption{\label{tab:lm-test-time-decompose-noskip}Decomposition of Effect on the CT: Response Speed Perspectives (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{0.48}*** & \num{0.57}*** & \num{0.00} & \num{1.33} & \num{2.11}*** & \num{0.91}\\
+ & (\num{0.18}) & (\num{0.21}) & (\num{0.91}) & (\num{1.05}) & (\num{0.71}) & (\num{0.77})\\
+Treatment C & \num{0.03} & \num{0.02} & \num{-0.56} & \num{-0.57} & \num{1.15} & \num{1.04}\\
+ & (\num{0.13}) & (\num{0.13}) & (\num{0.93}) & (\num{0.93}) & (\num{0.71}) & (\num{0.71})\\
+Treatment D & \num{0.26} & \num{0.27}* & \num{-0.37} & \num{-0.13} & \num{1.69}** & \num{1.55}**\\
+ & (\num{0.16}) & (\num{0.16}) & (\num{0.93}) & (\num{0.93}) & (\num{0.72}) & (\num{0.72})\\
+\midrule
+Control average & 0.21 & 0.21 & 12.68 & 12.68 & 6.24 & 6.24\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing and reached the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[t]
+\includegraphics{JMDPRC~3/figure-latex/dist-response-speed-by-gender-1} \caption{Density of Number of Days Required for Response with Positive Intention by Gender. \newline \emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.}\label{fig:dist-response-speed-by-gender}
+\end{figure}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-interaction-gender-int-time-decompose-noskip}Heterogenity of Effect on Speed of Response with Positive Intention by Gender (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{0.19} & \num{0.42} & \num{-5.81}*** & \num{-3.36} & \num{4.86}*** & \num{2.00}\\
+ & (\num{0.38}) & (\num{0.44}) & (\num{2.09}) & (\num{2.29}) & (\num{1.84}) & (\num{1.99})\\
+Treatment C & \num{0.09} & \num{-0.01} & \num{-2.94} & \num{-2.85} & \num{1.47} & \num{1.74}\\
+ & (\num{0.38}) & (\num{0.38}) & (\num{2.18}) & (\num{2.16}) & (\num{1.85}) & (\num{1.85})\\
+Treatment D & \num{0.24} & \num{0.28} & \num{-6.58}*** & \num{-6.26}*** & \num{4.24}** & \num{3.82}**\\
+ & (\num{0.39}) & (\num{0.39}) & (\num{2.11}) & (\num{2.09}) & (\num{1.86}) & (\num{1.87})\\
+Male & \num{0.09} & \num{0.08} & \num{-6.94}*** & \num{-7.58}*** & \num{2.43} & \num{2.84}\\
+ & (\num{0.34}) & (\num{0.42}) & (\num{1.95}) & (\num{2.23}) & (\num{1.68}) & (\num{1.97})\\
+Treatment B $\times$ Male & \num{0.78} & \num{0.59} & \num{6.21}** & \num{7.05}** & \num{-2.43} & \num{-3.61}\\
+ & (\num{0.53}) & (\num{0.61}) & (\num{2.62}) & (\num{2.89}) & (\num{2.36}) & (\num{2.55})\\
+Treatment C $\times$ Male & \num{-0.22} & \num{-0.07} & \num{2.88} & \num{3.48} & \num{-1.69} & \num{-1.67}\\
+ & (\num{0.48}) & (\num{0.48}) & (\num{2.71}) & (\num{2.68}) & (\num{2.37}) & (\num{2.37})\\
+Treatment D $\times$ Male & \num{-0.15} & \num{-0.16} & \num{6.13}** & \num{6.48}** & \num{-2.46} & \num{-2.47}\\
+ & (\num{0.50}) & (\num{0.50}) & (\num{2.67}) & (\num{2.64}) & (\num{2.40}) & (\num{2.41})\\
+\midrule
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and gender dummy.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lh-interaction-gender-int-time-decompose-noskip}Effect on Speed of Response with Positive Intention for Specific Gender Group (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{llcccccc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
+Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Female & B & 0.19 (0.38) & 0.42 (0.44) & -5.81 (2.09)*** & -3.36 (2.29) & 4.86 (1.84)*** & 2.00 (1.99)\\
+ & C & 0.09 (0.38) & -0.01 (0.38) & -2.94 (2.18) & -2.85 (2.16) & 1.47 (1.85) & 1.74 (1.85)\\
+ & D & 0.24 (0.39) & 0.28 (0.39) & -6.58 (2.11)*** & -6.26 (2.09)*** & 4.24 (1.86)** & 3.82 (1.87)**\\
+Male & B & 0.97 (0.37)*** & 1.01 (0.42)** & 0.40 (1.58) & 3.70 (1.76)** & 2.43 (1.47)* & -1.61 (1.60)\\
+ & C & -0.12 (0.29) & -0.08 (0.29) & -0.05 (1.61) & 0.63 (1.59) & -0.22 (1.48) & 0.07 (1.48)\\
+ & D & 0.09 (0.32) & 0.12 (0.32) & -0.45 (1.63) & 0.23 (1.60) & 1.78 (1.52) & 1.35 (1.52)\\
+\midrule
+ & Covariates &  & X &  & X &  & X\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-int-time-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[t]
+\includegraphics{JMDPRC~3/figure-latex/dist-response-speed-by-gender-age-1} \caption{Density of Number of Days Required for Response with Positive Intention by Gender. \newline \emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.}\label{fig:dist-response-speed-by-gender-age}
+\end{figure}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-interaction-gender-age-int-time-decompose-noskip}Heterogenity of Effect on Speed of Response with Positive Intention by Gender and Age (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{-0.19} & \num{0.02} & \num{-7.20}*** & \num{-4.99}* & \num{4.84}* & \num{3.06}\\
+ & (\num{0.60}) & (\num{0.67}) & (\num{2.73}) & (\num{3.02}) & (\num{2.57}) & (\num{2.79})\\
+Treatment C & \num{-0.49} & \num{-0.75} & \num{-0.80} & \num{-1.60} & \num{-1.77} & \num{-1.49}\\
+ & (\num{0.56}) & (\num{0.55}) & (\num{2.87}) & (\num{2.86}) & (\num{2.48}) & (\num{2.48})\\
+Treatment D & \num{-0.30} & \num{-0.32} & \num{-7.17}*** & \num{-6.90}** & \num{2.28} & \num{2.10}\\
+ & (\num{0.59}) & (\num{0.58}) & (\num{2.78}) & (\num{2.78}) & (\num{2.58}) & (\num{2.58})\\
+Older female & \num{-0.82} & \num{-0.99}* & \num{10.50}*** & \num{10.36}*** & \num{-1.60} & \num{-0.59}\\
+ & (\num{0.51}) & (\num{0.55}) & (\num{3.12}) & (\num{3.19}) & (\num{2.60}) & (\num{2.68})\\
+Young male & \num{-0.90}* & \num{-0.88}* & \num{-9.05}*** & \num{-8.93}*** & \num{1.09} & \num{1.36}\\
+ & (\num{0.49}) & (\num{0.52}) & (\num{2.61}) & (\num{2.67}) & (\num{2.41}) & (\num{2.48})\\
+Older male & \num{0.21} & \num{0.09} & \num{4.55}* & \num{3.82} & \num{2.14} & \num{3.85}\\
+ & (\num{0.61}) & (\num{0.65}) & (\num{2.70}) & (\num{2.78}) & (\num{2.36}) & (\num{2.45})\\
+Treatment B $\times$ Older female & \num{0.78} & \num{0.79} & \num{3.68} & \num{3.82} & \num{-0.06} & \num{-2.15}\\
+ & (\num{0.75}) & (\num{0.88}) & (\num{4.18}) & (\num{4.64}) & (\num{3.68}) & (\num{3.97})\\
+Treatment C $\times$ Older female & \num{1.25} & \num{1.51}** & \num{-3.53} & \num{-2.84} & \num{7.34}* & \num{7.21}*\\
+ & (\num{0.77}) & (\num{0.76}) & (\num{4.38}) & (\num{4.37}) & (\num{3.75}) & (\num{3.74})\\
+Treatment D $\times$ Older female & \num{1.13} & \num{1.22} & \num{1.67} & \num{1.58} & \num{4.11} & \num{3.89}\\
+ & (\num{0.78}) & (\num{0.78}) & (\num{4.22}) & (\num{4.22}) & (\num{3.73}) & (\num{3.74})\\
+Treatment B $\times$ Young male & \num{1.73}** & \num{1.42}* & \num{7.24}** & \num{7.55}** & \num{-1.24} & \num{-1.95}\\
+ & (\num{0.75}) & (\num{0.84}) & (\num{3.43}) & (\num{3.82}) & (\num{3.33}) & (\num{3.65})\\
+Treatment C $\times$ Young male & \num{1.15}* & \num{1.43}** & \num{1.23} & \num{1.82} & \num{0.46} & \num{0.42}\\
+ & (\num{0.65}) & (\num{0.64}) & (\num{3.55}) & (\num{3.54}) & (\num{3.23}) & (\num{3.23})\\
+Treatment D $\times$ Young male & \num{0.54} & \num{0.57} & \num{6.82}* & \num{6.73}* & \num{-2.39} & \num{-2.54}\\
+ & (\num{0.65}) & (\num{0.64}) & (\num{3.50}) & (\num{3.50}) & (\num{3.34}) & (\num{3.35})\\
+Treatment B $\times$ Older male & \num{0.66} & \num{0.60} & \num{8.51}** & \num{10.52}*** & \num{-3.50} & \num{-7.17}**\\
+ & (\num{0.83}) & (\num{0.93}) & (\num{3.58}) & (\num{4.01}) & (\num{3.28}) & (\num{3.54})\\
+Treatment C $\times$ Older male & \num{-0.37} & \num{-0.06} & \num{2.19} & \num{3.20} & \num{2.97} & \num{2.73}\\
+ & (\num{0.72}) & (\num{0.71}) & (\num{3.76}) & (\num{3.75}) & (\num{3.28}) & (\num{3.28})\\
+Treatment D $\times$ Older male & \num{0.31} & \num{0.40} & \num{7.43}** & \num{8.01}** & \num{1.43} & \num{0.83}\\
+ & (\num{0.81}) & (\num{0.81}) & (\num{3.67}) & (\num{3.67}) & (\num{3.36}) & (\num{3.37})\\
+\midrule
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. We created two age groups (Younger/Older) based on age 40. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and gender-age group dummies.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lh-interaction-gender-age-int-time-decompose-noskip}Effect on Speed of Response with Positive Intention for Specific Gender-Age Group (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{llcccccc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
+Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Young female & B & -0.19 (0.60) & 0.02 (0.67) & -7.20 (2.73)*** & -4.99 (3.02)* & 4.84 (2.57)* & 3.06 (2.79)\\
+ & C & -0.49 (0.56) & -0.75 (0.55) & -0.80 (2.87) & -1.60 (2.86) & -1.77 (2.48) & -1.49 (2.48)\\
+ & D & -0.30 (0.59) & -0.32 (0.58) & -7.17 (2.78)*** & -6.90 (2.78)** & 2.28 (2.58) & 2.10 (2.58)\\
+Older female & B & 0.58 (0.45) & 0.81 (0.58) & -3.52 (3.16) & -1.18 (3.52) & 4.78 (2.64)* & 0.91 (2.83)\\
+ & C & 0.76 (0.53) & 0.76 (0.53) & -4.33 (3.31) & -4.43 (3.30) & 5.57 (2.80)** & 5.73 (2.79)**\\
+ & D & 0.82 (0.51) & 0.90 (0.52)* & -5.50 (3.17)* & -5.32 (3.18)* & 6.39 (2.70)** & 5.99 (2.71)**\\
+Young male & B & 1.54 (0.45)*** & 1.44 (0.51)*** & 0.05 (2.07) & 2.56 (2.34) & 3.60 (2.13)* & 1.11 (2.34)\\
+ & C & 0.65 (0.33)** & 0.68 (0.33)** & 0.43 (2.08) & 0.22 (2.08) & -1.31 (2.06) & -1.07 (2.06)\\
+ & D & 0.24 (0.26) & 0.25 (0.27) & -0.35 (2.12) & -0.17 (2.12) & -0.11 (2.13) & -0.44 (2.14)\\
+Older male & B & 0.47 (0.58) & 0.63 (0.65) & 1.31 (2.31) & 5.53 (2.63)** & 1.34 (2.04) & -4.11 (2.17)*\\
+ & C & -0.86 (0.45)* & -0.81 (0.45)* & 1.39 (2.43) & 1.60 (2.43) & 1.20 (2.14) & 1.24 (2.14)\\
+ & D & 0.01 (0.56) & 0.08 (0.57) & 0.26 (2.40) & 1.11 (2.40) & 3.71 (2.15)* & 2.93 (2.16)\\
+\midrule
+ & Covariates &  & X &  & X &  & X\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-age-int-time-decompose-noskip}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-interaction-gender-test-time-decompose-noskip}Heterogeneity of Decomposition of Effect on the CT: Response Speed Perspectives (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{0.06} & \num{-0.01} & \num{-0.99} & \num{-0.41} & \num{2.90}*** & \num{2.15}*\\
+ & (\num{0.22}) & (\num{0.21}) & (\num{1.50}) & (\num{1.66}) & (\num{1.01}) & (\num{1.10})\\
+Treatment C & \num{-0.21} & \num{-0.22} & \num{-1.64} & \num{-1.82} & \num{0.96} & \num{0.95}\\
+ & (\num{0.15}) & (\num{0.16}) & (\num{1.53}) & (\num{1.54}) & (\num{0.97}) & (\num{0.97})\\
+Treatment D & \num{0.18} & \num{0.17} & \num{-1.42} & \num{-1.35} & \num{4.06}*** & \num{3.98}***\\
+ & (\num{0.25}) & (\num{0.25}) & (\num{1.52}) & (\num{1.52}) & (\num{1.08}) & (\num{1.08})\\
+Male & \num{-0.01} & \num{-0.17} & \num{-1.42} & \num{-0.85} & \num{3.37}*** & \num{4.21}***\\
+ & (\num{0.19}) & (\num{0.24}) & (\num{1.40}) & (\num{1.62}) & (\num{0.94}) & (\num{1.13})\\
+Treatment B $\times$ Male & \num{0.67}** & \num{0.96}** & \num{1.59} & \num{2.76} & \num{-1.32} & \num{-1.95}\\
+ & (\num{0.33}) & (\num{0.38}) & (\num{1.89}) & (\num{2.13}) & (\num{1.40}) & (\num{1.52})\\
+Treatment C $\times$ Male & \num{0.38} & \num{0.40} & \num{1.74} & \num{1.97} & \num{0.21} & \num{0.15}\\
+ & (\num{0.24}) & (\num{0.25}) & (\num{1.93}) & (\num{1.93}) & (\num{1.37}) & (\num{1.37})\\
+Treatment D $\times$ Male & \num{0.13} & \num{0.17} & \num{1.72} & \num{1.90} & \num{-3.85}*** & \num{-3.96}***\\
+ & (\num{0.33}) & (\num{0.33}) & (\num{1.92}) & (\num{1.92}) & (\num{1.44}) & (\num{1.44})\\
+\midrule
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing and reached the CT. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and geder dummy.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lh-interaction-gender-test-time-decompose-noskip}Decomposition of Effect on the CT for Specific Gender Group: Response Speed Perspectives (Excluding Those Who Skipped the CT)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{llcccccc}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
+Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Female & B & 0.06 (0.22) & -0.01 (0.21) & -0.99 (1.50) & -0.41 (1.66) & 2.90 (1.01)*** & 2.15 (1.10)*\\
+ & C & -0.21 (0.15) & -0.22 (0.16) & -1.64 (1.53) & -1.82 (1.54) & 0.96 (0.97) & 0.95 (0.97)\\
+ & D & 0.18 (0.25) & 0.17 (0.25) & -1.42 (1.52) & -1.35 (1.52) & 4.06 (1.08)*** & 3.98 (1.08)***\\
+Male & B & 0.73 (0.25)*** & 0.95 (0.31)*** & 0.61 (1.15) & 2.36 (1.34)* & 1.58 (0.96)* & 0.19 (1.05)\\
+ & C & 0.17 (0.19) & 0.18 (0.19) & 0.10 (1.17) & 0.15 (1.16) & 1.17 (0.97) & 1.10 (0.97)\\
+ & D & 0.31 (0.21) & 0.34 (0.21) & 0.30 (1.18) & 0.55 (1.18) & 0.20 (0.96) & 0.02 (0.96)\\
+\midrule
+ & Covariates &  & X &  & X &  & X\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-test-time-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\hypertarget{effect-on-remaining-coordination-process}{%
+\subsection{Effect on Remaining Coordination Process}\label{effect-on-remaining-coordination-process}}
+
+\hypertarget{average-treatment-effects-1}{%
+\subsubsection{Average Treatment Effects}\label{average-treatment-effects-1}}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-coordinate}Linear Probability Model of Coordination Process After CT}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -565,14 +1073,14 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-\begin{landscape}\begin{table}[H]
+\begin{table}[H]
 
-\caption{\label{tab:coordinate-logit}Logit Model of Coordination}
+\caption{\label{tab:logit-coordinate}Logit Model of Coordination Process After CT}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -595,563 +1103,14 @@ Log.Lik. & \num{-2610.914} & \num{-2555.918} & \num{-2410.035} & \num{-2357.402}
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-\end{landscape}
-
-\begin{table}[H]
-
-\caption{\label{tab:consent-lm-interaction-reg}Heterogenous Message Effects on Final Consent}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Final Consent} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
-\midrule
-Treatment B & \num{-1.98}* & \num{-2.03}*\\
- & (\num{1.09}) & (\num{1.14})\\
-Treatment C & \num{0.68} & \num{0.61}\\
- & (\num{1.28}) & (\num{1.28})\\
-Treatment D & \num{-0.64} & \num{-0.61}\\
- & (\num{1.20}) & (\num{1.21})\\
-Older female & \num{-1.24} & \num{-1.87}\\
- & (\num{1.21}) & (\num{2.54})\\
-Young male & \num{3.02}** & \num{1.83}\\
- & (\num{1.32}) & (\num{2.71})\\
-Older male & \num{1.57} & \num{-0.06}\\
- & (\num{1.22}) & (\num{2.45})\\
-Treatment B $\times$ Older female & \num{2.29} & \num{1.70}\\
- & (\num{1.57}) & (\num{1.64})\\
-Treatment C $\times$ Older female & \num{-0.37} & \num{-0.41}\\
- & (\num{1.74}) & (\num{1.73})\\
-Treatment D $\times$ Older female & \num{1.47} & \num{1.31}\\
- & (\num{1.68}) & (\num{1.69})\\
-Treatment B $\times$ Young male & \num{3.04}* & \num{2.81}\\
- & (\num{1.71}) & (\num{1.86})\\
-Treatment C $\times$ Young male & \num{-1.87} & \num{-1.77}\\
- & (\num{1.78}) & (\num{1.78})\\
-Treatment D $\times$ Young male & \num{0.84} & \num{0.88}\\
- & (\num{1.79}) & (\num{1.80})\\
-Treatment B $\times$ Older male & \num{2.62}* & \num{2.69}\\
- & (\num{1.57}) & (\num{1.75})\\
-Treatment C $\times$ Older male & \num{-0.15} & \num{-0.10}\\
- & (\num{1.74}) & (\num{1.74})\\
-Treatment D $\times$ Older male & \num{2.44} & \num{2.48}\\
- & (\num{1.71}) & (\num{1.72})\\
-\midrule
-Covariates &  & X\\
-Num.Obs. & \num{11049} & \num{11049}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:consent-lm-interaction-lh}Linear Combination Test: Message Effects on Final Consent for Specific Gender-Age Group}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
-\midrule
-Control average & 4.27 & 3.03 & 7.29 & 5.83\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & -1.98* & 0.31 & 1.06 & 0.63\\
-\hspace{1em} & (1.09) & (1.13) & (1.31) & (1.13)\\
-\hspace{1em}C & 0.68 & 0.31 & -1.19 & 0.53\\
-\hspace{1em} & (1.28) & (1.19) & (1.24) & (1.18)\\
-\hspace{1em}D & -0.64 & 0.83 & 0.21 & 1.80\\
-\hspace{1em} & (1.20) & (1.18) & (1.32) & (1.22)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & -2.03* & -0.33 & 0.77 & 0.65\\
-\hspace{1em} & (1.14) & (1.17) & (1.46) & (1.32)\\
-\hspace{1em}C & 0.61 & 0.19 & -1.17 & 0.51\\
-\hspace{1em} & (1.28) & (1.17) & (1.24) & (1.18)\\
-\hspace{1em}D & -0.61 & 0.70 & 0.27 & 1.87\\
-\hspace{1em} & (1.21) & (1.18) & (1.33) & (1.22)\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:consent-lm-interaction-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:consent-lm-subset1}Subset Regression of Final Consent without Covariates}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
-\midrule
-Treatment B & \num{-1.98}* & \num{0.31} & \num{1.06} & \num{0.63}\\
- & (\num{1.09}) & (\num{1.13}) & (\num{1.31}) & (\num{1.13})\\
-Treatment C & \num{0.68} & \num{0.31} & \num{-1.19} & \num{0.53}\\
- & (\num{1.28}) & (\num{1.19}) & (\num{1.24}) & (\num{1.18})\\
-Treatment D & \num{-0.64} & \num{0.83} & \num{0.21} & \num{1.80}\\
- & (\num{1.20}) & (\num{1.18}) & (\num{1.32}) & (\num{1.22})\\
-\midrule
-Control average & 4.27 & 3.03 & 7.29 & 5.83\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textit{Multiplicity-adjusted p-values}}\\
-\hspace{1em}Treatment B & 0.882 & 0.974 & 0.982 & 0.994\\
-\hspace{1em}Treatment C & 0.873 & 0.990 & 0.957 & 0.982\\
-\hspace{1em}Treatment D & 0.984 & 0.987 & 0.982 & 0.979\\
-Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \cite{List2019}.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:consent-lm-subset2}Subset Regression of Final Consent with Covariates and Month and Week FE}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Final Consent} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
-\midrule
-Treatment B & \num{-2.03}* & \num{-0.33} & \num{0.77} & \num{0.65}\\
- & (\num{1.14}) & (\num{1.17}) & (\num{1.46}) & (\num{1.32})\\
-Treatment C & \num{0.61} & \num{0.19} & \num{-1.17} & \num{0.51}\\
- & (\num{1.28}) & (\num{1.17}) & (\num{1.24}) & (\num{1.18})\\
-Treatment D & \num{-0.61} & \num{0.70} & \num{0.27} & \num{1.87}\\
- & (\num{1.21}) & (\num{1.19}) & (\num{1.33}) & (\num{1.22})\\
-\midrule
-Control average & 4.27 & 3.03 & 7.29 & 5.83\\
-Num.Obs. & \num{2268} & \num{1882} & \num{3445} & \num{3454}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:lm-test-initial-matched}Linear Probability Model of the CT (Only Initial Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
-\midrule
-Treatment B & \num{2.51}* & \num{1.84}\\
- & (\num{1.34}) & (\num{1.51})\\
-Treatment C & \num{-0.83} & \num{-0.93}\\
- & (\num{1.35}) & (\num{1.35})\\
-Treatment D & \num{1.94} & \num{1.93}\\
- & (\num{1.36}) & (\num{1.37})\\
-\midrule
-Control average & 18.67 & 18.67\\
-Covariates &  & X\\
-Num.Obs. & \num{7016} & \num{7016}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{landscape}\begin{table}[H]
-
-\caption{\label{tab:logit-test-initial-matched}Logit Model of the CT (Only Initial Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
-\midrule
-Treatment B & \num{1.17} & \num{1.12}\\
- & {}[\num{0.99}, \num{1.38}] & {}[\num{0.93}, \num{1.35}]\\
-Treatment C & \num{0.95} & \num{0.94}\\
- & {}[\num{0.79}, \num{1.13}] & {}[\num{0.79}, \num{1.12}]\\
-Treatment D & \num{1.13} & \num{1.13}\\
- & {}[\num{0.95}, \num{1.34}] & {}[\num{0.95}, \num{1.34}]\\
-\midrule
-Covariates &  & X\\
-Num.Obs. & \num{7016} & \num{7016}\\
-Log.Lik. & \num{-3472.809} & \num{-3460.764}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-\end{landscape}
-
-\begin{table}[H]
-
-\caption{\label{tab:lm-test-interaction-init-reg}Heterogenous Message Effects on CT (Only Initially Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
-\midrule
-Treatment B & \num{1.43} & \num{0.04}\\
- & (\num{2.71}) & (\num{2.97})\\
-Treatment C & \num{-3.03} & \num{-3.28}\\
- & (\num{2.61}) & (\num{2.61})\\
-Treatment D & \num{2.57} & \num{2.30}\\
- & (\num{2.74}) & (\num{2.76})\\
-Older female & \num{-0.07} & \num{1.61}\\
- & (\num{2.96}) & (\num{6.20})\\
-Young male & \num{4.40} & \num{3.56}\\
- & (\num{2.71}) & (\num{5.53})\\
-Older male & \num{-1.54} & \num{5.59}\\
- & (\num{2.63}) & (\num{5.54})\\
-Treatment B $\times$ Older female & \num{-2.09} & \num{-1.54}\\
- & (\num{4.09}) & (\num{4.49})\\
-Treatment C $\times$ Older female & \num{2.72} & \num{2.69}\\
- & (\num{4.16}) & (\num{4.17})\\
-Treatment D $\times$ Older female & \num{1.71} & \num{1.60}\\
- & (\num{4.19}) & (\num{4.21})\\
-Treatment B $\times$ Young male & \num{0.10} & \num{-0.04}\\
- & (\num{3.70}) & (\num{4.10})\\
-Treatment C $\times$ Young male & \num{-0.14} & \num{0.41}\\
- & (\num{3.59}) & (\num{3.59})\\
-Treatment D $\times$ Young male & \num{-6.55}* & \num{-6.25}*\\
- & (\num{3.70}) & (\num{3.71})\\
-Treatment B $\times$ Older male & \num{4.64} & \num{7.67}*\\
- & (\num{3.69}) & (\num{4.21})\\
-Treatment C $\times$ Older male & \num{6.47}* & \num{6.77}*\\
- & (\num{3.72}) & (\num{3.71})\\
-Treatment D $\times$ Older male & \num{4.20} & \num{4.89}\\
- & (\num{3.82}) & (\num{3.85})\\
-\midrule
-Covariates &  & X\\
-Num.Obs. & \num{7016} & \num{7016}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:lm-test-interaction-init-lh}Linear Combination Test: Message Effects on CT for Specific Gender-Age Group (Only Initially Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
-\midrule
-Control average & 17.75 & 17.69 & 22.15 & 16.21\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & 1.43 & -0.65 & 1.53 & 6.07**\\
-\hspace{1em} & (2.71) & (3.07) & (2.53) & (2.50)\\
-\hspace{1em}C & -3.03 & -0.31 & -3.16 & 3.45\\
-\hspace{1em} & (2.61) & (3.24) & (2.47) & (2.65)\\
-\hspace{1em}D & 2.57 & 4.27 & -3.99 & 6.76**\\
-\hspace{1em} & (2.74) & (3.17) & (2.48) & (2.67)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & 0.04 & -1.50 & 0.01 & 7.71***\\
-\hspace{1em} & (2.97) & (3.37) & (2.83) & (2.99)\\
-\hspace{1em}C & -3.28 & -0.59 & -2.87 & 3.49\\
-\hspace{1em} & (2.61) & (3.25) & (2.47) & (2.65)\\
-\hspace{1em}D & 2.30 & 3.89 & -3.95 & 7.18***\\
-\hspace{1em} & (2.76) & (3.19) & (2.47) & (2.68)\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-test-interaction-init-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:lm-test-subset1-init}Subset Regression of CT without Covariates (Only Initially Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
-\midrule
-Treatment B & \num{1.43} & \num{-0.65} & \num{1.53} & \num{6.07}**\\
- & (\num{2.71}) & (\num{3.07}) & (\num{2.53}) & (\num{2.50})\\
-Treatment C & \num{-3.03} & \num{-0.31} & \num{-3.16} & \num{3.45}\\
- & (\num{2.61}) & (\num{3.24}) & (\num{2.47}) & (\num{2.65})\\
-Treatment D & \num{2.57} & \num{4.27} & \num{-3.99} & \num{6.76}**\\
- & (\num{2.74}) & (\num{3.17}) & (\num{2.48}) & (\num{2.66})\\
-\midrule
-Control average & 17.75 & 17.69 & 22.15 & 16.21\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textit{Multiplicity-adjusted p-values}}\\
-\hspace{1em}Treatment B & 0.777 & 0.825 & 0.624 & 0.617\\
-\hspace{1em}Treatment C & 0.858 & 0.826 & 0.728 & 0.842\\
-\hspace{1em}Treatment D & 0.736 & 0.262 & 0.647 & 0.696\\
-Num.Obs. & \num{1685} & \num{1207} & \num{2283} & \num{1841}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \cite{List2019}.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:lm-test-subset2-init}Subset Regression of CT with Covariates and Month and Week FE (Only Initially Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
-\midrule
-Treatment B & \num{0.04} & \num{-1.50} & \num{0.01} & \num{7.71}***\\
- & (\num{2.97}) & (\num{3.37}) & (\num{2.83}) & (\num{2.99})\\
-Treatment C & \num{-3.28} & \num{-0.59} & \num{-2.87} & \num{3.49}\\
- & (\num{2.61}) & (\num{3.26}) & (\num{2.47}) & (\num{2.65})\\
-Treatment D & \num{2.30} & \num{3.89} & \num{-3.95} & \num{7.18}***\\
- & (\num{2.76}) & (\num{3.19}) & (\num{2.47}) & (\num{2.68})\\
-\midrule
-Control average & 17.75 & 17.69 & 22.15 & 16.21\\
-Num.Obs. & \num{1685} & \num{1207} & \num{2283} & \num{1841}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:test-decompose-init}Decompose Effect on the CT (Only Intially Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive Intention} & \multicolumn{2}{c}{No exogenous attrition} & \multicolumn{2}{c}{No endogenous attrition} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
-\midrule
-Treatment B & \num{2.95}* & \num{1.50} & \num{-0.24} & \num{-0.11} & \num{-0.21} & \num{0.46}\\
- & (\num{1.68}) & (\num{1.85}) & (\num{0.74}) & (\num{0.79}) & (\num{1.55}) & (\num{1.70})\\
-Treatment C & \num{-1.79} & \num{-1.09} & \num{-0.61} & \num{-0.65} & \num{1.57} & \num{0.80}\\
- & (\num{1.74}) & (\num{1.72}) & (\num{0.78}) & (\num{0.77}) & (\num{1.59}) & (\num{1.56})\\
-Treatment D & \num{-0.44} & \num{-0.45} & \num{0.16} & \num{0.15} & \num{2.16} & \num{2.17}\\
- & (\num{1.72}) & (\num{1.68}) & (\num{0.74}) & (\num{0.74}) & (\num{1.56}) & (\num{1.54})\\
-\midrule
-Control average & 53.52 & 53.52 & 95.08 & 95.08 & 70.07 & 70.07\\
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:test-decompose-interaction-reg-init}Heterogenity of Decomposing Effect on the CT (Only Initially Matched Candidate)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive Intention} & \multicolumn{2}{c}{No exogenous attrition} & \multicolumn{2}{c}{No endogenous attrition} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
-\midrule
-Treatment B & \num{-2.59} & \num{-3.51} & \num{0.78} & \num{1.04} & \num{3.25} & \num{2.51}\\
- & (\num{3.49}) & (\num{3.86}) & (\num{1.58}) & (\num{1.60}) & (\num{3.12}) & (\num{3.48})\\
-Treatment C & \num{-5.45} & \num{-6.19}* & \num{-0.67} & \num{-0.61} & \num{3.09} & \num{3.52}\\
- & (\num{3.53}) & (\num{3.52}) & (\num{1.69}) & (\num{1.68}) & (\num{3.16}) & (\num{3.16})\\
-Treatment D & \num{-6.36}* & \num{-6.59}* & \num{2.32} & \num{2.28} & \num{6.61}** & \num{6.60}**\\
- & (\num{3.49}) & (\num{3.50}) & (\num{1.47}) & (\num{1.47}) & (\num{3.06}) & (\num{3.06})\\
-Older female & \num{6.70}* & \num{8.63} & \num{-0.38} & \num{-4.37} & \num{-6.39}* & \num{-2.65}\\
- & (\num{3.84}) & (\num{7.78}) & (\num{1.84}) & (\num{3.69}) & (\num{3.63}) & (\num{7.30})\\
-Young male & \num{-7.97}** & \num{-7.63} & \num{2.90}** & \num{-2.08} & \num{9.47}*** & \num{13.27}**\\
- & (\num{3.40}) & (\num{6.76}) & (\num{1.41}) & (\num{2.95}) & (\num{2.93}) & (\num{5.73})\\
-Older male & \num{8.25}** & \num{0.85} & \num{0.04} & \num{4.14} & \num{-9.83}*** & \num{0.59}\\
- & (\num{3.46}) & (\num{6.83}) & (\num{1.63}) & (\num{3.12}) & (\num{3.29}) & (\num{6.38})\\
-Treatment B $\times$ Older female & \num{7.76} & \num{9.08} & \num{-0.02} & \num{-1.49} & \num{-9.83}* & \num{-9.12}\\
- & (\num{5.26}) & (\num{5.84}) & (\num{2.46}) & (\num{2.61}) & (\num{5.02}) & (\num{5.60})\\
-Treatment C $\times$ Older female & \num{8.81} & \num{9.48}* & \num{0.23} & \num{0.16} & \num{-6.33} & \num{-6.95}\\
- & (\num{5.46}) & (\num{5.45}) & (\num{2.68}) & (\num{2.65}) & (\num{5.19}) & (\num{5.19})\\
-Treatment D $\times$ Older female & \num{8.31} & \num{8.67}* & \num{-1.54} & \num{-1.82} & \num{-5.06} & \num{-5.25}\\
- & (\num{5.25}) & (\num{5.25}) & (\num{2.37}) & (\num{2.36}) & (\num{4.88}) & (\num{4.89})\\
-Treatment B $\times$ Young male & \num{8.48}* & \num{9.07}* & \num{-3.02} & \num{-4.52}** & \num{-5.36} & \num{-4.59}\\
- & (\num{4.60}) & (\num{5.13}) & (\num{1.95}) & (\num{2.13}) & (\num{3.95}) & (\num{4.41})\\
-Treatment C $\times$ Young male & \num{4.63} & \num{5.64} & \num{-1.02} & \num{-1.01} & \num{-3.75} & \num{-4.22}\\
- & (\num{4.65}) & (\num{4.64}) & (\num{2.03}) & (\num{2.03}) & (\num{3.98}) & (\num{3.98})\\
-Treatment D $\times$ Young male & \num{4.53} & \num{4.84} & \num{-4.59}** & \num{-4.69}** & \num{-6.50}* & \num{-6.40}\\
- & (\num{4.64}) & (\num{4.65}) & (\num{1.90}) & (\num{1.90}) & (\num{3.91}) & (\num{3.92})\\
-Treatment B $\times$ Older male & \num{5.99} & \num{3.53} & \num{-0.32} & \num{1.74} & \num{-1.03} & \num{2.41}\\
- & (\num{4.67}) & (\num{5.22}) & (\num{2.15}) & (\num{2.12}) & (\num{4.40}) & (\num{4.90})\\
-Treatment C $\times$ Older male & \num{6.14} & \num{7.12} & \num{0.97} & \num{0.83} & \num{-0.64} & \num{-1.18}\\
- & (\num{4.87}) & (\num{4.87}) & (\num{2.31}) & (\num{2.30}) & (\num{4.59}) & (\num{4.60})\\
-Treatment D $\times$ Older male & \num{12.75}*** & \num{12.74}*** & \num{-1.79} & \num{-1.45} & \num{-6.98} & \num{-6.62}\\
- & (\num{4.76}) & (\num{4.76}) & (\num{2.12}) & (\num{2.12}) & (\num{4.49}) & (\num{4.51})\\
-\midrule
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We created two age classes (Younger/Older) based on age 40. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:test-decompose-interaction-lh1-init}Linear Combination Test: Message Effects on Reply with Positive Intention for Specific Gender-Age Group (Only Initially Matched Candidate)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
-\midrule
-Control average & 52.48 & 59.18 & 44.51 & 60.73\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & -2.59 & 5.17 & 5.89* & 3.40\\
-\hspace{1em} & (3.49) & (3.94) & (3.00) & (3.10)\\
-\hspace{1em}C & -5.45 & 3.36 & -0.81 & 0.69\\
-\hspace{1em} & (3.53) & (4.16) & (3.03) & (3.36)\\
-\hspace{1em}D & -6.36* & 1.94 & -1.83 & 6.39**\\
-\hspace{1em} & (3.49) & (3.91) & (3.06) & (3.23)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & -3.51 & 5.56 & 5.56* & 0.02\\
-\hspace{1em} & (3.86) & (4.38) & (3.37) & (3.52)\\
-\hspace{1em}C & -6.19* & 3.29 & -0.55 & 0.93\\
-\hspace{1em} & (3.52) & (4.16) & (3.03) & (3.37)\\
-\hspace{1em}D & -6.59* & 2.08 & -1.75 & 6.15*\\
-\hspace{1em} & (3.50) & (3.92) & (3.06) & (3.23)\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:test-decompose-interaction-reg-init}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:test-decompose-interaction-lh2-init}Linear Combination Test: Message Effects on No Endogenous Attrition between Reply with Positive Intention and CT for Specific Gender-Age Group (Only Initially Matched Candidate)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
-\midrule
-Control average & 52.48 & 59.18 & 44.51 & 60.73\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & 3.25 & -6.58* & -2.11 & 2.22\\
-\hspace{1em} & (3.12) & (3.94) & (2.43) & (3.11)\\
-\hspace{1em}C & 3.09 & -3.24 & -0.66 & 2.45\\
-\hspace{1em} & (3.16) & (4.12) & (2.43) & (3.34)\\
-\hspace{1em}D & 6.61** & 1.55 & 0.11 & -0.38\\
-\hspace{1em} & (3.06) & (3.80) & (2.44) & (3.29)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & 2.51 & -6.61 & -2.08 & 4.92\\
-\hspace{1em} & (3.48) & (4.39) & (2.71) & (3.46)\\
-\hspace{1em}C & 3.52 & -3.43 & -0.70 & 2.34\\
-\hspace{1em} & (3.16) & (4.12) & (2.43) & (3.35)\\
-\hspace{1em}D & 6.60** & 1.35 & 0.20 & -0.02\\
-\hspace{1em} & (3.06) & (3.81) & (2.45) & (3.30)\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:test-decompose-interaction-reg-init}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[H]
-
-\caption{\label{tab:lm-coordinate-initial-matched}Linear Probability Model of Coordination (Only Initial Matched Candidates)}
+\caption{\label{tab:lm-coordinate-initial}Linear Probability Model of Coordination Process After CT (Only First-time Matched Candidates)}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -1174,14 +1133,14 @@ Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We restricted the analysis sample to those who matched the first time. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-\begin{landscape}\begin{table}[H]
+\begin{table}[H]
 
-\caption{\label{tab:logit-coordinate-initial-matched}Logit Model of Coordination (Only Initial Matched Candidates)}
+\caption{\label{tab:lm-coordinate-noskip}Linear Probability Model of Coordination Process After CT (Excluding Those Who Skipped the CT)}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
@@ -1191,184 +1150,175 @@ Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.03} & \num{0.88} & \num{1.04} & \num{0.89} & \num{1.08} & \num{0.86}\\
- & {}[\num{0.76}, \num{1.38}] & {}[\num{0.63}, \num{1.25}] & {}[\num{0.76}, \num{1.43}] & {}[\num{0.62}, \num{1.27}] & {}[\num{0.76}, \num{1.51}] & {}[\num{0.58}, \num{1.29}]\\
-Treatment C & \num{0.92} & \num{0.89} & \num{0.94} & \num{0.92} & \num{0.99} & \num{0.96}\\
- & {}[\num{0.67}, \num{1.25}] & {}[\num{0.65}, \num{1.22}] & {}[\num{0.68}, \num{1.31}] & {}[\num{0.66}, \num{1.28}] & {}[\num{0.69}, \num{1.41}] & {}[\num{0.67}, \num{1.38}]\\
-Treatment D & \num{1.06} & \num{1.05} & \num{1.11} & \num{1.10} & \num{1.00} & \num{0.98}\\
- & {}[\num{0.79}, \num{1.43}] & {}[\num{0.78}, \num{1.42}] & {}[\num{0.81}, \num{1.52}] & {}[\num{0.80}, \num{1.51}] & {}[\num{0.71}, \num{1.43}] & {}[\num{0.69}, \num{1.40}]\\
+Treatment B & \num{0.18} & \num{-0.20} & \num{0.17} & \num{-0.25} & \num{-0.02} & \num{-0.44}\\
+ & (\num{0.61}) & (\num{0.68}) & (\num{0.58}) & (\num{0.64}) & (\num{0.53}) & (\num{0.59})\\
+Treatment C & \num{-0.13} & \num{-0.26} & \num{-0.06} & \num{-0.17} & \num{-0.17} & \num{-0.25}\\
+ & (\num{0.62}) & (\num{0.62}) & (\num{0.59}) & (\num{0.59}) & (\num{0.54}) & (\num{0.54})\\
+Treatment D & \num{0.48} & \num{0.46} & \num{0.63} & \num{0.61} & \num{0.02} & \num{-0.02}\\
+ & (\num{0.64}) & (\num{0.64}) & (\num{0.61}) & (\num{0.61}) & (\num{0.55}) & (\num{0.55})\\
+\midrule
+Control average & 5.21 & 5.21 & 4.64 & 4.64 & 3.94 & 3.94\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\hypertarget{heterogenous-treatment-effects}{%
+\subsubsection{Heterogenous Treatment Effects}\label{heterogenous-treatment-effects}}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-interaction-gender-coordinate}Heterogeneity of Message Effects on Coordination Process After CT by Gender}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate Selection} & \multicolumn{2}{c}{Final Consent} & \multicolumn{2}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+Treatment B & \num{-1.19} & \num{-1.47}* & \num{-0.90} & \num{-1.20} & \num{-0.47} & \num{-0.72}\\
+ & (\num{0.85}) & (\num{0.89}) & (\num{0.78}) & (\num{0.81}) & (\num{0.74}) & (\num{0.78})\\
+Treatment C & \num{0.37} & \num{0.23} & \num{0.61} & \num{0.49} & \num{0.24} & \num{0.14}\\
+ & (\num{0.95}) & (\num{0.94}) & (\num{0.88}) & (\num{0.88}) & (\num{0.80}) & (\num{0.80})\\
+Treatment D & \num{0.08} & \num{0.02} & \num{0.07} & \num{0.01} & \num{-0.43} & \num{-0.50}\\
+ & (\num{0.92}) & (\num{0.92}) & (\num{0.84}) & (\num{0.84}) & (\num{0.75}) & (\num{0.75})\\
+Male & \num{2.87}*** & \num{3.68}*** & \num{2.85}*** & \num{3.73}*** & \num{2.17}*** & \num{2.89}***\\
+ & (\num{0.93}) & (\num{1.08}) & (\num{0.87}) & (\num{1.03}) & (\num{0.80}) & (\num{0.94})\\
+Treatment B $\times$ Male & \num{2.10}* & \num{2.24}* & \num{1.79} & \num{1.94} & \num{0.90} & \num{1.10}\\
+ & (\num{1.24}) & (\num{1.36}) & (\num{1.16}) & (\num{1.28}) & (\num{1.07}) & (\num{1.19})\\
+Treatment C $\times$ Male & \num{-0.73} & \num{-0.68} & \num{-0.91} & \num{-0.85} & \num{-0.38} & \num{-0.33}\\
+ & (\num{1.30}) & (\num{1.30}) & (\num{1.23}) & (\num{1.22}) & (\num{1.12}) & (\num{1.12})\\
+Treatment D $\times$ Male & \num{0.75} & \num{0.82} & \num{0.98} & \num{1.05} & \num{0.89} & \num{0.94}\\
+ & (\num{1.31}) & (\num{1.31}) & (\num{1.23}) & (\num{1.23}) & (\num{1.10}) & (\num{1.10})\\
 \midrule
 Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016} & \num{7016}\\
-Log.Lik. & \num{-1442.488} & \num{-1418.461} & \num{-1333.299} & \num{-1307.520} & \num{-1147.326} & \num{-1122.914}\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Individual-level covariates are gender, (demeaned) age, its squared term, the number of past coordinations. Week-level covariates are the number of public holidays in the assigned week and the following week. Prefecture-level covariates are the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Region represents geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period. Region$\times$Week (in Dec. and Jan.) FE represents the products of these region and week indicators.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-\end{landscape}
-
-\begin{table}[H]
-
-\caption{\label{tab:lm-consent-interaction-init-reg}Heterogenous Message Effects on Final Consent (Only Initially Matched Candidates)}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{lcc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Final Consent} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
-\midrule
-Treatment B & \num{-2.11}* & \num{-2.76}**\\
- & (\num{1.18}) & (\num{1.13})\\
-Treatment C & \num{-0.35} & \num{-0.40}\\
- & (\num{1.34}) & (\num{1.35})\\
-Treatment D & \num{-0.49} & \num{-0.57}\\
- & (\num{1.32}) & (\num{1.33})\\
-Older female & \num{-2.22}* & \num{-1.46}\\
- & (\num{1.25}) & (\num{2.62})\\
-Young male & \num{3.60}** & \num{4.10}\\
- & (\num{1.55}) & (\num{2.95})\\
-Older male & \num{-0.04} & \num{1.28}\\
- & (\num{1.36}) & (\num{2.63})\\
-Treatment B $\times$ Older female & \num{2.93}* & \num{2.77}\\
- & (\num{1.65}) & (\num{1.73})\\
-Treatment C $\times$ Older female & \num{1.36} & \num{1.28}\\
- & (\num{1.84}) & (\num{1.83})\\
-Treatment D $\times$ Older female & \num{2.65} & \num{2.47}\\
- & (\num{1.85}) & (\num{1.88})\\
-Treatment B $\times$ Young male & \num{1.43} & \num{1.49}\\
- & (\num{1.95}) & (\num{2.08})\\
-Treatment C $\times$ Young male & \num{-2.12} & \num{-1.99}\\
- & (\num{2.01}) & (\num{2.01})\\
-Treatment D $\times$ Young male & \num{-0.33} & \num{-0.26}\\
- & (\num{2.06}) & (\num{2.07})\\
-Treatment B $\times$ Older male & \num{4.39}** & \num{4.59}**\\
- & (\num{1.81}) & (\num{2.03})\\
-Treatment C $\times$ Older male & \num{1.63} & \num{1.68}\\
- & (\num{1.97}) & (\num{1.97})\\
-Treatment D $\times$ Older male & \num{2.24} & \num{2.26}\\
- & (\num{1.95}) & (\num{1.96})\\
-\midrule
-Covariates &  & X\\
-Num.Obs. & \num{7016} & \num{7016}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age classes (Younger/Older) based on age 30. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. Month and Week FE is month and week (the number of a week within each month) dummy variables. We controlled winter holidays effect by Region$\times$Week (in Dec. and Jan.) dummies. Region dummies represent geographical clusters, where 41 prefectures are grouped into 10 regions, while Hokkaido, Tokyo, Kanagawa, Aichi, Osaka, and Okinawa each form their own region, resulting in 16 region dummies in total. Week (in Dec. and Jan.) consists of dummy variables indicating each week in December 2020 and January 2021 and the remaining period.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:lm-consent-interaction-init-lh}Linear Combination Test: Message Effects on Final Consent for Specific Gender-Age Group (Only Initially Matched Candidates)}
+\caption{\label{tab:lh-interaction-gender-coordinate}Linear Combination Test: Message Effects on Coordination Process After CT for Specific Gender Group}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{llcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
- & (1) & (2) & (3) & (4)\\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Candidate Selection} & \multicolumn{2}{c}{Final Consent} & \multicolumn{2}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
+Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Control average & 3.92 & 1.70 & 7.52 & 3.88\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (1): No covariates}}\\
-\hspace{1em}B & -2.11* & 0.82 & -0.68 & 2.28*\\
-\hspace{1em} & (1.18) & (1.16) & (1.56) & (1.38)\\
-\hspace{1em}C & -0.35 & 1.00 & -2.48* & 1.28\\
-\hspace{1em} & (1.34) & (1.26) & (1.49) & (1.43)\\
-\hspace{1em}D & -0.49 & 2.16* & -0.82 & 1.75\\
-\hspace{1em} & (1.32) & (1.29) & (1.59) & (1.43)\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textbf{Model (2): Including covariates}}\\
-\hspace{1em}B & -2.76** & 0.01 & -1.27 & 1.84\\
-\hspace{1em} & (1.13) & (1.32) & (1.75) & (1.69)\\
-\hspace{1em}C & -0.40 & 0.89 & -2.39 & 1.29\\
-\hspace{1em} & (1.35) & (1.24) & (1.49) & (1.43)\\
-\hspace{1em}D & -0.57 & 1.90 & -0.83 & 1.68\\
-\hspace{1em} & (1.33) & (1.32) & (1.59) & (1.44)\\
+Female & B & -1.19 (0.85) & -1.47 (0.89)* & -0.90 (0.78) & -1.20 (0.81) & -0.47 (0.74) & -0.72 (0.78)\\
+ & C & 0.37 (0.95) & 0.23 (0.94) & 0.61 (0.88) & 0.49 (0.88) & 0.24 (0.80) & 0.14 (0.80)\\
+ & D & 0.08 (0.92) & 0.02 (0.92) & 0.07 (0.84) & 0.01 (0.84) & -0.43 (0.75) & -0.50 (0.75)\\
+Male & B & 0.90 (0.90) & 0.77 (1.03) & 0.89 (0.86) & 0.74 (0.98) & 0.43 (0.77) & 0.38 (0.90)\\
+ & C & -0.36 (0.90) & -0.45 (0.89) & -0.30 (0.85) & -0.36 (0.85) & -0.14 (0.78) & -0.20 (0.78)\\
+ & D & 0.83 (0.94) & 0.84 (0.94) & 1.05 (0.90) & 1.05 (0.90) & 0.45 (0.80) & 0.44 (0.81)\\
+\midrule
+ & Covariates &  & X &  & X &  & X\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-consent-interaction-init-reg}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-coordinate}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:lm-consent-subset1-init}Subset Regression of Final Consent without Covariates (Only Initially Matched Candidates)}
+\caption{\label{tab:lm-interaction-gender-age-coordinate}Heterogenous Message Effects on Coordination Process After CT by Gender-Age Group}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 30$} & \multicolumn{1}{c}{$30 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate Selection} & \multicolumn{2}{c}{Final Consent} & \multicolumn{2}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{-2.11}* & \num{0.82} & \num{-0.68} & \num{2.28}*\\
- & (\num{1.18}) & (\num{1.16}) & (\num{1.56}) & (\num{1.38})\\
-Treatment C & \num{-0.35} & \num{1.00} & \num{-2.48}* & \num{1.28}\\
- & (\num{1.34}) & (\num{1.26}) & (\num{1.49}) & (\num{1.43})\\
-Treatment D & \num{-0.49} & \num{2.16}* & \num{-0.82} & \num{1.75}\\
- & (\num{1.32}) & (\num{1.29}) & (\num{1.59}) & (\num{1.43})\\
+Treatment B & \num{-3.13} & \num{-3.08} & \num{-2.27} & \num{-2.01} & \num{-1.07} & \num{-0.94}\\
+ & (\num{1.93}) & (\num{1.97}) & (\num{1.79}) & (\num{1.87}) & (\num{1.66}) & (\num{1.76})\\
+Treatment C & \num{-0.16} & \num{-0.36} & \num{0.34} & \num{0.10} & \num{0.84} & \num{0.59}\\
+ & (\num{2.17}) & (\num{2.18}) & (\num{2.02}) & (\num{2.03}) & (\num{1.85}) & (\num{1.87})\\
+Treatment D & \num{-1.73} & \num{-1.75} & \num{-1.21} & \num{-1.17} & \num{-0.68} & \num{-0.63}\\
+ & (\num{2.04}) & (\num{2.04}) & (\num{1.88}) & (\num{1.89}) & (\num{1.70}) & (\num{1.71})\\
+Older female & \num{-3.25}* & \num{-3.76}** & \num{-2.62}* & \num{-3.04}* & \num{-1.70} & \num{-2.27}\\
+ & (\num{1.74}) & (\num{1.82}) & (\num{1.59}) & (\num{1.69}) & (\num{1.43}) & (\num{1.56})\\
+Young male & \num{0.96} & \num{1.60} & \num{0.77} & \num{0.99} & \num{0.31} & \num{0.30}\\
+ & (\num{2.13}) & (\num{2.25}) & (\num{1.94}) & (\num{2.08}) & (\num{1.71}) & (\num{1.88})\\
+Older male & \num{0.33} & \num{-0.82} & \num{0.96} & \num{-0.08} & \num{1.09} & \num{0.04}\\
+ & (\num{1.76}) & (\num{1.84}) & (\num{1.62}) & (\num{1.72}) & (\num{1.45}) & (\num{1.57})\\
+Treatment B $\times$ Older female & \num{2.63} & \num{2.11} & \num{1.84} & \num{1.04} & \num{0.80} & \num{0.24}\\
+ & (\num{2.14}) & (\num{2.20}) & (\num{1.98}) & (\num{2.07}) & (\num{1.85}) & (\num{1.95})\\
+Treatment C $\times$ Older female & \num{0.64} & \num{0.71} & \num{0.29} & \num{0.40} & \num{-0.90} & \num{-0.75}\\
+ & (\num{2.40}) & (\num{2.40}) & (\num{2.23}) & (\num{2.23}) & (\num{2.04}) & (\num{2.05})\\
+Treatment D $\times$ Older female & \num{2.44} & \num{2.35} & \num{1.71} & \num{1.56} & \num{0.31} & \num{0.14}\\
+ & (\num{2.28}) & (\num{2.28}) & (\num{2.09}) & (\num{2.11}) & (\num{1.89}) & (\num{1.89})\\
+Treatment B $\times$ Young male & \num{5.16}* & \num{3.80} & \num{4.01} & \num{2.61} & \num{3.76} & \num{2.24}\\
+ & (\num{2.80}) & (\num{2.96}) & (\num{2.57}) & (\num{2.77}) & (\num{2.38}) & (\num{2.58})\\
+Treatment C $\times$ Young male & \num{-1.50} & \num{-1.10} & \num{-1.11} & \num{-0.64} & \num{-0.68} & \num{-0.22}\\
+ & (\num{2.84}) & (\num{2.85}) & (\num{2.65}) & (\num{2.66}) & (\num{2.41}) & (\num{2.43})\\
+Treatment D $\times$ Young male & \num{2.49} & \num{2.47} & \num{2.82} & \num{2.73} & \num{2.09} & \num{2.00}\\
+ & (\num{2.87}) & (\num{2.86}) & (\num{2.67}) & (\num{2.68}) & (\num{2.38}) & (\num{2.39})\\
+Treatment B $\times$ Older male & \num{3.74}* & \num{3.95}* & \num{2.91} & \num{2.86} & \num{0.86} & \num{1.11}\\
+ & (\num{2.18}) & (\num{2.29}) & (\num{2.03}) & (\num{2.18}) & (\num{1.88}) & (\num{2.03})\\
+Treatment C $\times$ Older male & \num{0.20} & \num{0.40} & \num{-0.49} & \num{-0.24} & \num{-1.07} & \num{-0.83}\\
+ & (\num{2.40}) & (\num{2.41}) & (\num{2.24}) & (\num{2.25}) & (\num{2.06}) & (\num{2.07})\\
+Treatment D $\times$ Older male & \num{2.59} & \num{2.72} & \num{2.10} & \num{2.16} & \num{0.86} & \num{0.88}\\
+ & (\num{2.30}) & (\num{2.30}) & (\num{2.14}) & (\num{2.15}) & (\num{1.93}) & (\num{1.94})\\
 \midrule
-Control average & 3.92 & 1.70 & 7.52 & 3.88\\
-\addlinespace[0.3em]
-\multicolumn{5}{l}{\textit{Multiplicity-adjusted p-values}}\\
-\hspace{1em}Treatment B & 0.882 & 0.974 & 0.982 & 0.994\\
-\hspace{1em}Treatment C & 0.873 & 0.990 & 0.957 & 0.982\\
-\hspace{1em}Treatment D & 0.984 & 0.987 & 0.982 & 0.979\\
-Num.Obs. & \num{1685} & \num{1207} & \num{2283} & \num{1841}\\
+Covariates &  & X &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We did not control any covariates. Multiplicity-adjusted p-values were calculated with the method proposed by \cite{List2019}.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
 
-\caption{\label{tab:lm-consent-subset2-init}Subset Regression of Final Consent with Covariates and Month and Week FE (Only Initially Matched Candidates)}
+\caption{\label{tab:lh-interaction-gender-age-coordinate}Linear Combination Test: Message Effects on Coordination Process After CT for Specific Gender-Age Group}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{llcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Final Consent} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Females} & \multicolumn{2}{c}{Males} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} & \multicolumn{1}{c}{$\text{Age} < 40$} & \multicolumn{1}{c}{$40 \le \text{Age}$} \\
-\cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Candidate Selection} & \multicolumn{2}{c}{Final Consent} & \multicolumn{2}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
+Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{-2.76}** & \num{0.01} & \num{-1.27} & \num{1.84}\\
- & (\num{1.13}) & (\num{1.32}) & (\num{1.75}) & (\num{1.69})\\
-Treatment C & \num{-0.40} & \num{0.89} & \num{-2.39} & \num{1.29}\\
- & (\num{1.35}) & (\num{1.24}) & (\num{1.49}) & (\num{1.43})\\
-Treatment D & \num{-0.57} & \num{1.90} & \num{-0.83} & \num{1.68}\\
- & (\num{1.33}) & (\num{1.32}) & (\num{1.59}) & (\num{1.44})\\
+Young female & B & -3.13 (1.93) & -3.08 (1.97) & -2.27 (1.79) & -2.01 (1.87) & -1.07 (1.66) & -0.94 (1.76)\\
+ & C & -0.16 (2.17) & -0.36 (2.18) & 0.34 (2.02) & 0.10 (2.03) & 0.84 (1.85) & 0.59 (1.87)\\
+ & D & -1.73 (2.04) & -1.75 (2.04) & -1.21 (1.88) & -1.17 (1.89) & -0.68 (1.70) & -0.63 (1.71)\\
+Older female & B & -0.51 (0.92) & -0.97 (0.97) & -0.43 (0.85) & -0.97 (0.87) & -0.26 (0.81) & -0.70 (0.84)\\
+ & C & 0.48 (1.01) & 0.34 (1.00) & 0.63 (0.95) & 0.50 (0.93) & -0.06 (0.86) & -0.16 (0.84)\\
+ & D & 0.71 (1.01) & 0.60 (1.01) & 0.51 (0.92) & 0.39 (0.92) & -0.37 (0.82) & -0.50 (0.82)\\
+Young male & B & 2.03 (2.02) & 0.72 (2.20) & 1.74 (1.85) & 0.60 (2.04) & 2.69 (1.70) & 1.29 (1.89)\\
+ & C & -1.66 (1.84) & -1.47 (1.84) & -0.76 (1.72) & -0.54 (1.72) & 0.17 (1.54) & 0.36 (1.55)\\
+ & D & 0.75 (2.01) & 0.73 (2.01) & 1.61 (1.90) & 1.56 (1.90) & 1.41 (1.67) & 1.36 (1.67)\\
+Older male & B & 0.60 (1.01) & 0.87 (1.16) & 0.65 (0.97) & 0.85 (1.12) & -0.20 (0.87) & 0.16 (1.02)\\
+ & C & 0.04 (1.03) & 0.04 (1.02) & -0.15 (0.98) & -0.14 (0.98) & -0.23 (0.90) & -0.24 (0.90)\\
+ & D & 0.86 (1.06) & 0.97 (1.06) & 0.89 (1.02) & 0.99 (1.02) & 0.17 (0.92) & 0.25 (0.92)\\
 \midrule
-Control average & 3.92 & 1.70 & 7.52 & 3.88\\
-Num.Obs. & \num{1685} & \num{1207} & \num{2283} & \num{1841}\\
+ & Covariates &  & X &  & X &  & X\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We controlled the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers, and month and week (the number of a week within each month) dummy variables.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \ref{tab:lm-interaction-gender-age-coordinate}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
