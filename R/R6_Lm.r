@@ -409,7 +409,8 @@ LmFit <- R6::R6Class("LmFit",
           gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
           align = paste(c("l", rep("c", nrow(res))), collapse = ""),
           add_rows = add_tab,
-          fmt = digit
+          fmt = digit,
+          escape = FALSE
         )
 
       if (hold) {
@@ -477,7 +478,7 @@ LmFit <- R6::R6Class("LmFit",
           group = str_split(term, "_", simplify = TRUE)[, 2],
           group = if_else(str_detect(term, "Treatment B") & statistic == "estimate", group, ""),
           term = str_split(term, "_", simplify = TRUE)[, 1],
-          term = if_else(statistic == "estimate", str_remove(term, "_.*"), "")
+          term = if_else(statistic == "estimate", str_remove(term, "Treatment "), "")
         ) %>%
         select(-statistic) %>%
         select(group, term, everything()) %>%
@@ -487,7 +488,9 @@ LmFit <- R6::R6Class("LmFit",
         knitr::kable(
           caption = title,
           col.names = c("Group", "Treatment", names(tbl)[-c(1:2)]),
-          align = paste(c("ll", rep("c", nrow(res))), collapse = "")
+          align = paste(c("ll", rep("c", nrow(res))), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
         )
 
       if (hold) {
@@ -730,7 +733,9 @@ LmFitSubset <- R6::R6Class("LmFitSubset",
         knitr::kable(
           caption = title,
           col.names = c("", names(tbl3)[-c(1:2)]),
-          align = paste(c("l", rep("c", ncol(tbl3) - 2)), collapse = "")
+          align = paste(c("l", rep("c", ncol(tbl3) - 2)), collapse = ""),
+          booktabs = TRUE,
+          linesep = ""
         )
 
       if (hold) {
