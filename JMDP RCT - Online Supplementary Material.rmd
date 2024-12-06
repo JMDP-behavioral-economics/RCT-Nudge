@@ -120,21 +120,21 @@ rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
-rct$set_default_se_type(params$se_type)
+rct$set_default_se_type("stata")
 
 # robust sample (initially matched candidate)
 rct_initial <- rawdt_initial$RCT()
 rct_initial$add_intervention(intervention)
 rct_initial$add_outcome(endpoint)
 if (params$is_cluster) rct_initial$set_default_cluster("RCTweek")
-rct_initial$set_default_se_type(params$se_type)
+rct_initial$set_default_se_type("stata")
 
 # robust sample (remove those who skipped the CT)
 rct_noskip <- rawdt_noskip$RCT()
 rct_noskip$add_intervention(intervention)
 rct_noskip$add_outcome(endpoint)
 if (params$is_cluster) rct_noskip$set_default_cluster("RCTweek")
-rct_noskip$set_default_se_type(params$se_type)
+rct_noskip$set_default_se_type("stata")
 ```
 
 ## Balance Test
@@ -343,6 +343,165 @@ mha_gender_age_test %>%
 
 ### Decompose Effects: Intention and Attrition Perspectives
 
+```{r lm-skip}
+skip_dt <- rct$
+  lm_effect("reply", sample_drop = FALSE)$
+  data %>%
+    mutate(
+      coordinate_more = if_else(coordinate1 == 0, 100, 0),
+      skip_CT = case_when(
+        value == 0 ~ 0,
+        days_reply == 0 ~ 100,
+        TRUE ~ 0
+      )
+    )
+
+ctrl_avg <- skip_dt %>%
+  filter(treat == "A") %>%
+  summarize_at(vars(coordinate_more, skip_CT), list(~ mean(.))) %>%
+  mutate_all(list(~ sprintf("%1.2f", .)))
+
+add_tab <- data.frame(rbind(
+  c(
+    "Control average",
+    ctrl_avg$coordinate_more, ctrl_avg$coordinate_more,
+    ctrl_avg$skip_CT, ctrl_avg$skip_CT
+  ),
+  c(
+    "Covariates",
+    "", "X",
+    "", "X"
+  )
+))
+
+attr(add_tab, "position") <- 7:8
+
+skip_mods <- list(
+  coordinate_more ~ treat,
+  coordinate_more ~ treat + male + age + I(age^2) + hospital_per_area +
+    PB_per_area + BM_per_area + holidays,
+  skip_CT ~ treat,
+  skip_CT ~ treat + male + age + I(age^2) + coordinate + hospital_per_area +
+    PB_per_area + BM_per_area + holidays
+)
+
+est_skip_mods <- skip_mods %>%
+  purrr::map(~ lm_robust(., data = skip_dt, se_type = "stata"))
+
+est_skip_mods %>%
+  modelsummary(
+    title = "Linear Probability Model of Number of Coordination and Skipping CT",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
+    align = "lcccc",
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    add_rows = add_tab,
+    fmt = 2
+  ) %>%
+  kableExtra::kable_styling(
+    font_size = 8,
+    latex_options = "HOLD_position"
+  ) %>%
+  kableExtra::add_header_above(
+    c(" " = 1, "\\\\#.Coordination $>$ 1" = 2, "Skipped CT" = 2),
+    escape = FALSE
+  ) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We excluded the number of past coordinations in model (2).",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+```{r lm-interaction-gender-skip}
+skip_interaction_mods <- list(
+  coordinate_more ~ treat * male,
+  coordinate_more ~ treat * male + age + I(age^2) + hospital_per_area +
+    PB_per_area + BM_per_area + holidays + age:male + I(age^2):male + hospital_per_area:male + PB_per_area:male + BM_per_area:male + holidays:male,
+  skip_CT ~ treat * male,
+  skip_CT ~ treat * male + age + I(age^2) + hospital_per_area +
+    PB_per_area + BM_per_area + holidays + age:male + I(age^2):male + hospital_per_area:male + PB_per_area:male + BM_per_area:male + holidays:male
+)
+
+hypothesis <- c(
+  "treatB + treatB:male" = "Treatment B",
+  "treatC + treatC:male" = "Treatment C",
+  "treatD + treatD:male" = "Treatment D"
+)
+
+est_skip_interaction_mods <- skip_interaction_mods %>%
+  map(~ lh_robust(
+    .,
+    data = skip_dt,
+    se_type = "stata",
+    linear_hypothesis = names(hypothesis)
+  ))
+
+lh_tab <- est_skip_interaction_mods %>%
+  map(~ .$lh) %>%
+  modelsummary(
+    coef_map = hypothesis,
+    stars = c("***" = .01, "**" = .05, "*" = 0.1),
+    output = "data.frame",
+    fmt = 2
+  ) %>%
+  filter(part == "estimates") %>%
+  mutate(term = if_else(statistic == "std.error", "", term)) %>%
+  select(-part, -statistic)
+
+add_tab <- rbind(
+  lh_tab,
+  c("Covariates", "", "X", "", "X")
+)
+
+attr(add_tab, "position") <- 15:21
+
+est_skip_interaction_mods %>%
+  map(~ .$lm_robust) %>%
+  modelsummary(
+    title = "Heterogeneous Treatment Effects on Number of Coordination and Skipping CT by Gender",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D",
+      "male" = "Male",
+      "treatB:male" = "Treatment B $\\times$ Male",
+      "treatC:male" = "Treatment C $\\times$ Male",
+      "treatD:male" = "Treatment D $\\times$ Male"
+    ),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
+    align = "lcccc",
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 2,
+    add_rows = add_tab,
+    escape = FALSE
+  ) %>%
+  kableExtra::kable_styling(
+    font_size = 8,
+    latex_options = "HOLD_position"
+  ) %>%
+  kableExtra::add_header_above(
+    c(" " = 1, "\\\\#.Coordination $>$ 1" = 2, "Skipped CT" = 2),
+    escape = FALSE
+  ) %>%
+  kableExtra::group_rows(
+    "Linear combination test: Treatment + Treatment $\\times$ Male",
+    15, 20,
+    escape = FALSE
+  ) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.  We also controlled cross terms of each covariate and gender dummy. We excluded the number of past coordinations in model (2).",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
 ```{r lm-test-decompose}
 rct$
   lm_decompose_effect("test")$
@@ -415,7 +574,7 @@ test_decompose_interaction_gender_age$
 
 ### Decompose Effects: Response Timing Perspective
 
-```{r response-speed-CT, fig.cap = "Binned Scatter Plot of CT (or Response with Positive Intention) vs. Response Days. \\newline \\emph{Note}: We run logistic regression of the CT (or response with positive intention) on response days. We excluded those who skipped the CT and used control arm. We show the regression lines and its 95 percent confidence interval.", fig.pos = "H"}
+```{r speed-CT, fig.cap = "Binned Scatter Plot of CT (or Response with Positive Intention) vs. Response Days. \\newline \\emph{Note}: We run logistic regression of the CT (or response with positive intention) on response days. We excluded those who skipped the CT and used control arm. We show the regression lines and its 95 percent confidence interval.", fig.pos = "H"}
 reply_dt <- rct$data %>%
   filter(reply == 1 & 0 < days_reply & treat == "A")
 
@@ -465,8 +624,58 @@ plotdt %>%
       linetype = 1
     ) +
     labs(x = "Response days", y = "Proportion", shape = "Outcome") +
-    my_theme_classic(size = 20) +
+    my_theme_classic(size = 30) +
     theme(legend.position = "bottom")
+```
+
+```{r speed-CT-cond-response, fig.cap = "Binned Scatter Plot of CT vs. Response Spped among Those Who Responded with Positive Intention. \\newline \\emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental arm A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.", fig.pos = "H"}
+positive_dt <- rct$data %>%
+  filter(positive == 1 & 0 < days_reply & treat == "A")
+
+plotdt <- positive_dt %>%
+  mutate(ntile = ntile(days_reply, 20)) %>%
+  group_by(ntile) %>%
+  summarize(
+    median_day = (max(days_reply) + min(days_reply)) / 2,
+    mean_ct = mean(test)
+  )
+
+plotdt %>%
+  ggplot(aes(x = median_day, y = mean_ct)) +
+    geom_point(color = "grey40", size = 3) +
+    geom_smooth(
+      aes(x = days_reply, y = test),
+      data = positive_dt,
+      method = "glm",
+      method.args = list(family = "binomial"),
+      se = FALSE,
+      alpha = 0.2,
+      color = "black",
+      linetype = 1
+    ) +
+    geom_smooth(
+      aes(x = days_reply, y = test),
+      data = positive_dt,
+      se = FALSE,
+      alpha = 0.2,
+      color = "black",
+      linetype = 2
+    ) +
+    labs(x = "Response days", y = "Proportion", shape = "Outcome") +
+    my_theme_classic(size = 30)
+```
+
+```{r cumulative-response, fig.cap = "Cumulative Rate of Response with Positive Intention by Treatment \\newline \\emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate."}
+rct_noskip$
+  flow("positive", sample_drop = FALSE)$
+  plot_cumulative(
+    upper_days = 25,
+    xbreaks = seq(0, 100, by = 4),
+    ylim = c(0, 60),
+    xlab = "Response days",
+    ylab = "Cumulative rate of\nresponse with positive intention (%)",
+    base_size = 30
+  )
 ```
 
 ```{r dist-response-speed, fig.cap = "Density of Number of Days Required for Response with Positive Intention. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.", fig.pos = "H"}
@@ -474,14 +683,15 @@ rct_noskip$
   flow(outcome = "positive", sample_drop = FALSE)$
   plot_density(
     upper_days = 50,
-    x_breaks = seq(0, 100, by = 4)
+    x_breaks = seq(0, 100, by = 4),
+    base_size = 30
   )
 ```
 
 ```{r lm-positive-time-decompose-noskip}
 rct_noskip$
   flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(4, 9))$
+  lm_time_segment(cut_days = c(5, 12))$
   fit(scale = 100)$
   kable_reg(
     title = "Effect on Speed of Response with Positive Intention (Excluding Those Who Skipped the CT)",
@@ -494,7 +704,7 @@ rct_noskip$
 ```{r lm-test-time-decompose-noskip}
 rct_noskip$
   flow(outcome = "test", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(4, 9))$
+  lm_time_segment(cut_days = c(5, 12))$
   fit(scale = 100)$
   kable_reg(
     title = "Decomposition of Effect on the CT: Response Speed Perspectives (Excluding Those Who Skipped the CT)",
@@ -517,12 +727,12 @@ rct_noskip$
 ```{r set-lm-interaction-int-time-decompose-noskip,include=FALSE}
 int_t_decompose_gender <- rct_noskip$
   flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(4, 9))$
+  lm_time_segment(cut_days = c(5, 12))$
   fit(scale = 100, interaction_of_gender = TRUE)
 
 int_t_decompose_gender_age <- rct_noskip$
   flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(4, 9))$
+  lm_time_segment(cut_days = c(5, 12))$
   fit(scale = 100, interaction_of_gender_age = TRUE, age_cut = 40)
 ```
 
@@ -582,7 +792,7 @@ int_t_decompose_gender_age$
 
 test_t_decompose_gender <- rct_noskip$
   flow(outcome = "test", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(4, 9))$
+  lm_time_segment(cut_days = c(5, 12))$
   fit(scale = 100, interaction_of_gender = TRUE)
 ```
 

@@ -536,6 +536,81 @@ Older male & D & 3.397 & 0.111 & 0.650\\
 
 \begin{table}[H]
 
+\caption{\label{tab:lm-skip}Linear Probability Model of Number of Coordination and Skipping CT}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{\#.Coordination $>$ 1} & \multicolumn{2}{c}{Skipped CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{-0.18} & \num{1.43} & \num{0.79} & \num{0.64}\\
+ & (\num{1.29}) & (\num{1.41}) & (\num{0.54}) & (\num{0.58})\\
+Treatment C & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
+ & (\num{1.34}) & (\num{1.30}) & (\num{0.56}) & (\num{0.53})\\
+Treatment D & \num{-1.91} & \num{-1.29} & \num{1.11}* & \num{1.28}**\\
+ & (\num{1.32}) & (\num{1.29}) & (\num{0.57}) & (\num{0.54})\\
+\midrule
+Control average & 36.61 & 36.61 & 3.87 & 3.87\\
+Covariates &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We excluded the number of past coordinations in model (2).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-interaction-gender-skip}Heterogeneous Treatment Effects on Number of Coordination and Skipping CT by Gender}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{\#.Coordination $>$ 1} & \multicolumn{2}{c}{Skipped CT} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+Treatment B & \num{3.17} & \num{4.10}* & \num{0.98} & \num{1.40}*\\
+ & (\num{2.03}) & (\num{2.22}) & (\num{0.65}) & (\num{0.78})\\
+Treatment C & \num{3.30} & \num{3.80}* & \num{2.99}*** & \num{2.82}***\\
+ & (\num{2.08}) & (\num{2.05}) & (\num{0.80}) & (\num{0.79})\\
+Treatment D & \num{-1.47} & \num{-0.86} & \num{2.70}*** & \num{2.70}***\\
+ & (\num{2.01}) & (\num{1.99}) & (\num{0.76}) & (\num{0.76})\\
+Male & \num{12.14}*** & \num{12.42}*** & \num{3.34}*** & \num{5.01}***\\
+ & (\num{1.92}) & (\num{2.20}) & (\num{0.70}) & (\num{0.85})\\
+Treatment B $\times$ Male & \num{-5.47}** & \num{-4.36} & \num{-0.36} & \num{-1.08}\\
+ & (\num{2.62}) & (\num{2.88}) & (\num{1.01}) & (\num{1.14})\\
+Treatment C $\times$ Male & \num{-2.70} & \num{-2.87} & \num{-3.59}*** & \num{-3.44}***\\
+ & (\num{2.70}) & (\num{2.65}) & (\num{1.09}) & (\num{1.09})\\
+Treatment D $\times$ Male & \num{-0.43} & \num{-0.76} & \num{-2.54}** & \num{-2.63}**\\
+ & (\num{2.64}) & (\num{2.60}) & (\num{1.09}) & (\num{1.09})\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Linear combination test: Treatment + Treatment $\times$ Male}}\\
+\hspace{1em}Treatment B & -2.30 & -0.25 & 0.62 & 0.31\\
+\hspace{1em} & (1.66) & (1.82) & (0.77) & (0.84)\\
+\hspace{1em}Treatment C & 0.60 & 0.93 & -0.59 & -0.62\\
+\hspace{1em} & (1.72) & (1.68) & (0.75) & (0.75)\\
+\hspace{1em}Treatment D & -1.90 & -1.62 & 0.16 & 0.07\\
+\hspace{1em} & (1.72) & (1.68) & (0.78) & (0.78)\\
+Covariates &  & X &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.  We also controlled cross terms of each covariate and gender dummy. We excluded the number of past coordinations in model (2).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
 \caption{\label{tab:lm-test-decompose}Decompose Effect on the CT: Intention and Attrition Perspectives}
 \centering
 \fontsize{8}{10}\selectfont
@@ -750,7 +825,15 @@ Older male & B & 3.12 (2.36) & 2.04 (2.64) & -0.39 (1.06) & 1.03 (1.06) & 0.36 (
 \subsubsection{Decompose Effects: Response Timing Perspective}\label{decompose-effects-response-timing-perspective}}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~3/figure-latex/response-speed-CT-1} \caption{Binned Scatter Plot of CT (or Response with Positive Intention) vs. Response Days. \newline \emph{Note}: We run logistic regression of the CT (or response with positive intention) on response days. We excluded those who skipped the CT and used control arm. We show the regression lines and its 95 percent confidence interval.}\label{fig:response-speed-CT}
+\includegraphics{JMDPRC~3/figure-latex/speed-CT-1} \caption{Binned Scatter Plot of CT (or Response with Positive Intention) vs. Response Days. \newline \emph{Note}: We run logistic regression of the CT (or response with positive intention) on response days. We excluded those who skipped the CT and used control arm. We show the regression lines and its 95 percent confidence interval.}\label{fig:speed-CT}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics{JMDPRC~3/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Spped among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental arm A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
+\end{figure}
+
+\begin{figure}[t]
+\includegraphics{JMDPRC~3/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
 \end{figure}
 
 \begin{figure}[H]
@@ -765,18 +848,18 @@ Older male & B & 3.12 (2.36) & 2.04 (2.64) & -0.39 (1.06) & 1.03 (1.06) & 0.36 (
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{0.68}** & \num{0.80}*** & \num{-2.00} & \num{1.07} & \num{3.36}*** & \num{-0.22}\\
- & (\num{0.27}) & (\num{0.31}) & (\num{1.26}) & (\num{1.40}) & (\num{1.15}) & (\num{1.25})\\
-Treatment C & \num{-0.04} & \num{-0.05} & \num{-1.23} & \num{-0.68} & \num{0.44} & \num{0.70}\\
- & (\num{0.23}) & (\num{0.23}) & (\num{1.30}) & (\num{1.28}) & (\num{1.16}) & (\num{1.16})\\
-Treatment D & \num{0.15} & \num{0.18} & \num{-2.80}** & \num{-2.24}* & \num{2.72}** & \num{2.28}*\\
- & (\num{0.25}) & (\num{0.25}) & (\num{1.29}) & (\num{1.27}) & (\num{1.18}) & (\num{1.18})\\
+Treatment B & \num{0.85}* & \num{0.64} & \num{-0.87} & \num{1.19} & \num{2.06}** & \num{-0.18}\\
+ & (\num{0.43}) & (\num{0.46}) & (\num{1.34}) & (\num{1.48}) & (\num{0.88}) & (\num{0.94})\\
+Treatment C & \num{-0.25} & \num{-0.21} & \num{0.56} & \num{1.26} & \num{-1.14} & \num{-1.07}\\
+ & (\num{0.40}) & (\num{0.40}) & (\num{1.38}) & (\num{1.36}) & (\num{0.85}) & (\num{0.86})\\
+Treatment D & \num{-0.02} & \num{-0.03} & \num{-0.54} & \num{-0.10} & \num{0.64} & \num{0.35}\\
+ & (\num{0.41}) & (\num{0.41}) & (\num{1.38}) & (\num{1.36}) & (\num{0.89}) & (\num{0.89})\\
 \midrule
-Control average & 0.70 & 0.70 & 31.27 & 31.27 & 21.13 & 21.13\\
+Control average & 2.17 & 2.17 & 40.13 & 40.13 & 10.79 & 10.79\\
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
 \bottomrule
@@ -795,18 +878,18 @@ Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} &
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{0.48}*** & \num{0.57}*** & \num{0.00} & \num{1.33} & \num{2.11}*** & \num{0.91}\\
- & (\num{0.18}) & (\num{0.21}) & (\num{0.91}) & (\num{1.05}) & (\num{0.71}) & (\num{0.77})\\
-Treatment C & \num{0.03} & \num{0.02} & \num{-0.56} & \num{-0.57} & \num{1.15} & \num{1.04}\\
- & (\num{0.13}) & (\num{0.13}) & (\num{0.93}) & (\num{0.93}) & (\num{0.71}) & (\num{0.71})\\
-Treatment D & \num{0.26} & \num{0.27}* & \num{-0.37} & \num{-0.13} & \num{1.69}** & \num{1.55}**\\
- & (\num{0.16}) & (\num{0.16}) & (\num{0.93}) & (\num{0.93}) & (\num{0.72}) & (\num{0.72})\\
+Treatment B & \num{0.30} & \num{0.24} & \num{1.02} & \num{2.49}** & \num{1.27}*** & \num{0.08}\\
+ & (\num{0.28}) & (\num{0.30}) & (\num{1.01}) & (\num{1.16}) & (\num{0.48}) & (\num{0.48})\\
+Treatment C & \num{-0.21} & \num{-0.21} & \num{0.29} & \num{0.22} & \num{0.53} & \num{0.48}\\
+ & (\num{0.25}) & (\num{0.25}) & (\num{1.03}) & (\num{1.03}) & (\num{0.47}) & (\num{0.46})\\
+Treatment D & \num{0.29} & \num{0.29} & \num{0.37} & \num{0.62} & \num{0.92}* & \num{0.77}\\
+ & (\num{0.29}) & (\num{0.29}) & (\num{1.03}) & (\num{1.03}) & (\num{0.48}) & (\num{0.48})\\
 \midrule
-Control average & 0.21 & 0.21 & 12.68 & 12.68 & 6.24 & 6.24\\
+Control average & 0.90 & 0.90 & 15.68 & 15.68 & 2.54 & 2.54\\
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
 \bottomrule
@@ -829,24 +912,24 @@ Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} &
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{0.19} & \num{0.42} & \num{-5.81}*** & \num{-3.36} & \num{4.86}*** & \num{2.00}\\
- & (\num{0.38}) & (\num{0.44}) & (\num{2.09}) & (\num{2.29}) & (\num{1.84}) & (\num{1.99})\\
-Treatment C & \num{0.09} & \num{-0.01} & \num{-2.94} & \num{-2.85} & \num{1.47} & \num{1.74}\\
- & (\num{0.38}) & (\num{0.38}) & (\num{2.18}) & (\num{2.16}) & (\num{1.85}) & (\num{1.85})\\
-Treatment D & \num{0.24} & \num{0.28} & \num{-6.58}*** & \num{-6.26}*** & \num{4.24}** & \num{3.82}**\\
- & (\num{0.39}) & (\num{0.39}) & (\num{2.11}) & (\num{2.09}) & (\num{1.86}) & (\num{1.87})\\
-Male & \num{0.09} & \num{0.08} & \num{-6.94}*** & \num{-7.58}*** & \num{2.43} & \num{2.84}\\
- & (\num{0.34}) & (\num{0.42}) & (\num{1.95}) & (\num{2.23}) & (\num{1.68}) & (\num{1.97})\\
-Treatment B $\times$ Male & \num{0.78} & \num{0.59} & \num{6.21}** & \num{7.05}** & \num{-2.43} & \num{-3.61}\\
- & (\num{0.53}) & (\num{0.61}) & (\num{2.62}) & (\num{2.89}) & (\num{2.36}) & (\num{2.55})\\
-Treatment C $\times$ Male & \num{-0.22} & \num{-0.07} & \num{2.88} & \num{3.48} & \num{-1.69} & \num{-1.67}\\
- & (\num{0.48}) & (\num{0.48}) & (\num{2.71}) & (\num{2.68}) & (\num{2.37}) & (\num{2.37})\\
-Treatment D $\times$ Male & \num{-0.15} & \num{-0.16} & \num{6.13}** & \num{6.48}** & \num{-2.46} & \num{-2.47}\\
- & (\num{0.50}) & (\num{0.50}) & (\num{2.67}) & (\num{2.64}) & (\num{2.40}) & (\num{2.41})\\
+Treatment B & \num{-0.30} & \num{-0.16} & \num{-2.61} & \num{-1.08} & \num{2.14} & \num{0.31}\\
+ & (\num{0.71}) & (\num{0.78}) & (\num{2.20}) & (\num{2.42}) & (\num{1.37}) & (\num{1.45})\\
+Treatment C & \num{-0.68} & \num{-0.80} & \num{-0.07} & \num{0.14} & \num{-0.62} & \num{-0.44}\\
+ & (\num{0.71}) & (\num{0.71}) & (\num{2.28}) & (\num{2.27}) & (\num{1.34}) & (\num{1.34})\\
+Treatment D & \num{-1.11}* & \num{-1.10} & \num{-2.44} & \num{-2.26} & \num{1.45} & \num{1.20}\\
+ & (\num{0.67}) & (\num{0.67}) & (\num{2.23}) & (\num{2.22}) & (\num{1.38}) & (\num{1.38})\\
+Male & \num{-0.97} & \num{-0.87} & \num{-5.37}*** & \num{-6.24}*** & \num{1.93} & \num{2.45}*\\
+ & (\num{0.64}) & (\num{0.74}) & (\num{2.05}) & (\num{2.35}) & (\num{1.27}) & (\num{1.49})\\
+Treatment B $\times$ Male & \num{1.85}** & \num{1.26} & \num{2.87} & \num{3.50} & \num{-0.16} & \num{-0.74}\\
+ & (\num{0.90}) & (\num{0.97}) & (\num{2.78}) & (\num{3.06}) & (\num{1.79}) & (\num{1.90})\\
+Treatment C $\times$ Male & \num{0.71} & \num{0.98} & \num{1.14} & \num{1.73} & \num{-0.87} & \num{-0.97}\\
+ & (\num{0.85}) & (\num{0.85}) & (\num{2.87}) & (\num{2.84}) & (\num{1.74}) & (\num{1.74})\\
+Treatment D $\times$ Male & \num{1.78}** & \num{1.77}** & \num{3.05} & \num{3.45} & \num{-1.32} & \num{-1.36}\\
+ & (\num{0.85}) & (\num{0.85}) & (\num{2.84}) & (\num{2.81}) & (\num{1.80}) & (\num{1.80})\\
 \midrule
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
@@ -866,16 +949,16 @@ Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} &
 \begin{threeparttable}
 \begin{tabular}[t]{llcccccc}
 \toprule
-\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
 Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Female & B & 0.19 (0.38) & 0.42 (0.44) & -5.81 (2.09)*** & -3.36 (2.29) & 4.86 (1.84)*** & 2.00 (1.99)\\
- & C & 0.09 (0.38) & -0.01 (0.38) & -2.94 (2.18) & -2.85 (2.16) & 1.47 (1.85) & 1.74 (1.85)\\
- & D & 0.24 (0.39) & 0.28 (0.39) & -6.58 (2.11)*** & -6.26 (2.09)*** & 4.24 (1.86)** & 3.82 (1.87)**\\
-Male & B & 0.97 (0.37)*** & 1.01 (0.42)** & 0.40 (1.58) & 3.70 (1.76)** & 2.43 (1.47)* & -1.61 (1.60)\\
- & C & -0.12 (0.29) & -0.08 (0.29) & -0.05 (1.61) & 0.63 (1.59) & -0.22 (1.48) & 0.07 (1.48)\\
- & D & 0.09 (0.32) & 0.12 (0.32) & -0.45 (1.63) & 0.23 (1.60) & 1.78 (1.52) & 1.35 (1.52)\\
+Female & B & -0.30 (0.71) & -0.16 (0.78) & -2.61 (2.20) & -1.08 (2.42) & 2.14 (1.37) & 0.31 (1.45)\\
+ & C & -0.68 (0.71) & -0.80 (0.71) & -0.07 (2.28) & 0.14 (2.27) & -0.62 (1.34) & -0.44 (1.34)\\
+ & D & -1.11 (0.67)* & -1.10 (0.67) & -2.44 (2.23) & -2.26 (2.22) & 1.45 (1.38) & 1.20 (1.38)\\
+Male & B & 1.55 (0.54)*** & 1.10 (0.57)* & 0.26 (1.69) & 2.42 (1.87) & 1.98 (1.15)* & -0.43 (1.23)\\
+ & C & 0.03 (0.48) & 0.18 (0.48) & 1.07 (1.74) & 1.86 (1.70) & -1.49 (1.11) & -1.41 (1.11)\\
+ & D & 0.67 (0.52) & 0.67 (0.52) & 0.61 (1.75) & 1.18 (1.72) & 0.13 (1.16) & -0.16 (1.16)\\
 \midrule
  & Covariates &  & X &  & X &  & X\\
 \bottomrule
@@ -898,40 +981,40 @@ Male & B & 0.97 (0.37)*** & 1.01 (0.42)** & 0.40 (1.58) & 3.70 (1.76)** & 2.43 (
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{-0.19} & \num{0.02} & \num{-7.20}*** & \num{-4.99}* & \num{4.84}* & \num{3.06}\\
- & (\num{0.60}) & (\num{0.67}) & (\num{2.73}) & (\num{3.02}) & (\num{2.57}) & (\num{2.79})\\
-Treatment C & \num{-0.49} & \num{-0.75} & \num{-0.80} & \num{-1.60} & \num{-1.77} & \num{-1.49}\\
- & (\num{0.56}) & (\num{0.55}) & (\num{2.87}) & (\num{2.86}) & (\num{2.48}) & (\num{2.48})\\
-Treatment D & \num{-0.30} & \num{-0.32} & \num{-7.17}*** & \num{-6.90}** & \num{2.28} & \num{2.10}\\
- & (\num{0.59}) & (\num{0.58}) & (\num{2.78}) & (\num{2.78}) & (\num{2.58}) & (\num{2.58})\\
-Older female & \num{-0.82} & \num{-0.99}* & \num{10.50}*** & \num{10.36}*** & \num{-1.60} & \num{-0.59}\\
- & (\num{0.51}) & (\num{0.55}) & (\num{3.12}) & (\num{3.19}) & (\num{2.60}) & (\num{2.68})\\
-Young male & \num{-0.90}* & \num{-0.88}* & \num{-9.05}*** & \num{-8.93}*** & \num{1.09} & \num{1.36}\\
- & (\num{0.49}) & (\num{0.52}) & (\num{2.61}) & (\num{2.67}) & (\num{2.41}) & (\num{2.48})\\
-Older male & \num{0.21} & \num{0.09} & \num{4.55}* & \num{3.82} & \num{2.14} & \num{3.85}\\
- & (\num{0.61}) & (\num{0.65}) & (\num{2.70}) & (\num{2.78}) & (\num{2.36}) & (\num{2.45})\\
-Treatment B $\times$ Older female & \num{0.78} & \num{0.79} & \num{3.68} & \num{3.82} & \num{-0.06} & \num{-2.15}\\
- & (\num{0.75}) & (\num{0.88}) & (\num{4.18}) & (\num{4.64}) & (\num{3.68}) & (\num{3.97})\\
-Treatment C $\times$ Older female & \num{1.25} & \num{1.51}** & \num{-3.53} & \num{-2.84} & \num{7.34}* & \num{7.21}*\\
- & (\num{0.77}) & (\num{0.76}) & (\num{4.38}) & (\num{4.37}) & (\num{3.75}) & (\num{3.74})\\
-Treatment D $\times$ Older female & \num{1.13} & \num{1.22} & \num{1.67} & \num{1.58} & \num{4.11} & \num{3.89}\\
- & (\num{0.78}) & (\num{0.78}) & (\num{4.22}) & (\num{4.22}) & (\num{3.73}) & (\num{3.74})\\
-Treatment B $\times$ Young male & \num{1.73}** & \num{1.42}* & \num{7.24}** & \num{7.55}** & \num{-1.24} & \num{-1.95}\\
- & (\num{0.75}) & (\num{0.84}) & (\num{3.43}) & (\num{3.82}) & (\num{3.33}) & (\num{3.65})\\
-Treatment C $\times$ Young male & \num{1.15}* & \num{1.43}** & \num{1.23} & \num{1.82} & \num{0.46} & \num{0.42}\\
- & (\num{0.65}) & (\num{0.64}) & (\num{3.55}) & (\num{3.54}) & (\num{3.23}) & (\num{3.23})\\
-Treatment D $\times$ Young male & \num{0.54} & \num{0.57} & \num{6.82}* & \num{6.73}* & \num{-2.39} & \num{-2.54}\\
- & (\num{0.65}) & (\num{0.64}) & (\num{3.50}) & (\num{3.50}) & (\num{3.34}) & (\num{3.35})\\
-Treatment B $\times$ Older male & \num{0.66} & \num{0.60} & \num{8.51}** & \num{10.52}*** & \num{-3.50} & \num{-7.17}**\\
- & (\num{0.83}) & (\num{0.93}) & (\num{3.58}) & (\num{4.01}) & (\num{3.28}) & (\num{3.54})\\
-Treatment C $\times$ Older male & \num{-0.37} & \num{-0.06} & \num{2.19} & \num{3.20} & \num{2.97} & \num{2.73}\\
- & (\num{0.72}) & (\num{0.71}) & (\num{3.76}) & (\num{3.75}) & (\num{3.28}) & (\num{3.28})\\
-Treatment D $\times$ Older male & \num{0.31} & \num{0.40} & \num{7.43}** & \num{8.01}** & \num{1.43} & \num{0.83}\\
- & (\num{0.81}) & (\num{0.81}) & (\num{3.67}) & (\num{3.67}) & (\num{3.36}) & (\num{3.37})\\
+Treatment B & \num{-0.20} & \num{0.19} & \num{-5.14}* & \num{-4.13} & \num{2.79} & \num{2.03}\\
+ & (\num{1.02}) & (\num{1.10}) & (\num{2.97}) & (\num{3.28}) & (\num{1.91}) & (\num{2.03})\\
+Treatment C & \num{-1.45} & \num{-1.71}* & \num{-0.62} & \num{-1.24} & \num{-0.99} & \num{-0.88}\\
+ & (\num{0.92}) & (\num{0.91}) & (\num{3.05}) & (\num{3.05}) & (\num{1.80}) & (\num{1.80})\\
+Treatment D & \num{-1.44} & \num{-1.43} & \num{-4.50} & \num{-4.40} & \num{0.75} & \num{0.71}\\
+ & (\num{0.93}) & (\num{0.92}) & (\num{3.03}) & (\num{3.03}) & (\num{1.88}) & (\num{1.89})\\
+Older female & \num{-0.29} & \num{-0.23} & \num{8.33}** & \num{8.06}** & \num{0.04} & \num{0.95}\\
+ & (\num{1.07}) & (\num{1.10}) & (\num{3.23}) & (\num{3.32}) & (\num{1.93}) & (\num{1.99})\\
+Young male & \num{-1.78}** & \num{-1.61}* & \num{-9.75}*** & \num{-9.73}*** & \num{2.67} & \num{2.89}\\
+ & (\num{0.87}) & (\num{0.89}) & (\num{2.82}) & (\num{2.90}) & (\num{1.83}) & (\num{1.87})\\
+Older male & \num{-0.54} & \num{-0.28} & \num{6.11}** & \num{5.54}* & \num{1.32} & \num{2.50}\\
+ & (\num{0.94}) & (\num{0.97}) & (\num{2.85}) & (\num{2.94}) & (\num{1.74}) & (\num{1.79})\\
+Treatment B $\times$ Older female & \num{-0.22} & \num{-0.83} & \num{6.04} & \num{6.83} & \num{-1.42} & \num{-3.54}\\
+ & (\num{1.43}) & (\num{1.56}) & (\num{4.39}) & (\num{4.86}) & (\num{2.74}) & (\num{2.88})\\
+Treatment C $\times$ Older female & \num{1.76} & \num{1.98} & \num{2.43} & \num{3.00} & \num{0.88} & \num{0.91}\\
+ & (\num{1.45}) & (\num{1.44}) & (\num{4.57}) & (\num{4.57}) & (\num{2.69}) & (\num{2.69})\\
+Treatment D $\times$ Older female & \num{0.69} & \num{0.67} & \num{4.72} & \num{4.73} & \num{1.50} & \num{1.28}\\
+ & (\num{1.34}) & (\num{1.34}) & (\num{4.46}) & (\num{4.46}) & (\num{2.76}) & (\num{2.77})\\
+Treatment B $\times$ Young male & \num{1.42} & \num{0.72} & \num{7.80}** & \num{8.28}** & \num{-1.48} & \num{-1.98}\\
+ & (\num{1.21}) & (\num{1.30}) & (\num{3.77}) & (\num{4.19}) & (\num{2.55}) & (\num{2.75})\\
+Treatment C $\times$ Young male & \num{1.79}* & \num{2.10}* & \num{1.07} & \num{1.58} & \num{-0.02} & \num{-0.01}\\
+ & (\num{1.09}) & (\num{1.07}) & (\num{3.83}) & (\num{3.83}) & (\num{2.43}) & (\num{2.43})\\
+Treatment D $\times$ Young male & \num{1.32} & \num{1.29} & \num{5.07} & \num{4.99} & \num{-1.41} & \num{-1.52}\\
+ & (\num{1.07}) & (\num{1.06}) & (\num{3.85}) & (\num{3.86}) & (\num{2.52}) & (\num{2.53})\\
+Treatment B $\times$ Older male & \num{2.13} & \num{1.13} & \num{3.78} & \num{5.75} & \num{-0.24} & \num{-2.94}\\
+ & (\num{1.33}) & (\num{1.42}) & (\num{3.82}) & (\num{4.25}) & (\num{2.47}) & (\num{2.60})\\
+Treatment C $\times$ Older male & \num{1.30} & \num{1.68} & \num{4.74} & \num{5.45} & \num{-1.25} & \num{-1.26}\\
+ & (\num{1.20}) & (\num{1.18}) & (\num{3.97}) & (\num{3.97}) & (\num{2.35}) & (\num{2.35})\\
+Treatment D $\times$ Older male & \num{2.97}** & \num{2.98}** & \num{6.11} & \num{6.54}* & \num{0.09} & \num{-0.29}\\
+ & (\num{1.28}) & (\num{1.27}) & (\num{3.93}) & (\num{3.94}) & (\num{2.46}) & (\num{2.48})\\
 \midrule
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
@@ -951,22 +1034,22 @@ Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} &
 \begin{threeparttable}
 \begin{tabular}[t]{llcccccc}
 \toprule
-\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
 Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Young female & B & -0.19 (0.60) & 0.02 (0.67) & -7.20 (2.73)*** & -4.99 (3.02)* & 4.84 (2.57)* & 3.06 (2.79)\\
- & C & -0.49 (0.56) & -0.75 (0.55) & -0.80 (2.87) & -1.60 (2.86) & -1.77 (2.48) & -1.49 (2.48)\\
- & D & -0.30 (0.59) & -0.32 (0.58) & -7.17 (2.78)*** & -6.90 (2.78)** & 2.28 (2.58) & 2.10 (2.58)\\
-Older female & B & 0.58 (0.45) & 0.81 (0.58) & -3.52 (3.16) & -1.18 (3.52) & 4.78 (2.64)* & 0.91 (2.83)\\
- & C & 0.76 (0.53) & 0.76 (0.53) & -4.33 (3.31) & -4.43 (3.30) & 5.57 (2.80)** & 5.73 (2.79)**\\
- & D & 0.82 (0.51) & 0.90 (0.52)* & -5.50 (3.17)* & -5.32 (3.18)* & 6.39 (2.70)** & 5.99 (2.71)**\\
-Young male & B & 1.54 (0.45)*** & 1.44 (0.51)*** & 0.05 (2.07) & 2.56 (2.34) & 3.60 (2.13)* & 1.11 (2.34)\\
- & C & 0.65 (0.33)** & 0.68 (0.33)** & 0.43 (2.08) & 0.22 (2.08) & -1.31 (2.06) & -1.07 (2.06)\\
- & D & 0.24 (0.26) & 0.25 (0.27) & -0.35 (2.12) & -0.17 (2.12) & -0.11 (2.13) & -0.44 (2.14)\\
-Older male & B & 0.47 (0.58) & 0.63 (0.65) & 1.31 (2.31) & 5.53 (2.63)** & 1.34 (2.04) & -4.11 (2.17)*\\
- & C & -0.86 (0.45)* & -0.81 (0.45)* & 1.39 (2.43) & 1.60 (2.43) & 1.20 (2.14) & 1.24 (2.14)\\
- & D & 0.01 (0.56) & 0.08 (0.57) & 0.26 (2.40) & 1.11 (2.40) & 3.71 (2.15)* & 2.93 (2.16)\\
+Young female & B & -0.20 (1.02) & 0.19 (1.10) & -5.14 (2.97)* & -4.13 (3.28) & 2.79 (1.91) & 2.03 (2.03)\\
+ & C & -1.45 (0.92) & -1.71 (0.91)* & -0.62 (3.05) & -1.24 (3.05) & -0.99 (1.80) & -0.88 (1.80)\\
+ & D & -1.44 (0.93) & -1.43 (0.92) & -4.50 (3.03) & -4.40 (3.03) & 0.75 (1.88) & 0.71 (1.89)\\
+Older female & B & -0.43 (1.00) & -0.64 (1.11) & 0.90 (3.24) & 2.70 (3.59) & 1.37 (1.97) & -1.51 (2.05)\\
+ & C & 0.30 (1.12) & 0.27 (1.12) & 1.81 (3.40) & 1.76 (3.40) & -0.12 (2.00) & 0.03 (1.99)\\
+ & D & -0.75 (0.97) & -0.76 (0.98) & 0.21 (3.27) & 0.34 (3.27) & 2.25 (2.02) & 2.00 (2.03)\\
+Young male & B & 1.21 (0.65)* & 0.91 (0.69) & 2.66 (2.33) & 4.16 (2.60) & 1.31 (1.69) & 0.04 (1.85)\\
+ & C & 0.34 (0.57) & 0.38 (0.57) & 0.45 (2.32) & 0.34 (2.32) & -1.01 (1.63) & -0.89 (1.63)\\
+ & D & -0.12 (0.54) & -0.14 (0.53) & 0.56 (2.38) & 0.59 (2.38) & -0.66 (1.69) & -0.80 (1.69)\\
+Older male & B & 1.92 (0.86)** & 1.32 (0.89) & -1.36 (2.40) & 1.62 (2.71) & 2.55 (1.57) & -0.91 (1.63)\\
+ & C & -0.15 (0.76) & -0.03 (0.76) & 4.12 (2.53) & 4.21 (2.53)* & -2.24 (1.50) & -2.14 (1.50)\\
+ & D & 1.53 (0.88)* & 1.55 (0.88)* & 1.61 (2.50) & 2.15 (2.51) & 0.84 (1.59) & 0.43 (1.60)\\
 \midrule
  & Covariates &  & X &  & X &  & X\\
 \bottomrule
@@ -985,24 +1068,24 @@ Older male & B & 0.47 (0.58) & 0.63 (0.65) & 1.31 (2.31) & 5.53 (2.63)** & 1.34 
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{0.06} & \num{-0.01} & \num{-0.99} & \num{-0.41} & \num{2.90}*** & \num{2.15}*\\
- & (\num{0.22}) & (\num{0.21}) & (\num{1.50}) & (\num{1.66}) & (\num{1.01}) & (\num{1.10})\\
-Treatment C & \num{-0.21} & \num{-0.22} & \num{-1.64} & \num{-1.82} & \num{0.96} & \num{0.95}\\
- & (\num{0.15}) & (\num{0.16}) & (\num{1.53}) & (\num{1.54}) & (\num{0.97}) & (\num{0.97})\\
-Treatment D & \num{0.18} & \num{0.17} & \num{-1.42} & \num{-1.35} & \num{4.06}*** & \num{3.98}***\\
- & (\num{0.25}) & (\num{0.25}) & (\num{1.52}) & (\num{1.52}) & (\num{1.08}) & (\num{1.08})\\
-Male & \num{-0.01} & \num{-0.17} & \num{-1.42} & \num{-0.85} & \num{3.37}*** & \num{4.21}***\\
- & (\num{0.19}) & (\num{0.24}) & (\num{1.40}) & (\num{1.62}) & (\num{0.94}) & (\num{1.13})\\
-Treatment B $\times$ Male & \num{0.67}** & \num{0.96}** & \num{1.59} & \num{2.76} & \num{-1.32} & \num{-1.95}\\
- & (\num{0.33}) & (\num{0.38}) & (\num{1.89}) & (\num{2.13}) & (\num{1.40}) & (\num{1.52})\\
-Treatment C $\times$ Male & \num{0.38} & \num{0.40} & \num{1.74} & \num{1.97} & \num{0.21} & \num{0.15}\\
- & (\num{0.24}) & (\num{0.25}) & (\num{1.93}) & (\num{1.93}) & (\num{1.37}) & (\num{1.37})\\
-Treatment D $\times$ Male & \num{0.13} & \num{0.17} & \num{1.72} & \num{1.90} & \num{-3.85}*** & \num{-3.96}***\\
- & (\num{0.33}) & (\num{0.33}) & (\num{1.92}) & (\num{1.92}) & (\num{1.44}) & (\num{1.44})\\
+Treatment B & \num{-0.41} & \num{-0.55} & \num{0.70} & \num{1.30} & \num{1.69}*** & \num{0.99}*\\
+ & (\num{0.39}) & (\num{0.40}) & (\num{1.64}) & (\num{1.83}) & (\num{0.60}) & (\num{0.59})\\
+Treatment C & \num{-0.65}* & \num{-0.64}* & \num{-1.27} & \num{-1.50} & \num{1.02}* & \num{1.04}*\\
+ & (\num{0.37}) & (\num{0.37}) & (\num{1.65}) & (\num{1.66}) & (\num{0.57}) & (\num{0.57})\\
+Treatment D & \num{-0.18} & \num{-0.19} & \num{0.73} & \num{0.82} & \num{2.26}*** & \num{2.16}***\\
+ & (\num{0.42}) & (\num{0.42}) & (\num{1.67}) & (\num{1.67}) & (\num{0.65}) & (\num{0.66})\\
+Male & \num{-0.09} & \num{0.11} & \num{-0.37} & \num{0.34} & \num{2.40}*** & \num{2.75}***\\
+ & (\num{0.40}) & (\num{0.45}) & (\num{1.52}) & (\num{1.77}) & (\num{0.58}) & (\num{0.73})\\
+Treatment B $\times$ Male & \num{1.14}** & \num{1.32}** & \num{0.51} & \num{1.88} & \num{-0.70} & \num{-1.44}\\
+ & (\num{0.54}) & (\num{0.57}) & (\num{2.08}) & (\num{2.36}) & (\num{0.90}) & (\num{0.91})\\
+Treatment C $\times$ Male & \num{0.69} & \num{0.73} & \num{2.48} & \num{2.70} & \num{-0.84} & \num{-0.90}\\
+ & (\num{0.50}) & (\num{0.50}) & (\num{2.11}) & (\num{2.11}) & (\num{0.87}) & (\num{0.87})\\
+Treatment D $\times$ Male & \num{0.77} & \num{0.80} & \num{-0.60} & \num{-0.42} & \num{-2.18}** & \num{-2.27}**\\
+ & (\num{0.57}) & (\num{0.57}) & (\num{2.12}) & (\num{2.13}) & (\num{0.93}) & (\num{0.93})\\
 \midrule
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547}\\
@@ -1022,16 +1105,16 @@ Num.Obs. & \num{10547} & \num{10547} & \num{10547} & \num{10547} & \num{10547} &
 \begin{threeparttable}
 \begin{tabular}[t]{llcccccc}
 \toprule
-\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--4 days} & \multicolumn{2}{c}{5--9 days} & \multicolumn{2}{c}{10--85 days} \\
+\multicolumn{2}{c}{ } & \multicolumn{2}{c}{1--5 days} & \multicolumn{2}{c}{6--12 days} & \multicolumn{2}{c}{13--85 days} \\
 \cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-8}
 Group & Treatment & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Female & B & 0.06 (0.22) & -0.01 (0.21) & -0.99 (1.50) & -0.41 (1.66) & 2.90 (1.01)*** & 2.15 (1.10)*\\
- & C & -0.21 (0.15) & -0.22 (0.16) & -1.64 (1.53) & -1.82 (1.54) & 0.96 (0.97) & 0.95 (0.97)\\
- & D & 0.18 (0.25) & 0.17 (0.25) & -1.42 (1.52) & -1.35 (1.52) & 4.06 (1.08)*** & 3.98 (1.08)***\\
-Male & B & 0.73 (0.25)*** & 0.95 (0.31)*** & 0.61 (1.15) & 2.36 (1.34)* & 1.58 (0.96)* & 0.19 (1.05)\\
- & C & 0.17 (0.19) & 0.18 (0.19) & 0.10 (1.17) & 0.15 (1.16) & 1.17 (0.97) & 1.10 (0.97)\\
- & D & 0.31 (0.21) & 0.34 (0.21) & 0.30 (1.18) & 0.55 (1.18) & 0.20 (0.96) & 0.02 (0.96)\\
+Female & B & -0.41 (0.39) & -0.55 (0.40) & 0.70 (1.64) & 1.30 (1.83) & 1.69 (0.60)*** & 0.99 (0.59)*\\
+ & C & -0.65 (0.37)* & -0.64 (0.37)* & -1.27 (1.65) & -1.50 (1.66) & 1.02 (0.57)* & 1.04 (0.57)*\\
+ & D & -0.18 (0.42) & -0.19 (0.42) & 0.73 (1.67) & 0.82 (1.67) & 2.26 (0.65)*** & 2.16 (0.66)***\\
+Male & B & 0.73 (0.38)* & 0.76 (0.42)* & 1.22 (1.28) & 3.19 (1.50)** & 0.98 (0.68) & -0.45 (0.69)\\
+ & C & 0.05 (0.34) & 0.09 (0.34) & 1.20 (1.31) & 1.19 (1.31) & 0.19 (0.66) & 0.14 (0.66)\\
+ & D & 0.59 (0.39) & 0.61 (0.38) & 0.13 (1.31) & 0.40 (1.31) & 0.08 (0.66) & -0.10 (0.66)\\
 \midrule
  & Covariates &  & X &  & X &  & X\\
 \bottomrule
