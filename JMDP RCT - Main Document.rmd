@@ -1,6 +1,7 @@
 ---
 title: |
-  Field experiment Using Text Messages to Promote Stem Cell Donation in Japan Marrow Donor Program
+  Exploring Text Messages to Promote Stem Cell Donation:
+  Evidence from Field Experiment of Japan Marrow Donor Program
 thanks: |
   We would like to thank the Japan Marrow Donor Program Office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review board of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04). Declarations of interest: none. Funding: This work was supported by the Japan Society for the Promotion of Science [grant number 20H05632] and the Ministry of Health, Labour and Welfare [grant number 19FF1001].
 abstract: |
@@ -102,6 +103,7 @@ The remainder of this paper is organized as follows. Section \@ref(experiment) p
 
 ```{r library, include=FALSE}
 library(here)
+library(xfun)
 source(here("R/R6_RawData.r"))
 source(here("R/R6_Schedule.r"))
 
@@ -110,12 +112,12 @@ options(
   modelsummary_stars_note = FALSE
 )
 
-data_root <- "D:/JMDPフィールド実験"
+data_root <- "E:/JMDPフィールド実験"
 ```
 
 ## Background: Coordination Process of JMDP {#background}
 
-To provide a better understanding of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the HLA match letter.[^SNS] \revise{JMDP recommends in the letter that the matched donor responds within seven days.} The matched donor completes a questionnaire and responds to the letter, indicating their willingness to donate; this initiates the coordination process.
+To provide a better understanding of our interventions and our data, we outline the coordination process leading up to the donation of stem cells by potential donors enrolled in the JMDP. First, when a potential donor is matched with a patient enrolled in the JMDP, the JMDP office sends the donor the HLA match letter.[^SNS] JMDP recommends in the letter that the matched donor responds within seven days. The matched donor completes a questionnaire and responds to the letter, indicating their willingness to donate; this initiates the coordination process.
 
 [^SNS]: Simultaneously, the JMDP office sends a social networking message to the matched donors, informing them that JMDP has sent the HLA match letter.
 
@@ -129,13 +131,13 @@ The patient's physicians can select the most appropriate donor for transplantati
 
 Our experiment intervened in the content of the HLA match letter. Appendix \@ref(message) shows the contents of the standard letter and intervention messages. The letter recommends that the donor respond to the letter within seven days. JMDP also encloses a handbook that describes the coordination process outlined in the previous subsection, as well as the medical questionnaire and donor consent form.
 
-We added two messages (a probability message and an early coordination message) to the letter to facilitate coordination.[^pressure] The probability message emphasized the low number of matched donors per registered patient. If there are other potential donors with the same HLA type in the pool, one's donation can be substituted for that of another compatible donor. In addition, multiple donors (up to ten) can be simultaneously coordinated with a single patient. Thus, transplantation through JMDP is a public good and faces a free-ride problem [@Bergstrom2009]. \revise{According to the volunteer dilemma, we can predict that the more common the HLA type, the more reluctant the donor will be to donate.}[^prediction] [^belief] Additionally, @Kurosawa2022 interviewed previously matched donors and found that those with low donation intentions felt that they were "one of several donors," implying that the fact that their donation could be substituted by others discouraged them from donating. Because the  probability message emphasizes few possible substitutes, this message is expected to discourage free-riding and increase their willingness to donate.[^rarelity]
+We added two messages (a probability message and an early coordination message) to the letter to facilitate coordination.[^pressure] The probability message emphasized the low number of matched donors per registered patient. If there are other potential donors with the same HLA type in the pool, one's donation can be substituted for that of another compatible donor. In addition, multiple donors (up to ten) can be simultaneously coordinated with a single patient. Thus, transplantation through JMDP is a public good and faces a free-ride problem [@Bergstrom2009]. According to the volunteer dilemma, we can predict that the more common the HLA type, the more reluctant the donor will be to donate.[^prediction] [^belief] Additionally, @Kurosawa2022 interviewed previously matched donors and found that those with low donation intentions felt that they were "one of several donors," implying that the fact that their donation could be substituted by others discouraged them from donating. Because the  probability message emphasizes few possible substitutes, this message is expected to discourage free-riding and increase their willingness to donate.[^rarelity]
 
 [^pressure]: In designing our intervention messages, we were careful to avoid placing undue psychological pressure on potential donors. Specifically, first, we avoided using language that sounds like an appeal. Second, we only used information that is publicly available from the JMDP. In addition, the risks of transplantation are explained in the usual manner. The intervention message was approved by the Institutional Review Board of the Graduate School of Economics of Osaka University and the JMDP.
 
 [^prediction]: In the volunteer dilemma, public goods are produced by the cooperative behavior of only one person. The theory of the volunteer dilemma predicts that the probability of cooperative behavior decreases with group size. This hypothesis has been confirmed by laboratory experiments [@Diekmann1985; @Diekmann1986; @Goeree2017].
 
-[^belief]: \revise{More specifically, donors do not know their HLA type and make decisions based on how many people have the same HLA type.}
+[^belief]: More specifically, donors do not know their HLA type and make decisions based on how many people have the same HLA type.
 
 [^rarelity]: Alternatively, the probability message makes the rarity of the opportunity to donate more salient, which may change donors' behavior.
 
@@ -155,12 +157,17 @@ rawdt <- RawData$new(
   treat_vars = "treat",
   treat_levels = LETTERS[1:4]
 )
+
+rawdt$add_cond_study_sample("ongoing == 0")
+
+# robust sample (remove those who skipped the CT)
+rawdt_noskip <- rawdt$clone()
+rawdt_noskip$add_cond_study_sample("skip_test == 0")
 ```
 
 We used coordination data provided by JMDP. The unit of observation was experimental participants. For individual characteristics, the data included donors' gender, age, number of coordination experiences, and prefecture-level residence area. Data concerning the coordination process included whether each stage (response to the letter, CT, candidate selection, final consent, and collection) was reached. In addition, for responses to the notice, the data included the number of days donors took to respond and their willingness to donate. If coordination was interrupted, the reasons for the interruption were recorded in three categories (patient-side reasons, donor non-health reasons, and donor health reasons). The analysis used 11,049 matched donors living in Japan whose coordination was completed or interrupted.[^exclude]
 
 ```{r ongoing-balance, include=FALSE}
-rawdt$add_cond_study_sample("ongoing == 0")
 ongoing_f <- rawdt$balance_attrition()
 ```
 
@@ -192,16 +199,6 @@ endpoint <- list(
   donate = "Donation"
 )
 
-covs <- c(
-  "Male (= 1)" = "male",
-  "Age" = "age",
-  "Number of past coordination" = "coordinate",
-  "Number of listed hospitals" = "hospital_per_area",
-  "Number of hospitals listed with PBSC collection" = "PB_per_area",
-  "Number of hospitals listed with BM collection" = "BM_per_area",
-  "Number of holidays in the assigned week" = "holidays"
-)
-
 rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
@@ -220,23 +217,28 @@ rct$
 )
 ```
 
-Table \@ref(tab:summary) summarizes the field experiment. Panel A shows the intervention for each experimental arm, and Panel B shows the sample size for each experimental arm. Panel C shows a balanced test of whether randomization was successful. The assignment of the experimental arms is approximately random because no average difference was observed between the experimental arms for any variable except for age. The average age of the experimental arm C was approximately one year younger than that of the control arm.
+Table \@ref(tab:summary) summarizes the field experiment. Panel A shows the intervention for each experimental arm, and Panel B shows the sample size for each experimental arm. Panel C shows a balanced test of whether randomization was successful. There were statistically significant differences in averages of age and number of holidays in the assigned week and following week between experimental arms[^skip-CT]. The average age of the experimental arm C was approximately one year younger than that of the control arm. However, this difference is negligible from the perspective of standardized mean difference (see Table A2 in Supplementary Material A). The average number of holidays for experimental arm B was two more than for the control arm. This is because the week following the week in which experimental group B was assigned in December included the New Year's holiday (see Table A1 in Supplementary Material A).[^new-year-holidays]
 
-Because the assignment of experimental arms should be independent of the potential outcomes (the outcome variable that would be observed if an experimental arm is assigned) conditioned on a predetermined variable, we can identify the average treatment effect by the difference in means across experimental arms conditioned on the predetermined variable. Thus, we estimated the following linear regression model for individual $i$ who received an HLA match letter in week $w$ of month $m$.
+[^skip-CT]: While cases eligible for skipping CT were balanced across all experimental arms, there was an imbalance between experimental arm D and the control arm (see Table X in Supplementary Material A). This becomes an important factor in interpreting the effect of experimental arm D.
+
+[^new-year-holidays]: In Japan, the year-end and New Year holidays are legally set from December 29 to January 3. This period may be extended depending on individual circumstances.
+
+While most covariates were balanced across experimental arms, few covariates were unbalanced. Therefore, in addition to a simple difference of means test, we estimated the following linear regression model for individual $i$ who received an HLA match letter in week $w$.
 
 \begin{equation}
-  Y_{imw} =
-  \beta_1 \cdot \text{B}_{mw} + \beta_2 \cdot \text{C}_{mw} + \beta_3 \cdot \text{D}_{mw}
-  + X'_i \gamma + \lambda_m + \theta_w + u_{imw}, (\#eq:reg)
+  Y_{iw} =
+  \beta_1 \cdot \text{B}_{w} + \beta_2 \cdot \text{C}_{w} + \beta_3 \cdot \text{D}_{w}
+  + X'_{iw} \gamma + u_{iw}, (\#eq:reg)
 \end{equation}
 
 \noindent
-where $X_i$ was a vector of individual characteristics, including age. We added month and week dummy variables \revise{(the number of a week within each month)} $\lambda_m$ and $\theta_w$ to control for common shocks in a given period. The parameters of interest were $(\beta_1, \beta_2, \beta_3)$. When fixed effects are added, there appears to be no cause for the generation of correlations within the clusters (experimental weeks) of unobservable elements $u_{imw}$. Thus, we used robust standard errors for statistical inference.[^LZ]
+where $X_i$ was a vector of individual characteristics, including age and number of holidays. The parameters of interest were $(\beta_1, \beta_2, \beta_3)$. There appears to be no cause for the generation of correlations within the clusters (weeks) of unobservable elements $u_{iw}$. Thus, we used robust standard errors for statistical inference.[^LZ]
 
 [^LZ]: We conducted a regression analysis with cluster standard errors as a robustness check, confirming no change in the main results presented in this paper.
 
 # Experimental Results {#result}
 ## Effects on CT {#main}
+### Average Treatment Effects
 
 ```{r reason-stop, include=FALSE}
 mean_test <- subset(rct$data, treat == "A") %>%
@@ -254,20 +256,15 @@ reason_clasify <- rct$data %>%
   with(prop.table(table(exg_stop_test, useNA = "always")) * 100)
 ```
 
-In this subsection, we estimated the message effects on the probability that a matched donor reaches CT. This effect is critical because physicians select the optimal donor for transplantation to the patient from matched donors who have completed the CT. We used a dummy variable that takes the value of 1 if a matched donor has reached the CT stage. In the control arm, only `r sprintf("$%1.2f$%%", mean_test["1"])` of matched donors underwent CT.
+In this subsection, we estimated the effects of our intervention messages on reaching the CT stage. This effect is critical because physicians select the optimal donor for transplantation from among matched donors who have completed CT. We used a dummy variable that takes the value of 1 if a matched donor reached the CT stage. In the control arm, only `r sprintf("$%1.2f$%%", mean_test["1"])` of matched donors underwent CT.
 
-<!-- CTへの到達確率が低い理由は二つあると考えられる。第一に、コントロール群の`r sprintf("$%1.2f$%%", mean_positive["1"])`しか提供する意向を示していないことである。第二に、提供意向を示した人の`r sprintf("$%1.2f$%%", positive_clasify["1", "0"])`しかCTに到達していないことである。CTへ至らなかった理由の大多数はドナー側の理由である（`r sprintf("$%1.2f$%%", reason_clasify["0"])`）。我々のデータはドナー側の詳細な理由を検証できない。しかしながら、@Hirakawa2018 によれば、ドナー側の理由の上位3つは健康上の理由・都合がつかない・家族の同意なしである。我々の介入メッセージは提供意向の向上と返信からCT間の脱落の防止を通じて、CTへの到達確率を高めると期待される。 -->
-
-```{r setup-test-analysis, include=FALSE}
-id <- which(names(endpoint) %in% c("test"))
-test <- rct$lm(id, sample_drop = FALSE)
-full_test <- test$fit(scale = 100)
-interaction_test <- test$fit_interaction_of_gender_age(age_cut = 30, scale = 100)
-```
+There are two reasons for the low probability of reaching CT. First, only `r sprintf("$%1.2f$%%", mean_positive["1"])` of donors in the control arm indicated intention to donate. Second, only `r sprintf("$%1.2f$%%", positive_clasify["1", "0"])` of those who expressed willingness to donate reached the CT stage. The majority of cases where attrition between response and CT occurred were due to donor-related reasons (`r sprintf("$%1.2f$%%", reason_clasify["0"])`). @Hirakawa2018 found similar results and showed that the top three donor-related reasons were health issues, scheduling conflicts, and lack of family consent. Our intervention messages are expected to increase the probability of reaching CT by improving both the willingness to donate and preventing dropouts between the response and CT stages.
 
 ```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
-full_test$
-  plot(
+rct$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100)$
+  plot_ate(
     p_text_margin = 2,
     add_segment_margin = 5,
     p_text_size = 7,
@@ -277,94 +274,138 @@ full_test$
   )
 ```
 
-We show sample proporting of reaching the CT by experimental arms in Figure \@ref(fig:test-diff-mean). This figure shows that experimental arms B and D, which include the probability message, increased the probability of reaching the CT by $3.1$ and $2.4$ percentage points, respectively, which is statistically significant. We estimated the linear probability model and found that the effects of experimental arms B and D remain robust when controlling for covariates. Moreover, logistic regressions show that 95% confidence intervals for odds ratios do not include 1 and reject the null hypothesis that no message effects exist (see Table A3 in the Online Supplementary Material A).
+```{r lm-test}
+res <- rct$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100)$
+  get_est()
 
-<!-- Although statistical significance is at the 10% level, experimental arm B, which includes the probability message, may have increased rates of response with positive intentions by $2.3$ percentage points, suggesting that the probability message may enhance donor willingness. When controlling for covariates, although statistical significance is at the 10% level, experimental arm B may have also increased response rates (see Table \@ref(tab:stock-reg)). However, logistic regressions showed that 95% confidence intervals for odds ratios included 1 and failed to reject the null hypothesis that there was no message effect (see Table A3 in the Online Supplementary Material A). Therefore, we cannot robustly obtain the result that the probability message improves donor intentions. -->
-
-<!-- These results suggest that the probability message prevents donor dropout. In the control arm, the attrition rate between responses with positive intentions and the CT is approximately 60% ($=1 - 22.2/54.9$). In contrast, the attrition rate for experimental arms B and D is approximately 56% ($=1 - 25.4/57.2$ for experimental arm B). Thus, the probability message, which is included in experimental arms B and D, increases donors reaching the CT stage because these messages help maintain donors' intentions to donate rather than increasing the number of donors willing to donate. -->
-
-
-<!-- これらのメッセージ効果は提供意向の向上と提供からCTまでの脱落の防止によって生じている。
-メッセージ効果のチャンネルを検証するために、CTへの効果を5つに分解した。
-チャンネル(A)と(B)は提供からCTまでの脱落の防止による貢献を示している。
-チャンネル(C)は提供意向の向上による貢献を示している。
-チャンネル(D)と(E)は二つの要因の交互作用による貢献を示している。
-理由に関わらず、実験群BとDにおける脱落防止による効果は2%ポイント程度である。
-介入はドナー側の理由による脱落を防止していることに大きく貢献している。
-これがCTへの効果の大半を占めている。
-二つの実験群の差は提供意向の向上を通じたチャンネルである。
-このチャンネルの影響は実験群(B)の方が実験群(D)よりも強い。
-実際に、実験群(B)は提供の意向を持つ確率を高めている。
-これは統計的に10%水準で有意である。
-対して、実験群(D)は提供の意向を持つ確率を統計的有意に高めていない。
-実験群(B)と(D)は主に提供からCTまでの脱落の防止を通じてCTへの到達可能性を高めている。
-実験群Bは提供意向の向上を通じてCTへの到達可能性を高めているかもしれない。 -->
-
-```{r reg-interaction}
-interaction_test$kable_reg(
-  title = "Heterogenous Message Effects by Gender and Age",
-  escape = FALSE
+mha_test <- cache_rds(
+  {
+    rct$
+      multiple_hypotheses_adjust("test")$
+      estimate(scale = 100, B = 3000)$
+      get_result()
+  },
+  file = "mh-adjust-test.rds"
 )
-```
 
-```{r reg-interaction-lh}
-interaction_test$kable_lh(
-  "CT",
-  title = "Message Effects for Subgroup by Gender and Age"
+mha_test_tab <- data.frame(mha_test) %>%
+  select(term = Treated.id, "(1)" = List.p) %>%
+  mutate(
+    term = paste("Treatment", term),
+    "(1)" = sprintf("%1.3f", `(1)`),
+    "(2)" = ""
+  )
+
+add_tab <- data.frame(
+  rbind(
+    mha_test_tab,
+    c("Control average", sprintf("%1.2f", res$avg)),
+    c("Covariates", res$covariate)
+  )
 )
+
+attr(add_tab, "position") <- 7:11
+
+res %>%
+  pull(fit) %>%
+  modelsummary(
+    title = "Linear Probability Model of the CT",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D"
+    ),
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+    align = "lcc",
+    add_rows = add_tab,
+    fmt = 2,
+    escape = FALSE
+  ) %>%
+  kableExtra::kable_styling(font_size = 8) %>%
+  kableExtra::add_header_above(c(" " = 1, "CT" = 2)) %>%
+  kableExtra::group_rows(
+    "Adjustment of p-values for Multiple Testing",
+    7, 9,
+    bold = FALSE, italic = TRUE
+  ) %>%
+  kableExtra::column_spec(1, width = "20em") %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indictating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned. To adjust p-values for multiple testing, we employed the method proposed by \\\\citet{List2019}. For calculation of p-values, we used the bootstrapping with 3,000 bootstrap samples.",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
 ```
 
-The most important intervention is the one that changes the behavior of young males, who have good transplant outcomes but are prone to interrupting coordination. However, the probability message that increases the probability of reaching the CT may negatively impact the probability that young males reach the CT. Conversely, even if the probability message is most effective in young males, it may have negative impacts on other genders and age groups. Therefore, a policy that uniformly assigns the probability message regardless of gender and age may be problematic. An analysis using only the full sample cannot address this point. Therefore, we divided the sample into four subsets by gender and age (under 30 or not) and estimated the message effects in each subset.
+We show the proportion of donors reaching CT by experimental arm in Figure \@ref(fig:test-diff-mean). This figure shows that experimental arms B and D, which include the probability message, increased the probability of reaching CT by 3.1 and 2.4 percentage points, respectively. These effects were statistically significant. We obtained the same results when we adjusted for multiple testing as proposed by @List2019 (see Column (1) of Table \@ref(tab:lm-test)). When controlling for covariates in a linear probability model, the effect of experimental arm B remained statistically significant (see Column (2) of Table \@ref(tab:lm-test)). However, the effect of experimental arm D was statistically insignificant. This is due to a slight imbalance in cases eligible for skipping CT between experimental arm D and the control arm. In JMDP coordination, CT can be skipped when the previous CT remains valid[^skip-coordination]. In fact, while the proportion of donors with prior coordination experiences in experimental arm D was not higher than in the control arm, it was statistically significant at the 10% level in increasing the probability of CT being skipped (see Table X in Supplementary Material A). This difference likely influences the simple mean difference between experimental arm D and the control arm. These results are robust to using logistic regression models instead of linear probability models (see Table X in Online Supplementary Material A). In summary, the probability message included in experimental arm B increased the probability of reaching CT.
 
-The estimation results are presented in Table \@ref(tab:stock-reg-subset). Before discussing the message effects, we noted two important findings regarding the coordination process of young males. First, compared to other gender and age groups, young males had a lower willingness to donate. In the control arm, the response rate for the young male group was $74.2$%, with only $51.9$% ($=38.5/74.24$) expressing a willingness to donate. By contrast, response rates for other groups excluding young males exceeded 85%, with more than 60% of responses expressing a willingness to donate.[^cal1] Second, compared to other gender and age groups, the attrition rate of young males between responses with positive intentions and the CT was lower. In the control arm, the attrition rate for the young male group was $39.6$% ($=1-23.27/38.5$), while the attrition rates for other groups exceeded 50%.[^cal2] Therefore, increasing the willingness of young male donors to donate enhances the opportunity for physicians to select young male donors who have good transplant outcomes.
+[^skip-coordination]: Almost all candidates whose CT was skipped (except for one candidate) had prior coordination experience.
 
-[^cal1]: For females in their 20s, $59.1$% ($=50.8/86$); for females over 30, $62.2$% ($=58.66/94.32$); for males over 30, $66.3$% ($=58.44/88.2$).
+<!-- 先に述べたように、我々の介入は提供意向の向上と返信からCTの間の脱落防止を通じてCT到達率を高めていると予想できる。そこで、メッセージの効果を以下の三つの効果に分解する：提供意向・患者側の理由による脱落の防止（外生的な脱落）・ドナー側の理由による脱落の防止（内生的な脱落）。患者側の理由による脱落は、ドナーの意思決定の外側によって生じるものなので、外生的な脱落と呼ぶ。我々はその結果をSupplementary Material AにあるTable Xに示す。三つの要因への効果を足し上げると、CTへのメッセージ効果と一致する。統計的な有意性は弱いが、共変量をコントロールすると、CT到達率を高めた確率メッセージは提供意向の向上と意向の維持に貢献していた。特に、確率メッセージは相対的に提供意向の向上に大きく貢献しており、これはCTへの効果の半分を占める[^calc-contribution]。
 
-[^cal2]: For females in their 20s, $59.1$% ($=1 - 20.8/50.8$); for females over 30, $67.8$% ($=1-18.89/58.66$); for males over 30, $58.6$% ($=1-24.18/58.44$).
+[^calc-contribution]: 提供意向への実験群Bの効果を三つの要因への効果の絶対値を足し上げもの（実験群Bでは$3.44$）で割った。 -->
 
-We found that the probability message had a significant impact on the probability of young male donors reaching the CT stage. Experimental arm B, which includes only the probability message, enhanced the CT reach probability for young males by $6.6$ percentage points, which is statistically significant. This experimental arm also affected the response behavior of young males. Experimental arm B increased the response rate by $6.4$ percentage points, which is statistically significant. Moreover, it further boosted the response rate with positive intentions by $9.2$ percentage points, which is also statistically significant.
+As mentioned earlier, our interventions were expected to increase the probability of reaching CT through improving willingness to donate and preventing dropouts between response and CT. Therefore, we decompose the message effects into three components: responses with willingness to donate, prevention of attrition due to patient-side reasons (exogenous attrition), and prevention of attrition due to donor-side reasons (endogenous attrition). We call attrition due to patient-side reasons "exogenous attrition" because it occurs due to factors outside donors' decision-making. We present these results in Table X in Supplementary Material A. The sum of the effects on these three factors matches the overall message effects on CT completion. While these effects were not statistically significant, after controlling for covariates, the probability message that increased the CT completion rate contributed to both improving and maintaining willingness to donate. In particular, the probability message relatively contributed more to improving willingness to donate, which accounts for half of the effect on reaching CT.[^calc-contribution]
 
-These results suggest that the probability message suppresses responses with negative intentions. The probability message elevates the intention rate among young male responders from $51.9$% to $59.2$% ($=(9.22+38.50)/(6.43+74.24)$). The probability message resolves the problem that the willingness to donate among young males is relatively low. Additionally, this message slightly reduces the attrition rate between responses with positive intentions and the CT from $39.6$% to $37.4$% ($=1-(6.62+23.27)/(9.22+38.5)$). Thus, the probability message increases young male donors reaching the CT stage through the increase in intention rather than the decrease in attrition rate.
+[^calc-contribution]: We divided the effect of experimental arm B on responses with willingness to donate by the sum of absolute values of the effects on three factors ($3.44$ for experimental arm B).
 
-For other gender and age groups, excluding young males, experimental arm B, containing only the probability message, had no statistically significant effect on the CT reach probability. Experimental arm D, containing both the probability message and the early coordination message, enhanced the CT reach probability for older female groups while having no statistically significant effect on the CT reach probability for other gender and age groups, including young males. Considering these results, the probability message enhances young male donors with favorable transplantation outcomes to reach the CT stage without negatively impacting other groups. Presenting both the probability message and the early coordination message increases older female donors who reach the CT stage without negatively affecting other groups. Therefore, it can be concluded that there is no downside to uniformly assigning only the probability message.[^age-cutoff-40]
+<!-- 実験群Cに含まれるearly coordinationメッセージは早期返信を通じたCT到達率の向上が期待される。実際に、提供意向を示した返信者の中で、返信時期が早いほどCT到達確率が高くなる（Figure X in Supplementary Material A）。そこで、実験群Cは全体の提供意向を高めていないが、早期に提供意向を伴った返信を増やしているのかを検証する。初めに、視覚的なエビデンスとして、返信時期に応じた累積承諾返信率を実験群ごとにFigure X in Supplementary Material Aに示す。JMDPは7日以内の返信を求めているので、7日以内の累積承諾返信率を早期返信と定義する。しかしながら、実験群Cが7日に提供意向を伴って返信する確率を高める効果を持っていなかった。この結果は回帰分析でも得られた（Table X in Supplementary Material A）。したがって、early coordinationメッセージは我々が予想するような効果を持っていない。 -->
 
-[^age-cutoff-40]: Table A4 in the Online Supplementary Material A presents the subsample analysis with an age cutoff set at 40. The effect of the probability message (experimental arm B) on young males slightly weakened, while it slightly strengthened for older males. This suggests that in males, the effect of the probability message seems to follow a convex function of age. However, there is no change in our overall conclusion.
+The early coordination message included in experimental arm C was expected to increase the CT completion rate through encouraging early responses. Indeed, among donors who indicated willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure X in Supplementary Material A). Therefore, we examine whether experimental arm C, while not increasing overall willingness to donate, increased early responses accompanied by willingness to donate. First, as visual evidence, we show the cumulative response rates with willingness to donate over time by experimental arm in Figure X in Supplementary Material A. Since JMDP requests responses within seven days, we define early responses as cumulative response rates with willingness to donate within seven days. However, experimental arm C did not have any effect on increasing the probability of responding with willingness to donate within seven days. This result was also confirmed by regression analysis (see Table X in Supplementary Material A). Therefore, the early coordination message did not have the effect we expected.
 
-## Effects on the Coordination Process {#process}
+### Heterogeneous Treatment Effects on CT
 
-```{r setup-coordinate, include=FALSE}
-id3 <- which(names(endpoint) %in% c("candidate", "consent", "donate"))
-coordinate <- rct$lm(id3, sample_drop = FALSE)
-full_coordinate <- coordinate$fit(scale = 100)
-```
+<!-- この小節では、我々はメッセージの効果の異質性を探索する。はじめに、性別による効果の違いを調べる。Table X in Supplementary Material Aは男性ダミーと実験群の交差項を含めた線形確率モデルの推定結果である[^additiona-covariate]。共変量をコントロールしていないとき、実験群Dは女性のCT到達率に統計的に有意な正の効果を持っていた。さらに、この実験群と男性ダミーの交差項が統計的に10%水準で有意であり、実験群Dの効果が性別で異質的である可能性を示唆している。しかしながら、共変量（CTが省略されたことを示すダミー変数を含む）をコントロールすると、そのような傾向は観察されなかった。一方で、確率メッセージのみを含む実験群Bは女性のCT到達率に統計的に有意な影響を与えなかったが、男性のCT到達率を統計的有意に高めた。この結果は共変量をコントロールしても頑健に得られた。
 
-Finally, we examined the impact of messages on each step of the coordination process after the CT. As explained in Section \@ref(background), the coordination process comprises three stages: candidate selection, final consent, and collection (donation). For the outcome variable, we used a dummy variable that takes the value of 1 if a matched donor has reached each stage. We examined the influence on the post-candidate selection process, acknowledging the involvement of demand-side effects and emphasizing the need for caution in interpretation. In the control arm, $6.2$% became candidates, and $4.5$% ultimately donated.
+[^additional-covariate]: 交差項モデルでは、男性ダミーと各共変量の交差項もコントロールした。 -->
+
+In this subsection, we explore the heterogeneity of message effects. First, we examine differences in effects by gender. Table X in Supplementary Material A presents estimation results from linear probability models that include cross terms between the male dummy and experimental arms.[^additional-covariate] Without controlling for covariates, experimental arm D had a statistically significant positive effect on the probability of reaching CT for female candidates. Furthermore, the cross term between this experimental arm and the male dummy was statistically significant at the 10% level, suggesting that the effect of experimental arm D could be heterogeneous across gender. However, when controlling for covariates (including a dummy variable indicating whether CT was skipped), these results were not obtained. On the other hand, experimental arm B, which only included the probability message, did not have a statistically significant effect on female candidates' probability of reaching CT but significantly increased male candidates' probability. This result remained robust when controlling for covariates.
+
+[^additional-covariate]: In the cross-term models, we also controlled for cross terms between the male dummy and each covariate.
+
+<!-- 次に、初めて候補者になったかどうかによる効果の違いを調べる。Table X in Supplementary Material Aは初回候補者ダミーと実験群の交差項を含めた線形確率モデルの推定結果である。その結果、実験群Bは過去にコーディネーションを経験した候補者のCT到達率を統計的有意に高めていた。これは共変量をコントロールしても頑健であった。しかしながら、どの実験群も初めて候補となった人のCT到達率に統計的有意な影響を与えていなかった。これらの結果をまとめると、実験群Bに含まれる確率メッセージは主に過去にコーディネーションの経験がある男性に影響を与えているといえる。 -->
+
+Next, we examine differences in effects between first-time candidates and candidates with prior coordination experience. Table X in Supplementary Material A presents estimation results from linear probability models that include cross terms between the first-time candidate dummy and experimental arms. The results show that experimental arm B had a statistically significant positive effect on the probability of reaching CT for candidates with prior coordination experience. This result remained robust when controlling for covariates. However, none of the experimental arms had a statistically significant effect on the probability of reaching CT for first-time candidates. To summarize these findings, the probability message included in experimental arm B primarily affects male donors who had prior coordination experience.
+
+## Effects on the Coordination Process After CT {#process}
+
+Finally, we examined the effects of messages on subsequent stages of the coordination process after CT. As explained in Section \@ref(background), the coordination process comprises three stages: candidate selection, final consent, and collection (donation). For these outcomes, we used dummy variables that take the value of 1 if a matched donor reached each stage. We analyzed the effects on post-candidate selection stages, while acknowledging that these outcomes involve demand-side effects and thus require careful interpretation. In the control arm, $6.2$% of matched donors became candidates, and $4.5$% ultimately donated.
 
 ```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Candidate Selection, Final Consent, and Donation by Treatments.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
-full_coordinate$
-  plot(
+rct$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
+  fit(scale = 100)$
+  plot_ate(
     p_text_margin = 3,
     p_text_size = 7,
     avg_text_pos = 2,
     avg_text_size = 7,
-    ylim = c(0, 20),
-    ybreaks = seq(0, 20, by = 5),
+    ylim = c(0, 10),
+    ybreaks = seq(0, 20, by = 2),
     base_size = 25
   )
 ```
 
+```{r lm-coordinate}
+rct$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Linear Probability Model of Coordination Process After CT",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
+    font_size = 8
+  )
+```
+
 ```{r effect-dropout, include=FALSE}
-est <- estimatr::lm_robust(I(exg_stop_candidate * 100) ~ treat, data = subset(rct$data, test == 1), se_type = "stata")
+est <- estimatr::lm_robust(I(exg_stop_candidate * 100) ~ treat, data = subset(rct$data, test == 1), se_type = params$se_type)
 summary(est)
 ```
 
-We show sample averages of each outcome by treatment in Figure \@ref(fig:coordinate-diff-mean). No experimental arm affected the post-candidate selection process. Similar results were obtained with linear probability models and logistic regressions controlling for covariates (see Table A5 and A6 in Online Supplementary Material A). This result should be interpreted with caution. Given that our intervention does not affect demand (number of patients), if our intervention increases the number of people who reach the CT, it should increase the number of people who are not selected as candidates for exogenous reasons. Particularly, compared to the control arm, experimental arm B increased the probability of donors who reached CT not being selected because of patient-related reasons or donor health conditions by $4.3$ percentage points. This difference is marginally statistically significant ($p = 0.095$). Thus, intervention effects are annulled because of demand-side factors.
-
-Table \@ref(tab:coordinate-reg-subset) divides the sample into four subsets by gender and age (under 30 or not) and estimates the message effect in each subset. The results show that experimental arm B may have increased donations among males in their 20s by 4 percentage points, which is statistically significant at the 10% level. However, the effect on candidate selection and final consent is not statistically significant. As noted earlier, this effect may reflect not only the effect of our intervention but also the demand for stem cell transplants. Because younger males have better transplant outcomes, the demand for stem cell transplants may be higher in this generation than in other genders and ages. Indeed, in the control arm, the selection probability of young male donors who reached CT was $33.3$ ($=7.76/23.27$) %, which was higher than other groups.[^cal3] In addition, experimental arm C, which encouraged early responses from females in their 20s, had no statistically significant effect on the post-candidate selection process of females in their 20s.[^age-cutoff-40-2]
-
-[^cal3]: For females in their 20s, $32.7$ ($=6.80 / 20.80$) %; for females over 30, $18.8$ ($=3.55 / 18.89$) %; for males over 30, $29.5$ ($=7.13/24.18$)%.
-
-[^age-cutoff-40-2]: Table A7 in the Online Supplementary Material A presents the subsample analysis with an age cutoff set at 40. We confirmed that the results did not change.
+We show sample averages of each outcome by experimental arm in Figure \@ref(fig:coordinate-diff-mean). No experimental arm affected the post-candidate selection process. Similar results were obtained from linear probability models (see Table \@ref(tab:lm-coordinate)) and logistic regressions controlling for covariates (see Table X in Online Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (number of patients), if our intervention increases the number of donors who reach CT, it should increase the number of donors who are not selected as candidates for exogenous reasons. In particular, compared to the control arm, experimental arm B increased by $4.3$ percentage points the probability that donors who reached CT were not selected due to patient-related reasons or donor health conditions. This difference is statistically significant at the 10% level ($p = 0.095$). Thus, the intervention effects are weakened by demand-side factors.
 
 # Discussion and Conclusions {#conclusion}
 

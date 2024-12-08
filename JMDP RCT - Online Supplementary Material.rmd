@@ -20,7 +20,6 @@ params:
   se_type: stata
 ---
 
-\listoftables
 \clearpage
 
 ```{r include=FALSE}
@@ -90,10 +89,6 @@ rawdt <- RawData$new(
 # main sample
 rawdt$add_cond_study_sample("ongoing == 0")
 
-# robust sample (initially matched candidates)
-rawdt_initial <- rawdt$clone()
-rawdt_initial$add_cond_study_sample("coordinate == 1")
-
 # robust sample (remove those who skipped the CT)
 rawdt_noskip <- rawdt$clone()
 rawdt_noskip$add_cond_study_sample("reply == 0 | days_reply > 0")
@@ -120,228 +115,26 @@ rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
-rct$set_default_se_type("stata")
-
-# robust sample (initially matched candidate)
-rct_initial <- rawdt_initial$RCT()
-rct_initial$add_intervention(intervention)
-rct_initial$add_outcome(endpoint)
-if (params$is_cluster) rct_initial$set_default_cluster("RCTweek")
-rct_initial$set_default_se_type("stata")
+rct$set_default_se_type(params$se_type)
 
 # robust sample (remove those who skipped the CT)
 rct_noskip <- rawdt_noskip$RCT()
 rct_noskip$add_intervention(intervention)
 rct_noskip$add_outcome(endpoint)
 if (params$is_cluster) rct_noskip$set_default_cluster("RCTweek")
-rct_noskip$set_default_se_type("stata")
-```
-
-## Balance Test
-
-```{r summary}
-rct$
-  summary_experiment()$
-  kable(
-  title = "Summary of Field Experiment",
-  notes = paste(
-    "\\\\emph{Note}: For the balance test, we regressed a covariate on treatment dummies and tested the null hypothesis that all coefficients are zero. We used robust standard errors for statistical inference."
-  ),
-  hold = TRUE,
-  font_size = 8
-)
+rct_noskip$set_default_se_type(params$se_type)
 ```
 
 ```{r smd-balance}
 rct$
   smd_balance()$
   kable(
-    title = "Assessing Balance by Standaridized Mean Difference",
+    title = "Assessing Balance by Standardized Mean Difference",
     notes = "\\\\emph{Note}: These values represent the standardized mean differences (SMD) with the control arm (experimental arm A). Generally, covariates between two groups are balanced if the SMD is less than $0.1$.",
     hold = TRUE,
     font_size = 8
   )
 ```
-
-## Effect on the CT
-### Average Treatment Effects
-
-```{r lm-test}
-rct$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Linear Probability Model of the CT",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
-```{r logit-test}
-rct$
-  logit_effect("test", sample_drop = FALSE)$
-  fit()$
-  kable(
-    title = "Logit Model of the CT",
-    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
-    fmt = "%.2f",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
-```{r lm-test-initial}
-rct_initial$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Linear Probability Model of the CT (Only First-time Matched Candidates)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We restricted the analysis sample to those who matched the first time. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
-```{r lm-test-noskip}
-rct_noskip$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Linear Probability Model of the CT (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
-### Heterogeneous Treatment Effects
-
-```{r set-lm-interaction-test, include=FALSE}
-test_interaction_gender <- rct$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100, interaction_of_gender = TRUE)
-
-test_interaction_gender_age <- rct$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100, interaction_of_gender_age = TRUE, age_cut = 40)
-```
-
-```{r lm-interaction-gender-test}
-test_interaction_gender$
-  kable_reg(
-    title = "Heterogenous Message Effects on CT by Gender",
-    notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
-```{r lh-interaction-gender-test}
-test_interaction_gender$
-  kable_lh(
-    title = "Linear Combination Test: Message Effects on the CT for Specific Gender Group",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-test}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1:2, width = "8em")
-```
-
-```{r mh-adjust-gender-test}
-mha_gender_test <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("test")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "mh-adjust-gender-test.rds"
-)
-
-mha_gender_test %>%
-  select(Subgroup.id, Treated.id, Diff, Single.p, List.p) %>%
-  knitr::kable(
-    caption = "Adjustment of p-values for Multiple Testing of Effect on the CT for Specific Gender Group",
-    col.names = c(
-      "Group", "Treatment", "Diff-in-mean", "Unadjusted", "Adjusted"
-    ),
-    digits = 3,
-    align = "llccc",
-    booktabs = TRUE,
-    linesep = ""
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 3, "p-values" = 2)) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: To adjust p-values for multiple testing, we employed the method proposed by List et al. (2019). For calculation of p-values, we used the bootstrapping with 3,000 boostrap samples.",
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r lm-interaction-gender-age-test}
-test_interaction_gender_age$
-  kable_reg(
-    title = "Heterogenous Message Effects on CT by Gender-Age Group",
-    notes = "The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
-```{r lh-interaction-gender-age-test}
-test_interaction_gender_age$
-  kable_lh(
-    title = "Linear Combination Test: Message Effects on CT for Specific Gender-Age Group",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-test}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1:2, width = "8em")
-```
-
-```{r mh-adjust-gender-age-test}
-mha_gender_age_test <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("test", gender_age = TRUE, age_cut = 40)$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "mh-adjust-gender-age-test.rds"
-)
-
-mha_gender_age_test %>%
-  select(Subgroup.id, Treated.id, Diff, Single.p, List.p) %>%
-  knitr::kable(
-    caption = "Adjustment of p-values for Multiple Testing of Effect on the CT for Specific Gender-Age Group",
-    col.names = c(
-      "Group", "Treatment", "Diff-in-mean", "Unadjusted", "Adjusted"
-    ),
-    digits = 3,
-    align = "llccc",
-    booktabs = TRUE,
-    linesep = ""
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 3, "p-values" = 2)) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: To adjust p-values for multiple testing, we employed the method proposed by List et al. (2019). For calculation of p-values, we used the bootstrapping with 3,000 boostrap samples.",
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-### Decompose Effects: Intention and Attrition Perspectives
 
 ```{r lm-skip}
 skip_dt <- rct$
@@ -386,7 +179,7 @@ skip_mods <- list(
 )
 
 est_skip_mods <- skip_mods %>%
-  purrr::map(~ lm_robust(., data = skip_dt, se_type = "stata"))
+  purrr::map(~ lm_robust(., data = skip_dt, se_type = params$se_type))
 
 est_skip_mods %>%
   modelsummary(
@@ -418,88 +211,18 @@ est_skip_mods %>%
   )
 ```
 
-```{r lm-interaction-gender-skip}
-skip_interaction_mods <- list(
-  coordinate_more ~ treat * male,
-  coordinate_more ~ treat * male + age + I(age^2) + hospital_per_area +
-    PB_per_area + BM_per_area + holidays + age:male + I(age^2):male + hospital_per_area:male + PB_per_area:male + BM_per_area:male + holidays:male,
-  skip_CT ~ treat * male,
-  skip_CT ~ treat * male + age + I(age^2) + hospital_per_area +
-    PB_per_area + BM_per_area + holidays + age:male + I(age^2):male + hospital_per_area:male + PB_per_area:male + BM_per_area:male + holidays:male
-)
-
-hypothesis <- c(
-  "treatB + treatB:male" = "Treatment B",
-  "treatC + treatC:male" = "Treatment C",
-  "treatD + treatD:male" = "Treatment D"
-)
-
-est_skip_interaction_mods <- skip_interaction_mods %>%
-  map(~ lh_robust(
-    .,
-    data = skip_dt,
-    se_type = "stata",
-    linear_hypothesis = names(hypothesis)
-  ))
-
-lh_tab <- est_skip_interaction_mods %>%
-  map(~ .$lh) %>%
-  modelsummary(
-    coef_map = hypothesis,
-    stars = c("***" = .01, "**" = .05, "*" = 0.1),
-    output = "data.frame",
-    fmt = 2
+```{r logit-test}
+rct$
+  logit_effect("test", sample_drop = FALSE)$
+  fit()$
+  kable(
+    title = "Logit Model of the CT",
+    notes = "Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
   ) %>%
-  filter(part == "estimates") %>%
-  mutate(term = if_else(statistic == "std.error", "", term)) %>%
-  select(-part, -statistic)
-
-add_tab <- rbind(
-  lh_tab,
-  c("Covariates", "", "X", "", "X")
-)
-
-attr(add_tab, "position") <- 15:21
-
-est_skip_interaction_mods %>%
-  map(~ .$lm_robust) %>%
-  modelsummary(
-    title = "Heterogeneous Treatment Effects on Number of Coordination and Skipping CT by Gender",
-    coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D",
-      "male" = "Male",
-      "treatB:male" = "Treatment B $\\times$ Male",
-      "treatC:male" = "Treatment C $\\times$ Male",
-      "treatD:male" = "Treatment D $\\times$ Male"
-    ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
-    align = "lcccc",
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    fmt = 2,
-    add_rows = add_tab,
-    escape = FALSE
-  ) %>%
-  kableExtra::kable_styling(
-    font_size = 8,
-    latex_options = "HOLD_position"
-  ) %>%
-  kableExtra::add_header_above(
-    c(" " = 1, "\\\\#.Coordination $>$ 1" = 2, "Skipped CT" = 2),
-    escape = FALSE
-  ) %>%
-  kableExtra::group_rows(
-    "Linear combination test: Treatment + Treatment $\\times$ Male",
-    15, 20,
-    escape = FALSE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.  We also controlled cross terms of each covariate and gender dummy. We excluded the number of past coordinations in model (2).",
-    threeparttable = TRUE,
-    escape = FALSE
-  )
+  column_spec(1, width = "20em")
 ```
 
 ```{r lm-test-decompose}
@@ -507,125 +230,12 @@ rct$
   lm_decompose_effect("test")$
   fit(scale = 100)$
   kable_reg(
-    title = "Decompose Effect on the CT: Intention and Attrition Perspectives",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
+    title = "Decomposition of Effect on the CT",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     hold = TRUE,
     font_size = 8
-  )
-```
-
-```{r lm-test-decompose-noskip}
-rct_noskip$
-  lm_decompose_effect("test")$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Decompose Effect on the CT: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r set-lm-interaction-test-decompose-noskip, include=FALSE}
-test_decompose_interaction_gender <- rct_noskip$
-  lm_decompose_effect("test")$
-  fit(scale = 100, interaction_of_gender = TRUE)
-
-test_decompose_interaction_gender_age <- rct_noskip$
-  lm_decompose_effect("test")$
-  fit(scale = 100, interaction_of_gender_age = TRUE, age_cut = 40)
-```
-
-```{r lm-interaction-gender-test-decompose-noskip}
-test_decompose_interaction_gender$
-  kable_reg(
-    title = "Heterogenity of Decomposition of Effect on the CT by Gender: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender."
-  )
-```
-
-```{r lh-interaction-gender-test-decompose-noskip}
-test_decompose_interaction_gender$
-  kable_lh(
-    title = "Linear Combination Test: Decomposition of Effects on CT for Specific Gender Group (Intention and Attrition Perspectives; Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-test-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-interaction-gender-age-test-decompose-noskip}
-test_decompose_interaction_gender_age$
-  kable_reg(
-    title = "Heterogenity of Decomposition of Effect on the CT by Gender-Age Groups: Intention and Attrition Perspectives (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We created two age groups (Younger/Older) based on age 40. We excluded those who skipped the CT. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group."
-  )
-```
-
-```{r lh-interaction-gender-age-test-decompose-noskip}
-test_decompose_interaction_gender_age$
-  kable_lh(
-    title = "Linear Combination Test: Decomposition of Effects on CT for Specific Gender-Age Group (Intention and Attrition Perspectives; Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-test-decompose-noskip}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-### Decompose Effects: Response Timing Perspective
-
-```{r speed-CT, fig.cap = "Binned Scatter Plot of CT (or Response with Positive Intention) vs. Response Days. \\newline \\emph{Note}: We run logistic regression of the CT (or response with positive intention) on response days. We excluded those who skipped the CT and used control arm. We show the regression lines and its 95 percent confidence interval.", fig.pos = "H"}
-reply_dt <- rct$data %>%
-  filter(reply == 1 & 0 < days_reply & treat == "A")
-
-plotdt <- reply_dt %>%
-  mutate(ntile = ntile(days_reply, 20)) %>%
-  group_by(ntile) %>%
-  summarize(
-    median_day = (max(days_reply) + min(days_reply)) / 2,
-    mean_intention = mean(positive),
-    mean_ct = mean(test)
   ) %>%
-  pivot_longer(
-    mean_intention:mean_ct,
-    names_to = "outcome",
-    names_prefix = "mean_",
-    values_to = "mean"
-  ) %>%
-  mutate(
-    outcome = factor(
-      outcome,
-      levels = c("intention", "ct"),
-      labels = c("Positive intention", "CT")
-    )
-  )
-
-plotdt %>%
-  ggplot(aes(x = median_day, y = mean)) +
-    geom_point(aes(shape = outcome), color = "grey40", size = 3) +
-    geom_smooth(
-      aes(x = days_reply, y = positive),
-      data = reply_dt,
-      method = "glm",
-      method.args = list(family = "binomial"),
-      se = TRUE,
-      alpha = 0.2,
-      color = "black",
-      linetype = 2
-    ) +
-    geom_smooth(
-      aes(x = days_reply, y = test),
-      data = reply_dt,
-      method = "glm",
-      method.args = list(family = "binomial"),
-      se = TRUE,
-      alpha = 0.2,
-      color = "black",
-      linetype = 1
-    ) +
-    labs(x = "Response days", y = "Proportion", shape = "Outcome") +
-    my_theme_classic(size = 30) +
-    theme(legend.position = "bottom")
+  column_spec(1, width = "20em")
 ```
 
 ```{r speed-CT-cond-response, fig.cap = "Binned Scatter Plot of CT vs. Response Spped among Those Who Responded with Positive Intention. \\newline \\emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental arm A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.", fig.pos = "H"}
@@ -662,7 +272,7 @@ plotdt %>%
       linetype = 2
     ) +
     labs(x = "Response days", y = "Proportion", shape = "Outcome") +
-    my_theme_classic(size = 30)
+    my_theme_classic(size = 25)
 ```
 
 ```{r cumulative-response, fig.cap = "Cumulative Rate of Response with Positive Intention by Treatment \\newline \\emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate."}
@@ -674,161 +284,198 @@ rct_noskip$
     ylim = c(0, 60),
     xlab = "Response days",
     ylab = "Cumulative rate of\nresponse with positive intention (%)",
-    base_size = 30
+    base_size = 25
   )
 ```
 
-```{r dist-response-speed, fig.cap = "Density of Number of Days Required for Response with Positive Intention. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.", fig.pos = "H"}
-rct_noskip$
+```{r lm-positive-time-decompose}
+rct$
   flow(outcome = "positive", sample_drop = FALSE)$
-  plot_density(
-    upper_days = 50,
-    x_breaks = seq(0, 100, by = 4),
-    base_size = 30
-  )
-```
-
-```{r lm-positive-time-decompose-noskip}
-rct_noskip$
-  flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(5, 12))$
+  lm_time_segment(cut_days = c(7, 12))$
   fit(scale = 100)$
   kable_reg(
-    title = "Effect on Speed of Response with Positive Intention (Excluding Those Who Skipped the CT)",
+    title = "Effect on Speed of Response with Positive Intention",
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
     hold = TRUE,
     font_size = 8
+  ) %>%
+  column_spec(1, width = "20em")
+```
+
+```{r lm-interaction-gender-test}
+test_interaction_gender <- rct$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100, interaction_of_gender = TRUE)$
+  get_est()
+
+hypothesis <- c(
+  "treatB + treatB:groupMale" = "Treatment B",
+  "treatC + treatC:groupMale" = "Treatment C",
+  "treatD + treatD:groupMale" = "Treatment D"
+)
+
+lh_tab <- test_interaction_gender %>%
+  pull(fit) %>%
+  map(~ .$lh) %>%
+  modelsummary(
+    coef_map = hypothesis,
+    stars = c("***" = .01, "**" = .05, "*" = 0.1),
+    output = "data.frame",
+    fmt = 2
+  ) %>%
+  filter(part == "estimates") %>%
+  mutate(term = if_else(statistic == "std.error", "", term)) %>%
+  select(-part, -statistic)
+
+add_tab <- rbind(
+  lh_tab,
+  c("Covariates", "", "X")
+)
+
+attr(add_tab, "position") <- 15:21
+
+test_interaction_gender %>%
+  pull(fit) %>%
+  map(~ .$lm_robust) %>%
+  modelsummary(
+    title = "Heterogenous Message Effects on CT by Gender",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D",
+      "groupMale" = "Male",
+      "treatB:groupMale" = "Treatment B $\\times$ Male",
+      "treatC:groupMale" = "Treatment C $\\times$ Male",
+      "treatD:groupMale" = "Treatment D $\\times$ Male"
+    ),
+    gof_omit = "R2",
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    add_rows = add_tab,
+    fmt = 2,
+    align = "lcc",
+    escape = FALSE
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 1, "CT" = 2)) %>%
+  kableExtra::group_rows(
+    "Linear combination test: Treatment + Treatment $\\times$ Male",
+    15, 20,
+    bold = FALSE, italic = TRUE,
+    escape = FALSE
+  ) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
+    threeparttable = TRUE,
+    escape = FALSE
+  ) %>%
+  column_spec(1, width = "30em")
+```
+
+```{r lm-interaction-coordination-test}
+hypothesis <- c(
+  "treatB + treatB:coordinate1" = "Treatment B",
+  "treatC + treatC:coordinate1" = "Treatment C",
+  "treatD + treatD:coordinate1" = "Treatment D"
+)
+
+res <- rct$
+  lm_effect("test", sample_drop = FALSE)$data %>%
+  mutate(value = value * 100) %>%
+  group_by(outcome) %>%
+  nest() %>%
+  mutate(
+    fit_1 = map(
+      data,
+      ~ lh_robust(
+        value ~ treat * coordinate1,
+        data = .,
+        se_type = params$se_type,
+        linear_hypothesis = names(hypothesis)
+      )
+    ),
+    fit_2 = map(
+      data,
+      ~ lh_robust(
+        value ~ treat * coordinate1 +
+          male + age + I(age^2) + PB_per_area + BM_per_area + holidays + skip_test +
+          male:coordinate1 + age:coordinate1 + I(age^2):coordinate1 +
+          PB_per_area:coordinate1 + BM_per_area:coordinate1 + holidays:coordinate1 + skip_test:coordinate1,
+        data = .,
+        se_type = params$se_type,
+        linear_hypothesis = names(hypothesis)
+      )
+    )
+  ) %>%
+  pivot_longer(
+    fit_1:fit_2,
+    names_to = "model",
+    values_to = "fit",
+    names_prefix = "fit_"
   )
-```
 
-```{r lm-test-time-decompose-noskip}
-rct_noskip$
-  flow(outcome = "test", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(5, 12))$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Decomposition of Effect on the CT: Response Speed Perspectives (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing and reached the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
+lh_tab <- res %>%
+  pull(fit) %>%
+  map(~ .$lh) %>%
+  modelsummary(
+    coef_map = hypothesis,
+    stars = c("***" = .01, "**" = .05, "*" = 0.1),
+    output = "data.frame",
+    fmt = 2
+  ) %>%
+  filter(part == "estimates") %>%
+  mutate(term = if_else(statistic == "std.error", "", term)) %>%
+  select(-part, -statistic)
 
-```{r dist-response-speed-by-gender, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.", fig.pos = "H"}
-rct_noskip$
-  flow(outcome = "positive", sample_drop = FALSE)$
-  plot_density(
-    upper_days = 50,
-    subset_by_gender = TRUE,
-    x_breaks = seq(0, 100, by = 4)
-  )
-```
+add_tab <- rbind(
+  lh_tab,
+  c("Covariates", "", "X")
+)
 
-```{r set-lm-interaction-int-time-decompose-noskip,include=FALSE}
-int_t_decompose_gender <- rct_noskip$
-  flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(5, 12))$
-  fit(scale = 100, interaction_of_gender = TRUE)
+attr(add_tab, "position") <- 15:21
 
-int_t_decompose_gender_age <- rct_noskip$
-  flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(5, 12))$
-  fit(scale = 100, interaction_of_gender_age = TRUE, age_cut = 40)
-```
-
-```{r lm-interaction-gender-int-time-decompose-noskip}
-int_t_decompose_gender$
-  kable_reg(
-    title = "Heterogenity of Effect on Speed of Response with Positive Intention by Gender (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and gender dummy.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lh-interaction-gender-int-time-decompose-noskip}
-int_t_decompose_gender$
-  kable_lh(
-    title = "Effect on Speed of Response with Positive Intention for Specific Gender Group (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-int-time-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r dist-response-speed-by-gender-age, fig.cap = "Density of Number of Days Required for Response with Positive Intention by Gender. \\newline \\emph{Note}: We excluded those who did not respond and skipped the CT. We also excluded those who responded after 50 days due to outliers.", fig.pos = "H"}
-rct_noskip$
-  flow(outcome = "positive", sample_drop = FALSE)$
-  plot_density(
-    upper_days = 50,
-    subset_by_gender_age = TRUE,
-    age_cut = 40,
-    x_breaks = seq(0, 100, by = 4)
-  )
-```
-
-```{r lm-interaction-gender-age-int-time-decompose-noskip}
-int_t_decompose_gender_age$
-  kable_reg(
-    title = "Heterogenity of Effect on Speed of Response with Positive Intention by Gender and Age (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. We created two age groups (Younger/Older) based on age 40. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and gender-age group dummies.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lh-interaction-gender-age-int-time-decompose-noskip}
-int_t_decompose_gender_age$
-  kable_lh(
-    title = "Effect on Speed of Response with Positive Intention for Specific Gender-Age Group (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-int-time-decompose-noskip}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r set-lm-interaction-test-time-decompose-noskip, include=FALSE}
-# gender-age groupはRunできない
-
-test_t_decompose_gender <- rct_noskip$
-  flow(outcome = "test", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(5, 12))$
-  fit(scale = 100, interaction_of_gender = TRUE)
-```
-
-```{r lm-interaction-gender-test-time-decompose-noskip}
-test_t_decompose_gender$
-  kable_reg(
-    title = "Heterogeneity of Decomposition of Effect on the CT: Response Speed Perspectives (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing and reached the CT. Covariates are age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross term of each covariate and geder dummy.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lh-interaction-gender-test-time-decompose-noskip}
-test_t_decompose_gender$
-  kable_lh(
-    title = "Decomposition of Effect on the CT for Specific Gender Group: Response Speed Perspectives (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-test-time-decompose-noskip}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-## Effect on Remaining Coordination Process
-### Average Treatment Effects
-
-```{r lm-coordinate}
-rct$
-  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Linear Probability Model of Coordination Process After CT",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  )
+res %>%
+  pull(fit) %>%
+  map(~ .$lm_robust) %>%
+  modelsummary(
+    title = "Heterogeneous Treatment Effects on Positive Intention and CT by First-Time Coordination",
+    coef_map = c(
+      "treatB" = "Treatment B",
+      "treatC" = "Treatment C",
+      "treatD" = "Treatment D",
+      "coordinate1" = "First-time coordination",
+      "treatB:coordinate1" = "Treatment B $\\times$ First-time coordination",
+      "treatC:coordinate1" = "Treatment C $\\times$ First-time coordination",
+      "treatD:coordinate1" = "Treatment D $\\times$ First-time coordination"
+    ),
+    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
+    align = "lcc",
+    stars = c("***" = .01, "**" = .05, "*" = .1),
+    fmt = 2,
+    add_rows = add_tab,
+    escape = FALSE
+  ) %>%
+  kableExtra::kable_styling(
+    font_size = 8,
+    latex_options = "HOLD_position"
+  ) %>%
+  kableExtra::add_header_above(
+    c(" " = 1, "CT" = 2),
+    escape = FALSE
+  ) %>%
+  kableExtra::group_rows(
+    "Linear combination test: Treatment + Treatment $\\times$ First-Time Coordination",
+    15, 20,
+    bold = FALSE, italic = TRUE,
+    escape = FALSE
+  ) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and dummy of first-time coordination.",
+    threeparttable = TRUE,
+    escape = FALSE
+  ) %>%
+  column_spec(1, width = "30em")
 ```
 
 ```{r logit-coordinate}
@@ -837,84 +484,8 @@ rct$
   fit()$
   kable(
     title = "Logit Model of Coordination Process After CT",
-    notes = "Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
+    notes = "Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     fmt = "%.2f",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-coordinate-initial}
-rct_initial$
-  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Linear Probability Model of Coordination Process After CT (Only First-time Matched Candidates)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We restricted the analysis sample to those who matched the first time. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-coordinate-noskip}
-rct_noskip$
-  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Linear Probability Model of Coordination Process After CT (Excluding Those Who Skipped the CT)",
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. We excluded those who skipped the CT. Covariates are gender, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-### Heterogenous Treatment Effects
-
-```{r set-lm-interaction-coordinate, include=FALSE}
-coordinate_interaction_gender <- rct$
-  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit(scale = 100, interaction_of_gender = TRUE)
-
-coordinate_interaction_gender_age <- rct$
-  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit(scale = 100, interaction_of_gender_age = TRUE)
-```
-
-```{r lm-interaction-gender-coordinate}
-coordinate_interaction_gender$
-  kable_reg(
-    title = "Heterogeneity of Message Effects on Coordination Process After CT by Gender",
-    notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lh-interaction-gender-coordinate}
-coordinate_interaction_gender$
-  kable_lh(
-    title = "Linear Combination Test: Message Effects on Coordination Process After CT for Specific Gender Group",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-coordinate}. The null hypothesis for females is that the treatment dummy is zero. The null hypothesis for males is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender dummy is zero.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lm-interaction-gender-age-coordinate}
-coordinate_interaction_gender_age$
-  kable_reg(
-    title = "Heterogenous Message Effects on Coordination Process After CT by Gender-Age Group",
-    notes = "The robust standard errors are in parentheses. This tabel tests heterogenous message effects by gender and age. We created two age groups (Younger/Older) based on age 40. The unit of treatment effect is a percentage point. Covariates are the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender-age group dummies.",
-    hold = TRUE,
-    font_size = 8
-  )
-```
-
-```{r lh-interaction-gender-age-coordinate}
-coordinate_interaction_gender_age$
-  kable_lh(
-    title = "Linear Combination Test: Message Effects on Coordination Process After CT for Specific Gender-Age Group",
-    notes = "The robust standard errors are in parentheses. We performed a linear combination test on the coefficients of the linear probability model presented in Table \\\\ref{tab:lm-interaction-gender-age-coordinate}. The null hypothesis for young women is that the treatment dummy is zero. The null hypothesis for the other gender-age groups is that the sum of the treatment dummy and the cross term of the treatment dummy and the gender-age group dummy is zero.",
     hold = TRUE,
     font_size = 8
   )
