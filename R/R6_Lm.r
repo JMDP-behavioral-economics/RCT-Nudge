@@ -56,7 +56,8 @@ Lm <- R6::R6Class("Lm",
           holidays,
           hospital_per_area,
           PB_per_area,
-          BM_per_area
+          BM_per_area,
+          skip_test
         ) %>%
         summarize_all(~ var(.)) %>%
         pivot_longer(everything()) %>%
@@ -198,7 +199,8 @@ Lm <- R6::R6Class("Lm",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        mutate(covariate = if_else(model != "1", "X", ""))
+        mutate(covariate = if_else(model != "1", "X", "")) %>%
+        arrange(outcome)
 
       LmFit$new(est, model_type)
     },
@@ -444,7 +446,8 @@ LmFit <- R6::R6Class("LmFit",
                         notes = "",
                         font_size = 9,
                         digit = 2,
-                        hold = FALSE)
+                        hold = FALSE,
+                        output_data_frame = FALSE)
     {
       if (private$type == "ate") stop("No linear combination test!")
 
@@ -484,44 +487,48 @@ LmFit <- R6::R6Class("LmFit",
         select(group, term, everything()) %>%
         bind_rows(add_tab)
 
-      kbl <- tbl2 %>%
-        knitr::kable(
-          caption = title,
-          col.names = c("Group", "Treatment", names(tbl)[-c(1:2)]),
-          align = paste(c("ll", rep("c", nrow(res))), collapse = ""),
-          booktabs = TRUE,
-          linesep = ""
-        )
-
-      if (hold) {
-        kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+      if (output_data_frame) {
+        tbl2
       } else {
+        kbl <- tbl2 %>%
+          knitr::kable(
+            caption = title,
+            col.names = c("Group", "Treatment", names(tbl)[-c(1:2)]),
+            align = paste(c("ll", rep("c", nrow(res))), collapse = ""),
+            booktabs = TRUE,
+            linesep = ""
+          )
+
+        if (hold) {
+          kbl <- kbl %>%
+            kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
+        } else {
+          kbl <- kbl %>%
+            kableExtra::kable_styling(font_size = font_size)
+        }
+
+        label <- c(" ", " ", as.character(res$outcome))
+        label_structure <- rle(label)
+        lab1 <- label_structure$lengths
+        names(lab1) <- label_structure$values
+
         kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size)
+          kableExtra::add_header_above(lab1)
+
+        kbl <- kbl %>%
+          kableExtra::row_spec(nrow(tbl), hline_after = TRUE)
+
+        kbl %>%
+          kableExtra::footnote(
+            general_title = "",
+            general = paste(
+              "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
+              notes
+            ),
+            threeparttable = TRUE,
+            escape = FALSE
+          )
       }
-
-      label <- c(" ", " ", as.character(res$outcome))
-      label_structure <- rle(label)
-      lab1 <- label_structure$lengths
-      names(lab1) <- label_structure$values
-
-      kbl <- kbl %>%
-        kableExtra::add_header_above(lab1)
-
-      kbl <- kbl %>%
-        kableExtra::row_spec(nrow(tbl), hline_after = TRUE)
-
-      kbl %>%
-        kableExtra::footnote(
-          general_title = "",
-          general = paste(
-            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
-            notes
-          ),
-          threeparttable = TRUE,
-          escape = FALSE
-        )
     },
     plot_ate = function(segment_margin = 3,
                         add_segment_margin = 7,

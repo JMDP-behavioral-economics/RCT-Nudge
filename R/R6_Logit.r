@@ -49,7 +49,8 @@ Logit <- R6::R6Class("Logit",
           holidays,
           hospital_per_area,
           PB_per_area,
-          BM_per_area
+          BM_per_area,
+          skip_test
         ) %>%
         summarize_all(~ var(.)) %>%
         pivot_longer(everything()) %>%

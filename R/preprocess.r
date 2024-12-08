@@ -5,7 +5,7 @@ library(tidyverse)
 library(lubridate)
 
 #+ include = FALSE
-root <- "D:/JMDPフィールド実験"
+root <- "E:/JMDPフィールド実験"
 raw <- "raw.csv"
 schedule <- "schedule.csv"
 
@@ -68,8 +68,9 @@ shape_rawdt <- rawdt %>%
     reply = if_else(reply == "有", 1, 0),
     days_reply = if_else(days_reply != "-", as.numeric(days_reply), NA_real_),
     intention = if_else(intention == "希望する", 1, 0),
+    skip_test = if_else(days_reply == 0 & intention == 1, 1, 0),
     test = if_else(test == "有", 1, 0),
-    test = if_else(days_reply == 0 & intention == 1, 1, test),
+    test = if_else(skip_test == 1, 1, test),
     candidate = if_else(candidate == "有", 1, 0),
     consent = if_else(consent == "有", 1, 0),
     donate = if_else(donate == "有", 1, 0),
@@ -157,6 +158,7 @@ shape_rawdt <- rawdt %>%
     reply,
     days_reply,
     intention,
+    skip_test,
     test,
     candidate,
     consent,

@@ -20,6 +20,7 @@ BalanceTest <- R6::R6Class("BalanceTest",
           "Number of hospitals listed with PBSC collection" = PB_per_area,
           "Number of hospitals listed with BM collection" = BM_per_area,
           "Number of holidays in the assigned week" = holidays,
+          "Skipped the CT (= 1)" = skip_test
         )
 
       panelA <- reduce(intervention, bind_rows)
@@ -147,6 +148,7 @@ SmdBalanceTest <- R6::R6Class("SmdBalanceTest",
           "Number of hospitals listed with PBSC collection" = PB_per_area,
           "Number of hospitals listed with BM collection" = BM_per_area,
           "Number of holidays in the assigned week" = holidays,
+          "Skipped the CT (= 1)" = skip_test,
           treat
         ) %>%
         pivot_longer(-treat, names_to = "vars") %>%
