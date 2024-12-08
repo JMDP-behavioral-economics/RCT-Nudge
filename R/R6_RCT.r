@@ -71,7 +71,7 @@ RCT <- R6Class("RCT",
 
       use <- private$create_analysis_data(sample_drop)
       if (!missing(outcome)) {
-        outcome_id <- which(names(private$outcome) == outcome)
+        outcome_id <- which(names(private$outcome) %in% outcome)
         use <- private$subset_by_outcome(use, outcome_id)
       }
 
@@ -162,8 +162,18 @@ RCT <- R6Class("RCT",
 
       Lm$new(use, demean_covariate, se, cluster, hide_message)
     },
-    multiple_hypotheses_adjust = function(outcome, gender_age = FALSE, age_cut = 30) {
-      MultipleHypothesis$new(self$data, outcome, gender_age, age_cut)
+    multiple_hypotheses_adjust = function(outcome,
+                                          group_by_gender = FALSE,
+                                          group_by_gender_age = FALSE,
+                                          age_cut = 30)
+    {
+      MultipleHypothesis$new(
+        self$data,
+        outcome,
+        group_by_gender,
+        group_by_gender_age,
+        age_cut
+      )
     }
   ),
   private = list(

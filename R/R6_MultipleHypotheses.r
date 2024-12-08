@@ -5,14 +5,19 @@ source(here("R/misc.r"))
 
 MultipleHypothesis <- R6::R6Class("MultipleHypothesis",
   public = list(
-    initialize = function(data, outcome, gender_age, age_cut) {
-      private$data <- if (!gender_age) {
+    initialize = function(data,
+                          outcome,
+                          group_by_gender,
+                          group_by_gender_age,
+                          age_cut)
+    {
+      private$data <- if (group_by_gender) {
         data %>%
           mutate(
             group = male,
             group = factor(group, labels = c("Female", "Male"))
           )
-      } else {
+      } else if (group_by_gender_age) {
         data %>%
           mutate(
             young = if_else(age < age_cut, 1, 0),
@@ -30,6 +35,9 @@ MultipleHypothesis <- R6::R6Class("MultipleHypothesis",
               )
             )
           )
+      } else {
+        data %>%
+          mutate(group = "Full sample")
       }
 
       private$outcome <- outcome
