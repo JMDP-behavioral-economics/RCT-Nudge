@@ -103,10 +103,10 @@ intervention <- list(
 
 endpoint <- list(
   reply = "Response",
-  positive = "Positive Intention",
+  positive = "Positive intention",
   test = "CT",
-  candidate = "Candidate Selection",
-  consent = "Final Consent",
+  candidate = "Donor selection",
+  consent = "Final consent",
   donate = "Donation"
 )
 
@@ -527,7 +527,7 @@ fit_mods %>%
     fmt = 2
   ) %>%
   kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 1, "Candidate selection" = 4)) %>%
+  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 4)) %>%
   kableExtra::footnote(
     general_title = "",
     general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control arm. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.",
