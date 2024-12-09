@@ -200,7 +200,7 @@ est_skip_mods %>%
     latex_options = "HOLD_position"
   ) %>%
   kableExtra::add_header_above(
-    c(" " = 1, "\\\\#.Coordination $>$ 1" = 2, "Skipped CT" = 2),
+    c(" " = 1, "\\\\# Coordination $>$ 1" = 2, "Skipped CT" = 2),
     escape = FALSE
   ) %>%
   kableExtra::footnote(
@@ -488,6 +488,51 @@ rct$
     fmt = "%.2f",
     hold = TRUE,
     font_size = 8
+  )
+```
+
+```{r lm-who-selected}
+test_dt <- rct$data %>%
+  filter(treat == "A" & test == 1)
+
+mods <- list(
+  I(candidate * 100) ~ male + age + coordinate,
+  I(candidate * 100) ~ male + age + I(age^2) + coordinate,
+  I(candidate * 100) ~ male + age + coordinate +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I(candidate * 100) ~ male + age + I(age^2) + coordinate +
+    holidays + PB_per_area + BM_per_area + hospital_per_area
+)
+
+fit_mods <- mods %>%
+  map(~ lm_robust(., data = test_dt, se_type = "stata"))
+
+fit_mods %>%
+  modelsummary(
+    title = "Determination of Donor Selection",
+    coef_map = c(
+      "(Intercept)" = "(Intercept)",
+      "male" = "Male",
+      "age" = "Age",
+      "I(age^2)" = "Age (squared)",
+      "coordinate" = "\\# coordination experiences",
+      "holidays" = "\\# holidays",
+      "hospital_per_area" = "\\# listed hospitals",
+      "PB_per_area" = "\\# listed hospitals with PBSC collection",
+      "BM_per_area" = "\\# listed hospitals with BM collection"
+    ),
+    gof_omit = "AIC|BIC|RMSE",
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    escape = FALSE,
+    fmt = 2
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 1, "Candidate selection" = 4)) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control arm. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.",
+    threeparttable = TRUE,
+    escape = FALSE
   )
 ```
 

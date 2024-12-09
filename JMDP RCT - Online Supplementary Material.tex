@@ -160,7 +160,7 @@ Skipped the CT (= 1) & 0.039 & 0.038 & 0.054\\
 \begin{threeparttable}
 \begin{tabular}[t]{lcccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{\#.Coordination $>$ 1} & \multicolumn{2}{c}{Skipped CT} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{\# Coordination $>$ 1} & \multicolumn{2}{c}{Skipped CT} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
@@ -396,6 +396,48 @@ Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2410.035} & \num{-2283.231}
 \end{tabular}
 \begin{tablenotes}
 \item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-who-selected}Determination of Donor Selection}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Candidate selection} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+(Intercept) & \num{38.53}*** & \num{19.85} & \num{30.94}** & \num{12.68}\\
+ & (\num{8.33}) & (\num{30.13}) & (\num{14.84}) & (\num{32.18})\\
+Male & \num{8.76}** & \num{8.71}** & \num{8.22}** & \num{8.16}**\\
+ & (\num{3.93}) & (\num{3.93}) & (\num{3.96}) & (\num{3.96})\\
+Age & \num{-0.34}* & \num{0.75} & \num{-0.33}* & \num{0.73}\\
+ & (\num{0.20}) & (\num{1.68}) & (\num{0.20}) & (\num{1.68})\\
+Age (squared) &  & \num{-0.01} &  & \num{-0.01}\\
+ &  & (\num{0.02}) &  & (\num{0.02})\\
+\# coordination experiences & \num{-1.83} & \num{-1.94}* & \num{-1.92}* & \num{-2.03}*\\
+ & (\num{1.16}) & (\num{1.16}) & (\num{1.15}) & (\num{1.16})\\
+\# holidays &  &  & \num{1.76} & \num{1.76}\\
+ &  &  & (\num{2.69}) & (\num{2.70})\\
+\# listed hospitals &  &  & \num{14.22} & \num{14.53}\\
+ &  &  & (\num{16.20}) & (\num{16.19})\\
+\# listed hospitals with PBSC collection &  &  & \num{-8.52} & \num{-7.57}\\
+ &  &  & (\num{31.89}) & (\num{31.92})\\
+\# listed hospitals with BM collection &  &  & \num{-22.78} & \num{-23.74}\\
+ &  &  & (\num{37.39}) & (\num{37.34})\\
+\midrule
+Num.Obs. & \num{564} & \num{564} & \num{564} & \num{564}\\
+R2 & \num{0.016} & \num{0.017} & \num{0.020} & \num{0.021}\\
+R2 Adj. & \num{0.011} & \num{0.009} & \num{0.008} & \num{0.007}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control arm. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
