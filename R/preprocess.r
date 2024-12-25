@@ -5,7 +5,7 @@ library(tidyverse)
 library(lubridate)
 
 #+ include = FALSE
-root <- "E:/JMDPフィールド実験"
+root <- "D:/JMDPフィールド実験"
 raw <- "raw.csv"
 schedule <- "schedule.csv"
 
