@@ -15,12 +15,12 @@ BalanceTest <- R6::R6Class("BalanceTest",
           treat,
           "Male (= 1)" = male,
           "Age" = age,
-          "Number of past coordination" = coordinate,
+          "Number of past coordinations" = coordinate,
           "Number of listed hospitals" = hospital_per_area,
           "Number of hospitals listed with PBSC collection" = PB_per_area,
           "Number of hospitals listed with BM collection" = BM_per_area,
-          "Number of holidays in the assigned week" = holidays,
-          "Skipped the CT (= 1)" = skip_test
+          "Number of holidays" = holidays,
+          "Skipped CT (= 1)" = skip_test
         )
 
       panelA <- reduce(intervention, bind_rows)
@@ -119,7 +119,7 @@ BalanceTest <- R6::R6Class("BalanceTest",
       }
 
       kbl %>%
-        add_header_above(c(" " = 1, "Experimental Arms" = length(label) - 2, " " = 1)) %>%
+        add_header_above(c(" " = 1, "Experimental Groups" = length(label) - 2, " " = 1)) %>%
         group_rows(struct$values[1], 1, struct$lengths[1]) %>%
         group_rows(struct$values[2], struct$lengths[1] + 1, struct$lengths[2]) %>%
         group_rows(struct$values[3], struct$lengths[2] + 1, struct$lengths[3]) %>%
@@ -143,12 +143,12 @@ SmdBalanceTest <- R6::R6Class("SmdBalanceTest",
         select(
           "Male (= 1)" = male,
           "Age" = age,
-          "Number of past coordination" = coordinate,
+          "Number of past coordinations" = coordinate,
           "Number of listed hospitals" = hospital_per_area,
           "Number of hospitals listed with PBSC collection" = PB_per_area,
           "Number of hospitals listed with BM collection" = BM_per_area,
-          "Number of holidays in the assigned week" = holidays,
-          "Skipped the CT (= 1)" = skip_test,
+          "Number of holidays" = holidays,
+          "Skipped CT (= 1)" = skip_test,
           treat
         ) %>%
         pivot_longer(-treat, names_to = "vars") %>%
