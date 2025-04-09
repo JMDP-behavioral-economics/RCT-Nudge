@@ -541,6 +541,7 @@ LmFit <- R6::R6Class("LmFit",
                         avg_percent = TRUE,
                         avg_text_size = 5,
                         avg_text_pos = 10,
+                        xlab = "Experimental Arm",
                         ylim = c(0, 100),
                         ybreaks = seq(0, 100, by = 10),
                         base_size = 15)
@@ -651,7 +652,7 @@ LmFit <- R6::R6Class("LmFit",
           hjust = 0, color = "black", size = p_text_size
         ) +
         scale_y_continuous(limits = ylim, breaks = ybreaks) +
-        labs(x = "Treatment", y = "Sample average") +
+        labs(x = xlab, y = "Sample average") +
         my_theme_classic(size = base_size, strip_hjust = 0.5)
 
       if (private$type == "ate") {
