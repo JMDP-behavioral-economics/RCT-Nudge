@@ -312,37 +312,37 @@ LmFit <- R6::R6Class("LmFit",
       private$type <- model_type
       private$coef_map_lm <- if (model_type == "ate") {
         c(
-          "treatB" = "Treatment B",
-          "treatC" = "Treatment C",
-          "treatD" = "Treatment D"
+          "treatB" = "Experimental group B",
+          "treatC" = "Experimental group C",
+          "treatD" = "Experimental group D"
         )
       } else if (model_type == "hetero-gender") {
         c(
-          "treatB" = "Treatment B",
-          "treatC" = "Treatment C",
-          "treatD" = "Treatment D",
+          "treatB" = "Experimental group B",
+          "treatC" = "Experimental group C",
+          "treatD" = "Experimental group D",
           "groupMale" = "Male",
-          "treatB:groupMale" = "Treatment B $\\times$ Male",
-          "treatC:groupMale" = "Treatment C $\\times$ Male",
-          "treatD:groupMale" = "Treatment D $\\times$ Male"
+          "treatB:groupMale" = "Experimental group B $\\times$ Male",
+          "treatC:groupMale" = "Experimental group C $\\times$ Male",
+          "treatD:groupMale" = "Experimental group D $\\times$ Male"
         )
       } else {
         c(
-          "treatB" = "Treatment B",
-          "treatC" = "Treatment C",
-          "treatD" = "Treatment D",
+          "treatB" = "Experimental group B",
+          "treatC" = "Experimental group C",
+          "treatD" = "Experimental group D",
           "groupOlder female" = "Older female",
           "groupYoung male" = "Young male",
           "groupOlder male" = "Older male",
-          "treatB:groupOlder female" = "Treatment B $\\times$ Older female",
-          "treatC:groupOlder female" = "Treatment C $\\times$ Older female",
-          "treatD:groupOlder female" = "Treatment D $\\times$ Older female",
-          "treatB:groupYoung male" = "Treatment B $\\times$ Young male",
-          "treatC:groupYoung male" = "Treatment C $\\times$ Young male",
-          "treatD:groupYoung male" = "Treatment D $\\times$ Young male",
-          "treatB:groupOlder male" = "Treatment B $\\times$ Older male",
-          "treatC:groupOlder male" = "Treatment C $\\times$ Older male",
-          "treatD:groupOlder male" = "Treatment D $\\times$ Older male"
+          "treatB:groupOlder female" = "Experimental group B $\\times$ Older female",
+          "treatC:groupOlder female" = "Experimental group C $\\times$ Older female",
+          "treatD:groupOlder female" = "Experimental group D $\\times$ Older female",
+          "treatB:groupYoung male" = "Experimental group B $\\times$ Young male",
+          "treatC:groupYoung male" = "Experimental group C $\\times$ Young male",
+          "treatD:groupYoung male" = "Experimental group D $\\times$ Young male",
+          "treatB:groupOlder male" = "Experimental group B $\\times$ Older male",
+          "treatC:groupOlder male" = "Experimental group C $\\times$ Older male",
+          "treatD:groupOlder male" = "Experimental group D $\\times$ Older male"
         )
       }
       private$coef_map_lh <- if (model_type == "hetero-gender") {
@@ -408,7 +408,7 @@ LmFit <- R6::R6Class("LmFit",
           title = title,
           coef_map = private$coef_map_lm,
           stars = c("***" = .01, "**" = .05, "*" = .1),
-          gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
+          gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
           align = paste(c("l", rep("c", nrow(res))), collapse = ""),
           add_rows = add_tab,
           fmt = digit,

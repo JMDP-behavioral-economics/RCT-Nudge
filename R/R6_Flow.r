@@ -23,7 +23,7 @@ Flow <- R6::R6Class("Flow",
                                 ybreaks = seq(0, 100, 10),
                                 xlab = "Days",
                                 ylab = "Cumulative response rate (%)",
-                                dlab = "Experimental Arm",
+                                dlab = "Experimental group",
                                 base_size = 15)
     {
 

@@ -138,12 +138,12 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \midrule
 Age & -0.026 & -0.096 & -0.041\\
 Male (= 1) & 0.019 & 0.016 & -0.031\\
-Number of holidays in the assigned week & 0.956 & -0.129 & 0.317\\
+Number of holidays & 0.956 & -0.129 & 0.317\\
 Number of hospitals listed with BM collection & 0.028 & 0.023 & 0.013\\
 Number of hospitals listed with PBSC collection & 0.023 & 0.019 & 0.011\\
 Number of listed hospitals & 0.024 & 0.019 & 0.015\\
-Number of past coordination & -0.019 & 0.015 & -0.045\\
-Skipped the CT (= 1) & 0.039 & 0.038 & 0.054\\
+Number of past coordinations & -0.019 & 0.015 & -0.045\\
+Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -164,11 +164,11 @@ Skipped the CT (= 1) & 0.039 & 0.038 & 0.054\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & \num{-0.18} & \num{1.04} & \num{0.79} & \num{0.67}\\
+Experimental group B & \num{-0.18} & \num{1.04} & \num{0.79} & \num{0.67}\\
  & (\num{1.29}) & (\num{1.38}) & (\num{0.54}) & (\num{0.56})\\
-Treatment C & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
+Experimental group C & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
  & (\num{1.34}) & (\num{1.30}) & (\num{0.56}) & (\num{0.53})\\
-Treatment D & \num{-1.91} & \num{-1.28} & \num{1.11}* & \num{1.27}**\\
+Experimental group D & \num{-1.91} & \num{-1.28} & \num{1.11}* & \num{1.27}**\\
  & (\num{1.32}) & (\num{1.29}) & (\num{0.57}) & (\num{0.54})\\
 \midrule
 Control average & 36.61 & 36.61 & 3.87 & 3.87\\
@@ -194,11 +194,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3}
   & (1) & (2)\\
 \midrule
-Treatment B & \num{1.19} & \num{1.18}\\
+Experimental group B & \num{1.19} & \num{1.18}\\
  & {}[\num{1.05}, \num{1.34}] & {}[\num{1.02}, \num{1.36}]\\
-Treatment C & \num{1.07} & \num{1.03}\\
+Experimental group C & \num{1.07} & \num{1.03}\\
  & {}[\num{0.94}, \num{1.22}] & {}[\num{0.90}, \num{1.19}]\\
-Treatment D & \num{1.14} & \num{1.11}\\
+Experimental group D & \num{1.14} & \num{1.11}\\
  & {}[\num{1.01}, \num{1.30}] & {}[\num{0.97}, \num{1.28}]\\
 \midrule
 Covariates &  & X\\
@@ -224,17 +224,16 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181}\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{2.31}* & \num{1.86} & \num{0.97} & \num{1.14} & \num{-0.17} & \num{-0.44}\\
+Experimental group B & \num{2.31}* & \num{1.86} & \num{0.97} & \num{1.14} & \num{-0.17} & \num{-0.44}\\
  & (\num{1.33}) & (\num{1.40}) & (\num{1.20}) & (\num{1.27}) & (\num{0.57}) & (\num{0.60})\\
-Treatment C & \num{-0.44} & \num{-0.05} & \num{2.55}** & \num{1.50} & \num{-0.93} & \num{-0.96}\\
+Experimental group C & \num{-0.44} & \num{-0.05} & \num{2.55}** & \num{1.50} & \num{-0.93} & \num{-0.96}\\
  & (\num{1.37}) & (\num{1.33}) & (\num{1.22}) & (\num{1.19}) & (\num{0.60}) & (\num{0.60})\\
-Treatment D & \num{0.59} & \num{0.24} & \num{2.27}* & \num{1.97} & \num{-0.51} & \num{-0.61}\\
+Experimental group D & \num{0.59} & \num{0.24} & \num{2.27}* & \num{1.97} & \num{-0.51} & \num{-0.61}\\
  & (\num{1.37}) & (\num{1.33}) & (\num{1.22}) & (\num{1.20}) & (\num{0.59}) & (\num{0.59})\\
 \midrule
 Control average & 54.91 & 54.91 & 71.91 & 71.91 & 95.42 & 95.42\\
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-RMSE & \num{54.85} & \num{56.35} & \num{72.63} & \num{73.31} & \num{94.28} & \num{94.29}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -263,17 +262,16 @@ RMSE & \num{54.85} & \num{56.35} & \num{72.63} & \num{73.31} & \num{94.28} & \nu
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{-1.14} & \num{-0.13} & \num{1.58} & \num{1.44} & \num{1.88}** & \num{0.56}\\
+Experimental group B & \num{-1.14} & \num{-0.13} & \num{1.58} & \num{1.44} & \num{1.88}** & \num{0.56}\\
  & (\num{1.11}) & (\num{1.12}) & (\num{1.13}) & (\num{1.21}) & (\num{0.85}) & (\num{0.89})\\
-Treatment C & \num{-1.13} & \num{-1.47} & \num{1.86} & \num{2.44}** & \num{-1.17} & \num{-1.02}\\
+Experimental group C & \num{-1.13} & \num{-1.47} & \num{1.86} & \num{2.44}** & \num{-1.17} & \num{-1.02}\\
  & (\num{1.14}) & (\num{1.04}) & (\num{1.16}) & (\num{1.15}) & (\num{0.82}) & (\num{0.82})\\
-Treatment D & \num{-1.64} & \num{-2.15}** & \num{1.74} & \num{2.02}* & \num{0.48} & \num{0.36}\\
+Experimental group D & \num{-1.64} & \num{-2.15}** & \num{1.74} & \num{2.02}* & \num{0.48} & \num{0.36}\\
  & (\num{1.13}) & (\num{1.03}) & (\num{1.16}) & (\num{1.15}) & (\num{0.85}) & (\num{0.85})\\
 \midrule
 Control average & 22.37 & 22.37 & 22.17 & 22.17 & 10.37 & 10.37\\
 Covariates &  & X &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-RMSE & \num{21.19} & \num{27.97} & \num{23.32} & \num{24.18} & \num{10.61} & \num{11.00}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -294,28 +292,28 @@ RMSE & \num{21.19} & \num{27.97} & \num{23.32} & \num{24.18} & \num{10.61} & \nu
 \cmidrule(l{3pt}r{3pt}){2-3}
   & (1) & (2)\\
 \midrule
-Treatment B & \num{2.73} & \num{1.90}\\
+Experimental group B & \num{2.73} & \num{1.90}\\
  & (\num{1.78}) & (\num{1.82})\\
-Treatment C & \num{1.60} & \num{-1.02}\\
+Experimental group C & \num{1.60} & \num{-1.02}\\
  & (\num{1.81}) & (\num{1.70})\\
-Treatment D & \num{4.91}*** & \num{2.74}\\
+Experimental group D & \num{4.91}*** & \num{2.74}\\
  & (\num{1.83}) & (\num{1.74})\\
 Male & \num{4.58}*** & \num{3.37}*\\
  & (\num{1.67}) & (\num{1.84})\\
-Treatment B $\times$ Male & \num{0.52} & \num{1.04}\\
+Experimental group B $\times$ Male & \num{0.52} & \num{1.04}\\
  & (\num{2.31}) & (\num{2.36})\\
-Treatment C $\times$ Male & \num{-0.71} & \num{2.38}\\
+Experimental group C $\times$ Male & \num{-0.71} & \num{2.38}\\
  & (\num{2.35}) & (\num{2.18})\\
-Treatment D $\times$ Male & \num{-4.01}* & \num{-1.92}\\
+Experimental group D $\times$ Male & \num{-4.01}* & \num{-1.92}\\
  & (\num{2.37}) & (\num{2.22})\\
 \midrule
 \addlinespace[0.3em]
-\multicolumn{3}{l}{\textit{Linear combination test: Treatment + Treatment $\times$ Male}}\\
-\hspace{1em}Treatment B & 3.25** & 2.94**\\
+\multicolumn{3}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ Male}}\\
+\hspace{1em}Experimental group B & 3.25** & 2.94**\\
 \hspace{1em} & (1.48) & (1.50)\\
-\hspace{1em}Treatment C & 0.90 & 1.36\\
+\hspace{1em}Experimental group C & 0.90 & 1.36\\
 \hspace{1em} & (1.50) & (1.37)\\
-\hspace{1em}Treatment D & 0.89 & 0.82\\
+\hspace{1em}Experimental group D & 0.89 & 0.82\\
 \hspace{1em} & (1.51) & (1.37)\\
 Covariates &  & X\\
 Num.Obs. & \num{11049} & \num{11049}\\
@@ -339,28 +337,28 @@ Num.Obs. & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3}
   & (1) & (2)\\
 \midrule
-Treatment B & \num{4.20}** & \num{3.93}**\\
+Experimental group B & \num{4.20}** & \num{3.93}**\\
  & (\num{2.04}) & (\num{1.88})\\
-Treatment C & \num{4.02}* & \num{2.74}\\
+Experimental group C & \num{4.02}* & \num{2.74}\\
  & (\num{2.07}) & (\num{1.75})\\
-Treatment D & \num{3.80}* & \num{1.03}\\
+Experimental group D & \num{3.80}* & \num{1.03}\\
  & (\num{2.12}) & (\num{1.75})\\
 First-time coordination & \num{-9.78}*** & \num{-0.91}\\
  & (\num{1.77}) & (\num{2.12})\\
-Treatment B $\times$ First-time coordination & \num{-1.69} & \num{-2.21}\\
+Experimental group B $\times$ First-time coordination & \num{-1.69} & \num{-2.21}\\
  & (\num{2.45}) & (\num{2.39})\\
-Treatment C $\times$ First-time coordination & \num{-4.86}** & \num{-3.64}*\\
+Experimental group C $\times$ First-time coordination & \num{-4.86}** & \num{-3.64}*\\
  & (\num{2.47}) & (\num{2.21})\\
-Treatment D $\times$ First-time coordination & \num{-1.86} & \num{0.86}\\
+Experimental group D $\times$ First-time coordination & \num{-1.86} & \num{0.86}\\
  & (\num{2.52}) & (\num{2.22})\\
 \midrule
 \addlinespace[0.3em]
-\multicolumn{3}{l}{\textit{Linear combination test: Treatment + Treatment $\times$ First-Time Coordination}}\\
-\hspace{1em}Treatment B & 2.51* & 1.72\\
+\multicolumn{3}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ First-Time Coordination}}\\
+\hspace{1em}Experimental group B & 2.51* & 1.72\\
 \hspace{1em} & (1.34) & (1.47)\\
-\hspace{1em}Treatment C & -0.83 & -0.90\\
+\hspace{1em}Experimental group C & -0.83 & -0.90\\
 \hspace{1em} & (1.35) & (1.35)\\
-\hspace{1em}Treatment D & 1.94 & 1.89\\
+\hspace{1em}Experimental group D & 1.94 & 1.89\\
 \hspace{1em} & (1.36) & (1.37)\\
 Covariates &  & X\\
 Num.Obs. & \num{11049} & \num{11049}\\
@@ -384,11 +382,11 @@ Num.Obs. & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.03} & \num{0.95} & \num{1.05} & \num{0.98} & \num{1.03} & \num{0.97}\\
+Experimental group B & \num{1.03} & \num{0.95} & \num{1.05} & \num{0.98} & \num{1.03} & \num{0.97}\\
  & {}[\num{0.83}, \num{1.28}] & {}[\num{0.75}, \num{1.21}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.76}, \num{1.26}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.74}, \num{1.29}]\\
-Treatment C & \num{0.99} & \num{0.96} & \num{1.01} & \num{0.99} & \num{1.00} & \num{0.98}\\
+Experimental group C & \num{0.99} & \num{0.96} & \num{1.01} & \num{0.99} & \num{1.00} & \num{0.98}\\
  & {}[\num{0.79}, \num{1.24}] & {}[\num{0.76}, \num{1.21}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.77}, \num{1.26}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.75}, \num{1.27}]\\
-Treatment D & \num{1.09} & \num{1.06} & \num{1.12} & \num{1.10} & \num{1.02} & \num{0.99}\\
+Experimental group D & \num{1.09} & \num{1.06} & \num{1.12} & \num{1.10} & \num{1.02} & \num{0.99}\\
  & {}[\num{0.87}, \num{1.35}] & {}[\num{0.84}, \num{1.32}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.87}, \num{1.39}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.76}, \num{1.29}]\\
 \midrule
 Covariates &  & X &  & X &  & X\\

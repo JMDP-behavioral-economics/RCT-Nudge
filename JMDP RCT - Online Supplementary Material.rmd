@@ -96,7 +96,7 @@ rawdt_noskip$add_cond_study_sample("reply == 0 | days_reply > 0")
 
 ```{r set-rct-class, include=FALSE}
 intervention <- list(
-  "Standard notification" = c(A = "X", B = "X", C = "X", D = "X"),
+  "Standard message" = c(A = "X", B = "X", C = "X", D = "X"),
   "Probability message" = c(A = "", B = "X", C = "", D = "X"),
   "Early coordination message" = c(A = "", B = "", C = "X", D = "X")
 )
@@ -185,9 +185,9 @@ est_skip_mods %>%
   modelsummary(
     title = "Linear Probability Model of Number of Coordination and Skipping CT",
     coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D"
+      "treatB" = "Experimental group B",
+      "treatC" = "Experimental group C",
+      "treatD" = "Experimental group D"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
     align = "lcccc",
@@ -309,9 +309,9 @@ test_interaction_gender <- rct$
   get_est()
 
 hypothesis <- c(
-  "treatB + treatB:groupMale" = "Treatment B",
-  "treatC + treatC:groupMale" = "Treatment C",
-  "treatD + treatD:groupMale" = "Treatment D"
+  "treatB + treatB:groupMale" = "Experimental group B",
+  "treatC + treatC:groupMale" = "Experimental group C",
+  "treatD + treatD:groupMale" = "Experimental group D"
 )
 
 lh_tab <- test_interaction_gender %>%
@@ -340,13 +340,13 @@ test_interaction_gender %>%
   modelsummary(
     title = "Heterogenous Message Effects on CT by Gender",
     coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D",
+      "treatB" = "Experimental group B",
+      "treatC" = "Experimental group C",
+      "treatD" = "Experimental group D",
       "groupMale" = "Male",
-      "treatB:groupMale" = "Treatment B $\\times$ Male",
-      "treatC:groupMale" = "Treatment C $\\times$ Male",
-      "treatD:groupMale" = "Treatment D $\\times$ Male"
+      "treatB:groupMale" = "Experimental group B $\\times$ Male",
+      "treatC:groupMale" = "Experimental group C $\\times$ Male",
+      "treatD:groupMale" = "Experimental group D $\\times$ Male"
     ),
     gof_omit = "R2",
     stars = c("***" = .01, "**" = .05, "*" = .1),
@@ -358,7 +358,7 @@ test_interaction_gender %>%
   kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
   kableExtra::add_header_above(c(" " = 1, "CT" = 2)) %>%
   kableExtra::group_rows(
-    "Linear combination test: Treatment + Treatment $\\times$ Male",
+    "Linear combination test: Experimental group + Experimental group $\\times$ Male",
     15, 20,
     bold = FALSE, italic = TRUE,
     escape = FALSE
@@ -374,9 +374,9 @@ test_interaction_gender %>%
 
 ```{r lm-interaction-coordination-test}
 hypothesis <- c(
-  "treatB + treatB:coordinate1" = "Treatment B",
-  "treatC + treatC:coordinate1" = "Treatment C",
-  "treatD + treatD:coordinate1" = "Treatment D"
+  "treatB + treatB:coordinate1" = "Experimental group B",
+  "treatC + treatC:coordinate1" = "Experimental group C",
+  "treatD + treatD:coordinate1" = "Experimental group D"
 )
 
 res <- rct$
@@ -440,13 +440,13 @@ res %>%
   modelsummary(
     title = "Heterogeneous Treatment Effects on Positive Intention and CT by First-Time Coordination",
     coef_map = c(
-      "treatB" = "Treatment B",
-      "treatC" = "Treatment C",
-      "treatD" = "Treatment D",
+      "treatB" = "Experimental group B",
+      "treatC" = "Experimental group C",
+      "treatD" = "Experimental group D",
       "coordinate1" = "First-time coordination",
-      "treatB:coordinate1" = "Treatment B $\\times$ First-time coordination",
-      "treatC:coordinate1" = "Treatment C $\\times$ First-time coordination",
-      "treatD:coordinate1" = "Treatment D $\\times$ First-time coordination"
+      "treatB:coordinate1" = "Experimental group B $\\times$ First-time coordination",
+      "treatC:coordinate1" = "Experimental group C $\\times$ First-time coordination",
+      "treatD:coordinate1" = "Experimental group D $\\times$ First-time coordination"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
     align = "lcc",
@@ -464,7 +464,7 @@ res %>%
     escape = FALSE
   ) %>%
   kableExtra::group_rows(
-    "Linear combination test: Treatment + Treatment $\\times$ First-Time Coordination",
+    "Linear combination test: Experimental group + Experimental group $\\times$ First-Time Coordination",
     15, 20,
     bold = FALSE, italic = TRUE,
     escape = FALSE
