@@ -53,6 +53,19 @@
 
 % ------------------------------ other packages
 \usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \usepackage{siunitx}
 
   \newcolumntype{d}{S[
@@ -235,10 +248,7 @@ where \(X_{iw}\) is a vector of the individual characteristics, including age an
 \section{Experimental Results}\label{result}}
 
 \hypertarget{main}{%
-\subsection{Effects on CT}\label{main}}
-
-\hypertarget{average-treatment-effect}{%
-\subsubsection{Average Treatment Effect}\label{average-treatment-effect}}
+\subsection{Average Treatment Effects on CT}\label{main}}
 
 Estimating the effect of the intervention messages on reaching the CT stage is critical because physicians select the optimal donor for transplantation from among matched donors who have undergone CT. We used a dummy variable coded one if a matched donor reached the CT stage.\footnote{We also coded the CT dummy one if CT was skipped.} In the control group, only \(22.25\)\% of matched donors underwent CT.
 
@@ -290,7 +300,7 @@ As mentioned previously, our intervention was expected to increase the probabili
 The early coordination message included in the HLA letter sent to experimental group C was expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure A1 in Supplementary Material A). Therefore, we examined whether experimental group C, which did not show an overall increase in the willingness to donate, may have shown increased early responses accompanied by a willingness to donate. Figure A2 in Supplementary Material A presents the cumulative response rates of the willingness to donate over time for the experimental groups. Because the JMDP requests responses within seven days, we define early responses as cumulative response rates with a willingness to donate within seven days. However, the probability of responding with a willingness to donate within seven days did not increase in experimental group C. This result was also confirmed by the regression analysis (see Table A6 in Supplementary Material A). Therefore, the early coordination message did not have the expected effect.
 
 \hypertarget{heterogeneous-treatment-effects-on-ct}{%
-\subsubsection{Heterogeneous Treatment Effects on CT}\label{heterogeneous-treatment-effects-on-ct}}
+\subsection{Heterogeneous Treatment Effects on CT}\label{heterogeneous-treatment-effects-on-ct}}
 
 In this subsection, we explore the heterogeneity of the message effects. First, we examine the differences in the effects by sex. Table A7 in Supplementary Material A presents the estimation results from the linear probability models that include the cross-terms between the male dummy and experimental groups.\footnote{In the cross-term models, we also controlled for the cross-terms between the male dummy and each covariate.} Without controlling for the covariates, compared with the control, the probability of matched female donors reaching CT was higher in experimental group D. Furthermore, the cross-term between experimental group D and the male dummy was statistically significant at the 10\% level, suggesting that the effect could differ by sex in this experimental group. However, when controlling for the covariates (including the dummy variable indicating whether CT was skipped), the same results were not obtained.
 

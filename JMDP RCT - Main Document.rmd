@@ -247,8 +247,7 @@ where $X_{iw}$ is a vector of the individual characteristics, including age and 
 [^LZ]: We conducted a regression analysis with clustered standard errors as a robustness check and confirmed that the results remained unchanged.
 
 # Experimental Results {#result}
-## Effects on CT {#main}
-### Average Treatment Effect
+## Average Treatment Effects on CT {#main}
 
 ```{r reason-stop, include=FALSE}
 mean_test <- subset(rct$data, treat == "A") %>%
@@ -362,7 +361,7 @@ As mentioned previously, our intervention was expected to increase the probabili
 
 The early coordination message included in the HLA letter sent to experimental group C was expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure A1 in Supplementary Material A). Therefore, we examined whether experimental group C, which did not show an overall increase in the willingness to donate, may have shown increased early responses accompanied by a willingness to donate. Figure A2 in Supplementary Material A presents the cumulative response rates of the willingness to donate over time for the experimental groups. Because the JMDP requests responses within seven days, we define early responses as cumulative response rates with a willingness to donate within seven days. However, the probability of responding with a willingness to donate within seven days did not increase in experimental group C. This result was also confirmed by the regression analysis (see Table A6 in Supplementary Material A). Therefore, the early coordination message did not have the expected effect.
 
-### Heterogeneous Treatment Effects on CT
+## Heterogeneous Treatment Effects on CT
 
 In this subsection, we explore the heterogeneity of the message effects. First, we examine the differences in the effects by sex. Table A7 in Supplementary Material A presents the estimation results from the linear probability models that include the cross-terms between the male dummy and experimental groups.[^additional-covariate] Without controlling for the covariates, compared with the control, the probability of matched female donors reaching CT was higher in experimental group D. Furthermore, the cross-term between experimental group D and the male dummy was statistically significant at the 10% level, suggesting that the effect could differ by sex in this experimental group. However, when controlling for the covariates (including the dummy variable indicating whether CT was skipped), the same results were not obtained.
 
