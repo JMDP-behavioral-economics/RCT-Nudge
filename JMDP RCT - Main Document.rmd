@@ -48,7 +48,7 @@ acknowledgements: |
 ai-declaration: |
   During the preparation of this work the we used Claude in order to improve the readability and language of the manuscript. After using these tools, we carefully reviewed and edited the content as needed and take full responsibility for the content of the published article.
 bibliography: biblio.bib
-biblio-style: agsm
+biblio-style: elsarticle-harv.bst
 output:
   bookdown::pdf_document2:
     latex_engine: pdflatex
