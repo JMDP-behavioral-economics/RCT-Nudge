@@ -21,7 +21,7 @@ affiliations:
   - id: c
     name: Department of Oncology, Ina Central Hospital, Nagano, Japan
   - id: d
-    name: Graduate School of Medicine, Tokyo University, Tokyo, Japan
+    name: Graduate School of Medicine, The University of Tokyo, Tokyo, Japan
   - id: e
     name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan
 bibliography: biblio.bib
