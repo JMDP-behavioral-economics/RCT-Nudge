@@ -16,6 +16,7 @@
 
 % ------------------------------ author & natbib
 \usepackage{authblk}
+\renewcommand\Affilfont{\small}
 \usepackage[semicolon]{natbib}
 \bibliographystyle{agsm}
 
@@ -65,9 +66,28 @@
   
 
 % ------------------------------ paper information
-\title{Online Supplementary Material
-``Field experiment Using Text Messages to Promote Stem Cell Donation in Japan Marrow Donor Program''}
-\author{}
+\title{Supplementary Material
+``Exploring Information Provision to Promote Stem Cell Donation: Evidence from a Field Experiment of the Japan Marrow Donor Program''}
+\author[a]{%
+  Hiroki Kato
+}
+\author[b]{%
+  Fumio Ohtake
+}
+\author[c]{%
+  Saiko Kurosawa
+}
+\author[d]{%
+  Kazuhiro Yoshiuchi
+}
+\author[e]{%
+  Takahiro Fukuda
+}
+\affil[a]{School of International Politics, Economics and Communication, Aoyama Gakuin University, Tokyo, Japan}
+\affil[b]{Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan}
+\affil[c]{Department of Oncology, Ina Central Hospital, Nagano, Japan}
+\affil[d]{Graduate School of Medicine, Tokyo University, Tokyo, Japan}
+\affil[e]{Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan}
 \date{}
 
 \makeatletter
@@ -82,7 +102,8 @@
 
 
 \setcounter{footnote}{0}
-\clearpage
+
+\tableofcontents
 
 \appendix
 
@@ -94,7 +115,7 @@
 \renewcommand{\theHtable}{\thesection\arabic{table}}
 
 \hypertarget{figtab}{%
-\section{Additional Figures and Tables}\label{figtab}}
+\section{Figures and Tables}\label{figtab}}
 
 \begin{table}[H]
 
@@ -442,10 +463,9 @@ R2 Adj. & \num{0.011} & \num{0.009} & \num{0.008} & \num{0.007}\\
 \end{threeparttable}
 \end{table}
 
-\clearpage
-
-\bibliography{biblio.bib}
-
+\begin{spacing}{1}
+  \bibliography{biblio.bib}
+\end{spacing}
 
 
 \end{document}

@@ -1,13 +1,35 @@
 ---
 title: |
-  Online Supplementary Material
-  "Field experiment Using Text Messages to Promote Stem Cell Donation in Japan Marrow Donor Program"
+  Supplementary Material
+  "Exploring Information Provision to Promote Stem Cell Donation: Evidence from a Field Experiment of the Japan Marrow Donor Program"
+author:
+  - name: Hiroki Kato
+    affil-id: a
+  - name: Fumio Ohtake
+    affil-id: b
+  - name: Saiko Kurosawa
+    affil-id: c
+  - name: Kazuhiro Yoshiuchi
+    affil-id: d
+  - name: Takahiro Fukuda
+    affil-id: e
+affiliations:
+  - id: a
+    name: School of International Politics, Economics and Communication, Aoyama Gakuin University, Tokyo, Japan
+  - id: b
+    name: Center for Infectious Disease Education and Research (CiDER), Osaka University, Osaka, Japan
+  - id: c
+    name: Department of Oncology, Ina Central Hospital, Nagano, Japan
+  - id: d
+    name: Graduate School of Medicine, Tokyo University, Tokyo, Japan
+  - id: e
+    name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, Tokyo, Japan
 bibliography: biblio.bib
 biblio-style: agsm
 output:
   bookdown::pdf_document2:
     latex_engine: pdflatex
-    template: template/my-template.tex
+    template: template/my-template-science-direct.tex
     keep_tex: true
     toc: false
     number_sections: true
@@ -19,8 +41,6 @@ params:
   is_cluster: FALSE
   se_type: stata
 ---
-
-\clearpage
 
 ```{r include=FALSE}
 knitr::opts_chunk$set(
@@ -43,6 +63,8 @@ options(
 )
 ```
 
+\tableofcontents
+
 \appendix
 
 \setcounter{figure}{0}
@@ -51,7 +73,8 @@ options(
 \renewcommand{\thetable}{\thesection\arabic{table}}
 \renewcommand{\theHfigure}{\thesection\arabic{figure}}
 \renewcommand{\theHtable}{\thesection\arabic{table}}
-# Additional Figures and Tables {#figtab}
+
+# Figures and Tables {#figtab}
 
 ```{r library, include=FALSE}
 library(here)

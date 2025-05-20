@@ -52,7 +52,7 @@ biblio-style: agsm
 output:
   bookdown::pdf_document2:
     latex_engine: pdflatex
-    template: template/my-template.tex
+    template: template/my-template-science-direct.tex
     keep_tex: true
     toc: false
     number_sections: true
