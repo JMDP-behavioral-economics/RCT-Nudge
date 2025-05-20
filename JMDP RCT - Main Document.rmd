@@ -2,16 +2,51 @@
 title: |
   Exploring Information Provision to Promote Stem Cell Donation:
   Evidence from a Field Experiment of the Japan Marrow Donor Program
-thanks: |
-  We would like to thank the Japan Marrow Donor Program office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04). Declarations of interest: None. Funding: This work was supported by the Japan Society for the Promotion of Science [grant number 20H05632] and the Ministry of Health, Labour and Welfare [grant number 19FF1001].
+author:
+  - name: Hiroki Kato
+    affil-id: a
+    note: "Corresponding author. E-mail address: hkato.econ@aoyamagakuin.jp"
+  - name: Fumio Ohtake
+    affil-id: b
+    note: "E-mail address: ohtake@cider.osaka-u.ac.jp"
+  - name: Saiko Kurosawa
+    affil-id: c
+    note: "E-mail address: skurosaw@inahp.jp"
+  - name: Kazuhiro Yoshiuchi
+    affil-id: d
+    note: "E-mail address: kyoshiuc-tky@umin.ac.jp "
+  - name: Takahiro Fukuda
+    affil-id: e
+    note: "E-mail address: tafukuda@ncc.go.jp"
+affiliations:
+  - id: a
+    name: School of International Politics, Economics and Communication, Aoyama Gakuin University, 4-4-25 Shibuya, Shibuya-ku, Tokyo 150-8366, Japan
+  - id: b
+    name: Center for Infectious Disease Education and Research (CiDER), Osaka University, 1-10 Yamadaoka, Suita, Osaka 565-0871, Japan​
+  - id: c
+    name: Department of Oncology, Ina Central Hospital, 1313-1, Koshirokubo, Ina, Nagano 396-8555, Japan
+  - id: d
+    name: Graduate School of Medicine, Tokyo University, 7-3-1 Hongo, Bunkyo, Tokyo 113-8655, Japan
+  - id: e
+    name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, 5-1-1 Tsukiji, Chuo-ku, Tokyo 104-0045, Japan
 abstract: |
   Allogeneic hematopoietic stem cell transplantation faces supply shortages, similar to the issue faced by organ transplantation. While many studies examine interventions that aim to increase donor registrations for organ transplantation from deceased donors, stem cell transplantation involves living donors, who may refuse to donate when matched with patients. Therefore, preventing such donor attrition is crucial. Indeed, many transplant coordinations are interrupted before stem cells from donors can be collected. To address this issue, we developed a behavioral intervention in collaboration with the Japan Marrow Donor Program, which comprised adding messages based on insights from behavioral economics into the letters sent when donors are matched with patients. We then conducted a field experiment to verify the effect of our intervention. The results demonstrate that behavioral interventions bridging information gaps can prevent registered donor attrition and increase donor availability for transplantation. Specifically, the message explaining the limited number of compatible donors per patient increased the probability of donors completing the confirmatory typing stage (available donors from whom physicians can choose the optimal donor for transplantation) by 12%.
   \vskip\baselineskip
   \noindent
-  \textit{Keywords}: field experiment, free-riding, information provision, Japan Marrow Donor Program, stem cell transplantation
+  \textit{Keywords}: prosocial behavior,field experiment, free-riding, information provision, Japan Marrow Donor Program, stem cell transplantation
   \vskip\baselineskip
   \noindent
   \textit{JEL classification}: D64, D90, H41, I11
+acknowledgements: |
+  We would like to thank the Japan Marrow Donor Program office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04).
+  \vskip\baselineskip
+  \noindent
+  Funding: This work was supported by the Japan Society for the Promotion of Science [grant number 20H05632] and the Ministry of Health, Labour and Welfare [grant number 19FF1001].
+  \vskip\baselineskip
+  \noindent
+  Declarations of interest: none.
+ai-declaration: |
+  During the preparation of this work the we used Claude in order to improve the readability and language of the manuscript. After using these tools, we carefully reviewed and edited the content as needed and take full responsibility for the content of the published article.
 bibliography: biblio.bib
 biblio-style: agsm
 output:
@@ -429,4 +464,3 @@ To evaluate the cost effectiveness of the intervention, we assess the impact of 
 Whether the probability message increased the transplantation rate for registered patients, which is the JMDP's ultimate goal, remains unclear. Our experiment did not find that the probability message increased stem cell donation by donors. However, this result alone does not allow us to conclude that the probability message does not increase the transplantation rate among registered patients. As explained in Section \@ref(background), one patient can proceed with coordination simultaneously with multiple donor candidates. That is, multiple donors included in our sample may match with a single patient. In such cases, even if one donor does not donate, other donor candidates may donate and contribute to the patient's survival. Therefore, non-donation by a donor does not necessarily correspond to a patient's failure to receive transplantation. In other words, the effect on donor stem cell donation may underestimate the effect on patients' transplantation rate. To examine the effect on patients' transplantation rate, we would need data not only from the donor side but also from the patient side. Nevertheless, considering that registries worldwide are concerned about the causes of donor attrition and exploring potential countermeasures [for example, @Switzer2018; @Balassa2019; @Hamed2023; @Haylock2024], our results provide practical insights.
 
 Finally, our intervention can be applied to contexts beyond stem cell transplantation. The essence of the probability message is to emphasize the scarcity of investors or potential cooperators for public goods. In our context, this message corrected donors' overestimation of substitutable other donors and discouraged free-riding. Alternatively, this message made the rarity of opportunities to cooperate salient. Unfortunately, our data cannot identify which mechanism drove donors. Nevertheless, communicating the scarcity of cooperators is likely to be effective in other cooperative environments such as donations of rare blood types.
-

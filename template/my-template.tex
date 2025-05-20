@@ -16,6 +16,7 @@
 
 % ------------------------------ author & natbib
 \usepackage{authblk}
+\renewcommand\Affilfont{\small}
 \usepackage[semicolon]{natbib}
 \bibliographystyle{$biblio-style$}
 
@@ -112,14 +113,26 @@ $endif$
 $endif$
 
 \setcounter{footnote}{0}
+
 $body$
 
-\clearpage
-
-$if(bibliography)$
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$if(acknowledgements)$
+\begin{spacing}{1}
+  \section*{Acknowledgements}
+  $acknowledgements$
+\end{spacing}
 $endif$
-
+$if(ai-declaration)$
+\begin{spacing}{1}
+  \section*{Declaration of generative AI and AI-assisted Technologies in the Writing Process}
+  $ai-declaration$
+\end{spacing}
+$endif$
+$if(bibliography)$
+\begin{spacing}{1}
+  \bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+\end{spacing}
+$endif$
 
 $for(include-after)$
 $include-after$
