@@ -1,5 +1,6 @@
 library(here)
 library(rmarkdown)
+Sys.setlocale(category = "LC_TIME", "C")
 
 render_with_inference_opt <- function(  input,
                                         cluster = TRUE,

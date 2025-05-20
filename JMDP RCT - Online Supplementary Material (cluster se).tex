@@ -138,12 +138,12 @@ week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & Janua
 \midrule
 Age & -0.026 & -0.096 & -0.041\\
 Male (= 1) & 0.019 & 0.016 & -0.031\\
-Number of holidays in the assigned week & 0.956 & -0.129 & 0.317\\
+Number of holidays & 0.956 & -0.129 & 0.317\\
 Number of hospitals listed with BM collection & 0.028 & 0.023 & 0.013\\
 Number of hospitals listed with PBSC collection & 0.023 & 0.019 & 0.011\\
 Number of listed hospitals & 0.024 & 0.019 & 0.015\\
-Number of past coordination & -0.019 & 0.015 & -0.045\\
-Skipped the CT (= 1) & 0.039 & 0.038 & 0.054\\
+Number of past coordinations & -0.019 & 0.015 & -0.045\\
+Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -160,15 +160,15 @@ Skipped the CT (= 1) & 0.039 & 0.038 & 0.054\\
 \begin{threeparttable}
 \begin{tabular}[t]{lcccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{\#.Coordination $>$ 1} & \multicolumn{2}{c}{Skipped CT} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{\# Coordination $>$ 1} & \multicolumn{2}{c}{Skipped CT} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Treatment B & \num{-0.18} & \num{1.04} & \num{0.79} & \num{0.67}\\
+Experimental group B & \num{-0.18} & \num{1.04} & \num{0.79} & \num{0.67}\\
  & (\num{1.29}) & (\num{1.38}) & (\num{0.54}) & (\num{0.56})\\
-Treatment C & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
+Experimental group C & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
  & (\num{1.34}) & (\num{1.30}) & (\num{0.56}) & (\num{0.53})\\
-Treatment D & \num{-1.91} & \num{-1.28} & \num{1.11}* & \num{1.27}**\\
+Experimental group D & \num{-1.91} & \num{-1.28} & \num{1.11}* & \num{1.27}**\\
  & (\num{1.32}) & (\num{1.29}) & (\num{0.57}) & (\num{0.54})\\
 \midrule
 Control average & 36.61 & 36.61 & 3.87 & 3.87\\
@@ -194,11 +194,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3}
   & (1) & (2)\\
 \midrule
-Treatment B & \num{1.19} & \num{1.18}\\
+Experimental group B & \num{1.19} & \num{1.18}\\
  & {}[\num{1.05}, \num{1.34}] & {}[\num{1.02}, \num{1.36}]\\
-Treatment C & \num{1.07} & \num{1.03}\\
+Experimental group C & \num{1.07} & \num{1.03}\\
  & {}[\num{0.94}, \num{1.22}] & {}[\num{0.90}, \num{1.19}]\\
-Treatment D & \num{1.14} & \num{1.11}\\
+Experimental group D & \num{1.14} & \num{1.11}\\
  & {}[\num{1.01}, \num{1.30}] & {}[\num{0.97}, \num{1.28}]\\
 \midrule
 Covariates &  & X\\
@@ -220,15 +220,15 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181}\\
 \begin{threeparttable}
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}cccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive Intention} & \multicolumn{2}{c}{No endogenous attrition} & \multicolumn{2}{c}{No exogenous attrition} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive intention} & \multicolumn{2}{c}{No endogenous attrition} & \multicolumn{2}{c}{No exogenous attrition} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{2.31}* & \num{1.86}* & \num{0.97} & \num{1.14} & \num{-0.17} & \num{-0.44}\\
+Experimental group B & \num{2.31}* & \num{1.86}* & \num{0.97} & \num{1.14} & \num{-0.17} & \num{-0.44}\\
  & (\num{1.33}) & (\num{1.07}) & (\num{1.02}) & (\num{1.09}) & (\num{0.83}) & (\num{0.76})\\
-Treatment C & \num{-0.44} & \num{-0.05} & \num{2.55}** & \num{1.50} & \num{-0.93} & \num{-0.96}\\
+Experimental group C & \num{-0.44} & \num{-0.05} & \num{2.55}** & \num{1.50} & \num{-0.93} & \num{-0.96}\\
  & (\num{1.43}) & (\num{1.22}) & (\num{1.24}) & (\num{1.21}) & (\num{0.66}) & (\num{0.63})\\
-Treatment D & \num{0.59} & \num{0.24} & \num{2.27}** & \num{1.97}* & \num{-0.51} & \num{-0.61}\\
+Experimental group D & \num{0.59} & \num{0.24} & \num{2.27}** & \num{1.97}* & \num{-0.51} & \num{-0.61}\\
  & (\num{1.61}) & (\num{1.37}) & (\num{1.04}) & (\num{1.14}) & (\num{0.72}) & (\num{0.65})\\
 \midrule
 Control average & 54.91 & 54.91 & 71.91 & 71.91 & 95.42 & 95.42\\
@@ -243,11 +243,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Spped among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental arm A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
+\includegraphics{JMDPRC~3/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Spped among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental arm A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
 \end{figure}
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~4/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
+\includegraphics{JMDPRC~3/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
 \end{figure}
 
 \begin{table}[H]
@@ -262,11 +262,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{-1.14} & \num{-0.13} & \num{1.58} & \num{1.44} & \num{1.88} & \num{0.56}\\
+Experimental group B & \num{-1.14} & \num{-0.13} & \num{1.58} & \num{1.44} & \num{1.88} & \num{0.56}\\
  & (\num{2.39}) & (\num{3.09}) & (\num{1.70}) & (\num{2.14}) & (\num{2.17}) & (\num{1.79})\\
-Treatment C & \num{-1.13} & \num{-1.47} & \num{1.86} & \num{2.44} & \num{-1.17} & \num{-1.02}\\
+Experimental group C & \num{-1.13} & \num{-1.47} & \num{1.86} & \num{2.44} & \num{-1.17} & \num{-1.02}\\
  & (\num{3.03}) & (\num{2.74}) & (\num{2.35}) & (\num{2.29}) & (\num{1.49}) & (\num{1.36})\\
-Treatment D & \num{-1.64} & \num{-2.15} & \num{1.74} & \num{2.02} & \num{0.48} & \num{0.36}\\
+Experimental group D & \num{-1.64} & \num{-2.15} & \num{1.74} & \num{2.02} & \num{0.48} & \num{0.36}\\
  & (\num{2.03}) & (\num{2.44}) & (\num{1.87}) & (\num{1.75}) & (\num{1.42}) & (\num{1.49})\\
 \midrule
 Control average & 22.37 & 22.37 & 22.17 & 22.17 & 10.37 & 10.37\\
@@ -292,28 +292,28 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-3}
   & (1) & (2)\\
 \midrule
-Treatment B & \num{2.73}* & \num{1.90}\\
+Experimental group B & \num{2.73}* & \num{1.90}\\
  & (\num{1.44}) & (\num{1.67})\\
-Treatment C & \num{1.60} & \num{-1.02}\\
+Experimental group C & \num{1.60} & \num{-1.02}\\
  & (\num{1.52}) & (\num{1.57})\\
-Treatment D & \num{4.91}*** & \num{2.74}\\
+Experimental group D & \num{4.91}*** & \num{2.74}\\
  & (\num{1.51}) & (\num{1.93})\\
 Male & \num{4.58}** & \num{3.37}**\\
  & (\num{1.88}) & (\num{1.50})\\
-Treatment B $\times$ Male & \num{0.52} & \num{1.04}\\
+Experimental group B $\times$ Male & \num{0.52} & \num{1.04}\\
  & (\num{2.18}) & (\num{1.96})\\
-Treatment C $\times$ Male & \num{-0.71} & \num{2.38}*\\
+Experimental group C $\times$ Male & \num{-0.71} & \num{2.38}*\\
  & (\num{1.93}) & (\num{1.44})\\
-Treatment D $\times$ Male & \num{-4.01} & \num{-1.92}\\
+Experimental group D $\times$ Male & \num{-4.01} & \num{-1.92}\\
  & (\num{2.60}) & (\num{2.34})\\
 \midrule
 \addlinespace[0.3em]
-\multicolumn{3}{l}{\textit{Linear combination test: Treatment + Treatment $\times$ Male}}\\
-\hspace{1em}Treatment B & 3.25* & 2.94**\\
+\multicolumn{3}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ Male}}\\
+\hspace{1em}Experimental group B & 3.25* & 2.94**\\
 \hspace{1em} & (1.90) & (1.48)\\
-\hspace{1em}Treatment C & 0.90 & 1.36\\
+\hspace{1em}Experimental group C & 0.90 & 1.36\\
 \hspace{1em} & (1.96) & (1.27)\\
-\hspace{1em}Treatment D & 0.89 & 0.82\\
+\hspace{1em}Experimental group D & 0.89 & 0.82\\
 \hspace{1em} & (2.33) & (2.05)\\
 Covariates &  & X\\
 Num.Obs. & \num{11049} & \num{11049}\\
@@ -338,28 +338,28 @@ Std.Errors & by: g & by: g\\
 \cmidrule(l{3pt}r{3pt}){2-3}
   & (1) & (2)\\
 \midrule
-Treatment B & \num{4.20}** & \num{3.93}**\\
+Experimental group B & \num{4.20}** & \num{3.93}**\\
  & (\num{2.04}) & (\num{1.88})\\
-Treatment C & \num{4.02}* & \num{2.74}\\
+Experimental group C & \num{4.02}* & \num{2.74}\\
  & (\num{2.07}) & (\num{1.75})\\
-Treatment D & \num{3.80}* & \num{1.03}\\
+Experimental group D & \num{3.80}* & \num{1.03}\\
  & (\num{2.12}) & (\num{1.75})\\
 First-time coordination & \num{-9.78}*** & \num{-0.91}\\
  & (\num{1.77}) & (\num{2.12})\\
-Treatment B $\times$ First-time coordination & \num{-1.69} & \num{-2.21}\\
+Experimental group B $\times$ First-time coordination & \num{-1.69} & \num{-2.21}\\
  & (\num{2.45}) & (\num{2.39})\\
-Treatment C $\times$ First-time coordination & \num{-4.86}** & \num{-3.64}*\\
+Experimental group C $\times$ First-time coordination & \num{-4.86}** & \num{-3.64}*\\
  & (\num{2.47}) & (\num{2.21})\\
-Treatment D $\times$ First-time coordination & \num{-1.86} & \num{0.86}\\
+Experimental group D $\times$ First-time coordination & \num{-1.86} & \num{0.86}\\
  & (\num{2.52}) & (\num{2.22})\\
 \midrule
 \addlinespace[0.3em]
-\multicolumn{3}{l}{\textit{Linear combination test: Treatment + Treatment $\times$ First-Time Coordination}}\\
-\hspace{1em}Treatment B & 2.51* & 1.72\\
+\multicolumn{3}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ First-Time Coordination}}\\
+\hspace{1em}Experimental group B & 2.51* & 1.72\\
 \hspace{1em} & (1.34) & (1.47)\\
-\hspace{1em}Treatment C & -0.83 & -0.90\\
+\hspace{1em}Experimental group C & -0.83 & -0.90\\
 \hspace{1em} & (1.35) & (1.35)\\
-\hspace{1em}Treatment D & 1.94 & 1.89\\
+\hspace{1em}Experimental group D & 1.94 & 1.89\\
 \hspace{1em} & (1.36) & (1.37)\\
 Covariates &  & X\\
 Num.Obs. & \num{11049} & \num{11049}\\
@@ -379,15 +379,15 @@ Num.Obs. & \num{11049} & \num{11049}\\
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Candidate Selection} & \multicolumn{2}{c}{Final Consent} & \multicolumn{2}{c}{Donation} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Donor selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Treatment B & \num{1.03} & \num{0.95} & \num{1.05} & \num{0.98} & \num{1.03} & \num{0.97}\\
+Experimental group B & \num{1.03} & \num{0.95} & \num{1.05} & \num{0.98} & \num{1.03} & \num{0.97}\\
  & {}[\num{0.83}, \num{1.28}] & {}[\num{0.75}, \num{1.21}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.76}, \num{1.26}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.74}, \num{1.29}]\\
-Treatment C & \num{0.99} & \num{0.96} & \num{1.01} & \num{0.99} & \num{1.00} & \num{0.98}\\
+Experimental group C & \num{0.99} & \num{0.96} & \num{1.01} & \num{0.99} & \num{1.00} & \num{0.98}\\
  & {}[\num{0.79}, \num{1.24}] & {}[\num{0.76}, \num{1.21}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.77}, \num{1.26}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.75}, \num{1.27}]\\
-Treatment D & \num{1.09} & \num{1.06} & \num{1.12} & \num{1.10} & \num{1.02} & \num{0.99}\\
+Experimental group D & \num{1.09} & \num{1.06} & \num{1.12} & \num{1.10} & \num{1.02} & \num{0.99}\\
  & {}[\num{0.87}, \num{1.35}] & {}[\num{0.84}, \num{1.32}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.87}, \num{1.39}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.76}, \num{1.29}]\\
 \midrule
 Covariates &  & X &  & X &  & X\\
@@ -397,6 +397,48 @@ Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2410.035} & \num{-2283.231}
 \end{tabular}
 \begin{tablenotes}
 \item \emph{Note}: We show odds ratios and associated 95 percent confidential intervals in square brackets. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-who-selected}Determination of Donor Selection}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Donor selection} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+  & (1) & (2) & (3) & (4)\\
+\midrule
+(Intercept) & \num{38.53}*** & \num{19.85} & \num{30.94}** & \num{12.68}\\
+ & (\num{8.33}) & (\num{30.13}) & (\num{14.84}) & (\num{32.18})\\
+Male & \num{8.76}** & \num{8.71}** & \num{8.22}** & \num{8.16}**\\
+ & (\num{3.93}) & (\num{3.93}) & (\num{3.96}) & (\num{3.96})\\
+Age & \num{-0.34}* & \num{0.75} & \num{-0.33}* & \num{0.73}\\
+ & (\num{0.20}) & (\num{1.68}) & (\num{0.20}) & (\num{1.68})\\
+Age (squared) &  & \num{-0.01} &  & \num{-0.01}\\
+ &  & (\num{0.02}) &  & (\num{0.02})\\
+\# coordination experiences & \num{-1.83} & \num{-1.94}* & \num{-1.92}* & \num{-2.03}*\\
+ & (\num{1.16}) & (\num{1.16}) & (\num{1.15}) & (\num{1.16})\\
+\# holidays &  &  & \num{1.76} & \num{1.76}\\
+ &  &  & (\num{2.69}) & (\num{2.70})\\
+\# listed hospitals &  &  & \num{14.22} & \num{14.53}\\
+ &  &  & (\num{16.20}) & (\num{16.19})\\
+\# listed hospitals with PBSC collection &  &  & \num{-8.52} & \num{-7.57}\\
+ &  &  & (\num{31.89}) & (\num{31.92})\\
+\# listed hospitals with BM collection &  &  & \num{-22.78} & \num{-23.74}\\
+ &  &  & (\num{37.39}) & (\num{37.34})\\
+\midrule
+Num.Obs. & \num{564} & \num{564} & \num{564} & \num{564}\\
+R2 & \num{0.016} & \num{0.017} & \num{0.020} & \num{0.021}\\
+R2 Adj. & \num{0.011} & \num{0.009} & \num{0.008} & \num{0.007}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control arm. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
