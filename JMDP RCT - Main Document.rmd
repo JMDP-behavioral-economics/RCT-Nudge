@@ -31,18 +31,22 @@ affiliations:
     name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, 5-1-1 Tsukiji, Chuo-ku, Tokyo 104-0045, Japan
 abstract: |
   Allogeneic hematopoietic stem cell transplantation faces supply shortages, similar to the issue faced by organ transplantation. While many studies examine interventions that aim to increase donor registrations for organ transplantation from deceased donors, stem cell transplantation involves living donors, who may refuse to donate when matched with patients. Therefore, preventing such donor attrition is crucial. Indeed, many transplant coordinations are interrupted before stem cells from donors can be collected. To address this issue, we developed a behavioral intervention in collaboration with the Japan Marrow Donor Program, which comprised adding messages based on insights from behavioral economics into the letters sent when donors are matched with patients. We then conducted a field experiment to verify the effect of our intervention. The results demonstrate that behavioral interventions bridging information gaps can prevent registered donor attrition and increase donor availability for transplantation. Specifically, the message explaining the limited number of compatible donors per patient increased the probability of donors completing the confirmatory typing stage (available donors from whom physicians can choose the optimal donor for transplantation) by 12%.
-  \vskip\baselineskip
+
+  \vspace{0.5em}
   \noindent
   \textit{Keywords}: prosocial behavior, field experiment, free-riding, information provision, Japan Marrow Donor Program, stem cell transplantation
-  \vskip\baselineskip
+
+  \vspace{0.5em}
   \noindent
   \textit{JEL classification}: D64, D90, H41, I11
 acknowledgements: |
   We would like to thank the Japan Marrow Donor Program office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04).
-  \vskip\baselineskip
+
+  \vspace{0.5em}
   \noindent
   Funding: This work was supported by the Japan Society for the Promotion of Science [grant number 20H05632] and the Ministry of Health, Labour and Welfare [grant number 19FF1001].
-  \vskip\baselineskip
+
+  \vspace{0.5em}
   \noindent
   Declarations of interest: none.
 ai-declaration: |
@@ -82,7 +86,8 @@ knitr::opts_chunk$set(
 options(
   knitr.table.format = "latex",
   knitr.kable.NA = "",
-  kableExtra.auto_format = FALSE
+  kableExtra.auto_format = FALSE,
+  modelsummary_factory_latex = "kableExtra"
 )
 ```
 
@@ -131,7 +136,7 @@ options(
   modelsummary_stars_note = FALSE
 )
 
-data_root <- "D:/JMDPフィールド実験"
+data_root <- "data"
 ```
 
 ## Background: Coordination Process of JMDP {#background}

@@ -54,6 +54,14 @@
 
 % ------------------------------ other packages
 \usepackage{booktabs}
+\usepackage{siunitx}
+
+    \newcolumntype{d}{S[
+      table-align-text-before=false,
+      table-align-text-after=false,
+      input-symbols={-,\*+()}
+    ]}
+  
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
@@ -67,16 +75,6 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
-\usepackage{siunitx}
-
-  \newcolumntype{d}{S[
-    input-open-uncertainty=,
-    input-close-uncertainty=,
-    parse-numbers = false,
-    table-align-text-pre=false,
-    table-align-text-post=false
-  ]}
-  
 
 % ------------------------------ paper information
 \title{Exploring Information Provision to Promote Stem Cell Donation:
@@ -113,10 +111,14 @@ Evidence from a Field Experiment of the Japan Marrow Donor Program}
     \clearpage
   \begin{abstract}
   Allogeneic hematopoietic stem cell transplantation faces supply shortages, similar to the issue faced by organ transplantation. While many studies examine interventions that aim to increase donor registrations for organ transplantation from deceased donors, stem cell transplantation involves living donors, who may refuse to donate when matched with patients. Therefore, preventing such donor attrition is crucial. Indeed, many transplant coordinations are interrupted before stem cells from donors can be collected. To address this issue, we developed a behavioral intervention in collaboration with the Japan Marrow Donor Program, which comprised adding messages based on insights from behavioral economics into the letters sent when donors are matched with patients. We then conducted a field experiment to verify the effect of our intervention. The results demonstrate that behavioral interventions bridging information gaps can prevent registered donor attrition and increase donor availability for transplantation. Specifically, the message explaining the limited number of compatible donors per patient increased the probability of donors completing the confirmatory typing stage (available donors from whom physicians can choose the optimal donor for transplantation) by 12\%.
-  \vskip\baselineskip
+
+  \vspace{0.5em}
+
   \noindent
   \textit{Keywords}: prosocial behavior, field experiment, free-riding, information provision, Japan Marrow Donor Program, stem cell transplantation
-  \vskip\baselineskip
+
+  \vspace{0.5em}
+
   \noindent
   \textit{JEL classification}: D64, D90, H41, I11
   \end{abstract}
@@ -128,8 +130,7 @@ Evidence from a Field Experiment of the Japan Marrow Donor Program}
 
 \clearpage
 
-\hypertarget{intro}{%
-\section{Introduction}\label{intro}}
+\section{Introduction}\label{intro}
 
 Allogeneic hematopoietic stem cell transplantation (HSCT) faces supply shortages in many countries---similar to the issues faced by organ transplantation---and significant efforts are being made to increase supply in transplantation. Many studies have examined interventions to increase donor registrations, particularly in the context of organ transplantation from deceased donors \citep[for example,][]{Kessler2012}. However, unlike organ transplantation from deceased donors, stem cell transplantation involves living donors. Therefore, registered donors---when matched with patients---may still refuse to donate. Consequently, registries in some countries have implemented interventions aimed at preventing such donor attrition \citep{Switzer2018, Haylock2024}. However, more needs to be done to develop interventions to mitigate donor attrition. Thus, we conduct a field experiment in Japan and argue that behavioral interventions aimed at bridging information gaps can prevent registered donor attrition.
 
@@ -155,11 +156,9 @@ Finally, our research makes significant contributions to the broader context. Pr
 
 The remainder of this paper is organized as follows. Section \ref{experiment} provides an overview of the coordination process of the JMDP and describes our field experiment. Section \ref{result} presents the results of our experiment. Section \ref{conclusion} discusses the results and concludes.
 
-\hypertarget{experiment}{%
-\section{Field Experiment}\label{experiment}}
+\section{Field Experiment}\label{experiment}
 
-\hypertarget{background}{%
-\subsection{Background: Coordination Process of JMDP}\label{background}}
+\subsection{Background: Coordination Process of JMDP}\label{background}
 
 To allow readers to better understand our intervention and data, we first outline the coordination process leading to the donation of stem cells by donors registered with the JMDP. First, when a registrant is matched with a patient enrolled in the JMDP, the JMDP office sends the matched donor the HLA match letter.\footnote{Simultaneously, the JMDP office sends a social networking message to matched donors informing them that the JMDP has sent the HLA match letter.} In this letter, the JMDP recommends that the matched donor respond within seven days (see Table \ref{tab:list-message}). The matched donor completes a medical questionnaire and indicates their willingness to donate upon responding the letter. Matched donors who express a willingness to donate move onto the coordination process.
 
@@ -169,11 +168,10 @@ Physicians can choose up to 10 potential donors to proceed to this stage simulta
 
 The matched donor selected as the best donor must provide final consent after being informed of their selection by the coordinator and coordinating physician. Simultaneously, a representative of the donor's family must provide consent to the donation. After final consent is obtained, the selected donor cannot withdraw their decision to donate. They then undergo a surgical procedure to collect stem cells. The time from CT to collection is approximately three to four months.
 
-\hypertarget{design}{%
-\subsection{Experimental Design}\label{design}}
+\subsection{Experimental Design}\label{design}
 
 \begin{table}
-
+\centering
 \caption{\label{tab:list-message}List of Intervention Messages}
 \centering
 \fontsize{8}{10}\selectfont
@@ -205,8 +203,7 @@ Four experimental groups were established to estimate the effects of including t
 
 The participants in the experiment were 11,154 matched donors who received HLA match letters between September 6, 2021 and February 27, 2022. To maintain randomness to the best of the JMDP office's abilities, we assigned the participants to the four experimental groups using weekly cluster randomization. Specifically, we created a cluster every seven days (a week starting from Monday) and randomly assigned one experimental group to each cluster (see Table A1 in Supplementary Material A for the assignment schedule).\footnote{The experiment was not conducted from December 27, 2021 to January 3, 2022 because the JMDP was closed for the New Year's holiday.} The assignment of the experimental groups was designed to be as balanced across weeks and months as possible. Before conducting the experiment, we obtained approval from the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305) and the JMDP (approval number: JMDP2021-04).
 
-\hypertarget{data-and-empirical-strategy}{%
-\subsection{Data and Empirical Strategy}\label{data-and-empirical-strategy}}
+\subsection{Data and Empirical Strategy}\label{data-and-empirical-strategy}
 
 In the coordination data provided by the JMDP, the unit of observation was the matched donors. The data included individual characteristics such as the donor's sex, age, number of coordination experiences, and prefecture-level residential area. The data on the coordination process included whether each stage (response to the letter, CT, donor selection, final consent, and collection) had been completed. Additionally, the data included the number of days taken to respond and willingness to donate. If the coordination process was interrupted, the reasons for the interruption were recorded in three categories (patient-side, donor non-health, and donor health reasons). The analysis included 11,049 matched donors living in Japan whose coordination process was completed or interrupted.\footnote{One matched donor lived abroad. There were 104 matched donors with ongoing coordination at the time of data collection. The proportion of matched donors with ongoing matching was balanced across the experimental groups (F-test, p-value = \(0.383\)).}
 
@@ -215,7 +212,7 @@ The primary outcome was whether matched donors underwent CT. Responses that did 
 As additional data, we used the list of medical institutions published on the JMDP website.\footnote{\url{https://www.jmdp.or.jp/hospitals/view2/} (Accessed August 4, 2022).} This list includes complete addresses, the availability of bone marrow collection, and the availability of PBSC collection. We aggregated this list at the prefecture level, calculated the number of hospitals per 10 square kilometers, and merged the results with the coordination data using the prefecture as the merge key. We considered this variable as the traveling cost of coordination and donation.
 
 \begin{table}
-
+\centering
 \caption{\label{tab:summary}Summary of the Field Experiment}
 \centering
 \fontsize{9}{11}\selectfont
@@ -265,11 +262,9 @@ Although most covariates were balanced across the experimental groups, a few cov
 \noindent
 where \(X_{iw}\) is a vector of the individual characteristics, including age and the number of holidays. The parameters of interest are \((\beta_1, \beta_2, \beta_3)\). There appears to be no cause for generating correlations within the clusters (weeks) of unobservable elements \(u_{iw}\). Therefore, we used robust standard errors for statistical inference.\footnote{We conducted a regression analysis with clustered standard errors as a robustness check and confirmed that the results remained unchanged.}
 
-\hypertarget{result}{%
-\section{Experimental Results}\label{result}}
+\section{Experimental Results}\label{result}
 
-\hypertarget{main}{%
-\subsection{Average Treatment Effects on CT}\label{main}}
+\subsection{Average Treatment Effects on CT}\label{main}
 
 Estimating the effect of the intervention messages on reaching the CT stage is critical because physicians select the optimal donor for transplantation from among matched donors who have undergone CT. We used a dummy variable coded one if a matched donor reached the CT stage.\footnote{We also coded the CT dummy one if CT was skipped.} In the control group, only \(22.25\)\% of matched donors underwent CT.
 
@@ -280,7 +275,7 @@ There are two reasons for the low probability of reaching CT. First, only \(54.9
 \end{figure}
 
 \begin{table}
-
+\centering\centering
 \caption{\label{tab:lm-test}Linear Probability Model of CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -320,8 +315,7 @@ As mentioned previously, our intervention was expected to increase the probabili
 
 The early coordination message included in the HLA letter sent to experimental group C was expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure A1 in Supplementary Material A). Therefore, we examined whether experimental group C, which did not show an overall increase in the willingness to donate, may have shown increased early responses accompanied by a willingness to donate. Figure A2 in Supplementary Material A presents the cumulative response rates of the willingness to donate over time for the experimental groups. Because the JMDP requests responses within seven days, we define early responses as cumulative response rates with a willingness to donate within seven days. However, the probability of responding with a willingness to donate within seven days did not increase in experimental group C. This result was also confirmed by the regression analysis (see Table A6 in Supplementary Material A). Therefore, the early coordination message did not have the expected effect.
 
-\hypertarget{heterogeneous-treatment-effects-on-ct}{%
-\subsection{Heterogeneous Treatment Effects on CT}\label{heterogeneous-treatment-effects-on-ct}}
+\subsection{Heterogeneous Treatment Effects on CT}\label{heterogeneous-treatment-effects-on-ct}
 
 In this subsection, we explore the heterogeneity of the message effects. First, we examine the differences in the effects by sex. Table A7 in Supplementary Material A presents the estimation results from the linear probability models that include the cross-terms between the male dummy and experimental groups.\footnote{In the cross-term models, we also controlled for the cross-terms between the male dummy and each covariate.} Without controlling for the covariates, compared with the control, the probability of matched female donors reaching CT was higher in experimental group D. Furthermore, the cross-term between experimental group D and the male dummy was statistically significant at the 10\% level, suggesting that the effect could differ by sex in this experimental group. However, when controlling for the covariates (including the dummy variable indicating whether CT was skipped), the same results were not obtained.
 
@@ -329,8 +323,7 @@ The effect of experimental group B could be heterogenous by sex. We found no sta
 
 Next, we examined the differences in the effects between first-time matched donors and matched donors with prior coordination experience. Table A8 in Supplementary Material A presents the estimation results from the linear probability models including the cross-terms between the first-time coordination dummy and experimental groups. Compared with the control, the probability of reaching CT among potential donors with prior coordination experience was higher in experimental group B. This result remained robust after controlling for the covariates. However, there was no statistically significant effect on the probability of reaching CT in first-time matched donors for any of the experimental groups. However, the cross-term between experimental group B and first-time coordination dummy was not statistically significant. Thus, the probability message included in the HLA match letter sent to the participants in experimental group B primarily affected matched donors with prior coordination experience.
 
-\hypertarget{process}{%
-\subsection{Effects on the Coordination Process After CT}\label{process}}
+\subsection{Effects on the Coordination Process After CT}\label{process}
 
 Finally, we examined the effects of the messages on the stages of the coordination process after CT. As explained in Section \ref{background}, the post-CT coordination process consists of three stages: donor selection, final consent, and collection (donation). For these outcomes, we used dummy variables coded one if a matched donor reached each stage. The effects on the three post-CT stages require careful interpretation because the outcomes involve demand-side effects. In the control group, \(6.2\)\% of potential donors were selected as the most appropriate donors and \(4.5\)\% ultimately donated.
 
@@ -339,7 +332,7 @@ Finally, we examined the effects of the messages on the stages of the coordinati
 \end{figure}
 
 \begin{table}
-
+\centering\centering
 \caption{\label{tab:lm-coordinate}Linear Probability Model of the Coordination Processes After CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -370,14 +363,13 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 
 Figure \ref{fig:coordinate-diff-mean} presents the sample averages of each outcome by experimental group. The three post-CT processes were unaffected in all the experimental groups. Similar results were obtained from the linear probability models (see Table \ref{tab:lm-coordinate}) and logistic regressions when controlling for the covariates (see Table A9 in Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (that is, the number of patients), if it increases the number of donors who reach CT, it should increase the number of donors not selected as candidates for exogenous reasons. In particular, compared with the control group, the probability that matched donors who reached CT were not selected because of patient-related reasons or donor health conditions was higher by \(4.3\) percentage points in experimental group B, which was statistically significant at the 10\% level (\(p = 0.095\)). Therefore, the intervention effects were weakened by demand-side factors.
 
-\hypertarget{conclusion}{%
-\section{Discussion and Conclusions}\label{conclusion}}
+\section{Discussion and Conclusions}\label{conclusion}
 
 This study examined how information provision affects donor availability in stem cell transplantation. The results of our field experiment demonstrated that providing information on the limited number of HLA-compatible donors per patient (that is, the probability message) increased the probability of reaching CT by enhancing and maintaining the willingness to donate. This result suggests that physicians can select optimal donors for transplantation from a larger pool of candidates. However, when presented simultaneously with an ineffective early coordination message, the positive effect of the probability message was diminished. We speculate this is because of the negative effect of information overload. Therefore, it is important to convey effective information in a simple manner.
 
 Although we cannot obtain robust evidence of heterogenous treatment effects, we suggest that the probability message primarily affected men with prior coordination experience. Recent reviews have shown that when multiple donor options are available, physicians prefer male donors \citep{Fingrut2018} because patients with male donors are less likely to develop GVHD.\footnote{GVHD is a phenomenon in which donor-derived lymphocytes mistakenly identify the patient's normal cells as foreign and attack them, potentially leading to fever, skin symptoms, gastrointestinal symptoms such as diarrhea, and liver damage that may cause impaired consciousness.} Similar evidence has been obtained in Japan \citep{Shinohara2017}. Similarly, in our data, among matched donors who completed CT, male donors were more likely to be selected as transplant donors than female donors (see Table A10 in Supplementary Material A). Considering these facts and findings, the probability message may improve coordination efficiency by promoting CT completion among male donors.
 
-To evaluate the cost effectiveness of the intervention, we assess the impact of the probability message on donor recruitment. The probability message increased the CT completion rate by \(12\% (= 2.56/22.25)\). We can then calculate how many additional donor registrations would be needed to achieve this same 12\% increase in the CT completion rate. First, the positive effect of the probability message on CT is equivalent to increasing the number of registered donors who match with patients by 12\%.\footnote{Let \(N_m\) be the number of registrants who start the coordination process. Let \(N_1(d)\) be the number of potential donors who reach CT under treatment \(d\). Then, \(N_1(d) = p(d)N_m\) holds, where \(p(d)\) is the probability of reaching CT under treatment \(d\). Note that \(d = 1\) and \(d = 0\) represent the treatment and control groups, respectively. We solve \(N_1(1) = p(0)[N_m + \Delta N_m]\) for \(\Delta N_m\), where \(\Delta N_m\) represents the increase in registrants who start coordination. Therefore, we obtain \([p(1) - p(0)]/p(0) = \Delta N_m/N_m\).} Since 40\% of registrants become matched donors, \(224,000\) of the current \(560,000\) registrants are potential matched donors.\footnote{The cumulative number of registrants since the JMDP's establishment is \(980,000\). Among these registrants, \(390,000\) have become potential donors who started the coordination process. Therefore, 40\% of registrants become potential donors who start coordination. Data source: \url{https://www.bs.jrc.or.jp/bmdc/donorregistrant/m2_03_00_statistics.html} (Accessed December 8, 2024).} Therefore, the effect of the probability message on CT is equivalent to increasing the number of matched donors from \(224,000\) to \(250,000 (= 224,000 \times 1.12)\), an increase of \(26,000\). Alternatively, the effect of the probability message on CT is equivalent to increasing the number of registrants from \(560,000\) to \(630,000 (= 560,000 \times 1.12)\), an increase of \(70,000\). The current JMDP donor pool includes \(100,000\) registered donors in their 50s.\footnote{\url{https://www.jmdp.or.jp/about/read/number/} (Accessed December 8, 2024).} Owing to the age limit for donation (54 years), donors in their 50s will exit the pool within the next five years. This back-of-the-envelope calculation suggests that the probability message can prevent approximately 70\% of the negative effects caused by the shrinking donor pool. Donor recruitment efforts are costly. While the cost required to increase one donor registration at the JMDP is unknown, the National Marrow Donor Program incurs approximately USD 150 when adding one donor registration.\footnote{\url{https://fundraise.nmdp.org/index.cfm?fuseaction=cms.page\&id=1203\&eventID=675} (Accessed March 29, 2025).} If JMDP bears a similar cost, recruiting \(70,000\) donor candidates would cost USD \(10.5\) million. Therefore, adding messages could be a more cost-effective measure than recruiting donors.
+To evaluate the cost effectiveness of the intervention, we assess the impact of the probability message on donor recruitment. The probability message increased the CT completion rate by \(12\% (= 2.56/22.25)\). We can then calculate how many additional donor registrations would be needed to achieve this same 12\% increase in the CT completion rate. First, the positive effect of the probability message on CT is equivalent to increasing the number of registered donors who match with patients by 12\%.\footnote{Let \(N_m\) be the number of registrants who start the coordination process. Let \(N_1(d)\) be the number of potential donors who reach CT under treatment \(d\). Then, \(N_1(d) = p(d)N_m\) holds, where \(p(d)\) is the probability of reaching CT under treatment \(d\). Note that \(d = 1\) and \(d = 0\) represent the treatment and control groups, respectively. We solve \(N_1(1) = p(0)[N_m + \Delta N_m]\) for \(\Delta N_m\), where \(\Delta N_m\) represents the increase in registrants who start coordination. Therefore, we obtain \([p(1) - p(0)]/p(0) = \Delta N_m/N_m\).} Since 40\% of registrants become matched donors, \(224,000\) of the current \(560,000\) registrants are potential matched donors.\footnote{The cumulative number of registrants since the JMDP's establishment is \(980,000\). Among these registrants, \(390,000\) have become potential donors who started the coordination process. Therefore, 40\% of registrants become potential donors who start coordination. Data source: \url{https://www.bs.jrc.or.jp/bmdc/donorregistrant/m2_03_00_statistics.html} (Accessed December 8, 2024).} Therefore, the effect of the probability message on CT is equivalent to increasing the number of matched donors from \(224,000\) to \(250,000 (= 224,000 \times 1.12)\), an increase of \(26,000\). Alternatively, the effect of the probability message on CT is equivalent to increasing the number of registrants from \(560,000\) to \(630,000 (= 560,000 \times 1.12)\), an increase of \(70,000\). The current JMDP donor pool includes \(100,000\) registered donors in their 50s.\footnote{\url{https://www.jmdp.or.jp/about/read/number/} (Accessed December 8, 2024).} Owing to the age limit for donation (54 years), donors in their 50s will exit the pool within the next five years. This back-of-the-envelope calculation suggests that the probability message can prevent approximately 70\% of the negative effects caused by the shrinking donor pool. Donor recruitment efforts are costly. While the cost required to increase one donor registration at the JMDP is unknown, the National Marrow Donor Program incurs approximately USD 150 when adding one donor registration.\footnote{\url{https://fundraise.nmdp.org/index.cfm?fuseaction=cms.page&id=1203&eventID=675} (Accessed March 29, 2025).} If JMDP bears a similar cost, recruiting \(70,000\) donor candidates would cost USD \(10.5\) million. Therefore, adding messages could be a more cost-effective measure than recruiting donors.
 
 Whether the probability message increased the transplantation rate for registered patients, which is the JMDP's ultimate goal, remains unclear. Our experiment did not find that the probability message increased stem cell donation by donors. However, this result alone does not allow us to conclude that the probability message does not increase the transplantation rate among registered patients. As explained in Section \ref{background}, one patient can proceed with coordination simultaneously with multiple donor candidates. That is, multiple donors included in our sample may match with a single patient. In such cases, even if one donor does not donate, other donor candidates may donate and contribute to the patient's survival. Therefore, non-donation by a donor does not necessarily correspond to a patient's failure to receive transplantation. In other words, the effect on donor stem cell donation may underestimate the effect on patients' transplantation rate. To examine the effect on patients' transplantation rate, we would need data not only from the donor side but also from the patient side. Nevertheless, considering that registries worldwide are concerned about the causes of donor attrition and exploring potential countermeasures \citep[for example,][]{Switzer2018, Balassa2019, Hamed2023, Haylock2024}, our results provide practical insights.
 
@@ -386,10 +378,14 @@ Finally, our intervention can be applied to contexts beyond stem cell transplant
 \begin{spacing}{1}
   \section*{Acknowledgements}
   We would like to thank the Japan Marrow Donor Program office for managing the field experiment and providing us with the data. This study was conducted with the approval of the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305-2) and the Japan Marrow Donor Program (approval number: JMDP2021-04).
-  \vskip\baselineskip
+
+  \vspace{0.5em}
+
   \noindent
   Funding: This work was supported by the Japan Society for the Promotion of Science {[}grant number 20H05632{]} and the Ministry of Health, Labour and Welfare {[}grant number 19FF1001{]}.
-  \vskip\baselineskip
+
+  \vspace{0.5em}
+
   \noindent
   Declarations of interest: none.
 \end{spacing}
