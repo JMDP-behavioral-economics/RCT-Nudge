@@ -59,7 +59,9 @@ knitr::opts_chunk$set(
 ```{r option, include = FALSE}
 options(
   knitr.table.format = "latex",
-  kableExtra.auto_format = FALSE
+  knitr.kable.NA = "",
+  kableExtra.auto_format = FALSE,
+  modelsummary_factory_latex = "kableExtra"
 )
 ```
 
@@ -87,7 +89,7 @@ options(
   modelsummary_stars_note = FALSE
 )
 
-data_root <- "D:/JMDPフィールド実験"
+data_root <- "data"
 ```
 
 ```{r assignment}
@@ -138,7 +140,7 @@ rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
 if (params$is_cluster) rct$set_default_cluster("RCTweek")
-rct$set_default_se_type(params$se_type)
+rct$set_default_se_type("stata")
 
 # robust sample (remove those who skipped the CT)
 rct_noskip <- rawdt_noskip$RCT()
@@ -327,144 +329,41 @@ rct$
   column_spec(1, width = "20em")
 ```
 
-```{r lm-interaction-gender-test}
-test_interaction_gender <- rct$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100, interaction_of_gender = TRUE)$
-  get_est()
-
-hypothesis <- c(
-  "treatB + treatB:groupMale" = "Experimental group B",
-  "treatC + treatC:groupMale" = "Experimental group C",
-  "treatD + treatD:groupMale" = "Experimental group D"
-)
-
-lh_tab <- test_interaction_gender %>%
-  pull(fit) %>%
-  map(~ .$lh) %>%
-  modelsummary(
-    coef_map = hypothesis,
-    stars = c("***" = .01, "**" = .05, "*" = 0.1),
-    output = "data.frame",
-    fmt = 2
-  ) %>%
-  filter(part == "estimates") %>%
-  mutate(term = if_else(statistic == "std.error", "", term)) %>%
-  select(-part, -statistic)
-
-add_tab <- rbind(
-  lh_tab,
-  c("Covariates", "", "X")
-)
-
-attr(add_tab, "position") <- 15:21
-
-test_interaction_gender %>%
-  pull(fit) %>%
-  map(~ .$lm_robust) %>%
-  modelsummary(
-    title = "Heterogenous Message Effects on CT by Gender",
-    coef_map = c(
+```{r lm-interaction-gender-test-donate}
+rct$
+  lm_effect(c("test", "donate"), sample_drop = FALSE)$
+  fit(scale = 100, interaction = "male")$
+  kable_reg(
+    title = "Heterogenous Message Effects on CT and Donation by Gender",
+    coef_map_lm = c(
       "treatB" = "Experimental group B",
       "treatC" = "Experimental group C",
       "treatD" = "Experimental group D",
-      "groupMale" = "Male",
-      "treatB:groupMale" = "Experimental group B $\\times$ Male",
-      "treatC:groupMale" = "Experimental group C $\\times$ Male",
-      "treatD:groupMale" = "Experimental group D $\\times$ Male"
+      "male" = "Male",
+      "treatB:male" = "Experimental group B $\\times$ Male",
+      "treatC:male" = "Experimental group C $\\times$ Male",
+      "treatD:male" = "Experimental group D $\\times$ Male"
     ),
-    gof_omit = "R2",
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    add_rows = add_tab,
-    fmt = 2,
-    align = "lcc",
-    escape = FALSE
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 2)) %>%
-  kableExtra::group_rows(
-    "Linear combination test: Experimental group + Experimental group $\\times$ Male",
-    15, 20,
-    bold = FALSE, italic = TRUE,
-    escape = FALSE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
-    threeparttable = TRUE,
-    escape = FALSE
+    coef_map_lh = c(
+      "treatB + treatB:male" = "Experimental group B",
+      "treatC + treatC:male" = "Experimental group C",
+      "treatD + treatD:male" = "Experimental group D"
+    ),
+    label_lh = "Linear combination test: Experimental group + Experimental group $\\times$ Male",
+    notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
+    font_size = 8,
+    hold = TRUE
   ) %>%
   column_spec(1, width = "30em")
 ```
 
-```{r lm-interaction-coordination-test}
-hypothesis <- c(
-  "treatB + treatB:coordinate1" = "Experimental group B",
-  "treatC + treatC:coordinate1" = "Experimental group C",
-  "treatD + treatD:coordinate1" = "Experimental group D"
-)
-
-res <- rct$
-  lm_effect("test", sample_drop = FALSE)$data %>%
-  mutate(value = value * 100) %>%
-  group_by(outcome) %>%
-  nest() %>%
-  mutate(
-    fit_1 = map(
-      data,
-      ~ lh_robust(
-        value ~ treat * coordinate1,
-        data = .,
-        se_type = params$se_type,
-        linear_hypothesis = names(hypothesis)
-      )
-    ),
-    fit_2 = map(
-      data,
-      ~ lh_robust(
-        value ~ treat * coordinate1 +
-          male + age + I(age^2) + PB_per_area + BM_per_area + holidays + skip_test +
-          male:coordinate1 + age:coordinate1 + I(age^2):coordinate1 +
-          PB_per_area:coordinate1 + BM_per_area:coordinate1 + holidays:coordinate1 + skip_test:coordinate1,
-        data = .,
-        se_type = params$se_type,
-        linear_hypothesis = names(hypothesis)
-      )
-    )
-  ) %>%
-  pivot_longer(
-    fit_1:fit_2,
-    names_to = "model",
-    values_to = "fit",
-    names_prefix = "fit_"
-  )
-
-lh_tab <- res %>%
-  pull(fit) %>%
-  map(~ .$lh) %>%
-  modelsummary(
-    coef_map = hypothesis,
-    stars = c("***" = .01, "**" = .05, "*" = 0.1),
-    output = "data.frame",
-    fmt = 2
-  ) %>%
-  filter(part == "estimates") %>%
-  mutate(term = if_else(statistic == "std.error", "", term)) %>%
-  select(-part, -statistic)
-
-add_tab <- rbind(
-  lh_tab,
-  c("Covariates", "", "X")
-)
-
-attr(add_tab, "position") <- 15:21
-
-res %>%
-  pull(fit) %>%
-  map(~ .$lm_robust) %>%
-  modelsummary(
-    title = "Heterogeneous Treatment Effects on Positive Intention and CT by First-Time Coordination",
-    coef_map = c(
+```{r lm-interaction-coordination1-test-donate}
+rct$
+  lm_effect(c("test", "donate"), sample_drop = FALSE)$
+  fit(scale = 100, interaction = "coordinate1", drop_x = "coordinate")$
+  kable_reg(
+    title = "Heterogeneous Treatment Effects on CT and Donation by First-Time Coordination",
+    coef_map_lm = c(
       "treatB" = "Experimental group B",
       "treatC" = "Experimental group C",
       "treatD" = "Experimental group D",
@@ -473,32 +372,15 @@ res %>%
       "treatC:coordinate1" = "Experimental group C $\\times$ First-time coordination",
       "treatD:coordinate1" = "Experimental group D $\\times$ First-time coordination"
     ),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
-    align = "lcc",
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    fmt = 2,
-    add_rows = add_tab,
-    escape = FALSE
-  ) %>%
-  kableExtra::kable_styling(
+    coef_map_lh = c(
+      "treatB + treatB:coordinate1" = "Experimental group B",
+      "treatC + treatC:coordinate1" = "Experimental group C",
+      "treatD + treatD:coordinate1" = "Experimental group D"
+    ),
+    label_lh = "Linear combination test: Experimental group + Experimental group $\\times$ First-Time Coordination",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and dummy of first-time coordination.",
     font_size = 8,
-    latex_options = "HOLD_position"
-  ) %>%
-  kableExtra::add_header_above(
-    c(" " = 1, "CT" = 2),
-    escape = FALSE
-  ) %>%
-  kableExtra::group_rows(
-    "Linear combination test: Experimental group + Experimental group $\\times$ First-Time Coordination",
-    15, 20,
-    bold = FALSE, italic = TRUE,
-    escape = FALSE
-  ) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and dummy of first-time coordination.",
-    threeparttable = TRUE,
-    escape = FALSE
+    hold = TRUE
   ) %>%
   column_spec(1, width = "30em")
 ```
