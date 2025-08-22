@@ -72,10 +72,7 @@ Lm <- R6::R6Class("Lm",
 
       private$model <- list(
         unctrl = reformulate("treat", "value"),
-        ctrl1 = reformulate(
-          c("treat", use_x),
-          "value"
-        )
+        ctrl1 = reformulate(c("treat", use_x), "value")
       )
 
       private$se_type <- se
@@ -98,97 +95,51 @@ Lm <- R6::R6Class("Lm",
       }
     },
     fit = function( scale = 1,
-                    interaction_of_gender = FALSE,
-                    interaction_of_gender_age = FALSE,
-                    age_cut = 30)
+                    interaction = NULL,
+                    drop_x = NULL)
     {
-      est_dt <- self$data %>%
-        mutate(value = value * scale)
-
-      model_type <- if (interaction_of_gender) {
-        "hetero-gender"
-      } else if (interaction_of_gender_age) {
-        "hetero-gender-age"
+      model_type <- if (is.null(interaction)) {
+        "average effect"
       } else {
-        "ate"
+        "heterogeneous effect"
       }
 
-      if (model_type == "hetero-gender-age") {
-        mean_age <- private$mean_age
+      est_dt <- self$data %>%
+        mutate(value = value * scale) %>%
+        group_by(outcome) %>%
+        nest()
 
-        est_dt <- est_dt %>%
+      est_dt2 <- est_dt
+
+      if (model_type == "average effect") {
+        est_dt2 <- est_dt2 %>%
           mutate(
-            young = if_else(age < age_cut - mean_age, 1, 0),
-            group = case_when(
-              male == 0 & young == 1 ~ 1,
-              male == 0 & young == 0 ~ 2,
-              male == 1 & young == 1 ~ 3,
-              male == 1 & young == 0 ~ 4
-            ),
-            group = factor(
-              group,
-              labels = c(
-                "Young female", "Older female",
-                "Young male", "Older male"
-              )
-            )
-          )
-      } else if (model_type == "hetero-gender") {
-        est_dt <- est_dt %>%
-          mutate(
-            group = male,
-            group = factor(group, labels = c("Female", "Male"))
+            avg = map_dbl(data, ~ private$ctrl_mean(.))
           )
       }
 
-      if (model_type == "ate") {
-        lh <- NULL
+      if (model_type == "average effect") {
+        lh <- FALSE
         model <- private$model
       } else {
-        if (model_type == "hetero-gender") {
-          lh <- c(
-            "treatB",
-            "treatC",
-            "treatD",
-            "treatB + treatB:groupMale",
-            "treatC + treatC:groupMale",
-            "treatD + treatD:groupMale"
-          )
-
-          use_x <- private$covariates
-          use_x_2 <- use_x[!str_detect(use_x, "male")]
-        } else {
-          lh <- c(
-            "treatB",
-            "treatC",
-            "treatD",
-            "treatB + treatB:groupOlder female",
-            "treatC + treatC:groupOlder female",
-            "treatD + treatD:groupOlder female",
-            "treatB + treatB:groupYoung male",
-            "treatC + treatC:groupYoung male",
-            "treatD + treatD:groupYoung male",
-            "treatB + treatB:groupOlder male",
-            "treatC + treatC:groupOlder male",
-            "treatD + treatD:groupOlder male"
-          )
-
-          use_x <- private$covariates
-          use_x_2 <- use_x[!str_detect(use_x, "male|age")]
+        lh <- TRUE
+        use_x <- private$covariates
+        use_x_2 <- use_x[!str_detect(use_x, paste0("^", interaction, "$"))]
+        if (!is.null(drop_x)) {
+          pat <- paste(drop_x, collapse = "|")
+          use_x_2 <- use_x_2[!str_detect(use_x_2, pat)]
         }
-        use_x_2_int <- paste0(use_x_2, ":group")
+        cross_term_x <- paste0(use_x_2, ":", interaction)
+        cross_term_treat <- paste0("treat * ", interaction)
 
         model <- list(
-          unctrl = reformulate("treat * group", "value"),
-          ctrl = reformulate(c("treat * group", use_x_2, use_x_2_int), "value")
+          unctrl = reformulate(cross_term_treat, "value"),
+          ctrl = reformulate(c(cross_term_treat, use_x_2, cross_term_x), "value")
         )
       }
 
-      est <- est_dt %>%
-        group_by(outcome) %>%
-        nest() %>%
+      est <- est_dt2 %>%
         mutate(
-          avg = map_dbl(data, ~ private$ctrl_mean(., model_type)),
           fit_1 = map(data, ~ private$call_lh(., model$unctrl, lh)),
           fit_2 = map(data, ~ private$call_lh(., model$ctrl, lh))
         ) %>%
@@ -203,62 +154,6 @@ Lm <- R6::R6Class("Lm",
         arrange(outcome)
 
       LmFit$new(est, model_type)
-    },
-    fit_subset = function(scale = 1,
-                          gender_age = FALSE,
-                          age_cut = 30,
-                          covariates = TRUE)
-    {
-      model <- if (!covariates) {
-        private$model$unctrl
-      } else {
-        if (!gender_age) {
-          update(private$model$ctrl, . ~ . - male)
-        } else {
-          update(private$model$ctrl, . ~ . - male - age - I(age^2))
-        }
-      }
-
-      est_dt <- self$data %>%
-        mutate(value = value * scale)
-
-      if (!gender_age) {
-        est_dt <- est_dt %>%
-          mutate(
-            group = male,
-            group = factor(group, labels = c("Female", "Male"))
-          )
-      } else {
-        mean_age <- private$mean_age
-
-        est_dt <- est_dt %>%
-          mutate(
-            young = if_else(age < age_cut - mean_age, 1, 0),
-            group = case_when(
-              male == 0 & young == 1 ~ 1,
-              male == 0 & young == 0 ~ 2,
-              male == 1 & young == 1 ~ 3,
-              male == 1 & young == 0 ~ 4
-            ),
-            group = factor(
-              group,
-              labels = c(
-                "Young female", "Older female",
-                "Young male", "Older male"
-              )
-            )
-          )
-      }
-
-      est <- est_dt %>%
-        group_by(outcome, group) %>%
-        nest() %>%
-        mutate(
-          avg = map_dbl(data, ~ private$ctrl_mean(., "ate")),
-          fit = map(data, ~ private$call_lh(., model))
-        )
-
-      LmFitSubset$new(est)
     }
   ),
   private = list(
@@ -268,39 +163,65 @@ Lm <- R6::R6Class("Lm",
     cluster = NULL,
     covariates = "",
     mean_age = 0,
-    call_lh = function(data, model, lh = NULL) {
+    call_lh = function(data, model, lh = FALSE) {
       if (is.null(private$cluster)) {
-        if (is.null(lh)) {
+        if (!lh) {
           lm_robust(model, data = data, se_type = private$se_type)
         } else {
-          lh_robust(model, data = data, se_type = private$se_type, linear_hypothesis = lh)
+          reg <- lm_robust(model, data = data, se_type = private$se_type)
+
+          term <- tidy(reg)$term
+          term <- term[str_detect(term, "treat")]
+          single <- term[!str_detect(term, ":")]
+
+          hypo <- single %>%
+            sapply(function(x) paste(term[str_detect(term, x)], collapse = " + "))
+
+          lh <- hypo %>%
+            map(~ lh_robust(model, data = data, se_type = private$se_type, linear_hypothesis = .)) %>%
+            map(~ .$lh) %>%
+            map(tidy) %>%
+            reduce(bind_rows)
+
+          list(lm_robust = reg, lh = lh)
         }
       } else {
         g <- data[, private$cluster, drop = TRUE]
-        if (is.null(lh)) {
+        if (!lh) {
           lm_robust(model, data = data, se_type = private$se_type, clusters = g)
         } else {
+          reg <- lm_robust(model, data = data, se_type = private$se_type, clusters = g)
+
           lh_robust(model, data = data, se_type = private$se_type, clusters = g, linear_hypothesis = lh)
+
+          term <- tidy(reg)$term
+          term <- term[str_detect(term, "treat")]
+          single <- term[!str_detect(term, ":")]
+
+          hypo <- single %>%
+            sapply(function(x) paste(term[str_detect(term, x)], collapse = " + "))
+
+          lh <- hypo %>%
+            map(~ lh_robust(
+              model,
+              data = data,
+              se_type = private$se_type,
+              clusters = g,
+              linear_hypothesis = .
+            )) %>%
+            map(~ .$lh) %>%
+            map(tidy) %>%
+            reduce(bind_rows)
+
+          list(lm_robust = reg, lh = lh)
         }
       }
     },
-    ctrl_mean = function(data, model_type) {
-      if (model_type == "hetero-gender") {
-        with(
-          subset(data, treat == private$ctrl_arm & male == 0),
-          mean(value)
-        )
-      } else if (model_type == "hetero-gender-age") {
-        with(
-          subset(data, treat == private$ctrl_arm & group == levels(data$group)[1]),
-          mean(value)
-        )
-      } else {
-        with(
-          subset(data, treat == private$ctrl_arm),
-          mean(value)
-        )
-      }
+    ctrl_mean = function(data) {
+      with(
+        subset(data, treat == private$ctrl_arm),
+        mean(value)
+      )
     }
   )
 )
@@ -310,69 +231,16 @@ LmFit <- R6::R6Class("LmFit",
     initialize = function(est, model_type) {
       private$est <- est
       private$type <- model_type
-      private$coef_map_lm <- if (model_type == "ate") {
-        c(
-          "treatB" = "Experimental group B",
-          "treatC" = "Experimental group C",
-          "treatD" = "Experimental group D"
-        )
-      } else if (model_type == "hetero-gender") {
-        c(
-          "treatB" = "Experimental group B",
-          "treatC" = "Experimental group C",
-          "treatD" = "Experimental group D",
-          "groupMale" = "Male",
-          "treatB:groupMale" = "Experimental group B $\\times$ Male",
-          "treatC:groupMale" = "Experimental group C $\\times$ Male",
-          "treatD:groupMale" = "Experimental group D $\\times$ Male"
-        )
-      } else {
-        c(
-          "treatB" = "Experimental group B",
-          "treatC" = "Experimental group C",
-          "treatD" = "Experimental group D",
-          "groupOlder female" = "Older female",
-          "groupYoung male" = "Young male",
-          "groupOlder male" = "Older male",
-          "treatB:groupOlder female" = "Experimental group B $\\times$ Older female",
-          "treatC:groupOlder female" = "Experimental group C $\\times$ Older female",
-          "treatD:groupOlder female" = "Experimental group D $\\times$ Older female",
-          "treatB:groupYoung male" = "Experimental group B $\\times$ Young male",
-          "treatC:groupYoung male" = "Experimental group C $\\times$ Young male",
-          "treatD:groupYoung male" = "Experimental group D $\\times$ Young male",
-          "treatB:groupOlder male" = "Experimental group B $\\times$ Older male",
-          "treatC:groupOlder male" = "Experimental group C $\\times$ Older male",
-          "treatD:groupOlder male" = "Experimental group D $\\times$ Older male"
-        )
-      }
-      private$coef_map_lh <- if (model_type == "hetero-gender") {
-        c(
-          "treatB" = "Treatment B_Female",
-          "treatC" = "Treatment C_Female",
-          "treatD" = "Treatment D_Female",
-          "treatB + treatB:groupMale" = "Treatment B_Male",
-          "treatC + treatC:groupMale" = "Treatment C_Male",
-          "treatD + treatD:groupMale" = "Treatment D_Male"
-        )
-      } else {
-        c(
-          "treatB" = "Treatment B_Young female",
-          "treatC" = "Treatment C_Young female",
-          "treatD" = "Treatment D_Young female",
-          "treatB + treatB:groupOlder female" = "Treatment B_Older female",
-          "treatC + treatC:groupOlder female" = "Treatment C_Older female",
-          "treatD + treatD:groupOlder female" = "Treatment D_Older female",
-          "treatB + treatB:groupYoung male" = "Treatment B_Young male",
-          "treatC + treatC:groupYoung male" = "Treatment C_Young male",
-          "treatD + treatD:groupYoung male" = "Treatment D_Young male",
-          "treatB + treatB:groupOlder male" = "Treatment B_Older male",
-          "treatC + treatC:groupOlder male" = "Treatment C_Older male",
-          "treatD + treatD:groupOlder male" = "Treatment D_Older male"
-        )
-      }
     },
     get_est = function() private$est,
     kable_reg = function( title = "",
+                          coef_map_lh = NULL,
+                          coef_map_lm = c(
+                            "treatB" = "Experimental group B",
+                            "treatC" = "Experimental group C",
+                            "treatD" = "Experimental group D"
+                          ),
+                          label_lh = "Linear combination test",
                           notes = "",
                           font_size = 9,
                           digit = 2,
@@ -380,7 +248,7 @@ LmFit <- R6::R6Class("LmFit",
     {
       res <- private$est
 
-      if (private$type == "ate") {
+      if (private$type == "average effect") {
         avg_format <- paste0("%1.", digit, "f")
 
         add_tab <- data.frame(
@@ -390,29 +258,61 @@ LmFit <- R6::R6Class("LmFit",
           )
         )
       } else {
-        add_tab <- data.frame(
-          rbind(c("Covariates", res$covariate))
-        )
+        lh_summary <- res %>%
+          pull(fit) %>%
+          map(~ .$lh) %>%
+          map(function(x) {
+            x %>%
+              mutate(
+                p.value_label = case_when(
+                  p.value < 0.01 ~ "***",
+                  p.value < 0.05 ~ "**",
+                  p.value < 0.1 ~ "*",
+                  TRUE ~ ""
+                ),
+                estimate_label = sprintf("%1.2f%s", estimate, p.value_label),
+                se_label = sprintf("(%1.2f)", std.error)
+              ) %>%
+              select(term, estimate = estimate_label, se = se_label) %>%
+              pivot_longer(cols = c(estimate, se), names_to = "statistic") %>%
+              mutate(term = if_else(statistic == "se", "", term)) %>%
+              select(-statistic)
+          })
+
+        lh_summary[-1] <- lh_summary[-1] %>%
+          map(~ select(., -term))
+
+        lh_tab <- reduce(lh_summary, bind_cols)
+        if (!is.null(coef_map_lh)) {
+          lh_tab <- lh_tab %>%
+            mutate(term = dplyr::recode(term, !!!coef_map_lh))
+        }
+
+        add_tab <- data.frame(rbind(
+          lh_tab,
+          c("Covariates", res$covariate)
+        ))
       }
 
       attr(add_tab, "position") <- seq(
-        length(private$coef_map_lm) * 2 + 1,
+        length(coef_map_lm) * 2 + 1,
         length.out = nrow(add_tab)
       )
 
       fit <- pull(res, fit)
-      if (private$type != "ate") fit <- map(fit, ~ .$lm_robust)
+      if (private$type != "average effect") fit <- map(fit, ~ .$lm_robust)
 
       kbl <- fit %>%
         modelsummary(
           title = title,
-          coef_map = private$coef_map_lm,
+          coef_map = coef_map_lm,
           stars = c("***" = .01, "**" = .05, "*" = .1),
           gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
           align = paste(c("l", rep("c", nrow(res))), collapse = ""),
           add_rows = add_tab,
           fmt = digit,
-          escape = FALSE
+          escape = FALSE,
+          output = "kableExtra"
         )
 
       if (hold) {
@@ -431,6 +331,20 @@ LmFit <- R6::R6Class("LmFit",
       kbl <- kbl %>%
         kableExtra::add_header_above(lab1)
 
+      if (private$type != "average effect") {
+        pos <- base::attr(add_tab, "position")
+
+        kbl <- kbl %>%
+          kableExtra::group_rows(
+            label_lh,
+            pos[1],
+            pos[length(pos) - 1],
+            bold = FALSE,
+            italic = TRUE,
+            escape = FALSE
+          )
+      }
+
       kbl %>%
         kableExtra::footnote(
           general_title = "",
@@ -441,94 +355,6 @@ LmFit <- R6::R6Class("LmFit",
           threeparttable = TRUE,
           escape = FALSE
         )
-    },
-    kable_lh = function(title = "",
-                        notes = "",
-                        font_size = 9,
-                        digit = 2,
-                        hold = FALSE,
-                        output_data_frame = FALSE)
-    {
-      if (private$type == "ate") stop("No linear combination test!")
-
-      res <- private$est
-      add_tab <- data.frame(rbind(c("", "Covariates", res$covariate)))
-      names(add_tab) <- c("group", "term", paste0("(", seq(length(res$covariate)), ")"))
-
-      attr(add_tab, "position") <- seq(
-        length(private$coef_map_lh) * 2 + 1,
-        length.out = nrow(add_tab)
-      )
-
-      fit <- res %>%
-        pull(fit) %>%
-        map(~ .$lh)
-
-      tbl <- fit %>%
-        modelsummary(
-          coef_map = private$coef_map_lh,
-          estimate = "{estimate} ({std.error}){stars}",
-          statistic = NULL,
-          stars = c("***" = .01, "**" = .05, "*" = .1),
-          fmt = digit,
-          output = "data.frame"
-        ) %>%
-        filter(part == "estimates") %>%
-        select(-part)
-
-      tbl2 <- tbl %>%
-        mutate(
-          group = str_split(term, "_", simplify = TRUE)[, 2],
-          group = if_else(str_detect(term, "Treatment B") & statistic == "estimate", group, ""),
-          term = str_split(term, "_", simplify = TRUE)[, 1],
-          term = if_else(statistic == "estimate", str_remove(term, "Treatment "), "")
-        ) %>%
-        select(-statistic) %>%
-        select(group, term, everything()) %>%
-        bind_rows(add_tab)
-
-      if (output_data_frame) {
-        tbl2
-      } else {
-        kbl <- tbl2 %>%
-          knitr::kable(
-            caption = title,
-            col.names = c("Group", "Treatment", names(tbl)[-c(1:2)]),
-            align = paste(c("ll", rep("c", nrow(res))), collapse = ""),
-            booktabs = TRUE,
-            linesep = ""
-          )
-
-        if (hold) {
-          kbl <- kbl %>%
-            kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
-        } else {
-          kbl <- kbl %>%
-            kableExtra::kable_styling(font_size = font_size)
-        }
-
-        label <- c(" ", " ", as.character(res$outcome))
-        label_structure <- rle(label)
-        lab1 <- label_structure$lengths
-        names(lab1) <- label_structure$values
-
-        kbl <- kbl %>%
-          kableExtra::add_header_above(lab1)
-
-        kbl <- kbl %>%
-          kableExtra::row_spec(nrow(tbl), hline_after = TRUE)
-
-        kbl %>%
-          kableExtra::footnote(
-            general_title = "",
-            general = paste(
-              "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
-              notes
-            ),
-            threeparttable = TRUE,
-            escape = FALSE
-          )
-      }
     },
     plot_ate = function(segment_margin = 3,
                         add_segment_margin = 7,
@@ -548,7 +374,7 @@ LmFit <- R6::R6Class("LmFit",
     {
       wocov <- subset(private$est, covariate == "")
 
-      if (private$type == "ate") {
+      if (private$type == "average effect") {
         est <- wocov %>%
           mutate(
             tidy = map(fit, broom::tidy),
@@ -579,7 +405,7 @@ LmFit <- R6::R6Class("LmFit",
           select(outcome, group, treat, p.value)
       }
 
-      if (private$type == "ate") {
+      if (private$type == "average effect") {
         wocov <- wocov %>%
           mutate(data = map(data, ~ mutate(., group = "Full sample")))
       }
@@ -655,7 +481,7 @@ LmFit <- R6::R6Class("LmFit",
         labs(x = xlab, y = "Sample average") +
         my_theme_classic(size = base_size, strip_hjust = 0.5)
 
-      if (private$type == "ate") {
+      if (private$type == "average effect") {
         plt + facet_wrap(~ outcome)
       } else {
         plt + facet_grid(group ~ outcome)
@@ -669,121 +495,3 @@ LmFit <- R6::R6Class("LmFit",
     coef_map_lh = NULL
   )
 )
-
-LmFitSubset <- R6::R6Class("LmFitSubset",
-  public = list(
-    initialize = function(est) private$est <- est,
-    get_est = function() private$est,
-    kable = function(title = "",
-                    notes = "",
-                    font_size = 9,
-                    digit = 2,
-                    hold = FALSE)
-    {
-      est <- private$est
-
-      coef_map <- c(
-        "treatB" = "Treatment B",
-        "treatC" = "Treatment C",
-        "treatD" = "Treatment D"
-      )
-
-      avg_format <- paste0("%1.", digit, "f")
-
-      tbl_list <- list()
-
-      for (g in levels(est$group)) {
-        use <- est[est$group == g, ]
-
-        add_tab <- data.frame(
-          rbind(
-            c("Control average", sprintf(avg_format, use$avg))
-          )
-        )
-        names(add_tab) <- c("term", paste0("(", seq(nrow(use)), ")"))
-
-        tbl <- use %>%
-          pull(fit) %>%
-          modelsummary(
-            coef_map = coef_map,
-            estimate = "{estimate} ({std.error}){stars}",
-            statistic = NULL,
-            stars = c("***" = .01, "**" = .05, "*" = .1),
-            gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type",
-            add_rows = add_tab,
-            fmt = digit,
-            output = "data.frame"
-          )
-
-        tbl_part <- list(
-          estimates = tbl[tbl$part == "estimates", ],
-          manual = tbl[tbl$part == "manual", ],
-          gof = tbl[tbl$part == "gof", ]
-        )
-
-        tbl2 <- tbl_part %>%
-          reduce(bind_rows) %>%
-          mutate(
-            term = if_else(statistic == "std.error", "", term),
-            group = g
-          ) %>%
-          select(-part, -statistic) %>%
-          select(group, everything())
-
-        tbl_list <- append(tbl_list, list(tbl2))
-      }
-
-      tbl3 <- tbl_list %>%
-        reduce(bind_rows)
-
-      kbl <- tbl3 %>%
-        select(-group) %>%
-        knitr::kable(
-          caption = title,
-          col.names = c("", names(tbl3)[-c(1:2)]),
-          align = paste(c("l", rep("c", ncol(tbl3) - 2)), collapse = ""),
-          booktabs = TRUE,
-          linesep = ""
-        )
-
-      if (hold) {
-        kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size, latex_options = "HOLD_position")
-      } else {
-        kbl <- kbl %>%
-          kableExtra::kable_styling(font_size = font_size)
-      }
-
-      label <- c(" ", as.character(unique(est$outcome)))
-      label_structure <- rle(label)
-      lab1 <- label_structure$lengths
-      names(lab1) <- label_structure$values
-
-      kbl <- kbl %>% kableExtra::add_header_above(lab1)
-
-      for (g in levels(est$group)) {
-        pos <- which(tbl3$group == g)
-        start <- min(pos)
-        end <- max(pos)
-
-        kbl <- kbl %>% group_rows(g, start, end)
-      }
-
-      kbl %>%
-        kableExtra::footnote(
-          general_title = "",
-          general = paste(
-            "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$.",
-            "The robust standard errors are in parentheses.",
-            notes
-          ),
-          threeparttable = TRUE,
-          escape = FALSE
-        )
-    }
-  ),
-  private = list(
-    est = NULL
-  )
-)
-
