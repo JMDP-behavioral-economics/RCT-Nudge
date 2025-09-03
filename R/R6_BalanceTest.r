@@ -109,7 +109,8 @@ BalanceTest <- R6::R6Class("BalanceTest",
           col.names = label,
           align = paste(c("l", rep("c", length(label))), collapse = ""),
           booktabs = TRUE,
-          linesep = ""
+          linesep = "",
+          escape = FALSE
         )
 
       if (hold) {
