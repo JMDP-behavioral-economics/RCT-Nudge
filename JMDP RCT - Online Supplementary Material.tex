@@ -179,26 +179,27 @@ Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{\# Coordination $>$ 1} & \multicolumn{2}{c}{Skipped CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{\# Coordination $>$ 1} & \multicolumn{3}{c}{Skipped CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-MatchMessage group & \num{-0.18} & \num{1.04} & \num{0.79} & \num{0.67}\\
- & (\num{1.29}) & (\num{1.38}) & (\num{0.54}) & (\num{0.56})\\
-CoordMessage group & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
- & (\num{1.34}) & (\num{1.30}) & (\num{0.56}) & (\num{0.53})\\
-BothMessage group & \num{-1.91} & \num{-1.28} & \num{1.11}* & \num{1.27}**\\
- & (\num{1.32}) & (\num{1.29}) & (\num{0.57}) & (\num{0.54})\\
+MatchMessage group & \num{-0.18} & \num{1.04} & \num{1.20} & \num{0.79} & \num{0.67} & \num{0.73}\\
+ & (\num{1.94}) & (\num{1.71}) & (\num{1.87}) & (\num{0.74}) & (\num{0.69}) & (\num{0.57})\\
+CoordMessage group & \num{1.69} & \num{2.04} & \num{2.05} & \num{0.76} & \num{0.50} & \num{0.54}\\
+ & (\num{1.67}) & (\num{1.73}) & (\num{1.67}) & (\num{0.71}) & (\num{0.64}) & (\num{0.65})\\
+BothMessage group & \num{-1.91} & \num{-1.28} & \num{-1.04} & \num{1.11} & \num{1.27} & \num{1.24}\\
+ & (\num{1.90}) & (\num{1.93}) & (\num{1.92}) & (\num{1.01}) & (\num{0.94}) & (\num{0.80})\\
 \midrule
-Control average & NaN & NaN & NaN & NaN\\
-Covariates &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Control average & 36.61 & 36.61 & 36.61 & 3.87 & 3.87 & 3.87\\
+Covariates &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We excluded the number of past coordinations in model (2).
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We excluded the number of past coordinations in model (2).
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -209,22 +210,23 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}cc}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}ccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
 \midrule
-MatchMessage group & \num{1.19} & \num{1.18}\\
- & {}[\num{1.05}, \num{1.34}] & {}[\num{1.02}, \num{1.36}]\\
-CoordMessage group & \num{1.07} & \num{1.03}\\
- & {}[\num{0.94}, \num{1.22}] & {}[\num{0.90}, \num{1.19}]\\
-BothMessage group & \num{1.14} & \num{1.11}\\
- & {}[\num{1.01}, \num{1.30}] & {}[\num{0.97}, \num{1.28}]\\
+MatchMessage group & \num{1.19} & \num{1.18} & \num{1.11}\\
+ & {}[\num{1.05}, \num{1.34}] & {}[\num{1.02}, \num{1.36}] & {}[\num{0.96}, \num{1.29}]\\
+CoordMessage group & \num{1.07} & \num{1.03} & \num{1.02}\\
+ & {}[\num{0.94}, \num{1.22}] & {}[\num{0.90}, \num{1.19}] & {}[\num{0.89}, \num{1.17}]\\
+BothMessage group & \num{1.14} & \num{1.11} & \num{1.07}\\
+ & {}[\num{1.01}, \num{1.30}] & {}[\num{0.97}, \num{1.28}] & {}[\num{0.93}, \num{1.24}]\\
 \midrule
-Covariates &  & X\\
-Num.Obs. & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-6083.783} & \num{-5306.181}\\
+Covariates &  & X & X\\
+Month FE &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
+Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -239,22 +241,23 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181}\\
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}cccccc}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}ccccccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive intention} & \multicolumn{2}{c}{No endogenous dropout} & \multicolumn{2}{c}{No exogenous dropout} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Positive intention} & \multicolumn{3}{c}{No endogenous dropout} & \multicolumn{3}{c}{No exogenous dropout} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-MatchMessage group & \num{2.31}* & \num{1.86} & \num{0.97} & \num{1.14} & \num{-0.17} & \num{-0.44}\\
- & (\num{1.33}) & (\num{1.40}) & (\num{1.20}) & (\num{1.27}) & (\num{0.57}) & (\num{0.60})\\
-CoordMessage group & \num{-0.44} & \num{-0.05} & \num{2.55}** & \num{1.50} & \num{-0.93} & \num{-0.96}\\
- & (\num{1.37}) & (\num{1.33}) & (\num{1.22}) & (\num{1.19}) & (\num{0.60}) & (\num{0.60})\\
-BothMessage group & \num{0.59} & \num{0.24} & \num{2.27}* & \num{1.97} & \num{-0.51} & \num{-0.61}\\
- & (\num{1.37}) & (\num{1.33}) & (\num{1.22}) & (\num{1.20}) & (\num{0.59}) & (\num{0.59})\\
+MatchMessage group & \num{2.31}* & \num{1.86}* & \num{1.27} & \num{0.97} & \num{1.14} & \num{0.93} & \num{-0.17} & \num{-0.44} & \num{-0.57}\\
+ & (\num{1.33}) & (\num{1.07}) & (\num{0.93}) & (\num{1.02}) & (\num{1.09}) & (\num{0.92}) & (\num{0.83}) & (\num{0.76}) & (\num{0.51})\\
+CoordMessage group & \num{-0.44} & \num{-0.05} & \num{-0.31} & \num{2.55}** & \num{1.50} & \num{1.46} & \num{-0.93} & \num{-0.96} & \num{-0.89}*\\
+ & (\num{1.43}) & (\num{1.22}) & (\num{1.18}) & (\num{1.24}) & (\num{1.21}) & (\num{1.03}) & (\num{0.66}) & (\num{0.63}) & (\num{0.49})\\
+BothMessage group & \num{0.59} & \num{0.24} & \num{0.12} & \num{2.27}** & \num{1.97}* & \num{1.92}* & \num{-0.51} & \num{-0.61} & \num{-0.96}**\\
+ & (\num{1.61}) & (\num{1.37}) & (\num{1.09}) & (\num{1.04}) & (\num{1.14}) & (\num{1.04}) & (\num{0.72}) & (\num{0.65}) & (\num{0.42})\\
 \midrule
-Control average & 54.91 & 54.91 & 71.91 & 71.91 & 95.42 & 95.42\\
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Control average & 54.91 & 54.91 & 54.91 & 71.91 & 71.91 & 71.91 & 95.42 & 95.42 & 95.42\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -279,22 +282,23 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}cccccc}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}ccccccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{0--7 days} & \multicolumn{2}{c}{8--12 days} & \multicolumn{2}{c}{13--85 days} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{0--7 days} & \multicolumn{3}{c}{8--12 days} & \multicolumn{3}{c}{13--85 days} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-MatchMessage group & \num{-1.14} & \num{-0.13} & \num{1.58} & \num{1.44} & \num{1.88}** & \num{0.56}\\
- & (\num{1.11}) & (\num{1.12}) & (\num{1.13}) & (\num{1.21}) & (\num{0.85}) & (\num{0.89})\\
-CoordMessage group & \num{-1.13} & \num{-1.47} & \num{1.86} & \num{2.44}** & \num{-1.17} & \num{-1.02}\\
- & (\num{1.14}) & (\num{1.04}) & (\num{1.16}) & (\num{1.15}) & (\num{0.82}) & (\num{0.82})\\
-BothMessage group & \num{-1.64} & \num{-2.15}** & \num{1.74} & \num{2.02}* & \num{0.48} & \num{0.36}\\
- & (\num{1.13}) & (\num{1.03}) & (\num{1.16}) & (\num{1.15}) & (\num{0.85}) & (\num{0.85})\\
+MatchMessage group & \num{-1.14} & \num{-0.13} & \num{-0.34} & \num{1.58} & \num{1.44} & \num{0.83} & \num{1.88} & \num{0.56} & \num{0.78}\\
+ & (\num{2.39}) & (\num{3.09}) & (\num{2.47}) & (\num{1.70}) & (\num{2.14}) & (\num{2.53}) & (\num{2.17}) & (\num{1.79}) & (\num{1.14})\\
+CoordMessage group & \num{-1.13} & \num{-1.47} & \num{-1.40} & \num{1.86} & \num{2.44} & \num{2.27} & \num{-1.17} & \num{-1.02} & \num{-1.18}\\
+ & (\num{3.03}) & (\num{2.74}) & (\num{2.51}) & (\num{2.35}) & (\num{2.29}) & (\num{2.46}) & (\num{1.49}) & (\num{1.36}) & (\num{1.27})\\
+BothMessage group & \num{-1.64} & \num{-2.15} & \num{-2.09} & \num{1.74} & \num{2.02} & \num{1.56} & \num{0.48} & \num{0.36} & \num{0.65}\\
+ & (\num{2.03}) & (\num{2.44}) & (\num{2.15}) & (\num{1.87}) & (\num{1.75}) & (\num{1.89}) & (\num{1.42}) & (\num{1.49}) & (\num{1.03})\\
 \midrule
-Control average & 22.37 & 22.37 & 22.17 & 22.17 & 10.37 & 10.37\\
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Control average & 22.37 & 22.37 & 22.37 & 22.17 & 22.17 & 22.17 & 10.37 & 10.37 & 10.37\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -309,37 +313,38 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{30em}cccc}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{30em}cccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} & \multicolumn{2}{c}{Donation} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-MatchMessage group & \num{2.73} & \num{1.90} & \num{-0.47} & \num{-0.77}\\
- & (\num{1.78}) & (\num{1.82}) & (\num{0.74}) & (\num{0.75})\\
-CoordMessage group & \num{1.60} & \num{-1.02} & \num{0.24} & \num{-0.12}\\
- & (\num{1.81}) & (\num{1.70}) & (\num{0.80}) & (\num{0.80})\\
-BothMessage group & \num{4.91}*** & \num{2.74} & \num{-0.43} & \num{-0.80}\\
- & (\num{1.83}) & (\num{1.74}) & (\num{0.75}) & (\num{0.75})\\
-Male & \num{4.58}*** & \num{3.37}* & \num{2.17}*** & \num{2.32}**\\
- & (\num{1.67}) & (\num{1.84}) & (\num{0.80}) & (\num{0.93})\\
-MatchMessage group $\times$ Male & \num{0.52} & \num{1.04} & \num{0.90} & \num{1.07}\\
- & (\num{2.31}) & (\num{2.36}) & (\num{1.07}) & (\num{1.15})\\
-CoordMessage group $\times$ Male & \num{-0.71} & \num{2.38} & \num{-0.38} & \num{0.03}\\
- & (\num{2.35}) & (\num{2.18}) & (\num{1.12}) & (\num{1.11})\\
-BothMessage group $\times$ Male & \num{-4.01}* & \num{-1.92} & \num{0.89} & \num{1.19}\\
- & (\num{2.37}) & (\num{2.22}) & (\num{1.10}) & (\num{1.10})\\
+MatchMessage group & \num{2.73}* & \num{1.90} & \num{0.91} & \num{-0.47} & \num{-0.77}* & \num{-1.10}*\\
+ & (\num{1.44}) & (\num{1.67}) & (\num{1.36}) & (\num{0.43}) & (\num{0.43}) & (\num{0.57})\\
+CoordMessage group & \num{1.60} & \num{-1.02} & \num{-1.45} & \num{0.24} & \num{-0.12} & \num{-0.24}\\
+ & (\num{1.52}) & (\num{1.57}) & (\num{1.21}) & (\num{0.66}) & (\num{0.69}) & (\num{0.48})\\
+BothMessage group & \num{4.91}*** & \num{2.74} & \num{2.03} & \num{-0.43} & \num{-0.80} & \num{-1.06}**\\
+ & (\num{1.51}) & (\num{1.93}) & (\num{1.50}) & (\num{0.44}) & (\num{0.54}) & (\num{0.47})\\
+Male & \num{4.58}** & \num{3.37}** & \num{3.21}** & \num{2.17}*** & \num{2.32}*** & \num{2.27}***\\
+ & (\num{1.88}) & (\num{1.50}) & (\num{1.58}) & (\num{0.67}) & (\num{0.73}) & (\num{0.74})\\
+MatchMessage group $\times$ Male & \num{0.52} & \num{1.04} & \num{1.10} & \num{0.90} & \num{1.07} & \num{1.01}\\
+ & (\num{2.18}) & (\num{1.96}) & (\num{2.01}) & (\num{0.79}) & (\num{0.94}) & (\num{0.96})\\
+CoordMessage group $\times$ Male & \num{-0.71} & \num{2.38}* & \num{2.68}* & \num{-0.38} & \num{0.03} & \num{0.13}\\
+ & (\num{1.93}) & (\num{1.44}) & (\num{1.51}) & (\num{0.83}) & (\num{0.84}) & (\num{0.83})\\
+BothMessage group $\times$ Male & \num{-4.01} & \num{-1.92} & \num{-1.63} & \num{0.89} & \num{1.19} & \num{1.30}\\
+ & (\num{2.60}) & (\num{2.34}) & (\num{2.40}) & (\num{0.92}) & (\num{0.91}) & (\num{0.89})\\
 \midrule
 \addlinespace[0.3em]
-\multicolumn{5}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ Male}}\\
-\hspace{1em}MatchMessage group & 3.25** & 2.94** & 0.43 & 0.30\\
-\hspace{1em} & (1.48) & (1.50) & (0.77) & (0.87)\\
-\hspace{1em}CoordMessage group & 0.90 & 1.36 & -0.14 & -0.09\\
-\hspace{1em} & (1.50) & (1.37) & (0.78) & (0.77)\\
-\hspace{1em}BothMessage group & 0.89 & 0.82 & 0.45 & 0.39\\
-\hspace{1em} & (1.51) & (1.37) & (0.80) & (0.80)\\
-Covariates &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\multicolumn{7}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ Male}}\\
+\hspace{1em}MatchMessage group & 3.25* & 2.94** & 2.01* & 0.43 & 0.30 & -0.08\\
+\hspace{1em} & (1.90) & (1.48) & (1.09) & (0.64) & (0.76) & (0.60)\\
+\hspace{1em}CoordMessage group & 0.90 & 1.36 & 1.23 & -0.14 & -0.09 & -0.11\\
+\hspace{1em} & (1.96) & (1.27) & (1.12) & (0.72) & (0.63) & (0.54)\\
+\hspace{1em}BothMessage group & 0.89 & 0.82 & 0.40 & 0.45 & 0.39 & 0.24\\
+\hspace{1em} & (2.33) & (2.05) & (1.35) & (1.06) & (1.08) & (0.75)\\
+\hspace{1em}Covariates &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -354,37 +359,38 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{30em}cccc}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{30em}cccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} & \multicolumn{2}{c}{Donation} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-MatchMessage group & \num{4.20}** & \num{3.91}** & \num{-0.14} & \num{0.39}\\
- & (\num{2.04}) & (\num{1.88}) & (\num{1.03}) & (\num{1.09})\\
-CoordMessage group & \num{4.02}* & \num{2.70} & \num{0.04} & \num{-0.19}\\
- & (\num{2.07}) & (\num{1.75}) & (\num{1.05}) & (\num{1.03})\\
-BothMessage group & \num{3.80}* & \num{0.95} & \num{0.30} & \num{-0.10}\\
- & (\num{2.12}) & (\num{1.75}) & (\num{1.08}) & (\num{1.07})\\
-First-time coordination & \num{-9.78}*** & \num{-1.07} & \num{-1.92}** & \num{0.35}\\
- & (\num{1.77}) & (\num{2.12}) & (\num{0.90}) & (\num{1.14})\\
-MatchMessage group $\times$ First-time coordination & \num{-1.69} & \num{-2.19} & \num{0.41} & \num{-0.80}\\
- & (\num{2.45}) & (\num{2.38}) & (\num{1.22}) & (\num{1.31})\\
-CoordMessage group $\times$ First-time coordination & \num{-4.86}** & \num{-3.62} & \num{-0.09} & \num{0.05}\\
- & (\num{2.47}) & (\num{2.21}) & (\num{1.24}) & (\num{1.23})\\
-BothMessage group $\times$ First-time coordination & \num{-1.86} & \num{0.94} & \num{-0.28} & \num{0.02}\\
- & (\num{2.52}) & (\num{2.22}) & (\num{1.27}) & (\num{1.26})\\
+MatchMessage group & \num{4.20} & \num{3.91}* & \num{2.98}* & \num{-0.14} & \num{0.39} & \num{0.00}\\
+ & (\num{3.08}) & (\num{2.37}) & (\num{1.75}) & (\num{0.95}) & (\num{0.78}) & (\num{0.88})\\
+CoordMessage group & \num{4.02} & \num{2.70} & \num{2.46} & \num{0.04} & \num{-0.19} & \num{-0.26}\\
+ & (\num{3.16}) & (\num{2.37}) & (\num{2.11}) & (\num{0.86}) & (\num{0.76}) & (\num{0.78})\\
+BothMessage group & \num{3.80} & \num{0.95} & \num{0.57} & \num{0.30} & \num{-0.10} & \num{-0.26}\\
+ & (\num{3.41}) & (\num{2.60}) & (\num{1.82}) & (\num{1.01}) & (\num{1.20}) & (\num{0.99})\\
+First-time coordination & \num{-9.78}*** & \num{-1.07} & \num{-1.00} & \num{-1.92}* & \num{0.35} & \num{0.35}\\
+ & (\num{2.89}) & (\num{2.11}) & (\num{2.17}) & (\num{0.99}) & (\num{1.21}) & (\num{1.22})\\
+MatchMessage group $\times$ First-time coordination & \num{-1.69} & \num{-2.19} & \num{-2.16} & \num{0.41} & \num{-0.80} & \num{-0.76}\\
+ & (\num{3.10}) & (\num{2.28}) & (\num{2.35}) & (\num{1.38}) & (\num{1.31}) & (\num{1.31})\\
+CoordMessage group $\times$ First-time coordination & \num{-4.86} & \num{-3.62} & \num{-3.59} & \num{-0.09} & \num{0.05} & \num{0.08}\\
+ & (\num{3.31}) & (\num{2.56}) & (\num{2.62}) & (\num{1.08}) & (\num{0.98}) & (\num{0.99})\\
+BothMessage group $\times$ First-time coordination & \num{-1.86} & \num{0.94} & \num{0.72} & \num{-0.28} & \num{0.02} & \num{-0.04}\\
+ & (\num{3.67}) & (\num{2.27}) & (\num{2.32}) & (\num{1.27}) & (\num{1.16}) & (\num{1.19})\\
 \midrule
 \addlinespace[0.3em]
-\multicolumn{5}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ First-Time Coordination}}\\
-\hspace{1em}MatchMessage group & 2.51* & 1.72 & 0.27 & -0.41\\
-\hspace{1em} & (1.34) & (1.47) & (0.65) & (0.72)\\
-\hspace{1em}CoordMessage group & -0.83 & -0.92 & -0.05 & -0.14\\
-\hspace{1em} & (1.35) & (1.35) & (0.66) & (0.66)\\
-\hspace{1em}BothMessage group & 1.94 & 1.89 & 0.01 & -0.08\\
-\hspace{1em} & (1.36) & (1.37) & (0.66) & (0.66)\\
-Covariates &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\multicolumn{7}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ First-Time Coordination}}\\
+\hspace{1em}MatchMessage group & 2.51*** & 1.72 & 0.82 & 0.27 & -0.41 & -0.76\\
+\hspace{1em} & (0.79) & (1.05) & (1.01) & (0.69) & (0.79) & (0.64)\\
+\hspace{1em}CoordMessage group & -0.83 & -0.92 & -1.13 & -0.05 & -0.14 & -0.18\\
+\hspace{1em} & (1.15) & (1.12) & (1.09) & (0.69) & (0.66) & (0.42)\\
+\hspace{1em}BothMessage group & 1.94 & 1.89 & 1.30 & 0.01 & -0.08 & -0.31\\
+\hspace{1em} & (1.61) & (1.49) & (1.01) & (0.94) & (0.84) & (0.60)\\
+\hspace{1em}Covariates &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -399,22 +405,23 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
+\begin{tabular}[t]{lccccccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Donor selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Donor selection} & \multicolumn{3}{c}{Final consent} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-MatchMessage group & \num{1.03} & \num{0.95} & \num{1.05} & \num{0.98} & \num{1.03} & \num{0.97}\\
- & {}[\num{0.83}, \num{1.28}] & {}[\num{0.75}, \num{1.21}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.76}, \num{1.26}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.74}, \num{1.29}]\\
-CoordMessage group & \num{0.99} & \num{0.96} & \num{1.01} & \num{0.99} & \num{1.00} & \num{0.98}\\
- & {}[\num{0.79}, \num{1.24}] & {}[\num{0.76}, \num{1.21}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.77}, \num{1.26}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.75}, \num{1.27}]\\
-BothMessage group & \num{1.09} & \num{1.06} & \num{1.12} & \num{1.10} & \num{1.02} & \num{0.99}\\
- & {}[\num{0.87}, \num{1.35}] & {}[\num{0.84}, \num{1.32}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.87}, \num{1.39}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.76}, \num{1.29}]\\
+MatchMessage group & \num{1.03} & \num{0.95} & \num{0.89} & \num{1.05} & \num{0.98} & \num{0.90} & \num{1.03} & \num{0.97} & \num{0.90}\\
+ & {}[\num{0.83}, \num{1.28}] & {}[\num{0.75}, \num{1.21}] & {}[\num{0.70}, \num{1.14}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.76}, \num{1.26}] & {}[\num{0.70}, \num{1.17}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.74}, \num{1.29}] & {}[\num{0.68}, \num{1.19}]\\
+CoordMessage group & \num{0.99} & \num{0.96} & \num{0.95} & \num{1.01} & \num{0.99} & \num{0.98} & \num{1.00} & \num{0.98} & \num{0.97}\\
+ & {}[\num{0.79}, \num{1.24}] & {}[\num{0.76}, \num{1.21}] & {}[\num{0.75}, \num{1.20}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.77}, \num{1.26}] & {}[\num{0.77}, \num{1.25}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.75}, \num{1.27}] & {}[\num{0.74}, \num{1.26}]\\
+BothMessage group & \num{1.09} & \num{1.06} & \num{1.02} & \num{1.12} & \num{1.10} & \num{1.06} & \num{1.02} & \num{0.99} & \num{0.96}\\
+ & {}[\num{0.87}, \num{1.35}] & {}[\num{0.84}, \num{1.32}] & {}[\num{0.81}, \num{1.28}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.87}, \num{1.39}] & {}[\num{0.83}, \num{1.35}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.76}, \num{1.29}] & {}[\num{0.73}, \num{1.25}]\\
 \midrule
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2410.035} & \num{-2283.231} & \num{-2045.363} & \num{-1954.414}\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2454.591} & \num{-2410.035} & \num{-2283.231} & \num{-2272.377} & \num{-2045.363} & \num{-1954.414} & \num{-1944.719}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -429,34 +436,35 @@ Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2410.035} & \num{-2283.231}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccc}
+\begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Donor selection} \\
-\cmidrule(l{3pt}r{3pt}){2-5}
-  & (1) & (2) & (3) & (4)\\
+\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Donor selection} \\
+\cmidrule(l{3pt}r{3pt}){2-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-(Intercept) & \num{38.53}*** & \num{19.85} & \num{30.94}** & \num{12.68}\\
- & (\num{8.33}) & (\num{30.13}) & (\num{14.84}) & (\num{32.18})\\
-Male & \num{8.76}** & \num{8.71}** & \num{8.22}** & \num{8.16}**\\
- & (\num{3.93}) & (\num{3.93}) & (\num{3.96}) & (\num{3.96})\\
-Age & \num{-0.34}* & \num{0.75} & \num{-0.33}* & \num{0.73}\\
- & (\num{0.20}) & (\num{1.68}) & (\num{0.20}) & (\num{1.68})\\
-Age (squared) &  & \num{-0.01} &  & \num{-0.01}\\
- &  & (\num{0.02}) &  & (\num{0.02})\\
-\# coordination experiences & \num{-1.83} & \num{-1.94}* & \num{-1.92}* & \num{-2.03}*\\
- & (\num{1.16}) & (\num{1.16}) & (\num{1.15}) & (\num{1.16})\\
-\# holidays &  &  & \num{1.76} & \num{1.76}\\
- &  &  & (\num{2.69}) & (\num{2.70})\\
-\# listed hospitals &  &  & \num{14.22} & \num{14.53}\\
- &  &  & (\num{16.20}) & (\num{16.19})\\
-\# listed hospitals with PBSC collection &  &  & \num{-8.52} & \num{-7.57}\\
- &  &  & (\num{31.89}) & (\num{31.92})\\
-\# listed hospitals with BM collection &  &  & \num{-22.78} & \num{-23.74}\\
- &  &  & (\num{37.39}) & (\num{37.34})\\
+(Intercept) & \num{38.53}*** & \num{19.85} & \num{30.94}** & \num{12.68} &  & \\
+ & (\num{8.33}) & (\num{30.13}) & (\num{14.84}) & (\num{32.18}) &  & \\
+Male & \num{8.76}** & \num{8.71}** & \num{8.22}** & \num{8.16}** & \num{8.17}** & \num{8.10}**\\
+ & (\num{3.93}) & (\num{3.93}) & (\num{3.96}) & (\num{3.96}) & (\num{3.98}) & (\num{3.98})\\
+Age & \num{-0.34}* & \num{0.75} & \num{-0.33}* & \num{0.73} & \num{-0.37}* & \num{0.92}\\
+ & (\num{0.20}) & (\num{1.68}) & (\num{0.20}) & (\num{1.68}) & (\num{0.20}) & (\num{1.70})\\
+Age (squared) &  & \num{-0.01} &  & \num{-0.01} &  & \num{-0.02}\\
+ &  & (\num{0.02}) &  & (\num{0.02}) &  & (\num{0.02})\\
+\# coordination experiences & \num{-1.83} & \num{-1.94}* & \num{-1.92}* & \num{-2.03}* & \num{-1.81} & \num{-1.93}*\\
+ & (\num{1.16}) & (\num{1.16}) & (\num{1.15}) & (\num{1.16}) & (\num{1.15}) & (\num{1.15})\\
+\# holidays &  &  & \num{1.76} & \num{1.76} & \num{9.64}*** & \num{4.10}\\
+ &  &  & (\num{2.69}) & (\num{2.70}) & (\num{2.32}) & (\num{7.78})\\
+\# listed hospitals &  &  & \num{14.22} & \num{14.53} & \num{17.86} & \num{18.35}\\
+ &  &  & (\num{16.20}) & (\num{16.19}) & (\num{16.34}) & (\num{16.34})\\
+\# listed hospitals with PBSC collection &  &  & \num{-8.52} & \num{-7.57} & \num{-3.93} & \num{-2.60}\\
+ &  &  & (\num{31.89}) & (\num{31.92}) & (\num{32.34}) & (\num{32.36})\\
+\# listed hospitals with BM collection &  &  & \num{-22.78} & \num{-23.74} & \num{-31.86} & \num{-33.35}\\
+ &  &  & (\num{37.39}) & (\num{37.34}) & (\num{37.76}) & (\num{37.74})\\
 \midrule
-Num.Obs. & \num{564} & \num{564} & \num{564} & \num{564}\\
-R2 & \num{0.016} & \num{0.017} & \num{0.020} & \num{0.021}\\
-R2 Adj. & \num{0.011} & \num{0.009} & \num{0.008} & \num{0.007}\\
+Num.Obs. & \num{564} & \num{564} & \num{564} & \num{564} & \num{564} & \num{564}\\
+R2 & \num{0.016} & \num{0.017} & \num{0.020} & \num{0.021} & \num{0.026} & \num{0.027}\\
+R2 Adj. & \num{0.011} & \num{0.009} & \num{0.008} & \num{0.007} & \num{0.006} & \num{0.006}\\
+Month FE &  &  &  &  & X & X\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}

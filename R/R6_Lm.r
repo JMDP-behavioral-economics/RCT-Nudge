@@ -72,7 +72,8 @@ Lm <- R6::R6Class("Lm",
 
       private$model <- list(
         unctrl = reformulate("treat", "value"),
-        ctrl1 = reformulate(c("treat", use_x), "value")
+        ctrl1 = reformulate(c("treat", use_x), "value"),
+        ctrl2 = reformulate(c("treat", use_x, "factor(month)"), "value")
       )
 
       private$se_type <- se
@@ -134,23 +135,28 @@ Lm <- R6::R6Class("Lm",
 
         model <- list(
           unctrl = reformulate(cross_term_treat, "value"),
-          ctrl = reformulate(c(cross_term_treat, use_x_2, cross_term_x), "value")
+          ctrl1 = reformulate(c(cross_term_treat, use_x_2, cross_term_x), "value"),
+          ctrl2 = reformulate(c(cross_term_treat, use_x_2, cross_term_x, "factor(month)"), "value")
         )
       }
 
       est <- est_dt2 %>%
         mutate(
           fit_1 = map(data, ~ private$call_lh(., model$unctrl, lh)),
-          fit_2 = map(data, ~ private$call_lh(., model$ctrl, lh))
+          fit_2 = map(data, ~ private$call_lh(., model$ctrl1, lh)),
+          fit_3 = map(data, ~ private$call_lh(., model$ctrl2, lh))
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit_1:fit_2,
+          fit_1:fit_3,
           names_prefix = "fit_",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        mutate(covariate = if_else(model != "1", "X", "")) %>%
+        mutate(
+          covariate = if_else(model != "1", "X", ""),
+          fe = if_else(model == "3", "X", "")
+        ) %>%
         arrange(outcome)
 
       LmFit$new(est, model_type)
@@ -191,8 +197,6 @@ Lm <- R6::R6Class("Lm",
           lm_robust(model, data = data, se_type = private$se_type, clusters = g)
         } else {
           reg <- lm_robust(model, data = data, se_type = private$se_type, clusters = g)
-
-          lh_robust(model, data = data, se_type = private$se_type, clusters = g, linear_hypothesis = lh)
 
           term <- tidy(reg)$term
           term <- term[str_detect(term, "treat")]
@@ -254,7 +258,8 @@ LmFit <- R6::R6Class("LmFit",
         add_tab <- data.frame(
           rbind(
             c("Control average", sprintf(avg_format, res$avg)),
-            c("Covariates", res$covariate)
+            c("Covariates", res$covariate),
+            c("Month FE", res$fe)
           )
         )
       } else {
@@ -290,7 +295,8 @@ LmFit <- R6::R6Class("LmFit",
 
         add_tab <- data.frame(rbind(
           lh_tab,
-          c("Covariates", res$covariate)
+          c("Covariates", res$covariate),
+          c("Month FE", res$fe)
         ))
       }
 
@@ -368,6 +374,7 @@ LmFit <- R6::R6Class("LmFit",
                         avg_text_size = 5,
                         avg_text_pos = 10,
                         xlab = "Experimental Arm",
+                        ylab = "Sample Average",
                         ylim = c(0, 100),
                         ybreaks = seq(0, 100, by = 10),
                         base_size = 15)
@@ -478,7 +485,7 @@ LmFit <- R6::R6Class("LmFit",
           hjust = 0, color = "black", size = p_text_size
         ) +
         scale_y_continuous(limits = ylim, breaks = ybreaks) +
-        labs(x = xlab, y = "Sample average") +
+        labs(x = xlab, y = ylab) +
         my_theme_classic(size = base_size, strip_hjust = 0.5)
 
       if (private$type == "average effect") {

@@ -269,7 +269,7 @@ Estimating the effect of the intervention messages on reaching the CT stage is c
 There are two reasons for the low probability of reaching CT. First, only \(54.91\)\% of the donors in the \revise{StatusQuo} group indicated their willingness to donate. Second, only \(40.52\)\% of those who expressed a willingness to donate reached the CT stage. Most \revise{dropout} between the response and CT stages occurred because of donor-related reasons (\(85.99\)\%). \citet{Hirakawa2018} found similar results and showed that the top three donor-related reasons were health issues, scheduling conflicts, and the lack of family consent. Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~1/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors.}\label{fig:test-diff-mean}
+\includegraphics{JMDPRC~1/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:test-diff-mean}
 \end{figure}
 
 \begin{table}
@@ -278,31 +278,32 @@ There are two reasons for the low probability of reaching CT. First, only \(54.9
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}cc}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}ccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-3}
-  & (1) & (2)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
 \midrule
-MatchMessage group & \num{3.10}*** & \num{2.56}**\\
- & (\num{1.14}) & (\num{1.16})\\
-CoordMessage group & \num{1.19} & \num{0.50}\\
- & (\num{1.16}) & (\num{1.07})\\
-BothMessage group & \num{2.39}** & \num{1.64}\\
- & (\num{1.17}) & (\num{1.08})\\
+MatchMessage group & \num{3.10}** & \num{2.56}** & \num{1.63}**\\
+ & (\num{1.42}) & (\num{1.24}) & (\num{0.70})\\
+CoordMessage group & \num{1.19} & \num{0.50} & \num{0.27}\\
+ & (\num{1.55}) & (\num{1.18}) & (\num{0.90})\\
+BothMessage group & \num{2.39} & \num{1.64} & \num{1.11}\\
+ & (\num{1.63}) & (\num{1.65}) & (\num{0.80})\\
 \midrule
 \addlinespace[0.3em]
-\multicolumn{3}{l}{\textit{Adjustment of p-values for multiple testing}}\\
-\hspace{1em}MatchMessage group & 0.021 & \\
-\hspace{1em}CoordMessage group & 0.311 & \\
-\hspace{1em}BothMessage group & 0.073 & \\
-Control average & 22.25 & 22.25\\
-Covariates &  & X\\
-Num.Obs. & \num{11049} & \num{11049}\\
+\multicolumn{4}{l}{\textit{Adjustment of p-values for multiple testing}}\\
+\hspace{1em}MatchMessage group (adjusted p-value) & 0.021 &  & \\
+\hspace{1em}CoordMessage group (adjusted p-value) & 0.311 &  & \\
+\hspace{1em}BothMessage group (adjusted p-value) & 0.073 &  & \\
+Control average & 22.25 & 22.25 & 22.25\\
+Covariates &  & X & X\\
+Month FE &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -328,7 +329,7 @@ Next, we examined the differences in the effects between first-time matched dono
 Finally, we examined the effects of the messages on the stages of the coordination process after CT. As explained in Section \ref{background}, the post-CT coordination process consists of three stages: donor selection, final consent, and collection (donation). For these outcomes, we used dummy variables coded one if a matched donor reached each stage. The effects on the three post-CT stages require careful interpretation because the outcomes involve demand-side effects. In the \revise{StatusQuo} group, \(6.2\)\% of potential donors were selected as the most appropriate donors and \(4.5\)\% ultimately donated.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~1/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~1/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 \begin{table}
@@ -337,31 +338,32 @@ Finally, we examined the effects of the messages on the stages of the coordinati
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
-\begin{tabular}[t]{lcccccc}
+\begin{tabular}[t]{lccccccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Donor selection} & \multicolumn{2}{c}{Final consent} & \multicolumn{2}{c}{Donation} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
-  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Donor selection} & \multicolumn{3}{c}{Final consent} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-MatchMessage group & \num{0.16} & \num{-0.29} & \num{0.26} & \num{-0.14} & \num{0.12} & \num{-0.12}\\
- & (\num{0.65}) & (\num{0.69}) & (\num{0.62}) & (\num{0.66}) & (\num{0.56}) & (\num{0.61})\\
-CoordMessage group & \num{-0.07} & \num{-0.32} & \num{0.06} & \num{-0.16} & \num{0.02} & \num{-0.15}\\
- & (\num{0.66}) & (\num{0.65}) & (\num{0.63}) & (\num{0.62}) & (\num{0.57}) & (\num{0.57})\\
-BothMessage group & \num{0.50} & \num{0.26} & \num{0.63} & \num{0.43} & \num{0.07} & \num{-0.08}\\
- & (\num{0.68}) & (\num{0.67}) & (\num{0.64}) & (\num{0.64}) & (\num{0.57}) & (\num{0.57})\\
+MatchMessage group & \num{0.16} & \num{-0.29} & \num{-0.71}** & \num{0.26} & \num{-0.14} & \num{-0.58}** & \num{0.12} & \num{-0.12} & \num{-0.48}\\
+ & (\num{0.59}) & (\num{0.56}) & (\num{0.35}) & (\num{0.56}) & (\num{0.51}) & (\num{0.28}) & (\num{0.45}) & (\num{0.47}) & (\num{0.37})\\
+CoordMessage group & \num{-0.07} & \num{-0.32} & \num{-0.39} & \num{0.06} & \num{-0.16} & \num{-0.22} & \num{0.02} & \num{-0.15} & \num{-0.20}\\
+ & (\num{0.76}) & (\num{0.70}) & (\num{0.37}) & (\num{0.64}) & (\num{0.58}) & (\num{0.31}) & (\num{0.57}) & (\num{0.52}) & (\num{0.33})\\
+BothMessage group & \num{0.50} & \num{0.26} & \num{0.00} & \num{0.63} & \num{0.43} & \num{0.19} & \num{0.07} & \num{-0.08} & \num{-0.28}\\
+ & (\num{0.72}) & (\num{0.81}) & (\num{0.35}) & (\num{0.80}) & (\num{0.88}) & (\num{0.42}) & (\num{0.74}) & (\num{0.80}) & (\num{0.50})\\
 \midrule
-Control average & 6.19 & 6.19 & 5.44 & 5.44 & 4.50 & 4.50\\
-Covariates &  & X &  & X &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Control average & 6.19 & 6.19 & 6.19 & 5.44 & 5.44 & 5.44 & 4.50 & 4.50 & 4.50\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with bone marrow collection per 10 square kilometers. All the covariates except sex were demeaned.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with bone marrow collection per 10 square kilometers. All the covariates except sex were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-Figure \ref{fig:coordinate-diff-mean} presents the sample averages of each outcome by experimental group. The three post-CT processes were unaffected in all the experimental groups. Similar results were obtained from the linear probability models (see Table \ref{tab:lm-coordinate}) and logistic regressions when controlling for the covariates (see Table A9 in Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (that is, the number of patients), if it increases the number of donors who reach CT, it should increase the number of donors not selected as candidates for exogenous reasons. In particular, compared with the \revise{StatusQuo} group, the probability that matched donors who reached CT were not selected because of patient-related reasons or donor health conditions was higher by \(4.3\) percentage points in \revise{the MatchMessage group}, which was statistically significant at the 10\% level (\(p = 0.095\)). Therefore, the intervention effects were weakened by demand-side factors.
+Figure \ref{fig:coordinate-diff-mean} presents the sample averages of each outcome by experimental group. The three post-CT processes were unaffected in all the experimental groups. Similar results were obtained from the linear probability models (see Table \ref{tab:lm-coordinate}) and logistic regressions when controlling for the covariates (see Table A9 in Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (that is, the number of patients), if it increases the number of donors who reach CT, it should increase the number of donors not selected as candidates for exogenous reasons. In particular, compared with the \revise{StatusQuo} group, the probability that matched donors who reached CT were not selected because of patient-related reasons or donor health conditions was higher by \(4.3\) percentage points in \revise{the MatchMessage group}, which was statistically significant at the 10\% level (\(p = 0.080\)). Therefore, the intervention effects were weakened by demand-side factors.
 
 \hypertarget{conclusion}{%
 \section{Discussion and Conclusions}\label{conclusion}}

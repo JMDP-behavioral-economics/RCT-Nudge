@@ -36,10 +36,6 @@ output:
     citation_package: natbib
 base-strech: 1.5
 fontsize: 12pt
-params:
-  is_fe: TRUE
-  is_cluster: FALSE
-  se_type: stata
 ---
 
 ```{r include=FALSE}
@@ -143,15 +139,15 @@ endpoint <- list(
 rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
-if (params$is_cluster) rct$set_default_cluster("RCTweek")
+rct$set_default_cluster("RCTweek")
 rct$set_default_se_type("stata")
 
 # robust sample (remove those who skipped the CT)
 rct_noskip <- rawdt_noskip$RCT()
 rct_noskip$add_intervention(intervention)
 rct_noskip$add_outcome(endpoint)
-if (params$is_cluster) rct_noskip$set_default_cluster("RCTweek")
-rct_noskip$set_default_se_type(params$se_type)
+rct_noskip$set_default_cluster("RCTweek")
+rct_noskip$set_default_se_type("stata")
 ```
 
 ```{r smd-balance}
@@ -179,36 +175,45 @@ skip_dt <- rct$
     )
 
 ctrl_avg <- skip_dt %>%
-  filter(treat == "A") %>%
+  filter(treat == "StatusQuo") %>%
   summarize_at(vars(coordinate_more, skip_CT), list(~ mean(.))) %>%
   mutate_all(list(~ sprintf("%1.2f", .)))
 
 add_tab <- data.frame(rbind(
   c(
     "Control average",
-    ctrl_avg$coordinate_more, ctrl_avg$coordinate_more,
-    ctrl_avg$skip_CT, ctrl_avg$skip_CT
+    ctrl_avg$coordinate_more, ctrl_avg$coordinate_more, ctrl_avg$coordinate_more,
+    ctrl_avg$skip_CT, ctrl_avg$skip_CT, ctrl_avg$skip_CT
   ),
   c(
     "Covariates",
-    "", "X",
-    "", "X"
+    "", "X", "X",
+    "", "X", "X"
+  ),
+  c(
+    "Month FE",
+    "", "", "X",
+    "", "", "X"
   )
 ))
 
-attr(add_tab, "position") <- 7:8
+attr(add_tab, "position") <- 7:9
 
 skip_mods <- list(
   coordinate_more ~ treat,
   coordinate_more ~ treat + male + age + I(age^2) + hospital_per_area +
     PB_per_area + BM_per_area + holidays,
+  coordinate_more ~ treat + male + age + I(age^2) + hospital_per_area +
+    PB_per_area + BM_per_area + holidays + factor(month),
   skip_CT ~ treat,
   skip_CT ~ treat + male + age + I(age^2) + coordinate + hospital_per_area +
-    PB_per_area + BM_per_area + holidays
+    PB_per_area + BM_per_area + holidays,
+  skip_CT ~ treat + male + age + I(age^2) + coordinate + hospital_per_area +
+    PB_per_area + BM_per_area + holidays + factor(month)
 )
 
 est_skip_mods <- skip_mods %>%
-  purrr::map(~ lm_robust(., data = skip_dt, se_type = params$se_type))
+  purrr::map(~ lm_robust(., data = skip_dt, se_type = "stata", clusters = RCTweek))
 
 est_skip_mods %>%
   modelsummary(
@@ -219,7 +224,7 @@ est_skip_mods %>%
       "treatBothMessage" = "BothMessage group"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
-    align = "lcccc",
+    align = "lcccccc",
     stars = c("***" = .01, "**" = .05, "*" = .1),
     add_rows = add_tab,
     fmt = 2
@@ -229,12 +234,12 @@ est_skip_mods %>%
     latex_options = "HOLD_position"
   ) %>%
   kableExtra::add_header_above(
-    c(" " = 1, "\\\\# Coordination $>$ 1" = 2, "Skipped CT" = 2),
+    c(" " = 1, "\\\\# Coordination $>$ 1" = 3, "Skipped CT" = 3),
     escape = FALSE
   ) %>%
   kableExtra::footnote(
     general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We excluded the number of past coordinations in model (2).",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We excluded the number of past coordinations in model (2).",
     threeparttable = TRUE,
     escape = FALSE
   )
@@ -422,7 +427,11 @@ mods <- list(
   I(candidate * 100) ~ male + age + coordinate +
     holidays + PB_per_area + BM_per_area + hospital_per_area,
   I(candidate * 100) ~ male + age + I(age^2) + coordinate +
-    holidays + PB_per_area + BM_per_area + hospital_per_area
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I(candidate * 100) ~ male + age + coordinate +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month),
+  I(candidate * 100) ~ male + age + I(age^2) + coordinate +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month)
 )
 
 fit_mods <- mods %>%
@@ -445,10 +454,11 @@ fit_mods %>%
     gof_omit = "AIC|BIC|RMSE",
     stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
     escape = FALSE,
+    add_rows = data.frame(rbind(c("Month FE", "", "", "", "", "X", "X"))),
     fmt = 2
   ) %>%
   kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 4)) %>%
+  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 6)) %>%
   kableExtra::footnote(
     general_title = "",
     general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control arm. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.",

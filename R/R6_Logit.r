@@ -65,10 +65,8 @@ Logit <- R6::R6Class("Logit",
 
       private$model <- list(
         unctrl = reformulate("treat", "value"),
-        ctrl1 = reformulate(
-          c("treat", use_x),
-          "value"
-        )
+        ctrl1 = reformulate(c("treat", use_x), "value"),
+        ctrl2 = reformulate(c("treat", use_x, "factor(month)"), "value")
       )
 
       if (!hide_message) {
@@ -86,16 +84,20 @@ Logit <- R6::R6Class("Logit",
         nest() %>%
         mutate(
           fit1 = private$call_glm(private$model$unctrl, data),
-          fit2 = private$call_glm(private$model$ctrl1, data)
+          fit2 = private$call_glm(private$model$ctrl1, data),
+          fit3 = private$call_glm(private$model$ctrl2, data)
         ) %>%
         ungroup() %>%
         pivot_longer(
-          fit1:fit2,
+          fit1:fit3,
           names_prefix = "fit",
           names_to = "model",
           values_to = "fit"
         ) %>%
-        mutate(covs = if_else(model != "1", "X", ""))
+        mutate(
+          covariate = if_else(model != "1", "X", ""),
+          fe = if_else(model == "3", "X", "")
+        )
 
       LogitAll$new(est)
     }
@@ -214,10 +216,11 @@ LogitAll <- R6::R6Class("LogitAll",
       align <- paste(c("l", rep("c", nrow(private$est))), collapse = "")
       add_tab <- data.frame(
         rbind(
-          c("Covariates", private$est$covs)
+          c("Covariates", private$est$covariate),
+          c("Month FE", private$est$fe)
         )
       )
-      attr(add_tab, "position") <- 7
+      attr(add_tab, "position") <- 7:8
 
       args <- list(
         models = fit,

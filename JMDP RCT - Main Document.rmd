@@ -63,9 +63,6 @@ output:
     citation_package: natbib
 base-strech: 2
 fontsize: 12pt
-params:
-  is_cluster: FALSE
-  se_type: stata
 ---
 
 ```{r include=FALSE}
@@ -253,8 +250,8 @@ endpoint <- list(
 rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
-if (params$is_cluster) rct$set_default_cluster("RCTweek")
-rct$set_default_se_type(params$se_type)
+rct$set_default_cluster("RCTweek")
+rct$set_default_se_type("stata")
 ```
 
 ```{r summary}
@@ -315,18 +312,25 @@ Estimating the effect of the intervention messages on reaching the CT stage is c
 
 There are two reasons for the low probability of reaching CT. First, only `r sprintf("$%1.2f$%%", mean_positive["1"])` of the donors in the \revise{StatusQuo} group indicated their willingness to donate. Second, only `r sprintf("$%1.2f$%%", positive_clasify["1", "0"])` of those who expressed a willingness to donate reached the CT stage. Most \revise{dropout} between the response and CT stages occurred because of donor-related reasons (`r sprintf("$%1.2f$%%", reason_clasify["0"])`). @Hirakawa2018 found similar results and showed that the top three donor-related reasons were health issues, scheduling conflicts, and the lack of family consent. Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
 
-```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
+```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
 rct$
   lm_effect("test", sample_drop = FALSE)$
   fit(scale = 100)$
   plot_ate(
-    xlab = "Experimental Group",
-    p_text_margin = 2,
-    add_segment_margin = 5,
+    xlab = "Experimental group",
+    ylab = "Share of participants (%)",
+    p_text_margin = 4,
+    add_segment_margin = 12,
+    segment_margin = 5,
+    show_p = 1,
+    edge_length = 2,
     p_text_size = 7,
     avg_text_size = 7,
+    avg_text_pos = 10,
+    avg_digit = 1,
     base_size = 25,
-    ylim = c(0, 50)
+    ylim = c(0, 100),
+    ybreaks = seq(0, 100, by = 10)
   )
 ```
 
@@ -349,20 +353,22 @@ mha_test <- cache_rds(
 mha_test_tab <- data.frame(mha_test) %>%
   select(term = Treated.id, "(1)" = List.p) %>%
   mutate(
-    term = paste(term, "group"),
+    term = paste(term, "group", "(adjusted p-value)"),
     "(1)" = sprintf("%1.3f", `(1)`),
-    "(2)" = ""
+    "(2)" = "",
+    "(3)" = ""
   )
 
 add_tab <- data.frame(
   rbind(
     mha_test_tab,
     c("Control average", sprintf("%1.2f", res$avg)),
-    c("Covariates", res$covariate)
+    c("Covariates", res$covariate),
+    c("Month FE", res$fe)
   )
 )
 
-attr(add_tab, "position") <- 7:11
+attr(add_tab, "position") <- 7:12
 
 res %>%
   pull(fit) %>%
@@ -375,28 +381,28 @@ res %>%
     ),
     stars = c("***" = .01, "**" = .05, "*" = .1),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
-    align = "lcc",
+    align = "lccc",
     add_rows = add_tab,
     fmt = 2,
     escape = FALSE
   ) %>%
   kableExtra::kable_styling(font_size = 8) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 2)) %>%
+  kableExtra::add_header_above(c(" " = 1, "CT" = 3)) %>%
   kableExtra::group_rows(
-    "Adjustment of p-values for multiple testing",
+    "Adjustment of p-values for multiple hypotheses testing",
     7, 9,
     bold = FALSE, italic = TRUE
   ) %>%
   kableExtra::column_spec(1, width = "20em") %>%
   kableExtra::footnote(
     general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \\\\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \\\\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.",
     threeparttable = TRUE,
     escape = FALSE
   )
 ```
 
-The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \@ref(fig:test-diff-mean). Experimental groups B and D, which received the \revise{matching difficulty} message, had a $3.1$ and $2.4$ percentage point higher probability of reaching CT than the \revise{StatusQuo} group, respectively. These effects were statistically significant. We obtained the same results when we adjusted for multiple testing, as proposed by @List2019 (see Column (1) in Table \@ref(tab:lm-test)). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates using a linear probability model (see Column (2) in Table \@ref(tab:lm-test)). However, the effect of \revise{the BothMessage group} became not statistically significant owing to the slight imbalance in cases eligible for skipping CT between \revise{the BothMessage group} and the \revise{StatusQuo} group. In the JMDP coordination process, CT can be skipped when the previous CT result remains valid.[^skip-coordination] Compared with the \revise{StatusQuo} group, \revise{the BothMessage group} did not have a significantly higher proportion of potential donors with prior coordination experience; however, it did have a significantly higher proportion of potential donors eligible to skip CT (see Table A3 in Supplementary Material A). This difference likely influenced the simple difference of means between \revise{the BothMessage group} and the \revise{StatusQuo} group. These results were robust to using logistic regression models instead of linear probability models (see Table A4 in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
+The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \@ref(fig:test-diff-mean). Experimental groups B and D, which received the \revise{matching difficulty} message, had a $3.1$ and $2.4$ percentage point higher probability of reaching CT than the \revise{StatusQuo} group, respectively. These effects were statistically significant. We obtained the same results when we adjusted for multiple \revise{hypotheses} testing, as proposed by @List2019 (see Column (1) in Table \@ref(tab:lm-test)). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates using a linear probability model (see Column (2) in Table \@ref(tab:lm-test)). However, the effect of \revise{the BothMessage group} became not statistically significant owing to the slight imbalance in cases eligible for skipping CT between \revise{the BothMessage group} and the \revise{StatusQuo} group. In the JMDP coordination process, CT can be skipped when the previous CT result remains valid.[^skip-coordination] Compared with the \revise{StatusQuo} group, \revise{the BothMessage group} did not have a significantly higher proportion of potential donors with prior coordination experience; however, it did have a significantly higher proportion of potential donors eligible to skip CT (see Table A3 in Supplementary Material A). This difference likely influenced the simple difference of means between \revise{the BothMessage group} and the \revise{StatusQuo} group. These results were robust to using logistic regression models instead of linear probability models (see Table A4 in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
 
 [^skip-coordination]: All except one of the candidates whose CT was skipped had prior coordination experience.
 
@@ -420,18 +426,24 @@ Next, we examined the differences in the effects between first-time matched dono
 
 Finally, we examined the effects of the messages on the stages of the coordination process after CT. As explained in Section \@ref(background), the post-CT coordination process consists of three stages: donor selection, final consent, and collection (donation). For these outcomes, we used dummy variables coded one if a matched donor reached each stage. The effects on the three post-CT stages require careful interpretation because the outcomes involve demand-side effects. In the \revise{StatusQuo} group, $6.2$% of potential donors were selected as the most appropriate donors and $4.5$% ultimately donated.
 
-```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used robust standard errors."}
+```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
 rct$
   lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
   fit(scale = 100)$
   plot_ate(
-    xlab = "Experimental Group",
-    p_text_margin = 3,
+    xlab = "Experimental group",
+    ylab = "Share of participants (%)",
+    p_text_margin = 4,
+    add_segment_margin = 12,
+    segment_margin = 5,
+    show_p = 1,
+    edge_length = 2,
     p_text_size = 7,
     avg_text_pos = 2,
+    avg_digit = 1,
     avg_text_size = 7,
-    ylim = c(0, 10),
-    ybreaks = seq(0, 20, by = 2),
+    ylim = c(0, 100),
+    ybreaks = seq(0, 100, by = 10),
     base_size = 25
   ) +
   theme(
@@ -450,17 +462,17 @@ rct$
       "treatCoordMessage" = "CoordMessage group",
       "treatBothMessage" = "BothMessage group"
     ),
-    notes = "Robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with bone marrow collection per 10 square kilometers. All the covariates except sex were demeaned.",
+    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with bone marrow collection per 10 square kilometers. All the covariates except sex were demeaned.",
     font_size = 8
   )
 ```
 
 ```{r effect-dropout, include=FALSE}
-est <- estimatr::lm_robust(I(exg_stop_candidate * 100) ~ treat, data = subset(rct$data, test == 1), se_type = params$se_type)
+est <- lm_robust(I(exg_stop_candidate * 100) ~ treat, data = subset(rct$data, test == 1), se_type = "stata", clusters = RCTweek)
 summary(est)
 ```
 
-Figure \@ref(fig:coordinate-diff-mean) presents the sample averages of each outcome by experimental group. The three post-CT processes were unaffected in all the experimental groups. Similar results were obtained from the linear probability models (see Table \@ref(tab:lm-coordinate)) and logistic regressions when controlling for the covariates (see Table A9 in Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (that is, the number of patients), if it increases the number of donors who reach CT, it should increase the number of donors not selected as candidates for exogenous reasons. In particular, compared with the \revise{StatusQuo} group, the probability that matched donors who reached CT were not selected because of patient-related reasons or donor health conditions was higher by $4.3$ percentage points in \revise{the MatchMessage group}, which was statistically significant at the 10% level ($p = 0.095$). Therefore, the intervention effects were weakened by demand-side factors.
+Figure \@ref(fig:coordinate-diff-mean) presents the sample averages of each outcome by experimental group. The three post-CT processes were unaffected in all the experimental groups. Similar results were obtained from the linear probability models (see Table \@ref(tab:lm-coordinate)) and logistic regressions when controlling for the covariates (see Table A9 in Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (that is, the number of patients), if it increases the number of donors who reach CT, it should increase the number of donors not selected as candidates for exogenous reasons. In particular, compared with the \revise{StatusQuo} group, the probability that matched donors who reached CT were not selected because of patient-related reasons or donor health conditions was higher by $4.3$ percentage points in \revise{the MatchMessage group}, which was statistically significant at the 10% level ($p = 0.080$). Therefore, the intervention effects were weakened by demand-side factors.
 
 # Discussion and Conclusions {#conclusion}
 
