@@ -56,25 +56,14 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 
-    \newcolumntype{d}{S[
-      table-align-text-before=false,
-      table-align-text-after=false,
-      input-symbols={-,\*+()}
-    ]}
+  \newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+  ]}
   
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
-\usepackage{xcolor}
 
 % ------------------------------ paper information
 \title{Supplementary Material
@@ -125,10 +114,11 @@
 \renewcommand{\theHfigure}{\thesection\arabic{figure}}
 \renewcommand{\theHtable}{\thesection\arabic{table}}
 
-\section{Figures and Tables}\label{figtab}
+\hypertarget{figtab}{%
+\section{Figures and Tables}\label{figtab}}
 
 \begin{table}[H]
-\centering
+
 \caption{\label{tab:assignment}Assignment Schedule}
 \centering
 \fontsize{8}{10}\selectfont
@@ -137,33 +127,33 @@
 \toprule
 week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & January, 2022 & February, 2022\\
 \midrule
-1 & B & C & C & D & B & A\\
+1 & MatchMessage & CoordMessage & CoordMessage & BothMessage & MatchMessage & StatusQuo\\
  & (09/06 to 09/12) & (10/04 to 10/10) & (11/01 to 11/07) & (11/29 to 12/05) & (01/03 to 01/09) & (01/31 to 02/06)\\
-2 & D & B & A & A & C & B\\
+2 & BothMessage & MatchMessage & StatusQuo & StatusQuo & CoordMessage & MatchMessage\\
  & (09/13 to 09/19) & (10/11 to 10/17) & (11/08 to 11/14) & (12/06 to 12/12) & (01/10 to 01/16) & (02/07 to 02/13)\\
-3 & A & D & B & C & D & C\\
+3 & StatusQuo & BothMessage & MatchMessage & CoordMessage & BothMessage & CoordMessage\\
  & (09/20 to 09/26) & (10/18 to 10/24) & (11/15 to 11/21) & (12/13 to 12/19) & (01/17 to 01/23) & (02/14 to 02/20)\\
-4 & C & A & D & B & A & D\\
+4 & CoordMessage & StatusQuo & BothMessage & MatchMessage & StatusQuo & BothMessage\\
  & (09/27 to 10/03) & (10/25 to 10/31) & (11/22 to 11/28) & (12/20 to 12/26) & (01/24 to 01/30) & (02/21 to 02/27)\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: See Table 1 in the main manuscrpit for a detailed description of the intervention of each experimental group. The control arm is experimental group A. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday.
+\item \emph{Note}: See Table 1 in the main manuscript for a detailed description of the intervention of each experimental group. The control group is the StatusQuo group. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{table}[H]
-\centering
+
 \caption{\label{tab:smd-balance}Assessing Balance by Standardized Mean Difference}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
 \begin{tabular}[t]{lccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{3}{c}{A versus} \\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{StatusQuo versus} \\
 \cmidrule(l{3pt}r{3pt}){2-4}
-\multicolumn{1}{c}{ } & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D} \\
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{MatchMessage} & \multicolumn{1}{c}{CoordMessage} & \multicolumn{1}{c}{BothMessage} \\
 \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4}
  & (1) & (2) & (3)\\
 \midrule
@@ -184,7 +174,7 @@ Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \end{table}
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:lm-skip}Linear Probability Model of Number of Coordination and Skipping CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -195,14 +185,14 @@ Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Experimental group B & \num{-0.18} & \num{1.04} & \num{0.79} & \num{0.67}\\
+MatchMessage group & \num{-0.18} & \num{1.04} & \num{0.79} & \num{0.67}\\
  & (\num{1.29}) & (\num{1.38}) & (\num{0.54}) & (\num{0.56})\\
-Experimental group C & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
+CoordMessage group & \num{1.69} & \num{2.04} & \num{0.76} & \num{0.50}\\
  & (\num{1.34}) & (\num{1.30}) & (\num{0.56}) & (\num{0.53})\\
-Experimental group D & \num{-1.91} & \num{-1.28} & \num{1.11}* & \num{1.27}**\\
+BothMessage group & \num{-1.91} & \num{-1.28} & \num{1.11}* & \num{1.27}**\\
  & (\num{1.32}) & (\num{1.29}) & (\num{0.57}) & (\num{0.54})\\
 \midrule
-Control average & 36.61 & 36.61 & 3.87 & 3.87\\
+Control average & NaN & NaN & NaN & NaN\\
 Covariates &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \bottomrule
@@ -214,7 +204,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \end{table}
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:logit-test}Logit Model of the CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -225,11 +215,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3}
   & (1) & (2)\\
 \midrule
-Experimental group B & \num{1.19} & \num{1.18}\\
+MatchMessage group & \num{1.19} & \num{1.18}\\
  & {}[\num{1.05}, \num{1.34}] & {}[\num{1.02}, \num{1.36}]\\
-Experimental group C & \num{1.07} & \num{1.03}\\
+CoordMessage group & \num{1.07} & \num{1.03}\\
  & {}[\num{0.94}, \num{1.22}] & {}[\num{0.90}, \num{1.19}]\\
-Experimental group D & \num{1.14} & \num{1.11}\\
+BothMessage group & \num{1.14} & \num{1.11}\\
  & {}[\num{1.01}, \num{1.30}] & {}[\num{0.97}, \num{1.28}]\\
 \midrule
 Covariates &  & X\\
@@ -244,22 +234,22 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181}\\
 \end{table}
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:lm-test-decompose}Decomposition of Effect on the CT}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}cccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive intention} & \multicolumn{2}{c}{No endogenous attrition} & \multicolumn{2}{c}{No exogenous attrition} \\
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Positive intention} & \multicolumn{2}{c}{No endogenous dropout} & \multicolumn{2}{c}{No exogenous dropout} \\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Experimental group B & \num{2.31}* & \num{1.86} & \num{0.97} & \num{1.14} & \num{-0.17} & \num{-0.44}\\
+MatchMessage group & \num{2.31}* & \num{1.86} & \num{0.97} & \num{1.14} & \num{-0.17} & \num{-0.44}\\
  & (\num{1.33}) & (\num{1.40}) & (\num{1.20}) & (\num{1.27}) & (\num{0.57}) & (\num{0.60})\\
-Experimental group C & \num{-0.44} & \num{-0.05} & \num{2.55}** & \num{1.50} & \num{-0.93} & \num{-0.96}\\
+CoordMessage group & \num{-0.44} & \num{-0.05} & \num{2.55}** & \num{1.50} & \num{-0.93} & \num{-0.96}\\
  & (\num{1.37}) & (\num{1.33}) & (\num{1.22}) & (\num{1.19}) & (\num{0.60}) & (\num{0.60})\\
-Experimental group D & \num{0.59} & \num{0.24} & \num{2.27}* & \num{1.97} & \num{-0.51} & \num{-0.61}\\
+BothMessage group & \num{0.59} & \num{0.24} & \num{2.27}* & \num{1.97} & \num{-0.51} & \num{-0.61}\\
  & (\num{1.37}) & (\num{1.33}) & (\num{1.22}) & (\num{1.20}) & (\num{0.59}) & (\num{0.59})\\
 \midrule
 Control average & 54.91 & 54.91 & 71.91 & 71.91 & 95.42 & 95.42\\
@@ -268,23 +258,23 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental group A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
+\includegraphics{JMDPRC~3/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental group A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
 \end{figure}
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~4/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
+\includegraphics{JMDPRC~3/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
 \end{figure}
 
 \clearpage
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:lm-positive-time-decompose}Effect on Speed of Response with Positive Intention}
 \centering
 \fontsize{8}{10}\selectfont
@@ -295,11 +285,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Experimental group B & \num{-1.14} & \num{-0.13} & \num{1.58} & \num{1.44} & \num{1.88}** & \num{0.56}\\
+MatchMessage group & \num{-1.14} & \num{-0.13} & \num{1.58} & \num{1.44} & \num{1.88}** & \num{0.56}\\
  & (\num{1.11}) & (\num{1.12}) & (\num{1.13}) & (\num{1.21}) & (\num{0.85}) & (\num{0.89})\\
-Experimental group C & \num{-1.13} & \num{-1.47} & \num{1.86} & \num{2.44}** & \num{-1.17} & \num{-1.02}\\
+CoordMessage group & \num{-1.13} & \num{-1.47} & \num{1.86} & \num{2.44}** & \num{-1.17} & \num{-1.02}\\
  & (\num{1.14}) & (\num{1.04}) & (\num{1.16}) & (\num{1.15}) & (\num{0.82}) & (\num{0.82})\\
-Experimental group D & \num{-1.64} & \num{-2.15}** & \num{1.74} & \num{2.02}* & \num{0.48} & \num{0.36}\\
+BothMessage group & \num{-1.64} & \num{-2.15}** & \num{1.74} & \num{2.02}* & \num{0.48} & \num{0.36}\\
  & (\num{1.13}) & (\num{1.03}) & (\num{1.16}) & (\num{1.15}) & (\num{0.85}) & (\num{0.85})\\
 \midrule
 Control average & 22.37 & 22.37 & 22.17 & 22.17 & 10.37 & 10.37\\
@@ -314,7 +304,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:lm-interaction-gender-test-donate}Heterogenous Message Effects on CT and Donation by Gender}
 \centering
 \fontsize{8}{10}\selectfont
@@ -325,28 +315,28 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Experimental group B & \num{2.73} & \num{1.90} & \num{-0.47} & \num{-0.77}\\
+MatchMessage group & \num{2.73} & \num{1.90} & \num{-0.47} & \num{-0.77}\\
  & (\num{1.78}) & (\num{1.82}) & (\num{0.74}) & (\num{0.75})\\
-Experimental group C & \num{1.60} & \num{-1.02} & \num{0.24} & \num{-0.12}\\
+CoordMessage group & \num{1.60} & \num{-1.02} & \num{0.24} & \num{-0.12}\\
  & (\num{1.81}) & (\num{1.70}) & (\num{0.80}) & (\num{0.80})\\
-Experimental group D & \num{4.91}*** & \num{2.74} & \num{-0.43} & \num{-0.80}\\
+BothMessage group & \num{4.91}*** & \num{2.74} & \num{-0.43} & \num{-0.80}\\
  & (\num{1.83}) & (\num{1.74}) & (\num{0.75}) & (\num{0.75})\\
 Male & \num{4.58}*** & \num{3.37}* & \num{2.17}*** & \num{2.32}**\\
  & (\num{1.67}) & (\num{1.84}) & (\num{0.80}) & (\num{0.93})\\
-Experimental group B $\times$ Male & \num{0.52} & \num{1.04} & \num{0.90} & \num{1.07}\\
+MatchMessage group $\times$ Male & \num{0.52} & \num{1.04} & \num{0.90} & \num{1.07}\\
  & (\num{2.31}) & (\num{2.36}) & (\num{1.07}) & (\num{1.15})\\
-Experimental group C $\times$ Male & \num{-0.71} & \num{2.38} & \num{-0.38} & \num{0.03}\\
+CoordMessage group $\times$ Male & \num{-0.71} & \num{2.38} & \num{-0.38} & \num{0.03}\\
  & (\num{2.35}) & (\num{2.18}) & (\num{1.12}) & (\num{1.11})\\
-Experimental group D $\times$ Male & \num{-4.01}* & \num{-1.92} & \num{0.89} & \num{1.19}\\
+BothMessage group $\times$ Male & \num{-4.01}* & \num{-1.92} & \num{0.89} & \num{1.19}\\
  & (\num{2.37}) & (\num{2.22}) & (\num{1.10}) & (\num{1.10})\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ Male}}\\
-\hspace{1em}Experimental group B & 3.25** & 2.94** & 0.43 & 0.30\\
+\hspace{1em}MatchMessage group & 3.25** & 2.94** & 0.43 & 0.30\\
 \hspace{1em} & (1.48) & (1.50) & (0.77) & (0.87)\\
-\hspace{1em}Experimental group C & 0.90 & 1.36 & -0.14 & -0.09\\
+\hspace{1em}CoordMessage group & 0.90 & 1.36 & -0.14 & -0.09\\
 \hspace{1em} & (1.50) & (1.37) & (0.78) & (0.77)\\
-\hspace{1em}Experimental group D & 0.89 & 0.82 & 0.45 & 0.39\\
+\hspace{1em}BothMessage group & 0.89 & 0.82 & 0.45 & 0.39\\
 \hspace{1em} & (1.51) & (1.37) & (0.80) & (0.80)\\
 Covariates &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
@@ -359,7 +349,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \end{table}
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:lm-interaction-coordination1-test-donate}Heterogeneous Treatment Effects on CT and Donation by First-Time Coordination}
 \centering
 \fontsize{8}{10}\selectfont
@@ -370,28 +360,28 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
   & (1) & (2) & (3) & (4)\\
 \midrule
-Experimental group B & \num{4.20}** & \num{3.91}** & \num{-0.14} & \num{0.39}\\
+MatchMessage group & \num{4.20}** & \num{3.91}** & \num{-0.14} & \num{0.39}\\
  & (\num{2.04}) & (\num{1.88}) & (\num{1.03}) & (\num{1.09})\\
-Experimental group C & \num{4.02}* & \num{2.70} & \num{0.04} & \num{-0.19}\\
+CoordMessage group & \num{4.02}* & \num{2.70} & \num{0.04} & \num{-0.19}\\
  & (\num{2.07}) & (\num{1.75}) & (\num{1.05}) & (\num{1.03})\\
-Experimental group D & \num{3.80}* & \num{0.95} & \num{0.30} & \num{-0.10}\\
+BothMessage group & \num{3.80}* & \num{0.95} & \num{0.30} & \num{-0.10}\\
  & (\num{2.12}) & (\num{1.75}) & (\num{1.08}) & (\num{1.07})\\
 First-time coordination & \num{-9.78}*** & \num{-1.07} & \num{-1.92}** & \num{0.35}\\
  & (\num{1.77}) & (\num{2.12}) & (\num{0.90}) & (\num{1.14})\\
-Experimental group B $\times$ First-time coordination & \num{-1.69} & \num{-2.19} & \num{0.41} & \num{-0.80}\\
+MatchMessage group $\times$ First-time coordination & \num{-1.69} & \num{-2.19} & \num{0.41} & \num{-0.80}\\
  & (\num{2.45}) & (\num{2.38}) & (\num{1.22}) & (\num{1.31})\\
-Experimental group C $\times$ First-time coordination & \num{-4.86}** & \num{-3.62} & \num{-0.09} & \num{0.05}\\
+CoordMessage group $\times$ First-time coordination & \num{-4.86}** & \num{-3.62} & \num{-0.09} & \num{0.05}\\
  & (\num{2.47}) & (\num{2.21}) & (\num{1.24}) & (\num{1.23})\\
-Experimental group D $\times$ First-time coordination & \num{-1.86} & \num{0.94} & \num{-0.28} & \num{0.02}\\
+BothMessage group $\times$ First-time coordination & \num{-1.86} & \num{0.94} & \num{-0.28} & \num{0.02}\\
  & (\num{2.52}) & (\num{2.22}) & (\num{1.27}) & (\num{1.26})\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ First-Time Coordination}}\\
-\hspace{1em}Experimental group B & 2.51* & 1.72 & 0.27 & -0.41\\
+\hspace{1em}MatchMessage group & 2.51* & 1.72 & 0.27 & -0.41\\
 \hspace{1em} & (1.34) & (1.47) & (0.65) & (0.72)\\
-\hspace{1em}Experimental group C & -0.83 & -0.92 & -0.05 & -0.14\\
+\hspace{1em}CoordMessage group & -0.83 & -0.92 & -0.05 & -0.14\\
 \hspace{1em} & (1.35) & (1.35) & (0.66) & (0.66)\\
-\hspace{1em}Experimental group D & 1.94 & 1.89 & 0.01 & -0.08\\
+\hspace{1em}BothMessage group & 1.94 & 1.89 & 0.01 & -0.08\\
 \hspace{1em} & (1.36) & (1.37) & (0.66) & (0.66)\\
 Covariates &  & X &  & X\\
 Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
@@ -404,7 +394,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \end{table}
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:logit-coordinate}Logit Model of Coordination Process After CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -415,11 +405,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5} \cmidrule(l{3pt}r{3pt}){6-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-Experimental group B & \num{1.03} & \num{0.95} & \num{1.05} & \num{0.98} & \num{1.03} & \num{0.97}\\
+MatchMessage group & \num{1.03} & \num{0.95} & \num{1.05} & \num{0.98} & \num{1.03} & \num{0.97}\\
  & {}[\num{0.83}, \num{1.28}] & {}[\num{0.75}, \num{1.21}] & {}[\num{0.83}, \num{1.32}] & {}[\num{0.76}, \num{1.26}] & {}[\num{0.80}, \num{1.32}] & {}[\num{0.74}, \num{1.29}]\\
-Experimental group C & \num{0.99} & \num{0.96} & \num{1.01} & \num{0.99} & \num{1.00} & \num{0.98}\\
+CoordMessage group & \num{0.99} & \num{0.96} & \num{1.01} & \num{0.99} & \num{1.00} & \num{0.98}\\
  & {}[\num{0.79}, \num{1.24}] & {}[\num{0.76}, \num{1.21}] & {}[\num{0.80}, \num{1.28}] & {}[\num{0.77}, \num{1.26}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.75}, \num{1.27}]\\
-Experimental group D & \num{1.09} & \num{1.06} & \num{1.12} & \num{1.10} & \num{1.02} & \num{0.99}\\
+BothMessage group & \num{1.09} & \num{1.06} & \num{1.12} & \num{1.10} & \num{1.02} & \num{0.99}\\
  & {}[\num{0.87}, \num{1.35}] & {}[\num{0.84}, \num{1.32}] & {}[\num{0.89}, \num{1.42}] & {}[\num{0.87}, \num{1.39}] & {}[\num{0.78}, \num{1.32}] & {}[\num{0.76}, \num{1.29}]\\
 \midrule
 Covariates &  & X &  & X &  & X\\
@@ -434,7 +424,7 @@ Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2410.035} & \num{-2283.231}
 \end{table}
 
 \begin{table}[H]
-\centering\centering
+
 \caption{\label{tab:lm-who-selected}Determination of Donor Selection}
 \centering
 \fontsize{8}{10}\selectfont
