@@ -278,9 +278,11 @@ Table \@ref(tab:summary) summarizes our experiment. Panels A and B present the i
 Although most covariates were balanced across the experimental groups, a few covariates were unbalanced. Therefore, in addition to a simple difference of means test, we estimated the following linear regression model for individual $i$ who received the HLA match letter in week $w$:
 
 \begin{equation}
-  Y_{iw} =
-  \beta_1 \cdot \text{B}_{w} + \beta_2 \cdot \text{C}_{w} + \beta_3 \cdot \text{D}_{w}
-  + X'_{iw} \gamma + u_{iw}, (\#eq:reg)
+  \begin{split}
+  Y_{iw} =& \alpha + \beta_1 \cdot \text{MatchMessage}_{w}
+  + \beta_2 \cdot \text{CoordMessage}_{w} + \beta_3 \cdot \text{BothMessage}_{w} \\
+  &+ X'_{iw} \gamma + u_{iw},
+  \end{split}(\#eq:reg)
 \end{equation}
 
 \noindent
@@ -398,7 +400,7 @@ The proportions of donors reaching the CT stage for each of the experimental gro
 
 [^skip-coordination]: All except one of the candidates whose CT was skipped had prior coordination experience.
 
-As mentioned previously, our intervention was expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into three components: responses with a willingness to donate, prevention of \revise{dropout} because of patient-side reasons (exogenous \revise{dropout}), and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). We call \revise{dropout} because of patient-side reasons ``exogenous \revise{dropout}'' because it occurs owing to factors outside donors' decision making. The results are presented in Table A5 in Supplementary Material A. The total effects on these three factors was equal to the overall message effect on completing CT. Although these effects were not statistically significant, after controlling for the covariates, the result suggested that the \revise{matching difficulty} message that increased the CT completion rate could have contributed to both improving and maintaining the willingness to donate. In particular, the \revise{matching difficulty} message contributed more to improving the willingness to donate, accounting for half of the effect on reaching CT.[^calc-contribution]
+As mentioned previously, our intervention was expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into three components: responses with a willingness to donate, prevention of \revise{dropout} because of patient-side reasons (exogenous \revise{dropout}), and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). We call \revise{dropout} because of patient-side reasons "exogenous \revise{dropout}" because it occurs owing to factors outside donors' decision making. The results are presented in Table A5 in Supplementary Material A. The total effects on these three factors was equal to the overall message effect on completing CT. Although these effects were not statistically significant, after controlling for the covariates, the result suggested that the \revise{matching difficulty} message that increased the CT completion rate could have contributed to both improving and maintaining the willingness to donate. In particular, the \revise{matching difficulty} message contributed more to improving the willingness to donate, accounting for half of the effect on reaching CT.[^calc-contribution]
 
 [^calc-contribution]: We divided the effect of \revise{the MatchMessage group} on responses that included a willingness to donate by the sum of the absolute values of the effects on the three factors ($3.44$ for \revise{the MatchMessage group}).
 

@@ -100,7 +100,7 @@ schedule <- Schedule$new(
 schedule$kable(
   title = "Assignment Schedule",
   notes = paste(
-    "\\\\emph{Note}: See Table 1 in the main manuscrpit for a detailed description of the intervention of each experimental group. The control arm is experimental group A. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday."
+    "\\\\emph{Note}: See Table 1 in the main manuscript for a detailed description of the intervention of each experimental group. The control group is the StatusQuo group. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday."
   ),
   hold = TRUE,
   font_size = 8
@@ -265,7 +265,7 @@ rct$
       "treatCoordMessage" = "CoordMessage group",
       "treatBothMessage" = "BothMessage group"
     ),
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     hold = TRUE,
     font_size = 8
   ) %>%
