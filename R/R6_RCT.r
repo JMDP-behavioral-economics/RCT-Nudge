@@ -152,8 +152,8 @@ RCT <- R6Class("RCT",
             levels = c("before_endpoint", "end_attr", "exg_attr"),
             labels = c(
               private$outcome[[previous_endpoint]],
-              "No endogenous attrition",
-              "No exogenous attrition"
+              "No endogenous dropout",
+              "No exogenous dropout"
             )
           )
         )

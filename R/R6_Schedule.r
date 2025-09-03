@@ -7,14 +7,21 @@ source(here("R/misc.r"))
 Schedule <- R6::R6Class("Schedule",
   public = list(
     data = NULL,
-    initialize = function(path) {
-      self$data <- read_csv(path) %>%
+    initialize = function(path, treat_labels = NULL) {
+      dt <- read_csv(path) %>%
         mutate(
           date = paste(format(start_date, "%m/%d"), "to", format(end_date, "%m/%d")),
           date = paste0("(", date, ")"),
           year_month = format(make_date(year, month), "%B, %Y")
         ) %>%
-        select(year_month, week, treat, date) %>%
+        select(year_month, week, treat, date)
+
+        if (!is.null(treat_labels)) {
+          dt <- dt %>%
+            mutate(treat = dplyr::recode(treat, !!!treat_labels))
+        }
+
+      self$data <- dt %>%
         pivot_longer(treat:date) %>%
         pivot_wider(names_from = year_month) %>%
         mutate(week = if_else(name == "date", NA_real_, week)) %>%

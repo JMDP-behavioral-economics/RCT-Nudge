@@ -205,9 +205,9 @@ LogitAll <- R6::R6Class("LogitAll",
       estimate <- "{or}"
       statistic <- "[{lower.or}, {upper.or}]"
       coef_map <- c(
-        "treatB" = "Experimental group B",
-        "treatC" = "Experimental group C",
-        "treatD" = "Experimental group D"
+        "treatMatchMessage" = "MatchMessage group",
+        "treatCoordMessage" = "CoordMessage group",
+        "treatBothMessage" = "BothMessage group"
       )
       stars <- c("***" = .01, "**" = .05, "*" = .1)
       gof_omit <- "R2|AIC|BIC|RMSE|Std|FE|se_type"
