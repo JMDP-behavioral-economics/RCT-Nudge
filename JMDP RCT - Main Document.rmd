@@ -283,9 +283,7 @@ Although most covariates were balanced across the experimental groups, a few cov
 \end{equation}
 
 \noindent
-where $X_{iw}$ is a vector of the individual characteristics, including age and the number of holidays. The parameters of interest are $(\beta_1, \beta_2, \beta_3)$. There appears to be no cause for generating correlations within the clusters (weeks) of unobservable elements $u_{iw}$. Therefore, we used robust standard errors for statistical inference.[^LZ]
-
-[^LZ]: We conducted a regression analysis with clustered standard errors as a robustness check and confirmed that the results remained unchanged.
+where $X_{iw}$ is a vector of the individual characteristics, including age and the number of holidays. The parameters of interest are $(\beta_1, \beta_2, \beta_3)$. \revise{We used standard errors clustered by the assigned week for statistical inference because all donors who matched with the same patient might receive the letter in the same week.}
 
 # Experimental Results {#result}
 ## Average Treatment Effects on CT {#main}
