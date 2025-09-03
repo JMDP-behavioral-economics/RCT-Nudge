@@ -93,7 +93,10 @@ data_root <- "data"
 ```
 
 ```{r assignment}
-schedule <- Schedule$new(here(data_root, "RCT-schedule.csv"))
+schedule <- Schedule$new(
+  here(data_root, "RCT-schedule.csv"),
+  treat_labels = list(A = "StatusQuo", B = "MatchMessage", C = "CoordMessage", D = "BothMessage")
+)
 schedule$kable(
   title = "Assignment Schedule",
   notes = paste(
@@ -108,7 +111,8 @@ schedule$kable(
 rawdt <- RawData$new(
   here(data_root, "shape.csv"),
   treat_vars = "treat",
-  treat_levels = LETTERS[1:4]
+  treat_levels = LETTERS[1:4],
+  treat_labels = c("StatusQuo", "MatchMessage", "CoordMessage", "BothMessage")
 )
 
 # main sample
@@ -121,9 +125,9 @@ rawdt_noskip$add_cond_study_sample("reply == 0 | days_reply > 0")
 
 ```{r set-rct-class, include=FALSE}
 intervention <- list(
-  "Standard message" = c(A = "X", B = "X", C = "X", D = "X"),
-  "Probability message" = c(A = "", B = "X", C = "", D = "X"),
-  "Early coordination message" = c(A = "", B = "", C = "X", D = "X")
+  "Standard message" = c(StatusQuo = "X", MatchMessage = "X", CoordMessage = "X", BothMessage = "X"),
+  "\\revise{Matching difficulty} message" = c(StatusQuo = "", MatchMessage = "X", CoordMessage = "", BothMessage = "X"),
+  "Early coordination message" = c(StatusQuo = "", MatchMessage = "", CoordMessage = "X", BothMessage = "X")
 )
 
 endpoint <- list(
@@ -210,9 +214,9 @@ est_skip_mods %>%
   modelsummary(
     title = "Linear Probability Model of Number of Coordination and Skipping CT",
     coef_map = c(
-      "treatB" = "Experimental group B",
-      "treatC" = "Experimental group C",
-      "treatD" = "Experimental group D"
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
     ),
     gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
     align = "lcccc",
@@ -256,6 +260,11 @@ rct$
   fit(scale = 100)$
   kable_reg(
     title = "Decomposition of Effect on the CT",
+    coef_map_lm = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous attrition'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     hold = TRUE,
     font_size = 8
@@ -322,6 +331,11 @@ rct$
   fit(scale = 100)$
   kable_reg(
     title = "Effect on Speed of Response with Positive Intention",
+    coef_map_lm = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
     hold = TRUE,
     font_size = 8
@@ -336,18 +350,18 @@ rct$
   kable_reg(
     title = "Heterogenous Message Effects on CT and Donation by Gender",
     coef_map_lm = c(
-      "treatB" = "Experimental group B",
-      "treatC" = "Experimental group C",
-      "treatD" = "Experimental group D",
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group",
       "male" = "Male",
-      "treatB:male" = "Experimental group B $\\times$ Male",
-      "treatC:male" = "Experimental group C $\\times$ Male",
-      "treatD:male" = "Experimental group D $\\times$ Male"
+      "treatMatchMessage:male" = "MatchMessage group $\\times$ Male",
+      "treatCoordMessage:male" = "CoordMessage group $\\times$ Male",
+      "treatBothMessage:male" = "BothMessage group $\\times$ Male"
     ),
     coef_map_lh = c(
-      "treatB + treatB:male" = "Experimental group B",
-      "treatC + treatC:male" = "Experimental group C",
-      "treatD + treatD:male" = "Experimental group D"
+      "treatMatchMessage + treatMatchMessage:male" = "MatchMessage group",
+      "treatCoordMessage + treatCoordMessage:male" = "CoordMessage group",
+      "treatBothMessage + treatBothMessage:male" = "BothMessage group"
     ),
     label_lh = "Linear combination test: Experimental group + Experimental group $\\times$ Male",
     notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
@@ -364,18 +378,18 @@ rct$
   kable_reg(
     title = "Heterogeneous Treatment Effects on CT and Donation by First-Time Coordination",
     coef_map_lm = c(
-      "treatB" = "Experimental group B",
-      "treatC" = "Experimental group C",
-      "treatD" = "Experimental group D",
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group",
       "coordinate1" = "First-time coordination",
-      "treatB:coordinate1" = "Experimental group B $\\times$ First-time coordination",
-      "treatC:coordinate1" = "Experimental group C $\\times$ First-time coordination",
-      "treatD:coordinate1" = "Experimental group D $\\times$ First-time coordination"
+      "treatMatchMessage:coordinate1" = "MatchMessage group $\\times$ First-time coordination",
+      "treatCoordMessage:coordinate1" = "CoordMessage group $\\times$ First-time coordination",
+      "treatBothMessage:coordinate1" = "BothMessage group $\\times$ First-time coordination"
     ),
     coef_map_lh = c(
-      "treatB + treatB:coordinate1" = "Experimental group B",
-      "treatC + treatC:coordinate1" = "Experimental group C",
-      "treatD + treatD:coordinate1" = "Experimental group D"
+      "treatMatchMessage + treatMatchMessage:coordinate1" = "MatchMessage group",
+      "treatCoordMessage + treatCoordMessage:coordinate1" = "CoordMessage group",
+      "treatBothMessage + treatBothMessage:coordinate1" = "BothMessage group"
     ),
     label_lh = "Linear combination test: Experimental group + Experimental group $\\times$ First-Time Coordination",
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and dummy of first-time coordination.",
@@ -400,7 +414,7 @@ rct$
 
 ```{r lm-who-selected}
 test_dt <- rct$data %>%
-  filter(treat == "A" & test == 1)
+  filter(treat == "StatusQuo" & test == 1)
 
 mods <- list(
   I(candidate * 100) ~ male + age + coordinate,
