@@ -410,7 +410,7 @@ As mentioned previously, our intervention was expected to increase the probabili
 
 The early coordination message included in the HLA letter sent to \revise{the CoordMessage group} was expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure A1 in Supplementary Material A). Therefore, we examined whether \revise{the CoordMessage group}, which did not show an overall increase in the willingness to donate, may have shown increased early responses accompanied by a willingness to donate. Figure A2 in Supplementary Material A presents the cumulative response rates of the willingness to donate over time for the experimental groups. Because the JMDP requests responses within seven days, we define early responses as cumulative response rates with a willingness to donate within seven days. However, the probability of responding with a willingness to donate within seven days did not increase in \revise{the CoordMessage group}. This result was also confirmed by the regression analysis (see Table A6 in Supplementary Material A). Therefore, the early coordination message did not have the expected effect.
 
-## Heterogeneous Treatment Effects on CT
+<!-- ## Heterogeneous Treatment Effects on CT
 
 In this subsection, we explore the heterogeneity of the message effects. First, we examine the differences in the effects by sex. Table A7 in Supplementary Material A presents the estimation results from the linear probability models that include the cross-terms between the male dummy and experimental groups.[^additional-covariate] Without controlling for the covariates, compared with the control, the probability of matched female donors reaching CT was higher in \revise{the BothMessage group}. Furthermore, the cross-term between \revise{the BothMessage group} and the male dummy was statistically significant at the 10% level, suggesting that the effect could differ by sex in this experimental group. However, when controlling for the covariates (including the dummy variable indicating whether CT was skipped), the same results were not obtained.
 
@@ -418,61 +418,22 @@ The effect of \revise{the MatchMessage group} could be heterogenous by sex. We f
 
 [^additional-covariate]: In the cross-term models, we also controlled for the cross-terms between the male dummy and each covariate.
 
-Next, we examined the differences in the effects between first-time matched donors and matched donors with prior coordination experience. Table A8 in Supplementary Material A presents the estimation results from the linear probability models including the cross-terms between the first-time coordination dummy and experimental groups. Compared with the control, the probability of reaching CT among potential donors with prior coordination experience was higher in \revise{the MatchMessage group}. This result remained robust after controlling for the covariates. However, there was no statistically significant effect on the probability of reaching CT in first-time matched donors for any of the experimental groups. However, the cross-term between \revise{the MatchMessage group} and first-time coordination dummy was not statistically significant. Thus, the \revise{matching difficulty} message included in the HLA match letter sent to the participants in \revise{the MatchMessage group} primarily affected matched donors with prior coordination experience.
+Next, we examined the differences in the effects between first-time matched donors and matched donors with prior coordination experience. Table A8 in Supplementary Material A presents the estimation results from the linear probability models including the cross-terms between the first-time coordination dummy and experimental groups. Compared with the control, the probability of reaching CT among potential donors with prior coordination experience was higher in \revise{the MatchMessage group}. This result remained robust after controlling for the covariates. However, there was no statistically significant effect on the probability of reaching CT in first-time matched donors for any of the experimental groups. However, the cross-term between \revise{the MatchMessage group} and first-time coordination dummy was not statistically significant. Thus, the \revise{matching difficulty} message included in the HLA match letter sent to the participants in \revise{the MatchMessage group} primarily affected matched donors with prior coordination experience. -->
 
-## Effects on the Coordination Process After CT {#process}
+<!-- ## Effects on the Coordination Process After CT {#process}
 
-Finally, we examined the effects of the messages on the stages of the coordination process after CT. As explained in Section \@ref(background), the post-CT coordination process consists of three stages: donor selection, final consent, and collection (donation). For these outcomes, we used dummy variables coded one if a matched donor reached each stage. The effects on the three post-CT stages require careful interpretation because the outcomes involve demand-side effects. In the \revise{StatusQuo} group, $6.2$% of potential donors were selected as the most appropriate donors and $4.5$% ultimately donated.
+Finally, we examined the effects of the messages on the stages of the coordination process after CT. As explained in Section \@ref(background), the post-CT coordination process consists of three stages: donor selection, final consent, and collection (donation). For these outcomes, we used dummy variables coded one if a matched donor reached each stage. The effects on the three post-CT stages require careful interpretation because the outcomes involve demand-side effects. In the \revise{StatusQuo} group, $6.2$% of potential donors were selected as the most appropriate donors and $4.5$% ultimately donated. -->
 
-```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
-rct$
-  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit(scale = 100)$
-  plot_ate(
-    xlab = "Experimental group",
-    ylab = "Share of participants (%)",
-    p_text_margin = 4,
-    add_segment_margin = 12,
-    segment_margin = 5,
-    show_p = 1,
-    edge_length = 2,
-    p_text_size = 7,
-    avg_text_pos = 2,
-    avg_digit = 1,
-    avg_text_size = 7,
-    ylim = c(0, 100),
-    ybreaks = seq(0, 100, by = 10),
-    base_size = 25
-  ) +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
-```
-
-```{r lm-coordinate}
-rct$
-  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Linear Probability Model of the Coordination Processes After CT",
-    coef_map_lm = c(
-      "treatMatchMessage" = "MatchMessage group",
-      "treatCoordMessage" = "CoordMessage group",
-      "treatBothMessage" = "BothMessage group"
-    ),
-    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with bone marrow collection per 10 square kilometers. All the covariates except sex were demeaned.",
-    font_size = 8
-  )
-```
-
-```{r effect-dropout, include=FALSE}
+```{r effect-dropout, include=FALSE, eval = FALSE}
 est <- lm_robust(I(exg_stop_candidate * 100) ~ treat, data = subset(rct$data, test == 1), se_type = "stata", clusters = RCTweek)
 summary(est)
 ```
 
-Figure \@ref(fig:coordinate-diff-mean) presents the sample averages of each outcome by experimental group. The three post-CT processes were unaffected in all the experimental groups. Similar results were obtained from the linear probability models (see Table \@ref(tab:lm-coordinate)) and logistic regressions when controlling for the covariates (see Table A9 in Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (that is, the number of patients), if it increases the number of donors who reach CT, it should increase the number of donors not selected as candidates for exogenous reasons. In particular, compared with the \revise{StatusQuo} group, the probability that matched donors who reached CT were not selected because of patient-related reasons or donor health conditions was higher by $4.3$ percentage points in \revise{the MatchMessage group}, which was statistically significant at the 10% level ($p = 0.080$). Therefore, the intervention effects were weakened by demand-side factors.
+<!-- Figure \@ref(fig:coordinate-diff-mean) presents the sample averages of each outcome by experimental group. The three post-CT processes were unaffected in all the experimental groups. Similar results were obtained from the linear probability models (see Table \@ref(tab:lm-coordinate)) and logistic regressions when controlling for the covariates (see Table A9 in Supplementary Material A). These results should be interpreted with caution. Given that our intervention does not affect demand (that is, the number of patients), if it increases the number of donors who reach CT, it should increase the number of donors not selected as candidates for exogenous reasons. In particular, compared with the \revise{StatusQuo} group, the probability that matched donors who reached CT were not selected because of patient-related reasons or donor health conditions was higher by $4.3$ percentage points in \revise{the MatchMessage group}, which was statistically significant at the 10% level ($p = 0.080$). Therefore, the intervention effects were weakened by demand-side factors. -->
 
-# Discussion and Conclusions {#conclusion}
+# Discussion
+
+# Conclusions {#conclusion}
 
 This study examined how information provision affects donor availability in stem cell transplantation. The results of our field experiment demonstrated that providing information on the limited number of HLA-compatible donors per patient (that is, the \revise{matching difficulty} message) increased the probability of reaching CT by enhancing and maintaining the willingness to donate. This result suggests that physicians can select optimal donors for transplantation from a larger pool of candidates. However, when presented simultaneously with an ineffective early coordination message, the positive effect of the \revise{matching difficulty} message was diminished. We speculate this is because of the negative effect of information overload. Therefore, it is important to convey effective information in a simple manner.
 

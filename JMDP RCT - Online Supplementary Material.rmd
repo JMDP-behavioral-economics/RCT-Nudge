@@ -47,7 +47,7 @@ knitr::opts_chunk$set(
   dev = "pdf",
   fig.width = 15,
   fig.height = 10,
-  fig.pos = "t",
+  fig.pos = "H",
   out.extra = ""
 )
 ```
@@ -277,9 +277,9 @@ rct$
   column_spec(1, width = "20em")
 ```
 
-```{r speed-CT-cond-response, fig.cap = "Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \\newline \\emph{Note}: We used those who responded with positive intention to donate in the control arm (experimental group A). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.", fig.pos = "H"}
+```{r speed-CT-cond-response, fig.cap = "Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \\newline \\emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.", fig.pos = "H"}
 positive_dt <- rct$data %>%
-  filter(positive == 1 & 0 < days_reply & treat == "A")
+  filter(positive == 1 & 0 < days_reply & treat == "StatusQuo")
 
 plotdt <- positive_dt %>%
   mutate(ntile = ntile(days_reply, 20)) %>%
@@ -348,6 +348,66 @@ rct$
   column_spec(1, width = "20em")
 ```
 
+```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
+rct$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
+  fit(scale = 100)$
+  plot_ate(
+    xlab = "Experimental group",
+    ylab = "Share of participants (%)",
+    p_text_margin = 4,
+    add_segment_margin = 12,
+    segment_margin = 5,
+    show_p = 1,
+    edge_length = 2,
+    p_text_size = 7,
+    avg_text_pos = 2,
+    avg_digit = 1,
+    avg_text_size = 7,
+    ylim = c(0, 100),
+    ybreaks = seq(0, 100, by = 10),
+    base_size = 25
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+```{r lm-coordinate}
+rct$
+  lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Linear Probability Model of the Coordination Processes After CT",
+    coef_map_lm = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
+    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, (demeaned) age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with bone marrow collection per 10 square kilometers. All the covariates except sex were demeaned.",
+    font_size = 8,
+    hold = TRUE
+  )
+```
+
+\clearpage
+
+```{r logit-coordinate}
+rct$
+  logit_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
+  fit()$
+  kable(
+    title = "Logit Model of Coordination Process After CT",
+    notes = "Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    fmt = "%.2f",
+    hold = TRUE,
+    font_size = 8
+  ) %>%
+  landscape()
+```
+
+\clearpage
+
 ```{r lm-interaction-gender-test-donate}
 rct$
   lm_effect(c("test", "donate"), sample_drop = FALSE)$
@@ -402,19 +462,6 @@ rct$
     hold = TRUE
   ) %>%
   column_spec(1, width = "30em")
-```
-
-```{r logit-coordinate}
-rct$
-  logit_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
-  fit()$
-  kable(
-    title = "Logit Model of Coordination Process After CT",
-    notes = "Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
-    fmt = "%.2f",
-    hold = TRUE,
-    font_size = 8
-  )
 ```
 
 ```{r lm-who-selected}
