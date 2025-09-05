@@ -53,6 +53,17 @@
 \usepackage[hidelinks]{hyperref}
 
 % ------------------------------ other packages
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+  \newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+  ]}
+  
 
 % ------------------------------ paper information
 \title{Exploring Information Provision to Promote Stem Cell Donation:
@@ -262,6 +273,37 @@ There are two reasons for the low probability of reaching CT. First, only \(54.9
 \end{figure}
 
 The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \ref{fig:test-diff-mean}. \revise{Experimental groups B, which received the matching difficulty message, had a $3.1$ percentage point higher probability of reaching CT than the \revise{StatusQuo} group. This effect was} statistically significant. We obtained the same results when we adjusted for multiple \revise{hypotheses} testing, as proposed by \citet{List2019} (see Column (1) of \revise{Table A4 in Supplementary Material A}). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates \revise{month fixed effects} using a linear probability model (see Column (2) of \revise{Table A4 in Supplementary Material A}). \revise{Also, this result was} robust to using logistic regression models instead of linear probability models (see Table \revise{A5} in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
+
+\begin{table}
+
+\caption{\label{tab:lm-test-decompose}Decomposition of Effect on the CT}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Positive intention} & \multicolumn{3}{c}{No endogenous dropout} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+MatchMessage group & \num{2.31}* & \num{1.86}* & \num{1.27} & \num{0.97} & \num{1.14} & \num{0.93}\\
+ & (\num{1.33}) & (\num{1.07}) & (\num{0.93}) & (\num{1.02}) & (\num{1.09}) & (\num{0.92})\\
+CoordMessage group & \num{-0.44} & \num{-0.05} & \num{-0.31} & \num{2.55}** & \num{1.50} & \num{1.46}\\
+ & (\num{1.43}) & (\num{1.22}) & (\num{1.18}) & (\num{1.24}) & (\num{1.21}) & (\num{1.03})\\
+BothMessage group & \num{0.59} & \num{0.24} & \num{0.12} & \num{2.27}** & \num{1.97}* & \num{1.92}*\\
+ & (\num{1.61}) & (\num{1.37}) & (\num{1.09}) & (\num{1.04}) & (\num{1.14}) & (\num{1.04})\\
+\midrule
+Control average & 54.91 & 54.91 & 54.91 & 71.91 & 71.91 & 71.91\\
+Covariates &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to endogenous reasons (donor-side reasons) between reply with positive intention and CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
 
 As mentioned previously, our intervention was expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into three components: responses with a willingness to donate, prevention of \revise{dropout} because of patient-side reasons (exogenous \revise{dropout}), and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). We call \revise{dropout} because of patient-side reasons ``exogenous \revise{dropout}'' because it occurs owing to factors outside donors' decision making. The results are presented in Table A5 in Supplementary Material A. The total effects on these three factors was equal to the overall message effect on completing CT. Although these effects were not statistically significant, after controlling for the covariates, the result suggested that the \revise{matching difficulty} message that increased the CT completion rate could have contributed to both improving and maintaining the willingness to donate. In particular, the \revise{matching difficulty} message contributed more to improving the willingness to donate, accounting for half of the effect on reaching CT.\footnote{We divided the effect of \revise{the MatchMessage group} on responses that included a willingness to donate by the sum of the absolute values of the effects on the three factors (\(3.44\) for \revise{the MatchMessage group}).}
 

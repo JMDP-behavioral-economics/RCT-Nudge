@@ -336,6 +336,22 @@ The proportions of donors reaching the CT stage for each of the experimental gro
 
 <!-- [^skip-coordination]: All except one of the candidates whose CT was skipped had prior coordination experience. -->
 
+```{r lm-test-decompose}
+dt <- rct$
+  lm_decompose_effect("test")$
+  fit(scale = 100)$
+  kable_reg(
+    title = "Decomposition of Effect on the CT",
+    coef_map_lm = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
+    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to endogenous reasons (donor-side reasons) between reply with positive intention and CT. Note that this dummy variable takes a value of 1 if a matched donor did not reply without intention. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    font_size = 8
+  )
+```
+
 As mentioned previously, our intervention was expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into three components: responses with a willingness to donate, prevention of \revise{dropout} because of patient-side reasons (exogenous \revise{dropout}), and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). We call \revise{dropout} because of patient-side reasons "exogenous \revise{dropout}" because it occurs owing to factors outside donors' decision making. The results are presented in Table A5 in Supplementary Material A. The total effects on these three factors was equal to the overall message effect on completing CT. Although these effects were not statistically significant, after controlling for the covariates, the result suggested that the \revise{matching difficulty} message that increased the CT completion rate could have contributed to both improving and maintaining the willingness to donate. In particular, the \revise{matching difficulty} message contributed more to improving the willingness to donate, accounting for half of the effect on reaching CT.[^calc-contribution]
 
 [^calc-contribution]: We divided the effect of \revise{the MatchMessage group} on responses that included a willingness to donate by the sum of the absolute values of the effects on the three factors ($3.44$ for \revise{the MatchMessage group}).

@@ -327,24 +327,6 @@ rct$
   column_spec(1, width = "20em")
 ```
 
-```{r lm-test-decompose}
-rct$
-  lm_decompose_effect("test")$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Decomposition of Effect on the CT",
-    coef_map_lm = c(
-      "treatMatchMessage" = "MatchMessage group",
-      "treatCoordMessage" = "CoordMessage group",
-      "treatBothMessage" = "BothMessage group"
-    ),
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
 ```{r speed-CT-cond-response, fig.cap = "Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \\newline \\emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.", fig.pos = "H"}
 positive_dt <- rct$data %>%
   filter(positive == 1 & 0 < days_reply & treat == "StatusQuo")

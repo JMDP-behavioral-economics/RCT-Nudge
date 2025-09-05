@@ -271,37 +271,6 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \end{threeparttable}
 \end{table}
 
-\begin{table}[H]
-
-\caption{\label{tab:lm-test-decompose}Decomposition of Effect on the CT}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}ccccccccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Positive intention} & \multicolumn{3}{c}{No endogenous dropout} & \multicolumn{3}{c}{No exogenous dropout} \\
-\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
-  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
-\midrule
-MatchMessage group & \num{2.31}* & \num{1.86}* & \num{1.27} & \num{0.97} & \num{1.14} & \num{0.93} & \num{-0.17} & \num{-0.44} & \num{-0.57}\\
- & (\num{1.33}) & (\num{1.07}) & (\num{0.93}) & (\num{1.02}) & (\num{1.09}) & (\num{0.92}) & (\num{0.83}) & (\num{0.76}) & (\num{0.51})\\
-CoordMessage group & \num{-0.44} & \num{-0.05} & \num{-0.31} & \num{2.55}** & \num{1.50} & \num{1.46} & \num{-0.93} & \num{-0.96} & \num{-0.89}*\\
- & (\num{1.43}) & (\num{1.22}) & (\num{1.18}) & (\num{1.24}) & (\num{1.21}) & (\num{1.03}) & (\num{0.66}) & (\num{0.63}) & (\num{0.49})\\
-BothMessage group & \num{0.59} & \num{0.24} & \num{0.12} & \num{2.27}** & \num{1.97}* & \num{1.92}* & \num{-0.51} & \num{-0.61} & \num{-0.96}**\\
- & (\num{1.61}) & (\num{1.37}) & (\num{1.09}) & (\num{1.04}) & (\num{1.14}) & (\num{1.04}) & (\num{0.72}) & (\num{0.65}) & (\num{0.42})\\
-\midrule
-Control average & 54.91 & 54.91 & 54.91 & 71.91 & 71.91 & 71.91 & 95.42 & 95.42 & 95.42\\
-Covariates &  & X & X &  & X & X &  & X & X\\
-Month FE &  &  & X &  &  & X &  &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``No exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to exogenous reasons (patient-side reasons) between reply with positive intention and CT. The outcome ``No endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was not interrupted due to other reasons (mainly donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
 \begin{figure}[H]
 \includegraphics{JMDPRC~2/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
 \end{figure}

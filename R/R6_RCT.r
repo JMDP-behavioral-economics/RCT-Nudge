@@ -140,7 +140,7 @@ RCT <- R6Class("RCT",
       dt$exg_stop <- dt[, paste0("exg_stop_", outcome), drop = TRUE]
       dt$endpoint <- dt[, outcome, drop = TRUE]
       dt$before_endpoint <- dt[, previous_endpoint, drop = TRUE]
-      dt$exg_attr <- ifelse(dt$before_endpoint == 1 & dt$endpoint == 0 & dt$exg_stop == 1, 0, 1)
+      # dt$exg_attr <- ifelse(dt$before_endpoint == 1 & dt$endpoint == 0 & dt$exg_stop == 1, 0, 1)
       dt$end_attr <- ifelse(dt$before_endpoint == 1 & dt$endpoint == 0 & dt$exg_stop == 0, 0, 1)
 
       use <- dt %>%
@@ -149,11 +149,12 @@ RCT <- R6Class("RCT",
         mutate(
           outcome = factor(
             outcome,
-            levels = c("before_endpoint", "end_attr", "exg_attr"),
+            levels = c("before_endpoint", "end_attr"),
+            # levels = c("before_endpoint", "end_attr", "exg_attr"),
             labels = c(
               private$outcome[[previous_endpoint]],
-              "No endogenous dropout",
-              "No exogenous dropout"
+              "No endogenous dropout"
+              # "No exogenous dropout"
             )
           )
         )
