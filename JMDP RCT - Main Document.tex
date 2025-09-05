@@ -53,17 +53,6 @@
 \usepackage[hidelinks]{hyperref}
 
 % ------------------------------ other packages
-\usepackage{booktabs}
-\usepackage{siunitx}
-
-  \newcolumntype{d}{S[
-    input-open-uncertainty=,
-    input-close-uncertainty=,
-    parse-numbers = false,
-    table-align-text-pre=false,
-    table-align-text-post=false
-  ]}
-  
 
 % ------------------------------ paper information
 \title{Exploring Information Provision to Promote Stem Cell Donation:
@@ -269,46 +258,10 @@ Estimating the effect of the intervention messages on reaching the CT stage is c
 There are two reasons for the low probability of reaching CT. First, only \(54.91\)\% of the donors in the \revise{StatusQuo} group indicated their willingness to donate. Second, only \(40.52\)\% of those who expressed a willingness to donate reached the CT stage. Most \revise{dropout} between the response and CT stages occurred because of donor-related reasons (\(85.99\)\%). \citet{Hirakawa2018} found similar results and showed that the top three donor-related reasons were health issues, scheduling conflicts, and the lack of family consent. Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
 
 \begin{figure}[t]
-\includegraphics{JMDP RCT - Main Document_files/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:test-diff-mean}
+\includegraphics{JMDPRC~1/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:test-diff-mean}
 \end{figure}
 
-\begin{table}
-
-\caption{\label{tab:lm-test}Linear Probability Model of CT}
-\centering
-\fontsize{8}{10}\selectfont
-\begin{threeparttable}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}ccc}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
-\cmidrule(l{3pt}r{3pt}){2-4}
-  & (1) & (2) & (3)\\
-\midrule
-MatchMessage group & \num{3.10}** & \num{2.56}** & \num{1.63}**\\
- & (\num{1.42}) & (\num{1.24}) & (\num{0.70})\\
-CoordMessage group & \num{1.19} & \num{0.50} & \num{0.27}\\
- & (\num{1.55}) & (\num{1.18}) & (\num{0.90})\\
-BothMessage group & \num{2.39} & \num{1.64} & \num{1.11}\\
- & (\num{1.63}) & (\num{1.65}) & (\num{0.80})\\
-\midrule
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textit{Adjustment of p-values for multiple hypotheses testing}}\\
-\hspace{1em}MatchMessage group (adjusted p-value) & 0.021 &  & \\
-\hspace{1em}CoordMessage group (adjusted p-value) & 0.311 &  & \\
-\hspace{1em}BothMessage group (adjusted p-value) & 0.073 &  & \\
-Control average & 22.25 & 22.25 & 22.25\\
-Covariates &  & X & X\\
-Month FE &  &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \ref{fig:test-diff-mean}. Experimental groups B and D, which received the \revise{matching difficulty} message, had a \(3.1\) and \(2.4\) percentage point higher probability of reaching CT than the \revise{StatusQuo} group, respectively. These effects were statistically significant. We obtained the same results when we adjusted for multiple \revise{hypotheses} testing, as proposed by \citet{List2019} (see Column (1) in Table \ref{tab:lm-test}). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates using a linear probability model (see Column (2) in Table \ref{tab:lm-test}). However, the effect of \revise{the BothMessage group} became not statistically significant owing to the slight imbalance in cases eligible for skipping CT between \revise{the BothMessage group} and the \revise{StatusQuo} group. In the JMDP coordination process, CT can be skipped when the previous CT result remains valid.\footnote{All except one of the candidates whose CT was skipped had prior coordination experience.} Compared with the \revise{StatusQuo} group, \revise{the BothMessage group} did not have a significantly higher proportion of potential donors with prior coordination experience; however, it did have a significantly higher proportion of potential donors eligible to skip CT (see Table A3 in Supplementary Material A). This difference likely influenced the simple difference of means between \revise{the BothMessage group} and the \revise{StatusQuo} group. These results were robust to using logistic regression models instead of linear probability models (see Table A4 in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
+The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \ref{fig:test-diff-mean}. \revise{Experimental groups B, which received the matching difficulty message, had a $3.1$ percentage point higher probability of reaching CT than the \revise{StatusQuo} group. This effect was} statistically significant. We obtained the same results when we adjusted for multiple \revise{hypotheses} testing, as proposed by \citet{List2019} (see Column (1) of \revise{Table A4 in Supplementary Material A}). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates \revise{month fixed effects} using a linear probability model (see Column (2) of \revise{Table A4 in Supplementary Material A}). \revise{Also, this result was} robust to using logistic regression models instead of linear probability models (see Table \revise{A5} in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
 
 As mentioned previously, our intervention was expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into three components: responses with a willingness to donate, prevention of \revise{dropout} because of patient-side reasons (exogenous \revise{dropout}), and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). We call \revise{dropout} because of patient-side reasons ``exogenous \revise{dropout}'' because it occurs owing to factors outside donors' decision making. The results are presented in Table A5 in Supplementary Material A. The total effects on these three factors was equal to the overall message effect on completing CT. Although these effects were not statistically significant, after controlling for the covariates, the result suggested that the \revise{matching difficulty} message that increased the CT completion rate could have contributed to both improving and maintaining the willingness to donate. In particular, the \revise{matching difficulty} message contributed more to improving the willingness to donate, accounting for half of the effect on reaching CT.\footnote{We divided the effect of \revise{the MatchMessage group} on responses that included a willingness to donate by the sum of the absolute values of the effects on the three factors (\(3.44\) for \revise{the MatchMessage group}).}
 

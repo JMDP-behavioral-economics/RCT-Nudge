@@ -332,77 +332,9 @@ rct$
   )
 ```
 
-```{r lm-test}
-res <- rct$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100)$
-  get_est()
+The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \@ref(fig:test-diff-mean). \revise{Experimental groups B, which received the matching difficulty message, had a $3.1$ percentage point higher probability of reaching CT than the \revise{StatusQuo} group. This effect was} statistically significant. We obtained the same results when we adjusted for multiple \revise{hypotheses} testing, as proposed by @List2019 (see Column (1) of \revise{Table A4 in Supplementary Material A}). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates \revise{month fixed effects} using a linear probability model (see Column (2) of \revise{Table A4 in Supplementary Material A}). <!--However, the effect of \revise{the BothMessage group} became not statistically significant owing to the slight imbalance in cases eligible for skipping CT between \revise{the BothMessage group} and the \revise{StatusQuo} group. In the JMDP coordination process, CT can be skipped when the previous CT result remains valid.[^skip-coordination]Compared with the \revise{StatusQuo} group, \revise{the BothMessage group} did not have a significantly higher proportion of potential donors with prior coordination experience; however, it did have a significantly higher proportion of potential donors eligible to skip CT (see Table A3 in Supplementary Material A). This difference likely influenced the simple difference of means between \revise{the BothMessage group} and the \revise{StatusQuo} group.--> \revise{Also, this result was} robust to using logistic regression models instead of linear probability models (see Table \revise{A5} in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
 
-mha_test <- cache_rds(
-  {
-    rct$
-      multiple_hypotheses_adjust("test")$
-      estimate(scale = 100, B = 3000)$
-      get_result()
-  },
-  file = "mh-adjust-test.rds"
-)
-
-mha_test_tab <- data.frame(mha_test) %>%
-  select(term = Treated.id, "(1)" = List.p) %>%
-  mutate(
-    term = paste(term, "group", "(adjusted p-value)"),
-    "(1)" = sprintf("%1.3f", `(1)`),
-    "(2)" = "",
-    "(3)" = ""
-  )
-
-add_tab <- data.frame(
-  rbind(
-    mha_test_tab,
-    c("Control average", sprintf("%1.2f", res$avg)),
-    c("Covariates", res$covariate),
-    c("Month FE", res$fe)
-  )
-)
-
-attr(add_tab, "position") <- 7:12
-
-res %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Linear Probability Model of CT",
-    coef_map = c(
-      "treatMatchMessage" = "MatchMessage group",
-      "treatCoordMessage" = "CoordMessage group",
-      "treatBothMessage" = "BothMessage group"
-    ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
-    align = "lccc",
-    add_rows = add_tab,
-    fmt = 2,
-    escape = FALSE
-  ) %>%
-  kableExtra::kable_styling(font_size = 8) %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 3)) %>%
-  kableExtra::group_rows(
-    "Adjustment of p-values for multiple hypotheses testing",
-    7, 9,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::column_spec(1, width = "20em") %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \\\\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.",
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \@ref(fig:test-diff-mean). Experimental groups B and D, which received the \revise{matching difficulty} message, had a $3.1$ and $2.4$ percentage point higher probability of reaching CT than the \revise{StatusQuo} group, respectively. These effects were statistically significant. We obtained the same results when we adjusted for multiple \revise{hypotheses} testing, as proposed by @List2019 (see Column (1) in Table \@ref(tab:lm-test)). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates using a linear probability model (see Column (2) in Table \@ref(tab:lm-test)). However, the effect of \revise{the BothMessage group} became not statistically significant owing to the slight imbalance in cases eligible for skipping CT between \revise{the BothMessage group} and the \revise{StatusQuo} group. In the JMDP coordination process, CT can be skipped when the previous CT result remains valid.[^skip-coordination] Compared with the \revise{StatusQuo} group, \revise{the BothMessage group} did not have a significantly higher proportion of potential donors with prior coordination experience; however, it did have a significantly higher proportion of potential donors eligible to skip CT (see Table A3 in Supplementary Material A). This difference likely influenced the simple difference of means between \revise{the BothMessage group} and the \revise{StatusQuo} group. These results were robust to using logistic regression models instead of linear probability models (see Table A4 in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
-
-[^skip-coordination]: All except one of the candidates whose CT was skipped had prior coordination experience.
+<!-- [^skip-coordination]: All except one of the candidates whose CT was skipped had prior coordination experience. -->
 
 As mentioned previously, our intervention was expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into three components: responses with a willingness to donate, prevention of \revise{dropout} because of patient-side reasons (exogenous \revise{dropout}), and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). We call \revise{dropout} because of patient-side reasons "exogenous \revise{dropout}" because it occurs owing to factors outside donors' decision making. The results are presented in Table A5 in Supplementary Material A. The total effects on these three factors was equal to the overall message effect on completing CT. Although these effects were not statistically significant, after controlling for the covariates, the result suggested that the \revise{matching difficulty} message that increased the CT completion rate could have contributed to both improving and maintaining the willingness to donate. In particular, the \revise{matching difficulty} message contributed more to improving the willingness to donate, accounting for half of the effect on reaching CT.[^calc-contribution]
 

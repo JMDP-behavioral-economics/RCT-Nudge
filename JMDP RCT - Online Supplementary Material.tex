@@ -206,6 +206,42 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 
 \begin{table}[H]
 
+\caption{\label{tab:lm-test}Linear Probability Model of CT}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{20em}ccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
+\midrule
+MatchMessage group & \num{3.10}** & \num{2.56}** & \num{1.63}**\\
+ & (\num{1.42}) & (\num{1.24}) & (\num{0.70})\\
+CoordMessage group & \num{1.19} & \num{0.50} & \num{0.27}\\
+ & (\num{1.55}) & (\num{1.18}) & (\num{0.90})\\
+BothMessage group & \num{2.39} & \num{1.64} & \num{1.11}\\
+ & (\num{1.63}) & (\num{1.65}) & (\num{0.80})\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{4}{l}{\textit{Adjustment of p-values for multiple hypotheses testing}}\\
+\hspace{1em}MatchMessage group (adjusted p-value) & 0.021 &  & \\
+\hspace{1em}CoordMessage group (adjusted p-value) & 0.311 &  & \\
+\hspace{1em}BothMessage group (adjusted p-value) & 0.073 &  & \\
+Control average & 22.25 & 22.25 & 22.25\\
+Covariates &  & X & X\\
+Month FE &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
 \caption{\label{tab:logit-test}Logit Model of the CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -267,11 +303,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
+\includegraphics{JMDPRC~2/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
+\includegraphics{JMDPRC~2/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
 \end{figure}
 
 \clearpage
@@ -308,7 +344,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDP RCT - Online Supplementary Material_files/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~2/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 \begin{table}[H]
