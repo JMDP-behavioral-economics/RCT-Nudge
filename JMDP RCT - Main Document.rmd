@@ -272,7 +272,7 @@ Table \@ref(tab:summary) summarizes our experiment. Panels A and B present the i
 
 [^new-year-holidays]: In Japan, the New Year's holiday is set by the government to run from December 29 to January 3. While we follow this definition, this holiday may be extended depending on individual circumstances.
 
-Although most covariates were balanced across the experimental groups, a few covariates were unbalanced. Therefore, in addition to a simple difference of means test, we estimated the following linear regression model for individual $i$ who received the HLA match letter in week $w$:
+Although most covariates were balanced across the experimental groups, a few covariates were unbalanced.[^cor] Therefore, in addition to a simple difference of means test, we estimated the following linear regression model for individual $i$ who received the HLA match letter in week $w$:
 
 \begin{equation}
   \begin{split}
@@ -284,6 +284,8 @@ Although most covariates were balanced across the experimental groups, a few cov
 
 \noindent
 where $X_{iw}$ is a vector of the individual characteristics, including age and the number of holidays. The parameters of interest are $(\beta_1, \beta_2, \beta_3)$. \revise{We used standard errors clustered by the assigned week for statistical inference because all donors who matched with the same patient might receive the letter in the same week.}
+
+[^cor]: \revise{We confirmed that age and number of holidays did not affect CT, which is our primary outcome, in the control group. Therefore, the imbalance in some covariates is not a major concern. We present the results of regression analysis that adjusts for these effects in the Supplementary Material.}
 
 # Experimental Results {#result}
 ## Average Treatment Effects on CT {#main}
