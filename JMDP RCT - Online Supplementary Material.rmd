@@ -482,8 +482,7 @@ rct$
     notes = "The robust standard errors are in parentheses. This table tests heterogenous message effects by gender. The unit of treatment effect is a percentage point. Covariates are age, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
     font_size = 8,
     hold = TRUE
-  ) %>%
-  column_spec(1, width = "30em")
+  )
 ```
 
 ```{r lm-interaction-coordination1-test-donate}
@@ -510,8 +509,51 @@ rct$
     notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and dummy of first-time coordination.",
     font_size = 8,
     hold = TRUE
-  ) %>%
-  column_spec(1, width = "30em")
+  )
+```
+
+```{r lm-interaction-gender-coordination-group-test-donate}
+rct2 <- rct$clone()
+rct2$data <- rct2$data %>%
+  mutate(
+    group = case_when(
+      male == 1 & coordinate1 == 1 ~ "Flesh male",
+      male == 1 & coordinate1 == 0 ~ "Experienced male",
+      male == 0 & coordinate1 == 1 ~ "Flesh female",
+      male == 0 & coordinate1 == 0 ~ "Experienced female"
+    ),
+    group = factor(
+      group,
+      levels = c("Flesh male", "Experienced male", "Flesh female", "Experienced female")
+    )
+  )
+
+rct2$
+  lm_effect(c("test", "donate"), sample_drop = FALSE)$
+  fit(scale = 100, interaction = "group", drop_x = c("male", "coordinate", "skip_test"))$
+  kable_reg(
+    title = "Heterogeneous Treatment Effects on CT and Donation by Gender and Coordination Experience",
+    coef_map_lm = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
+    coef_map_lh = c(
+      "treatMatchMessage + treatMatchMessage:groupExperienced male" = "MatchMessage (Experienced male)",
+      "treatCoordMessage + treatCoordMessage:groupExperienced male" = "CoordMessage (Experienced male)",
+      "treatBothMessage + treatBothMessage:groupExperienced male" = "BothMessage (Experienced male)",
+      "treatMatchMessage + treatMatchMessage:groupFlesh female" = "MatchMessage (Flesh female)",
+      "treatCoordMessage + treatCoordMessage:groupFlesh female" = "CoordMessage (Flesh female)",
+      "treatBothMessage + treatBothMessage:groupFlesh female" = "BothMessage (Flesh female)",
+      "treatMatchMessage + treatMatchMessage:groupExperienced female" = "MatchMessage (Experienced female)",
+      "treatCoordMessage + treatCoordMessage:groupExperienced female" = "CoordMessage (Experienced female)",
+      "treatBothMessage + treatBothMessage:groupExperienced female" = "BothMessage (Experienced female)"
+    ),
+    label_lh = "Linear combination test: Experimental group + Experimental group $\\times$ Gender-Coordination group",
+    notes = "The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are age, its squared term, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and gender.",
+    font_size = 8,
+    hold = TRUE
+  )
 ```
 
 ```{r lm-who-selected}
@@ -532,7 +574,13 @@ mods <- list(
 )
 
 fit_mods <- mods %>%
-  map(~ lm_robust(., data = test_dt, se_type = "stata"))
+  map(~ lm_robust(., data = test_dt, se_type = "stata", clusters = RCTweek))
+
+add_tab <- data.frame(
+  rbind(c("Month FE", "", "", "", "", "X", "X"))
+)
+
+attr(add_tab, "position") <- 19
 
 fit_mods %>%
   modelsummary(
@@ -548,17 +596,17 @@ fit_mods %>%
       "PB_per_area" = "\\# listed hospitals with PBSC collection",
       "BM_per_area" = "\\# listed hospitals with BM collection"
     ),
-    gof_omit = "AIC|BIC|RMSE",
+    gof_omit = "AIC|BIC|RMSE|Std.Errors",
     stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
     escape = FALSE,
-    add_rows = data.frame(rbind(c("Month FE", "", "", "", "", "X", "X"))),
+    add_rows = add_tab,
     fmt = 2
   ) %>%
   kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
   kableExtra::add_header_above(c(" " = 1, "Donor selection" = 6)) %>%
   kableExtra::footnote(
     general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control arm. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.",
     threeparttable = TRUE,
     escape = FALSE
   )

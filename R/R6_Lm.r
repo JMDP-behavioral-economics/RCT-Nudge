@@ -203,7 +203,13 @@ Lm <- R6::R6Class("Lm",
           single <- term[!str_detect(term, ":")]
 
           hypo <- single %>%
-            sapply(function(x) paste(term[str_detect(term, x)], collapse = " + "))
+            lapply(function(x) {
+              x <- term[str_detect(term, x)]
+              single_x <- x[!str_detect(x, ":")]
+              cross_x <- x[str_detect(x, ":")]
+              paste(single_x, cross_x, sep = " + ")
+            }) %>%
+            unlist()
 
           lh <- hypo %>%
             map(~ lh_robust(
@@ -344,7 +350,7 @@ LmFit <- R6::R6Class("LmFit",
           kableExtra::group_rows(
             label_lh,
             pos[1],
-            pos[length(pos) - 1],
+            pos[1] + nrow(lh_tab) - 1,
             bold = FALSE,
             italic = TRUE,
             escape = FALSE
