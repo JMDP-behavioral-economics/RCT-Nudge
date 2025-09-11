@@ -162,28 +162,22 @@ rct$
 ```
 
 ```{r lm-skip}
-skip_dt <- rct$
-  lm_effect("reply", sample_drop = FALSE)$
-  data %>%
-    mutate(
-      coordinate_more = if_else(coordinate1 == 0, 100, 0),
-      skip_CT = case_when(
-        value == 0 ~ 0,
-        days_reply == 0 ~ 100,
-        TRUE ~ 0
-      )
-    )
+skip_dt <- rct$data %>%
+  mutate(
+    coordinate_more = if_else(coordinate1 == 0, 100, 0),
+    skip_test = skip_test * 100
+  )
 
 ctrl_avg <- skip_dt %>%
   filter(treat == "StatusQuo") %>%
-  summarize_at(vars(coordinate_more, skip_CT), list(~ mean(.))) %>%
+  summarize_at(vars(coordinate_more, skip_test), list(~ mean(.))) %>%
   mutate_all(list(~ sprintf("%1.2f", .)))
 
 add_tab <- data.frame(rbind(
   c(
     "Control average",
     ctrl_avg$coordinate_more, ctrl_avg$coordinate_more, ctrl_avg$coordinate_more,
-    ctrl_avg$skip_CT, ctrl_avg$skip_CT, ctrl_avg$skip_CT
+    ctrl_avg$skip_test, ctrl_avg$skip_test, ctrl_avg$skip_test
   ),
   c(
     "Covariates",
@@ -205,10 +199,10 @@ skip_mods <- list(
     PB_per_area + BM_per_area + holidays,
   coordinate_more ~ treat + male + age + I(age^2) + hospital_per_area +
     PB_per_area + BM_per_area + holidays + factor(month),
-  skip_CT ~ treat,
-  skip_CT ~ treat + male + age + I(age^2) + coordinate + hospital_per_area +
+  skip_test ~ treat,
+  skip_test ~ treat + male + age + I(age^2) + coordinate + hospital_per_area +
     PB_per_area + BM_per_area + holidays,
-  skip_CT ~ treat + male + age + I(age^2) + coordinate + hospital_per_area +
+  skip_test ~ treat + male + age + I(age^2) + coordinate + hospital_per_area +
     PB_per_area + BM_per_area + holidays + factor(month)
 )
 
@@ -243,6 +237,23 @@ est_skip_mods %>%
     threeparttable = TRUE,
     escape = FALSE
   )
+```
+
+```{r cross-table-skip}
+skip_dt %>%
+  mutate(
+    `Coordination experience` = if_else(
+      coordinate_more == 0, "First-time coordination", "Second-time or more coordination"
+    ),
+    skip_test = if_else(skip_test == 0, "Not skipped", "Skipped")
+  ) %>%
+  datasummary_crosstab(
+    `Coordination experience` ~ skip_test,
+    data = .,
+    title = "Cross-Table of Coordination Experience and Skipping CT",
+    fmt = 2
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
 ```{r lm-test}
