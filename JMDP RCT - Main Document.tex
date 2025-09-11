@@ -194,7 +194,33 @@ The early coordination message emphasizes that early coordination would increase
 
 Four experimental groups were established to estimate the effects of including the two intervention messages. First group received the standard HLA match letter with neither of the intervention messages, serving as a control group (\revise{StatusQuo} group). Second and third group received the standard HLA match letter including only the probability and early coordination messages, respectively (\revise{MatchMessage} group and \revise{CoordMessage} group, respectively). The last group received the standard HLA match letter with both intervention messages included to test the negative effect of information overload (\revise{BothMessage} group).
 
-The participants in the experiment were 11,154 matched donors who received HLA match letters between September 6, 2021 and February 27, 2022. To maintain randomness to the best of the JMDP office's abilities, we assigned the participants to the four experimental groups using weekly cluster randomization. Specifically, we created a cluster every seven days (a week starting from Monday) and randomly assigned one experimental group to each cluster (see Table A1 in Supplementary Material A for the assignment schedule).\footnote{The experiment was not conducted from December 27, 2021 to January 3, 2022 because the JMDP was closed for the New Year's holiday.} The assignment of the experimental groups was designed to be as balanced across weeks and months as possible. Before conducting the experiment, we obtained approval from the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305) and the JMDP (approval number: JMDP2021-04).
+\begin{table}
+
+\caption{\label{tab:assignment}Assignment Schedule}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+week & September, 2021 & October, 2021 & November, 2021 & December, 2021 & January, 2022 & February, 2022\\
+\midrule
+1 & MatchMessage & CoordMessage & CoordMessage & BothMessage & MatchMessage & StatusQuo\\
+ & (09/06 to 09/12) & (10/04 to 10/10) & (11/01 to 11/07) & (11/29 to 12/05) & (01/03 to 01/09) & (01/31 to 02/06)\\
+2 & BothMessage & MatchMessage & StatusQuo & StatusQuo & CoordMessage & MatchMessage\\
+ & (09/13 to 09/19) & (10/11 to 10/17) & (11/08 to 11/14) & (12/06 to 12/12) & (01/10 to 01/16) & (02/07 to 02/13)\\
+3 & StatusQuo & BothMessage & MatchMessage & CoordMessage & BothMessage & CoordMessage\\
+ & (09/20 to 09/26) & (10/18 to 10/24) & (11/15 to 11/21) & (12/13 to 12/19) & (01/17 to 01/23) & (02/14 to 02/20)\\
+4 & CoordMessage & StatusQuo & BothMessage & MatchMessage & StatusQuo & BothMessage\\
+ & (09/27 to 10/03) & (10/25 to 10/31) & (11/22 to 11/28) & (12/20 to 12/26) & (01/24 to 01/30) & (02/21 to 02/27)\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: The control group is the StatusQuo group. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The participants in the experiment were 11,154 matched donors who received HLA match letters between September 6, 2021 and February 27, 2022. To maintain randomness to the best of the JMDP office's abilities, we assigned the participants to the four experimental groups using weekly cluster randomization. Specifically, we created a cluster every seven days (a week starting from Monday) and randomly assigned one experimental group to each cluster (see Table \ref{tab:assignment}).\footnote{The experiment was not conducted from December 27, 2021 to January 3, 2022 because the JMDP was closed for the New Year's holiday.} The assignment of the experimental groups was designed to be as balanced across weeks and months as possible. Before conducting the experiment, we obtained approval from the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305) and the JMDP (approval number: JMDP2021-04).
 
 \hypertarget{data-and-empirical-strategy}{%
 \subsection{Data and Empirical Strategy}\label{data-and-empirical-strategy}}
@@ -243,7 +269,7 @@ As additional data, we used the list of medical institutions published on the JM
 \end{threeparttable}
 \end{table}
 
-Table \ref{tab:summary} summarizes our experiment. Panels A and B present the intervention and sample size for each experimental group, respectively. Panel C presents a balance test of whether the randomization was successful. There were statistically significant differences in the average age and number of holidays in the assigned and following weeks between the experimental groups. The average age of \revise{the CoordMessage group} was approximately one year younger than that of the \revise{StatusQuo} group. However, this difference was negligible from a standardized mean difference perspective (see Table A2 in Supplementary Material A). The average number of holidays for \revise{the MatchMessage group} was higher than that of the \revise{StatusQuo} group. This occurred because the week following the week in which \revise{the MatchMessage group} was assigned in December included the New Year's holiday (see Table A1 in Supplementary Material A).\footnote{In Japan, the New Year's holiday is set by the government to run from December 29 to January 3. While we follow this definition, this holiday may be extended depending on individual circumstances.}
+Table \ref{tab:summary} summarizes our experiment. Panels A and B present the intervention and sample size for each experimental group, respectively. Panel C presents a balance test of whether the randomization was successful. There were statistically significant differences in the average age and number of holidays in the assigned and following weeks between the experimental groups. The average age of \revise{the CoordMessage group} was approximately one year younger than that of the \revise{StatusQuo} group. However, this difference was negligible from a standardized mean difference perspective (see Table \revise{A1} in Supplementary Material A). The average number of holidays for \revise{the MatchMessage group} was higher than that of the \revise{StatusQuo} group. This occurred because the week following the week in which \revise{the MatchMessage group} was assigned in December included the New Year's holiday (see Table \ref{tab:assignment}).\footnote{In Japan, the New Year's holiday is set by the government to run from December 29 to January 3. While we follow this definition, this holiday may be extended depending on individual circumstances.}
 
 Although most covariates were balanced across the experimental groups, a few covariates were unbalanced.\footnote{\revise{We confirmed that age and number of holidays did not affect CT, which is our primary outcome, in the control group. Therefore, the imbalance in some covariates is not a major concern. We present the results of regression analysis that adjusts for these effects in the Supplementary Material.}} Therefore, in addition to a simple difference of means test, we estimated the following linear regression model for individual \(i\) who received the HLA match letter in week \(w\):
 

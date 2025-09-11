@@ -88,21 +88,6 @@ options(
 data_root <- "data"
 ```
 
-```{r assignment}
-schedule <- Schedule$new(
-  here(data_root, "RCT-schedule.csv"),
-  treat_labels = list(A = "StatusQuo", B = "MatchMessage", C = "CoordMessage", D = "BothMessage")
-)
-schedule$kable(
-  title = "Assignment Schedule",
-  notes = paste(
-    "\\\\emph{Note}: See Table 1 in the main manuscript for a detailed description of the intervention of each experimental group. The control group is the StatusQuo group. The experiment was not conducted during the week beginning December 27, 2021, and ending January 3, 2022, because JMDP was closed for the New Year's holiday."
-  ),
-  hold = TRUE,
-  font_size = 8
-)
-```
-
 ```{r data, include=FALSE}
 rawdt <- RawData$new(
   here(data_root, "shape.csv"),
