@@ -84,7 +84,8 @@ options(
   knitr.table.format = "latex",
   knitr.kable.NA = "",
   kableExtra.auto_format = FALSE,
-  modelsummary_factory_latex = "kableExtra"
+  modelsummary_factory_latex = "kableExtra",
+  modelsummary_get = "broom"
 )
 ```
 
