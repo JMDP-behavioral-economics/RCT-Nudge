@@ -520,43 +520,122 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 
 \begin{table}[H]
 
-\caption{\label{tab:lm-who-selected}Determination of Donor Selection}
+\caption{\label{tab:lm-who-selected-statusquo}Determination of Donor Selection and Donation among Potential Donors Reaching CT (only Status Quo Group)}
 \centering
 \fontsize{8}{10}\selectfont
 \begin{threeparttable}
 \begin{tabular}[t]{lcccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{6}{c}{Donor selection} \\
-\cmidrule(l{3pt}r{3pt}){2-7}
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Donor selection} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-(Intercept) & \num{38.53}*** & \num{19.85} & \num{30.94}** & \num{12.68} &  & \\
- & (\num{6.63}) & (\num{33.20}) & (\num{10.41}) & (\num{25.84}) &  & \\
-Male & \num{8.76}** & \num{8.71}** & \num{8.22}* & \num{8.16}* & \num{8.17}* & \num{8.10}*\\
- & (\num{3.12}) & (\num{3.12}) & (\num{3.40}) & (\num{3.40}) & (\num{3.26}) & (\num{3.29})\\
-Age & \num{-0.34}* & \num{0.75} & \num{-0.33}* & \num{0.73} & \num{-0.37}* & \num{0.92}\\
- & (\num{0.15}) & (\num{1.81}) & (\num{0.15}) & (\num{1.68}) & (\num{0.15}) & (\num{1.75})\\
-Age (squared) &  & \num{-0.01} &  & \num{-0.01} &  & \num{-0.02}\\
- &  & (\num{0.02}) &  & (\num{0.02}) &  & (\num{0.02})\\
-\# coordination experiences & \num{-1.83} & \num{-1.94} & \num{-1.92} & \num{-2.03} & \num{-1.81} & \num{-1.93}\\
- & (\num{1.20}) & (\num{1.12}) & (\num{1.15}) & (\num{1.09}) & (\num{1.21}) & (\num{1.14})\\
-\# holidays &  &  & \num{1.76} & \num{1.76} & \num{9.64}*** & \num{4.10}\\
- &  &  & (\num{1.74}) & (\num{1.76}) & (\num{1.57}) & (\num{7.74})\\
-\# listed hospitals &  &  & \num{14.22} & \num{14.53} & \num{17.86} & \num{18.35}\\
- &  &  & (\num{10.60}) & (\num{10.52}) & (\num{12.23}) & (\num{12.21})\\
-\# listed hospitals with PBSC collection &  &  & \num{-8.52} & \num{-7.57} & \num{-3.93} & \num{-2.60}\\
- &  &  & (\num{33.56}) & (\num{32.13}) & (\num{32.91}) & (\num{31.24})\\
-\# listed hospitals with BM collection &  &  & \num{-22.78} & \num{-23.74} & \num{-31.86} & \num{-33.35}\\
- &  &  & (\num{27.39}) & (\num{26.53}) & (\num{29.20}) & (\num{28.39})\\
+(Intercept) & \num{22.79}*** & \num{24.75}** & \num{24.65}*** & \num{19.45}*** & \num{24.19}** & \num{20.72}***\\
+ & (\num{4.10}) & (\num{7.78}) & (\num{4.02}) & (\num{4.50}) & (\num{7.42}) & (\num{4.54})\\
+Male & \num{7.32}* & \num{2.12} & \num{7.20} & \num{6.51}* & \num{-1.30} & \num{6.30}*\\
+ & (\num{3.39}) & (\num{6.89}) & (\num{3.81}) & (\num{2.77}) & (\num{6.83}) & (\num{2.72})\\
+Age (demeaned) & \num{-0.37}* & \num{0.62} & \num{-0.67}* & \num{-0.18} & \num{0.22} & \num{-0.49}**\\
+ & (\num{0.16}) & (\num{0.39}) & (\num{0.31}) & (\num{0.09}) & (\num{0.26}) & (\num{0.19})\\
+First-time coordination & \num{1.28} & \num{-3.66} & \num{-0.58} & \num{-0.61} & \num{-9.09} & \num{-1.84}\\
+ & (\num{4.13}) & (\num{10.10}) & (\num{4.05}) & (\num{4.30}) & (\num{9.15}) & (\num{4.27})\\
+Skipped CT & \num{2.29} & \num{4.07} & \num{6.70} & \num{-9.79} & \num{-8.31} & \num{-7.67}\\
+ & (\num{8.92}) & (\num{9.20}) & (\num{11.17}) & (\num{6.75}) & (\num{6.85}) & (\num{11.13})\\
+Response days (demeaned) & \num{-0.01} & \num{-0.14} & \num{-0.16} & \num{-0.62} & \num{-0.67} & \num{-0.70}\\
+ & (\num{0.51}) & (\num{0.57}) & (\num{0.53}) & (\num{0.40}) & (\num{0.40}) & (\num{0.39})\\
+\# holidays (demeaned) & \num{2.02} & \num{2.09} & \num{2.42} & \num{3.75}*** & \num{3.83}*** & \num{4.06}***\\
+ & (\num{1.68}) & (\num{1.58}) & (\num{1.96}) & (\num{0.75}) & (\num{0.75}) & (\num{0.99})\\
+\# hospitals (demeaned) & \num{13.92} & \num{14.06} & \num{15.67} & \num{16.95} & \num{17.72} & \num{18.70}\\
+ & (\num{11.21}) & (\num{11.73}) & (\num{10.97}) & (\num{15.88}) & (\num{16.16}) & (\num{16.24})\\
+\# hospitals with PBSC collection (demeaned) & \num{-7.51} & \num{-5.70} & \num{-11.39} & \num{10.30} & \num{10.01} & \num{7.05}\\
+ & (\num{32.94}) & (\num{33.51}) & (\num{34.09}) & (\num{37.27}) & (\num{37.05}) & (\num{38.83})\\
+\# hospitals with BM collection (demeaned) & \num{-22.40} & \num{-23.89} & \num{-23.46} & \num{-39.18} & \num{-40.30} & \num{-40.35}\\
+ & (\num{28.05}) & (\num{28.93}) & (\num{29.20}) & (\num{41.71}) & (\num{42.21}) & (\num{43.95})\\
+Male $\times$ Age &  & \num{-0.66} & \num{-0.08} &  & \num{-0.22} & \num{0.12}\\
+ &  & (\num{0.45}) & (\num{0.48}) &  & (\num{0.18}) & (\num{0.37})\\
+Male $\times$ First-time coordination &  & \num{9.89} &  &  & \num{13.97} & \\
+ &  & (\num{8.81}) &  &  & (\num{9.30}) & \\
+Age $\times$ First-time coordination &  & \num{-1.49}** &  &  & \num{-0.86}* & \\
+ &  & (\num{0.56}) &  &  & (\num{0.34}) & \\
+Male $\times$ Age $\times$ First-time coordination &  & \num{1.02} &  &  & \num{0.80}* & \\
+ &  & (\num{0.74}) &  &  & (\num{0.31}) & \\
+Male $\times$ Skipped CT &  &  & \num{-7.38} &  &  & \num{-3.88}\\
+ &  &  & (\num{7.86}) &  &  & (\num{7.45})\\
+Age $\times$ Skipped CT &  &  & \num{3.26}*** &  &  & \num{2.00}*\\
+ &  &  & (\num{0.58}) &  &  & (\num{0.94})\\
+Male $\times$ Age $\times$ Skipped CT &  &  & \num{-1.44}*** &  &  & \num{-0.69}\\
+ &  &  & (\num{0.35}) &  &  & (\num{1.10})\\
 \midrule
-Month FE &  &  &  &  & X & X\\
 Num.Obs. & \num{564} & \num{564} & \num{564} & \num{564} & \num{564} & \num{564}\\
-R2 & \num{0.016} & \num{0.017} & \num{0.020} & \num{0.021} & \num{0.026} & \num{0.027}\\
-R2 Adj. & \num{0.011} & \num{0.009} & \num{0.008} & \num{0.007} & \num{0.006} & \num{0.006}\\
+R2 & \num{0.017} & \num{0.028} & \num{0.044} & \num{0.020} & \num{0.029} & \num{0.035}\\
+R2 Adj. & \num{0.002} & \num{0.005} & \num{0.021} & \num{0.004} & \num{0.007} & \num{0.012}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. We demeaned covariates except sex, dummy of first-time coordination, and dummy of skipped CT.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-who-selected-full}Determination of Donor Selection and Donation among Potential Donors Reaching CT (All Groups)}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Donor selection} & \multicolumn{3}{c}{Donation} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+(Intercept) & \num{20.35}*** & \num{20.59}*** & \num{20.64}*** & \num{14.63}*** & \num{16.14}*** & \num{14.77}***\\
+ & (\num{1.34}) & (\num{1.71}) & (\num{1.58}) & (\num{1.15}) & (\num{1.58}) & (\num{1.33})\\
+Male & \num{11.89}*** & \num{10.50}*** & \num{11.82}*** & \num{9.01}*** & \num{5.74}** & \num{9.22}***\\
+ & (\num{1.54}) & (\num{2.53}) & (\num{1.85}) & (\num{1.24}) & (\num{2.23}) & (\num{1.45})\\
+Age (demeaned) & \num{-0.31}*** & \num{0.17} & \num{-0.27}* & \num{-0.23}*** & \num{0.05} & \num{-0.17}\\
+ & (\num{0.08}) & (\num{0.17}) & (\num{0.15}) & (\num{0.06}) & (\num{0.16}) & (\num{0.12})\\
+First-time coordination & \num{1.36} & \num{0.40} & \num{1.07} & \num{1.88} & \num{-1.18} & \num{1.64}\\
+ & (\num{1.34}) & (\num{2.85}) & (\num{1.43}) & (\num{1.61}) & (\num{2.38}) & (\num{1.67})\\
+Skipped CT & \num{-5.07} & \num{-4.11} & \num{-2.66} & \num{-7.33}** & \num{-6.46}** & \num{-6.76}\\
+ & (\num{3.86}) & (\num{3.70}) & (\num{4.41}) & (\num{3.23}) & (\num{3.10}) & (\num{4.08})\\
+Response days (demeaned) & \num{-0.63}*** & \num{-0.67}*** & \num{-0.67}*** & \num{-0.74}*** & \num{-0.76}*** & \num{-0.78}***\\
+ & (\num{0.23}) & (\num{0.23}) & (\num{0.23}) & (\num{0.19}) & (\num{0.20}) & (\num{0.20})\\
+\# holidays (demeaned) & \num{0.58} & \num{0.49} & \num{0.57} & \num{0.22} & \num{0.16} & \num{0.24}\\
+ & (\num{0.45}) & (\num{0.45}) & (\num{0.45}) & (\num{0.38}) & (\num{0.39}) & (\num{0.38})\\
+\# hospitals (demeaned) & \num{-9.18} & \num{-9.27} & \num{-9.15} & \num{0.54} & \num{0.35} & \num{0.54}\\
+ & (\num{6.01}) & (\num{5.93}) & (\num{6.06}) & (\num{5.96}) & (\num{5.85}) & (\num{5.96})\\
+\# hospitals with PBSC collection (demeaned) & \num{13.20} & \num{14.63} & \num{13.95} & \num{17.47} & \num{18.39} & \num{17.90}\\
+ & (\num{13.50}) & (\num{13.33}) & (\num{13.49}) & (\num{13.61}) & (\num{13.57}) & (\num{13.39})\\
+\# hospitals with BM collection (demeaned) & \num{6.29} & \num{5.57} & \num{5.71} & \num{-11.40} & \num{-11.59} & \num{-11.74}\\
+ & (\num{12.56}) & (\num{12.43}) & (\num{12.57}) & (\num{13.77}) & (\num{13.56}) & (\num{13.57})\\
+MatchMessage group & \num{-3.83}** & \num{-3.60}** & \num{-3.79}** & \num{-2.53}* & \num{-2.37}* & \num{-2.47}*\\
+ & (\num{1.42}) & (\num{1.35}) & (\num{1.47}) & (\num{1.31}) & (\num{1.34}) & (\num{1.34})\\
+CoordMessage group & \num{-1.70} & \num{-1.40} & \num{-1.61} & \num{-0.88} & \num{-0.75} & \num{-0.93}\\
+ & (\num{2.03}) & (\num{2.03}) & (\num{2.08}) & (\num{1.55}) & (\num{1.59}) & (\num{1.61})\\
+BothMessage group & \num{-0.12} & \num{0.19} & \num{0.01} & \num{-1.20} & \num{-0.97} & \num{-1.20}\\
+ & (\num{2.16}) & (\num{2.17}) & (\num{2.25}) & (\num{2.44}) & (\num{2.50}) & (\num{2.49})\\
+Male $\times$ Age &  & \num{-0.36} & \num{-0.18} &  & \num{-0.04} & \num{-0.18}\\
+ &  & (\num{0.23}) & (\num{0.21}) &  & (\num{0.19}) & (\num{0.16})\\
+Male $\times$ First-time coordination &  & \num{2.06} &  &  & \num{5.40} & \\
+ &  & (\num{3.86}) &  &  & (\num{3.32}) & \\
+Age $\times$ First-time coordination &  & \num{-0.54}* &  &  & \num{-0.36} & \\
+ &  & (\num{0.29}) &  &  & (\num{0.25}) & \\
+Male $\times$ Age $\times$ First-time coordination &  & \num{0.18} &  &  & \num{-0.11} & \\
+ &  & (\num{0.38}) &  &  & (\num{0.35}) & \\
+Male $\times$ Skipped CT &  &  & \num{-2.78} &  &  & \num{-1.45}\\
+ &  &  & (\num{3.94}) &  &  & (\num{3.03})\\
+Age $\times$ Skipped CT &  &  & \num{0.68} &  &  & \num{0.05}\\
+ &  &  & (\num{0.52}) &  &  & (\num{0.45})\\
+Male $\times$ Age $\times$ Skipped CT &  &  & \num{-0.46} &  &  & \num{0.42}\\
+ &  &  & (\num{0.60}) &  &  & (\num{0.57})\\
+\midrule
+Num.Obs. & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651}\\
+R2 & \num{0.022} & \num{0.025} & \num{0.024} & \num{0.017} & \num{0.021} & \num{0.018}\\
+R2 Adj. & \num{0.017} & \num{0.019} & \num{0.018} & \num{0.013} & \num{0.015} & \num{0.012}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. We demeaned covariates except sex, dummy of first-time coordination, dummy of skipped CT, and treatment dummies.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
