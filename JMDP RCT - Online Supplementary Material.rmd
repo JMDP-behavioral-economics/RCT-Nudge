@@ -700,6 +700,79 @@ fit_mods %>%
   )
 ```
 
+```{r average-characteristics-among-CT}
+rct$data %>%
+  filter(test == 1) %>%
+  datasummary(
+    (`Male` = male) +
+      (`Age` = age) +
+      (`First-time coordination` = coordinate1) +
+      (`Skipped CT` = skip_test) +
+      (`Response days` = days_reply) +
+      (`Number of holidays` = holidays) +
+      (`Number of hospitals` = hospital_per_area) +
+      (`Number of hospitals with PBSC collection` = PB_per_area) +
+      (`Number of hospitals with BM collection` = BM_per_area) ~ treat *(mean + sd),
+    title = "Average Characteristics among Potential Donors Reaching CT",
+    data = .,
+    fmt = 2,
+    align = "lcccccccc"
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position")
+```
+
+```{r relative-likelihood-complier-characteristics}
+data_list <- list(
+  full = rct$data,
+  male = subset(rct$data, male == 1),
+  age20 = subset(rct$data, age < 30),
+  age30 = subset(rct$data, 30 <= age & age < 40),
+  age40 = subset(rct$data, 40 <= age),
+  coordinate1 = subset(rct$data, coordinate1 == 1)
+)
+
+regs <- data_list %>%
+  map(~ lm_robust(test ~ treat, data = .)) %>%
+  map(tidy) %>%
+  map(~ filter(., term != "(Intercept)")) %>%
+  map(~ select(., term, estimate))
+
+for (i in names(regs)) {
+  colnames(regs[[i]]) <- c("term", i)
+}
+
+ratio <- regs %>%
+  reduce(full_join, by = "term") %>%
+  mutate(
+    male = male / full,
+    age20 = age20 / full,
+    age30 = age30 / full,
+    age40 = age40 / full,
+    coordinate1 = coordinate1 / full
+  ) %>%
+  select(-full) %>%
+  pivot_longer(cols = -term, names_to = "group", values_to = "ratio") %>%
+  pivot_wider(names_from = term, values_from = ratio) %>%
+  mutate(group = dplyr::recode(group,
+    "male" = "Male",
+    "age20" = "Age $<$ 30",
+    "age30" = "30 $\\leq$ Age $<$ 40",
+    "age40" = "40 $\\leq$ Age",
+    "coordinate1" = "First-time coordination"
+  ))
+
+ratio %>%
+  knitr::kable(
+    col.names = c("Characteristics", "MatchMessage", "CoordMessage", "BothMessage"),
+    caption = "Relative Likelihood of Complier Characteristics",
+    digits = 2,
+    booktabs = TRUE,
+    linesep = "",
+    escape = FALSE
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position")
+```
+
 <!---
 # Economic Models for Predictions
 
