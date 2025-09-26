@@ -56,14 +56,25 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 
-  \newcolumntype{d}{S[
-    input-open-uncertainty=,
-    input-close-uncertainty=,
-    parse-numbers = false,
-    table-align-text-pre=false,
-    table-align-text-post=false
-  ]}
+    \newcolumntype{d}{S[
+      table-align-text-before=false,
+      table-align-text-after=false,
+      input-symbols={-,\*+()}
+    ]}
   
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 
 % ------------------------------ paper information
 \title{Supplementary Material
@@ -114,11 +125,10 @@
 \renewcommand{\theHfigure}{\thesection\arabic{figure}}
 \renewcommand{\theHtable}{\thesection\arabic{table}}
 
-\hypertarget{figtab}{%
-\section{Figures and Tables}\label{figtab}}
+\section{Figures and Tables}\label{figtab}
 
 \begin{table}[H]
-
+\centering
 \caption{\label{tab:smd-balance}Assessing Balance by Standardized Mean Difference}
 \centering
 \fontsize{8}{10}\selectfont
@@ -148,7 +158,7 @@ Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-skip}Linear Probability Model of Number of Coordination and Skipping CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -179,7 +189,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:cross-table-skip}Cross-Table of Coordination Experience and Skipping CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -198,7 +208,7 @@ All & N & 10547 & 502 & 11049\\
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-test}Linear Probability Model of CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -234,7 +244,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:logit-test}Logit Model of the CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -265,17 +275,17 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
+\includegraphics{JMDPRC~1/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
+\includegraphics{JMDPRC~1/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
 \end{figure}
 
 \clearpage
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-positive-time-decompose}Effect on Speed of Response with Positive Intention}
 \centering
 \fontsize{8}{10}\selectfont
@@ -306,11 +316,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~1/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-coordinate}Linear Probability Model of the Coordination Processes After CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -343,7 +353,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \clearpage
 
 \begin{landscape}\begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:logit-coordinate}Logit Model of Coordination Process After CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -377,7 +387,7 @@ Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2454.591} & \num{-2410.035}
 \clearpage
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-interaction-gender-test-donate}Heterogenous Message Effects on CT and Donation by Gender}
 \centering
 \fontsize{8}{10}\selectfont
@@ -405,7 +415,7 @@ BothMessage group $\times$ Male & \num{-4.01} & \num{-1.92} & \num{-1.63} & \num
 \midrule
 \addlinespace[0.3em]
 \multicolumn{7}{l}{\textit{Linear combination test: Experimental group + Experimental group $\times$ Male}}\\
-\hspace{1em}MatchMessage group & 3.25* & 2.94** & 2.01* & 0.43 & 0.30 & -0.08\\
+\hspace{1em}MatchMessage group & 3.25* & 2.94* & 2.01* & 0.43 & 0.30 & -0.08\\
 \hspace{1em} & (1.90) & (1.48) & (1.09) & (0.64) & (0.76) & (0.60)\\
 \hspace{1em}CoordMessage group & 0.90 & 1.36 & 1.23 & -0.14 & -0.09 & -0.11\\
 \hspace{1em} & (1.96) & (1.27) & (1.12) & (0.72) & (0.63) & (0.54)\\
@@ -423,7 +433,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-interaction-coordination1-test-donate}Heterogeneous Treatment Effects on CT and Donation by First-Time Coordination}
 \centering
 \fontsize{8}{10}\selectfont
@@ -469,7 +479,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-interaction-gender-coordination-group-test-donate}Heterogeneous Treatment Effects on CT and Donation by Gender and Coordination Experience}
 \centering
 \fontsize{8}{10}\selectfont
@@ -493,17 +503,17 @@ BothMessage group & \num{0.92} & \num{0.93} & \num{0.39} & \num{-0.09} & \num{-0
 \hspace{1em} & (3.65) & (3.26) & (2.97) & (1.32) & (1.43) & (1.38)\\
 \hspace{1em}MatchMessage (Flesh female) & 0.56 & -0.27 & -1.10 & -0.52 & -1.00* & -1.29**\\
 \hspace{1em} & (1.04) & (0.98) & (1.41) & (0.74) & (0.57) & (0.53)\\
-\hspace{1em}MatchMessage (Experienced female) & 6.73** & 7.93** & 7.07** & -0.62 & -0.31 & -0.67\\
+\hspace{1em}MatchMessage (Experienced female) & 6.73* & 7.93** & 7.07** & -0.62 & -0.31 & -0.67\\
 \hspace{1em} & (3.34) & (3.42) & (3.00) & (1.48) & (1.40) & (1.63)\\
 \hspace{1em}CoordMessage (Experienced male) & 2.12 & 1.75 & 1.63 & 0.41 & 0.30 & 0.28\\
 \hspace{1em} & (4.11) & (3.95) & (3.61) & (1.06) & (1.05) & (0.93)\\
 \hspace{1em}CoordMessage (Flesh female) & -1.99 & -2.23 & -2.58* & 0.58 & 0.49 & 0.42\\
 \hspace{1em} & (1.44) & (1.41) & (1.44) & (0.81) & (0.80) & (0.45)\\
-\hspace{1em}CoordMessage (Experienced female) & 8.53*** & 7.13*** & 6.82** & -0.75 & -0.89 & -1.04\\
+\hspace{1em}CoordMessage (Experienced female) & 8.53*** & 7.13** & 6.82** & -0.75 & -0.89 & -1.04\\
 \hspace{1em} & (2.67) & (2.69) & (2.79) & (1.50) & (1.50) & (1.62)\\
 \hspace{1em}BothMessage (Experienced male) & 1.39 & 1.17 & 0.88 & 1.35 & 1.39 & 1.27\\
 \hspace{1em} & (4.07) & (3.92) & (3.63) & (1.40) & (1.38) & (1.11)\\
-\hspace{1em}BothMessage (Flesh female) & 3.31** & 3.06** & 2.34 & 0.22 & 0.11 & -0.16\\
+\hspace{1em}BothMessage (Flesh female) & 3.31** & 3.06* & 2.34 & 0.22 & 0.11 & -0.16\\
 \hspace{1em} & (1.50) & (1.55) & (1.57) & (0.67) & (0.66) & (0.50)\\
 \hspace{1em}BothMessage (Experienced female) & 9.42** & 7.82* & 7.26* & -2.00 & -2.15 & -2.40\\
 \hspace{1em} & (4.37) & (4.32) & (4.19) & (1.42) & (1.43) & (1.60)\\
@@ -518,8 +528,12 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{threeparttable}
 \end{table}
 
-\begin{table}[H]
+\begin{figure}[H]
+\includegraphics{JMDPRC~1/figure-latex/lm-interaction-gender-coordination-age-1} \caption{Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and Experience Group}\label{fig:lm-interaction-gender-coordination-age}
+\end{figure}
 
+\begin{table}[H]
+\centering\centering
 \caption{\label{tab:lm-who-selected-statusquo}Determination of Donor Selection and Donation among Potential Donors Reaching CT (only Status Quo Group)}
 \centering
 \fontsize{8}{10}\selectfont
@@ -577,7 +591,7 @@ R2 Adj. & \num{0.002} & \num{0.005} & \num{0.021} & \num{0.004} & \num{0.007} & 
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-who-selected-full}Determination of Donor Selection and Donation among Potential Donors Reaching CT (All Groups)}
 \centering
 \fontsize{8}{10}\selectfont
@@ -641,7 +655,7 @@ R2 Adj. & \num{0.017} & \num{0.019} & \num{0.018} & \num{0.013} & \num{0.015} & 
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:average-characteristics-among-CT}Average Characteristics among Potential Donors Reaching CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -665,7 +679,7 @@ Number of hospitals with BM collection & \num{0.27} & \num{0.37} & \num{0.29} & 
 \end{table}
 
 \begin{table}[H]
-
+\centering
 \caption{\label{tab:relative-likelihood-complier-characteristics}Relative Likelihood of Complier Characteristics}
 \centering
 \fontsize{8}{10}\selectfont

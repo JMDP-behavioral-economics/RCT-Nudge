@@ -52,16 +52,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r option, include = FALSE}
-options(
-  knitr.table.format = "latex",
-  knitr.kable.NA = "",
-  kableExtra.auto_format = FALSE,
-  modelsummary_factory_latex = "kableExtra",
-  modelsummary_get = "broom"
-)
-```
-
 \tableofcontents
 
 \appendix
@@ -82,14 +72,18 @@ source(here("R/R6_RawData.r"))
 source(here("R/R6_Schedule.r"))
 
 options(
+  knitr.table.format = "latex",
   knitr.kable.NA = "",
+  kableExtra.auto_format = FALSE,
+  modelsummary_factory_latex = "kableExtra",
+  modelsummary_get = "broom",
   modelsummary_stars_note = FALSE
 )
-
-data_root <- "data"
 ```
 
 ```{r data, include=FALSE}
+data_root <- "data"
+
 rawdt <- RawData$new(
   here(data_root, "shape.csv"),
   treat_vars = "treat",
@@ -552,6 +546,94 @@ rct2$
     hold = TRUE
   )
 ```
+
+```{r lm-interaction-gender-coordination-age, fig.width = 15, fig.height = 10, fig.cap = "Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and Experience Group", fig.pos = "H"}
+rct3 <- rct$clone()
+
+rct3$data <- rct3$data %>%
+  mutate(
+    young = if_else(age <= 39, 1, 0),
+    group = case_when(
+      male == 1 & coordinate1 == 1 & young == 1 ~ "Flesh male (20--39)",
+      male == 1 & coordinate1 == 1 & young == 0 ~ "Flesh male (39--54)",
+      male == 1 & coordinate1 == 0 & young == 1 ~ "Experienced male (20--39)",
+      male == 1 & coordinate1 == 0 & young == 0 ~ "Experienced male (39--54)",
+      male == 0 & coordinate1 == 1 & young == 1 ~ "Flesh female (20--39)",
+      male == 0 & coordinate1 == 1 & young == 0 ~ "Flesh female (39--54)",
+      male == 0 & coordinate1 == 0 & young == 1 ~ "Experienced female (20--39)",
+      male == 0 & coordinate1 == 0 & young == 0 ~ "Experienced female (39--54)",
+    )
+  )
+
+est_hetero3 <- rct3$
+  lm_effect(c("test", "candidate", "donate"), sample_drop = FALSE)$
+  fit(scale = 100, interaction = "group", drop_x = c("male", "coordinate", "skip_test", "age"))$
+  get_est()
+
+coef_dt <- est_hetero3 %>%
+  filter(model == 2) %>%
+  select(outcome, fit) %>%
+  mutate(
+    coef = map(fit, function(x) {
+      single <- tidy(x$lm_robust) %>%
+        filter(term %in% c("treatMatchMessage", "treatCoordMessage", "treatBothMessage"))
+
+      combine <- bind_rows(single, x$lh) %>%
+        select(-outcome)
+
+      return(combine)
+    })
+  ) %>%
+  select(-fit) %>%
+  unnest(coef) %>%
+  mutate(
+    treat = case_when(
+      str_detect(term, "treatMatchMessage") ~ "MatchMessage",
+      str_detect(term, "treatCoordMessage") ~ "CoordMessage",
+      str_detect(term, "treatBothMessage") ~ "BothMessage"
+    ),
+    age = case_when(
+      !str_detect(term, "\\+") ~ "20--39",
+      str_detect(term, "\\(20--39\\)") ~ "20--39",
+      str_detect(term, "\\(39--54\\)") ~ "39+"
+    ),
+    group = case_when(
+      !str_detect(term, "\\+") ~ "Experienced female",
+      str_detect(term, "Experienced female") ~ "Experienced female",
+      str_detect(term, "Flesh female") ~ "Flesh female",
+      str_detect(term, "Experienced male") ~ "Experienced male",
+      str_detect(term, "Flesh male") ~ "Flesh male"
+    ),
+    outcome = factor(outcome, levels = c("CT", "Donor selection", "Donation")),
+    treat = factor(treat, levels = c("MatchMessage", "CoordMessage", "BothMessage")),
+    age = factor(age, levels = c("20--39", "39+")),
+    group = factor(group, levels = c("Flesh male", "Flesh female", "Experienced male", "Experienced female"))
+  )
+
+coef_dt %>%
+  ggplot(aes(x = age, y = estimate, shape = group, color = group)) +
+    geom_hline(yintercept = 0, linetype = "dashed") +
+    geom_point(size = 3, position = position_dodge(width = 0.5)) +
+    geom_errorbar(
+      aes(ymin = conf.low, ymax = conf.high),
+      position = position_dodge(width = 0.5),
+      width = 0.2
+    ) +
+    facet_grid(treat ~ outcome) +
+    theme_minimal(base_size = 20) +
+    scale_shape_manual(values = c(1, 2, 0, 5)) +
+    labs(
+      x = "Age group",
+      y = "Treatment effect (percentage points; 95%CI)",
+      shape = "Sex-Experience Group",
+      color = "Sex-Experience Group"
+    ) +
+    theme(
+      legend.position = "bottom",
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    )
+```
+
 
 ```{r lm-who-selected-statusquo}
 test_dt <- rct$data %>%
