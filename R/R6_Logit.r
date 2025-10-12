@@ -1,12 +1,13 @@
 library(here)
 library(R6)
 library(tidyverse)
+library(fixest)
 source(here("R/misc.r"))
 
 Logit <- R6::R6Class("Logit",
   public = list(
     data = NULL,
-    initialize = function(data, demean_covariate, hide_message) {
+    initialize = function(data, demean_covariate, cluster, hide_message = TRUE) {
       private$ctrl_arm <- levels(data$treat)[1]
 
       dt <- data %>%
@@ -69,6 +70,8 @@ Logit <- R6::R6Class("Logit",
         ctrl2 = reformulate(c("treat", use_x, "factor(month)"), "value")
       )
 
+      private$cluster <- cluster
+
       if (!hide_message) {
         cat("\n")
         cat("Options for binary regression (Logit)\n")
@@ -106,8 +109,18 @@ Logit <- R6::R6Class("Logit",
     ctrl_arm = "",
     covariates = NULL,
     model = list(),
+    cluster = NULL,
     call_glm = function(model, data) {
-      map(data, ~ glm(model, data = ., family = binomial()))
+      map(
+        data,
+        function(x) {
+          if (is.null(private$cluster)) {
+            glm(model, data = x, family = binomial(link = "logit"))
+          } else {
+            feglm(model, data = x, se = "cluster", cluster = private$cluster, family = "logit")
+          }
+        }
+      )
     }
   )
 )

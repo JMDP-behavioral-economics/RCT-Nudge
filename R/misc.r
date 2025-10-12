@@ -33,6 +33,17 @@ tidy_custom.glm <- function(x, ...) {
   tbl
 }
 
+# * Tidy custom for fixest class
+tidy_custom.fixest <- function(x, ...) {
+  tbl <- broom::tidy(x) %>%
+    mutate(
+      or = exp(estimate),
+      lower.or = exp(estimate - 1.96 * std.error),
+      upper.or = exp(estimate + 1.96 * std.error)
+    )
+  tbl
+}
+
 # * Standard errors
 se <- function(x, na.rm = FALSE) {
   if (na.rm) x <- na.omit(x)

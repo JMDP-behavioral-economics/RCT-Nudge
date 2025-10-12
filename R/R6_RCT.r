@@ -82,6 +82,7 @@ RCT <- R6Class("RCT",
     logit_effect = function(outcome,
                             sample_drop = TRUE,
                             demean_covariate = TRUE,
+                            cluster,
                             hide_message = TRUE)
     {
       use <- private$create_analysis_data(sample_drop)
@@ -90,7 +91,9 @@ RCT <- R6Class("RCT",
         use <- private$subset_by_outcome(use, outcome_id)
       }
 
-      Logit$new(use, demean_covariate, hide_message)
+      if (missing(cluster)) cluster <- private$cluster
+
+      Logit$new(use, demean_covariate, cluster, hide_message)
     },
     rcf = function(outcome, sample_drop = TRUE) {
       if (length(private$covariate) == 0) stop("Specify covariate by add_covariate()")

@@ -310,7 +310,7 @@ rct$
   fit()$
   kable(
     title = "Logit Model of the CT",
-    notes = "Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    notes = "Standard errors clustered by the assigned week are in parentheses. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     fmt = "%.2f",
     hold = TRUE,
     font_size = 8
@@ -439,7 +439,7 @@ rct$
   fit()$
   kable(
     title = "Logit Model of Coordination Process After CT",
-    notes = "Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    notes = "Standard errors clustered by the assigned week are in parentheses. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     fmt = "%.2f",
     hold = TRUE,
     font_size = 8
