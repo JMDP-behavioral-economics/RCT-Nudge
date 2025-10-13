@@ -592,6 +592,36 @@ R2 Adj. & \num{0.002} & \num{0.005} & \num{0.021} & \num{0.004} & \num{0.007} & 
 
 \begin{table}[H]
 \centering\centering
+\caption{\label{tab:lm-decompose-effect-donor-selection}Effect on Donor Selection and Dropout among Potential Donors Reaching CT}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccccccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Donor selection} & \multicolumn{3}{c}{Exogenous dropout} & \multicolumn{3}{c}{Endogenous dropout} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
+\midrule
+MatchMessage group & \num{-3.03}* & \num{-3.89}** & \num{-4.76}*** & \num{3.57}* & \num{5.12}*** & \num{5.86}*** & \num{-0.54} & \num{-1.22} & \num{-1.10}\\
+ & (\num{1.69}) & (\num{1.54}) & (\num{1.40}) & (\num{1.95}) & (\num{1.36}) & (\num{1.59}) & (\num{0.99}) & (\num{0.82}) & (\num{0.89})\\
+CoordMessage group & \num{-1.70} & \num{-1.85} & \num{-1.95} & \num{1.22} & \num{1.68} & \num{1.72} & \num{0.48} & \num{0.18} & \num{0.23}\\
+ & (\num{2.03}) & (\num{2.06}) & (\num{1.21}) & (\num{2.12}) & (\num{2.07}) & (\num{1.49}) & (\num{0.95}) & (\num{0.76}) & (\num{0.69})\\
+BothMessage group & \num{-0.69} & \num{-0.15} & \num{-0.66} & \num{0.43} & \num{0.58} & \num{0.97} & \num{0.25} & \num{-0.43} & \num{-0.32}\\
+ & (\num{2.13}) & (\num{2.29}) & (\num{1.34}) & (\num{2.12}) & (\num{2.50}) & (\num{1.69}) & (\num{0.74}) & (\num{0.54}) & (\num{0.53})\\
+\midrule
+Num.Obs. & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651}\\
+R2 & \num{0.001} & \num{0.020} & \num{0.023} & \num{0.001} & \num{0.036} & \num{0.038} & \num{0.000} & \num{0.088} & \num{0.089}\\
+R2 Adj. & \num{-0.000} & \num{0.015} & \num{0.016} & \num{-0.000} & \num{0.032} & \num{0.032} & \num{-0.001} & \num{0.084} & \num{0.083}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to exogenous reasons (reasons related with donor health and patient) between CT and donor selection. The outcome ``Endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to endogenous reasons (donor-side reasons) between CT and donor selection. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+\centering\centering
 \caption{\label{tab:lm-who-selected-full}Determination of Donor Selection and Donation among Potential Donors Reaching CT (All Groups)}
 \centering
 \fontsize{8}{10}\selectfont

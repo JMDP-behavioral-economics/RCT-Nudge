@@ -707,6 +707,52 @@ fit_mods %>%
   )
 ```
 
+```{r lm-decompose-effect-donor-selection}
+models <- list(
+  I(candidate * 100) ~ treat,
+  I(candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I(candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month),
+  I(exg_stop_candidate * 100) ~ treat,
+  I(exg_stop_candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I(exg_stop_candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month),
+  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat,
+  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month)
+)
+
+fit_models <- models %>%
+  map(~ lm_robust(., data = test_dt, se_type = "stata", clusters = RCTweek))
+
+fit_models %>%
+  modelsummary(
+    title = "Effect on Donor Selection and Dropout among Potential Donors Reaching CT",
+    coef_map = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
+    gof_omit = "AIC|BIC|RMSE|Std.Errors",
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    escape = FALSE,
+    output = "kableExtra",
+    fmt = 2
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 3, "Exogenous dropout" = 3, "Endogenous dropout" = 3)) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to exogenous reasons (reasons related with donor health and patient) between CT and donor selection. The outcome ``Endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to endogenous reasons (donor-side reasons) between CT and donor selection. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
 ```{r lm-who-selected-full}
 test_dt <- rct$data %>%
   filter(test == 1) %>%
