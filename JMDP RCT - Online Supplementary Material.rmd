@@ -447,9 +447,7 @@ rct$
   landscape()
 ```
 
-\clearpage
-
-```{r lm-interaction-gender-test-donate}
+```{r lm-interaction-gender-test-donate, eval = FALSE}
 rct$
   lm_effect(c("test", "donate"), sample_drop = FALSE)$
   fit(scale = 100, interaction = "male")$
@@ -476,7 +474,7 @@ rct$
   )
 ```
 
-```{r lm-interaction-coordination1-test-donate}
+```{r lm-interaction-coordination1-test-donate, eval = FALSE}
 rct$
   lm_effect(c("test", "donate"), sample_drop = FALSE)$
   fit(scale = 100, interaction = "coordinate1", drop_x = "coordinate")$
@@ -503,7 +501,7 @@ rct$
   )
 ```
 
-```{r lm-interaction-gender-coordination-group-test-donate}
+```{r lm-interaction-gender-coordination-group-test-donate, eval = FALSE}
 rct2 <- rct$clone()
 rct2$data <- rct2$data %>%
   mutate(
@@ -547,7 +545,151 @@ rct2$
   )
 ```
 
-```{r lm-interaction-gender-coordination-age, fig.width = 15, fig.height = 10, fig.cap = "Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and Experience Group", fig.pos = "H"}
+
+```{r lm-decompose-effect-donor-selection}
+test_dt <- rct$data %>%
+  filter(test == 1) %>%
+  mutate(
+    age = age - mean(age),
+    holidays = holidays - mean(holidays),
+    PB_per_area = PB_per_area - mean(PB_per_area),
+    BM_per_area = BM_per_area - mean(BM_per_area),
+    hospital_per_area = hospital_per_area - mean(hospital_per_area),
+    days_reply = days_reply - mean(days_reply)
+  )
+
+models <- list(
+  I(candidate * 100) ~ treat,
+  I(candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I(candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month),
+  I(exg_stop_candidate * 100) ~ treat,
+  I(exg_stop_candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I(exg_stop_candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month),
+  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat,
+  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month)
+)
+
+fit_models <- models %>%
+  map(~ lm_robust(., data = test_dt, se_type = "stata", clusters = RCTweek))
+
+add_table <- data.frame(rbind(
+  c("Covariates", rep(c("", "X", "X"), 3)),
+  c("Month FE", rep(c("", "", "X"), 3))
+))
+
+attr(add_table, "position") <- 7:8
+
+fit_models %>%
+  modelsummary(
+    title = "Effect on Donor Selection and Dropout among Potential Donors Reaching CT",
+    coef_map = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
+    gof_omit = "AIC|BIC|RMSE|Std.Errors",
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    escape = FALSE,
+    output = "kableExtra",
+    fmt = 2,
+    add_rows = add_table
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 3, "Exogenous dropout" = 3, "Endogenous dropout" = 3)) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to exogenous reasons (reasons related with donor health and patient) between CT and donor selection. The outcome ``Endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to endogenous reasons (donor reasons other than health) between CT and donor selection. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+
+```{r lm-who-selected-statusquo}
+test_dt <- rct$data %>%
+  filter(test == 1) %>%
+  mutate(
+    age = age - mean(age),
+    holidays = holidays - mean(holidays),
+    PB_per_area = PB_per_area - mean(PB_per_area),
+    BM_per_area = BM_per_area - mean(BM_per_area),
+    hospital_per_area = hospital_per_area - mean(hospital_per_area),
+    days_reply = days_reply - mean(days_reply)
+  )
+
+mods <- list(
+  I(candidate * 100) ~ male + age + coordinate1 + skip_test + days_reply +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  # I(candidate * 100) ~ male * age + coordinate1 + skip_test + days_reply +
+  #   holidays + PB_per_area + BM_per_area + hospital_per_area,
+  # I(candidate * 100) ~ male * age * coordinate1 + skip_test + days_reply +
+  #   holidays + PB_per_area + BM_per_area + hospital_per_area,
+  # I(candidate * 100) ~ male * age * skip_test + coordinate1 + days_reply +
+  #   holidays + PB_per_area + BM_per_area + hospital_per_area,
+  I(donate * 100) ~ male + age + coordinate1 + skip_test + days_reply +
+    holidays + PB_per_area + BM_per_area + hospital_per_area
+  # I(donate * 100) ~ male * age + coordinate1 + skip_test + days_reply +
+  #   holidays + PB_per_area + BM_per_area + hospital_per_area,
+  # I(donate * 100) ~ male * age * coordinate1 + skip_test + days_reply +
+  #   holidays + PB_per_area + BM_per_area + hospital_per_area
+  # I(donate * 100) ~ male * age * skip_test + coordinate1 + days_reply +
+  #   holidays + PB_per_area + BM_per_area + hospital_per_area
+)
+
+fit_mods <- mods %>%
+  map(~ lm_robust(
+    .,
+    data = subset(test_dt, treat == "StatusQuo"),
+    se_type = "stata",
+    clusters = RCTweek
+  ))
+
+fit_mods %>%
+  modelsummary(
+    title = "Determination of Donor Selection and Donation among Potential Donors Reaching CT (only Status Quo Group)",
+    coef_map = c(
+      "(Intercept)" = "(Intercept)",
+      "male" = "Male",
+      "age" = "Age (demeaned)",
+      "coordinate1" = "First-time coordination",
+      "skip_test" = "Skipped CT",
+      "days_reply" = "Response days (demeaned)",
+      "holidays" = "\\# holidays (demeaned)",
+      "hospital_per_area" = "\\# hospitals (demeaned)",
+      "PB_per_area" = "\\# hospitals with PBSC collection (demeaned)",
+      "BM_per_area" = "\\# hospitals with BM collection (demeaned)",
+      "male:age" = "Male $\\times$ Age",
+      "male:coordinate1" = "Male $\\times$ First-time coordination",
+      "age:coordinate1" = "Age $\\times$ First-time coordination",
+      "male:age:coordinate1" = "Male $\\times$ Age $\\times$ First-time coordination",
+      "male:skip_test" = "Male $\\times$ Skipped CT",
+      "age:skip_test" = "Age $\\times$ Skipped CT",
+      "male:age:skip_test" = "Male $\\times$ Age $\\times$ Skipped CT"
+    ),
+    gof_omit = "AIC|BIC|RMSE|Std.Errors",
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    escape = FALSE,
+    fmt = 2
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 1, "Donation" = 1)) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. We estimated the linear probability model. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. Reseponse days are days that passed between the date of receiving the HLA match letter and the date of responding to the letter. We demeaned covariates except male dummy, dummy of first-time coordination, and dummy of skipped CT.",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+
+```{r lm-interaction-gender-coordination-age, fig.width = 15, fig.height = 15, fig.cap = "Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and CoordinationExperience Groups. \\newline \\emph{Note}: The standard errors clustered by the assigned week are in parentheses. Covariates are the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and group dummies.", fig.pos = "H"}
 rct3 <- rct$clone()
 
 rct3$data <- rct3$data %>%
@@ -635,125 +777,8 @@ coef_dt %>%
 ```
 
 
-```{r lm-who-selected-statusquo}
-test_dt <- rct$data %>%
-  filter(test == 1) %>%
-  mutate(
-    age = age - mean(age),
-    holidays = holidays - mean(holidays),
-    PB_per_area = PB_per_area - mean(PB_per_area),
-    BM_per_area = BM_per_area - mean(BM_per_area),
-    hospital_per_area = hospital_per_area - mean(hospital_per_area),
-    days_reply = days_reply - mean(days_reply)
-  )
 
-mods <- list(
-  I(candidate * 100) ~ male + age + coordinate1 + skip_test + days_reply +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I(candidate * 100) ~ male * age * coordinate1 + skip_test + days_reply +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I(candidate * 100) ~ male * age * skip_test + coordinate1 + days_reply +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I(donate * 100) ~ male + age + coordinate1 + skip_test + days_reply +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I(donate * 100) ~ male * age * coordinate1 + skip_test + days_reply +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I(donate * 100) ~ male * age * skip_test + coordinate1 + days_reply +
-    holidays + PB_per_area + BM_per_area + hospital_per_area
-)
-
-fit_mods <- mods %>%
-  map(~ lm_robust(
-    .,
-    data = subset(test_dt, treat == "StatusQuo"),
-    se_type = "stata",
-    clusters = RCTweek
-  ))
-
-fit_mods %>%
-  modelsummary(
-    title = "Determination of Donor Selection and Donation among Potential Donors Reaching CT (only Status Quo Group)",
-    coef_map = c(
-      "(Intercept)" = "(Intercept)",
-      "male" = "Male",
-      "age" = "Age (demeaned)",
-      "coordinate1" = "First-time coordination",
-      "skip_test" = "Skipped CT",
-      "days_reply" = "Response days (demeaned)",
-      "holidays" = "\\# holidays (demeaned)",
-      "hospital_per_area" = "\\# hospitals (demeaned)",
-      "PB_per_area" = "\\# hospitals with PBSC collection (demeaned)",
-      "BM_per_area" = "\\# hospitals with BM collection (demeaned)",
-      "male:age" = "Male $\\times$ Age",
-      "male:coordinate1" = "Male $\\times$ First-time coordination",
-      "age:coordinate1" = "Age $\\times$ First-time coordination",
-      "male:age:coordinate1" = "Male $\\times$ Age $\\times$ First-time coordination",
-      "male:skip_test" = "Male $\\times$ Skipped CT",
-      "age:skip_test" = "Age $\\times$ Skipped CT",
-      "male:age:skip_test" = "Male $\\times$ Age $\\times$ Skipped CT"
-    ),
-    gof_omit = "AIC|BIC|RMSE|Std.Errors",
-    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
-    escape = FALSE,
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 3, "Donation" = 3)) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. We demeaned covariates except sex, dummy of first-time coordination, and dummy of skipped CT.",
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r lm-decompose-effect-donor-selection}
-models <- list(
-  I(candidate * 100) ~ treat,
-  I(candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I(candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
-    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month),
-  I(exg_stop_candidate * 100) ~ treat,
-  I(exg_stop_candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I(exg_stop_candidate * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
-    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month),
-  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat,
-  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
-    holidays + PB_per_area + BM_per_area + hospital_per_area,
-  I((candidate == 0 & exg_stop_candidate == 0) * 100) ~ treat + male + age + I(age^2) + coordinate + skip_test +
-    holidays + PB_per_area + BM_per_area + hospital_per_area + factor(month)
-)
-
-fit_models <- models %>%
-  map(~ lm_robust(., data = test_dt, se_type = "stata", clusters = RCTweek))
-
-fit_models %>%
-  modelsummary(
-    title = "Effect on Donor Selection and Dropout among Potential Donors Reaching CT",
-    coef_map = c(
-      "treatMatchMessage" = "MatchMessage group",
-      "treatCoordMessage" = "CoordMessage group",
-      "treatBothMessage" = "BothMessage group"
-    ),
-    gof_omit = "AIC|BIC|RMSE|Std.Errors",
-    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
-    escape = FALSE,
-    output = "kableExtra",
-    fmt = 2
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 3, "Exogenous dropout" = 3, "Endogenous dropout" = 3)) %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to exogenous reasons (reasons related with donor health and patient) between CT and donor selection. The outcome ``Endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to endogenous reasons (donor-side reasons) between CT and donor selection. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
-    threeparttable = TRUE,
-    escape = FALSE
-  )
-```
-
-```{r lm-who-selected-full}
+```{r lm-who-selected-full, eval = FALSE}
 test_dt <- rct$data %>%
   filter(test == 1) %>%
   mutate(
@@ -828,7 +853,7 @@ fit_mods %>%
   )
 ```
 
-```{r average-characteristics-among-CT}
+```{r average-characteristics-among-CT, eval = FALSE}
 rct$data %>%
   filter(test == 1) %>%
   datasummary(
@@ -849,7 +874,7 @@ rct$data %>%
   kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
-```{r relative-likelihood-complier-characteristics}
+```{r relative-likelihood-complier-characteristics, eval = FALSE}
 data_list <- list(
   full = rct$data,
   male = subset(rct$data, male == 1),
