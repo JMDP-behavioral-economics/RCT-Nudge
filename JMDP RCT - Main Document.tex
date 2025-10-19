@@ -271,7 +271,7 @@ As additional data, we used the list of medical institutions published on the JM
 
 Table \ref{tab:summary} summarizes our experiment. Panels A and B present the intervention and sample size for each experimental group, respectively. Panel C presents a balance test of whether the randomization was successful. There were statistically significant differences in the average age and number of holidays in the assigned and following weeks between the experimental groups. The average age of \revise{the CoordMessage group} was approximately one year younger than that of the \revise{StatusQuo} group. However, this difference was negligible from a standardized mean difference perspective (see Table \revise{A1} in Supplementary Material A). The average number of holidays for \revise{the MatchMessage group} was higher than that of the \revise{StatusQuo} group. This occurred because the week following the week in which \revise{the MatchMessage group} was assigned in December included the New Year's holiday (see Table \ref{tab:assignment}).\footnote{In Japan, the New Year's holiday is set by the government to run from December 29 to January 3. While we follow this definition, this holiday may be extended depending on individual circumstances.}
 
-Although most covariates were balanced across the experimental groups, a few covariates were unbalanced.\footnote{\revise{We confirmed that age and number of holidays did not affect CT, which is our primary outcome, in the control group. Therefore, the imbalance in some covariates is not a major concern. We present the results of regression analysis that adjusts for these effects in the Supplementary Material.}} Therefore, in addition to a simple difference of means test, we estimated the following linear regression model for individual \(i\) who received the HLA match letter in week \(w\):
+Although most covariates were balanced across the experimental groups, a few covariates were unbalanced.\footnote{\revise{We confirmed that age and number of holidays did not affect CT, which is our primary outcome, in the StatusQuo group. Therefore, the imbalance in some covariates is not a major concern. We present the results of regression analysis that adjusts for these effects in the Supplementary Material.}} Therefore, in addition to a simple difference of means test, we estimated the following linear regression model for individual \(i\) who received the HLA match letter in week \(w\):
 
 \begin{equation}
   \begin{split}
@@ -292,7 +292,7 @@ where \(X_{iw}\) is a vector of the individual characteristics, including age an
 
 Estimating the effect of the intervention messages on reaching the CT stage is critical because physicians select the optimal donor for transplantation from among matched donors who have undergone CT. We used a dummy variable coded one if a matched donor reached the CT stage.\footnote{We also coded the CT dummy one if CT was skipped.} In the \revise{StatusQuo} group, only \(22.25\)\% of matched donors underwent CT.
 
-There are two reasons for the low probability of reaching CT. First, only \(54.91\)\% of the donors in the \revise{StatusQuo} group indicated their willingness to donate. Second, only \(40.52\)\% of those who expressed a willingness to donate reached the CT stage. Most \revise{dropout} between the response and CT stages occurred because of donor-related reasons (\(85.99\)\%). \citet{Hirakawa2018} found similar results and showed that the top three donor-related reasons were health issues, scheduling conflicts, and the lack of family consent. Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
+There are two reasons for the low probability of reaching CT. First, only \(54.91\)\% of the donors in the \revise{StatusQuo} group indicated their willingness to donate. Second, \revise{$59.48$\% of those who expressed a willingness to donate did not reach the CT stage, that is dropout between the response and CT stages. 86\% of these dropouts occurred because of donor-related reasons.}\footnote{\revise{Thus, $51.15$\% ($=59.48 \times 0.86$) of those who expressed a willingness to donate did not reach the CT stage due to donor-related reasons.}} According to \citet{Hirakawa2018}, \revise{the top three donor-related reasons were health conditions such as lower back pain (59\%), scheduling conflicts (14\%), and the lack of family consent (9\%).}\footnote{\citet{Hirakawa2018} \revise{found that the top three donor-related reasons were health issues (69\%), scheduling conflicts (16\%), and the lack of family consent (10\%). Using these values, we imputed the percentages of donor-related reasons in our data. For example, the percentage of health issues is $86 \times 0.69 = 48$\%.}} Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
 
 \begin{figure}[t]
 \includegraphics{JMDPRC~1/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:test-diff-mean}
@@ -300,9 +300,85 @@ There are two reasons for the low probability of reaching CT. First, only \(54.9
 
 The proportions of donors reaching the CT stage for each of the experimental groups are presented in Figure \ref{fig:test-diff-mean}. \revise{Experimental groups B, which received the matching difficulty message, had a $3.1$ percentage point higher probability of reaching CT than the \revise{StatusQuo} group. This effect was} statistically significant. We obtained the same results when we adjusted for multiple \revise{hypotheses} testing, as proposed by \citet{List2019} (see Column (1) of \revise{Table A4 in Supplementary Material A}). The effect of \revise{the MatchMessage group} remained statistically significant when controlling for the covariates \revise{month fixed effects} using a linear probability model (see Column (2) of \revise{Table A4 in Supplementary Material A}). \revise{Also, this result was} robust to using logistic regression models instead of linear probability models (see Table \revise{A5} in Supplementary Material A). In summary, the \revise{matching difficulty} message included in the HLA match letter sent to \revise{the MatchMessage group} increased the probability of those participants reaching the CT stage.
 
-As mentioned previously, our intervention was expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into three components: responses with a willingness to donate, prevention of \revise{dropout} because of patient-side reasons (exogenous \revise{dropout}), and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). We call \revise{dropout} because of patient-side reasons ``exogenous \revise{dropout}'' because it occurs owing to factors outside donors' decision making. The results are presented in Table A5 in Supplementary Material A. The total effects on these three factors was equal to the overall message effect on completing CT. Although these effects were not statistically significant, after controlling for the covariates, the result suggested that the \revise{matching difficulty} message that increased the CT completion rate could have contributed to both improving and maintaining the willingness to donate. In particular, the \revise{matching difficulty} message contributed more to improving the willingness to donate, accounting for half of the effect on reaching CT.\footnote{We divided the effect of \revise{the MatchMessage group} on responses that included a willingness to donate by the sum of the absolute values of the effects on the three factors (\(3.44\) for \revise{the MatchMessage group}).}
+\begin{table}
 
-The early coordination message included in the HLA letter sent to \revise{the CoordMessage group} was expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure A1 in Supplementary Material A). Therefore, we examined whether \revise{the CoordMessage group}, which did not show an overall increase in the willingness to donate, may have shown increased early responses accompanied by a willingness to donate. Figure A2 in Supplementary Material A presents the cumulative response rates of the willingness to donate over time for the experimental groups. Because the JMDP requests responses within seven days, we define early responses as cumulative response rates with a willingness to donate within seven days. However, the probability of responding with a willingness to donate within seven days did not increase in \revise{the CoordMessage group}. This result was also confirmed by the regression analysis (see Table A6 in Supplementary Material A). Therefore, the early coordination message did not have the expected effect.
+\caption{\label{tab:lm-test-decompose}Decomposition of Effect on the CT}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Positive intention} & \multicolumn{3}{c}{Endogenous dropout} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
+  & (1) & (2) & (3) & (4) & (5) & (6)\\
+\midrule
+MatchMessage group & \num{2.31}* & \num{1.86}* & \num{1.27} & \num{-0.97} & \num{-1.14} & \num{-0.93}\\
+ & (\num{1.33}) & (\num{1.07}) & (\num{0.93}) & (\num{1.02}) & (\num{1.09}) & (\num{0.92})\\
+CoordMessage group & \num{-0.44} & \num{-0.05} & \num{-0.31} & \num{-2.55}* & \num{-1.50} & \num{-1.46}\\
+ & (\num{1.43}) & (\num{1.22}) & (\num{1.18}) & (\num{1.24}) & (\num{1.21}) & (\num{1.03})\\
+BothMessage group & \num{0.59} & \num{0.24} & \num{0.12} & \num{-2.27}** & \num{-1.97}* & \num{-1.92}*\\
+ & (\num{1.61}) & (\num{1.37}) & (\num{1.09}) & (\num{1.04}) & (\num{1.14}) & (\num{1.04})\\
+\midrule
+Control average & 54.91 & 54.91 & 54.91 & 28.09 & 28.09 & 28.09\\
+Covariates &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Endogenous dropout'' is a dummy variable that takes a value of 1 if
+    candidates responded with a willingness to donate but did not reach the CT stage due to endogenous reasons (donor-side reasons). Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+As mentioned previously, our intervention is expected to increase the probability of reaching CT by improving the willingness to donate and preventing dropouts between the response and CT stages. Therefore, we decomposed the intervention message effects into two components: responses with a willingness to donate and prevention of \revise{dropout} because of donor-side reasons (endogenous \revise{dropout}). The results are presented in \revise{Table} \ref{tab:lm-test-decompose}. \revise{Although the evidence is suggestive, our intervention generally worked as expected.}\footnote{\revise{As an exception, the CoordMessage group had a negative effect on the willingness to donate, although this was not statistically significant.}}
+
+\revise{However, the mechanisms differed slightly across intervention groups. The MatchMessage group primarily increased the willingness to donate. In column (1), the MatchMessage group increased the willingness to donate by $2.31$ percentage points, which was statistically significant at the 10\% level. The MatchMessage group also prevented endogenous dropout by approximately 1 percentage point, although this was not statistically significant. Combining these effects, the MatchMessage group had the effect of increasing the probability of reaching CT. In contrast, the CoordMessage and BothMessage groups primarily contributed to preventing endogenous dropout. In particular, in column (4), the BothMessage group prevented endogenous dropout by $2.27$ percentage points, which was statistically significant at the 5\% level. However, these groups did not sufficiently increase the willingness to donate, so their effect on increasing the probability of reaching CT was limited. Therefore, these findings suggest that the matching difficulty message may contribute to improving the willingness to donate, while the early coordination message may contribute to preventing endogenous dropout.}
+
+\hypertarget{response-speed}{%
+\subsection{Effect on Response Speed}\label{response-speed}}
+
+The early coordination message included in the HLA letter sent to \revise{the CoordMessage group} was expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure A1 in Supplementary Material A). Therefore, we examined whether \revise{the CoordMessage group}, which did not show an overall increase in the willingness to donate, may have shown increased early responses accompanied by a willingness to donate.
+
+\begin{figure}[t]
+\includegraphics{JMDPRC~1/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate.}\label{fig:cumulative-response}
+\end{figure}
+
+\begin{table}[H]
+
+\caption{\label{tab:lm-positive-time-decompose}Effect on Speed of Response with Positive Intention}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccccccccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{0--7 days} & \multicolumn{3}{c}{8--12 days} & \multicolumn{3}{c}{13--85 days} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
+  & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
+\midrule
+MatchMessage group & \num{-1.14} & \num{-0.13} & \num{-0.34} & \num{1.58} & \num{1.44} & \num{0.83} & \num{1.88} & \num{0.56} & \num{0.78}\\
+ & (\num{2.39}) & (\num{3.09}) & (\num{2.47}) & (\num{1.70}) & (\num{2.14}) & (\num{2.53}) & (\num{2.17}) & (\num{1.79}) & (\num{1.14})\\
+CoordMessage group & \num{-1.13} & \num{-1.47} & \num{-1.40} & \num{1.86} & \num{2.44} & \num{2.27} & \num{-1.17} & \num{-1.02} & \num{-1.18}\\
+ & (\num{3.03}) & (\num{2.74}) & (\num{2.51}) & (\num{2.35}) & (\num{2.29}) & (\num{2.46}) & (\num{1.49}) & (\num{1.36}) & (\num{1.27})\\
+BothMessage group & \num{-1.64} & \num{-2.15} & \num{-2.09} & \num{1.74} & \num{2.02} & \num{1.56} & \num{0.48} & \num{0.36} & \num{0.65}\\
+ & (\num{2.03}) & (\num{2.44}) & (\num{2.15}) & (\num{1.87}) & (\num{1.75}) & (\num{1.89}) & (\num{1.42}) & (\num{1.49}) & (\num{1.03})\\
+\midrule
+Control average & 22.37 & 22.37 & 22.37 & 22.17 & 22.17 & 22.17 & 10.37 & 10.37 & 10.37\\
+Covariates &  & X & X &  & X & X &  & X & X\\
+Month FE &  &  & X &  &  & X &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\revise{We first show the cumulative response rates of the willingness to donate over time for the experimental groups in Figure} \ref{fig:cumulative-response}. \revise{We obtain two notable findings. First, up to approximately 10 days, the cumulative response rates of the intervention groups were almost identical but lower than those of the StatusQuo group. This suggests that the early coordination message may not have had the expected effect. Second, after 14 days, the cumulative response rate of the MatchMessage group became higher than that of the StatusQuo group. Thus, the MatchMessage group increased the willingness to donate but may have slowed the response speed.}
+
+\revise{Next, we verified these findings through regression analysis. Since the JMDP requests responses within seven days, we define early responses as responses with willingness to donate within seven days. We created dummy variables for responses with willingness to donate within 7 days, 8--12 days, and after 13 days. We estimated linear probability models using these dummy variables as outcomes. The results were consistent with the descriptive findings, but the differences from the StatusQuo group were not statistically significant. Therefore, the early coordination message did not have the expected effect.}
 
 \hypertarget{dicussion}{%
 \section{Discussion}\label{dicussion}}

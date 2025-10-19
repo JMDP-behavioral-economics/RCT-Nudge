@@ -355,40 +355,6 @@ plotdt %>%
     my_theme_classic(size = 25)
 ```
 
-```{r cumulative-response, fig.cap = "Cumulative Rate of Response with Positive Intention by Treatment \\newline \\emph{Note}: We excluded those who skipped the CT. We only shows cumulative response rates up to 25 days after the mailing because there is no remarkable change in response rate."}
-rct_noskip$
-  flow("positive", sample_drop = FALSE)$
-  plot_cumulative(
-    upper_days = 25,
-    xbreaks = seq(0, 100, by = 4),
-    ylim = c(0, 60),
-    xlab = "Response days",
-    ylab = "Cumulative rate of\nresponse with positive intention (%)",
-    base_size = 25
-  )
-```
-
-\clearpage
-
-```{r lm-positive-time-decompose}
-rct$
-  flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(7, 12))$
-  fit(scale = 100)$
-  kable_reg(
-    title = "Effect on Speed of Response with Positive Intention",
-    coef_map_lm = c(
-      "treatMatchMessage" = "MatchMessage group",
-      "treatCoordMessage" = "CoordMessage group",
-      "treatBothMessage" = "BothMessage group"
-    ),
-    notes = "The robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if candidate responded with positive intention within a specified time after mailing. We excluded those who skipped the CT. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned.",
-    hold = TRUE,
-    font_size = 8
-  ) %>%
-  column_spec(1, width = "20em")
-```
-
 ```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
 rct$
   lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
