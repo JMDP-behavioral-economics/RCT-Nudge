@@ -139,16 +139,23 @@ data_root <- "data"
 
 ## Background: Coordination Process of JMDP {#background}
 
-To allow readers to better understand our intervention and data, we first outline the coordination process leading to the donation of stem cells by donors registered with the JMDP. When a registrant is matched with a patient enrolled in the JMDP, the JMDP office sends the matched donor the HLA match letter.[^SMS] In this letter, the JMDP recommends that the matched donor respond within seven days (see Table \@ref(tab:list-message)). \revise{We include all matched donors who received HLA match letters between September 2021 and February 2022 as experimental subjects and use them as our analysis sample.} The matched donor completes a medical questionnaire and indicates their willingness to donate upon responding to the letter. Matched donors who express a willingness to donate move on to the coordination process.
+To allow readers to better understand our intervention and data, we first outline the coordination process leading to the donation of stem cells by donors registered with the JMDP. \revise{Individuals eligible to register as donors with the JMDP must be between 18 and 54 years old and in good health.}[^weight] \revise{Individuals who can actually donate must be between 20 and 55 years old. Currently, approximately 560,000 donors are registered with the JMDP.}[^ref1] \revise{Of these, 240,000 (42\%) are under 40 years old.}[^ref2]
+
+[^weight]: Additionally, body weight is required. For males, the weight must be at least 45 kg. For females, the weight must be at least 40 kg. See <https://www.jmdp.or.jp/reg/requirement/> (Japanese; Accessed October 24, 2025).
+
+[^ref1]: Data source: <https://www.bs.jrc.or.jp/bmdc/donorregistrant/m2_03_00_statistics.html> (Japanese; Accessed December 8, 2024).
+
+[^ref2]: Data source: <https://www.jmdp.or.jp/about/read/number/> (Japanese; Accessed October 24, 2025).
+
+\revise{After a patient's physician registers the patient with the JMDP, the JMDP compiles a list of candidates based on the physician's criteria (primarily HLA compatibility). The physician selects up to 10 matched donors from this list. Subsequently,} the JMDP office sends each matched donor an HLA match letter, recommending a response within seven days.[^SMS] \revise{We include all matched donors who received HLA match letters between September 2021 and February 2022 as experimental subjects and use them as our analysis sample.} Upon responding, matched donors complete a medical questionnaire and indicate their willingness to donate.
 
 [^SMS]: Simultaneously, the JMDP office sends a \revise{short message} to matched donors informing them that the JMDP has sent the HLA match letter.
 
-A matched and willing donor undergoes CT within approximately one month. CT confirms whether the matched donor meets the appropriate donor criteria set by the JMDP. The transplantation coordinator delegated by the JMDP explains the details of the donation process and asks matched donors and their families about their willingness to donate. Thereafter, the coordinating physician conducts medical interviews, examinations, and blood tests, including those for infectious disease markers. Collection methods (bone marrow or PBSC collection) are also determined based on the preferences of the matched donor and coordinating physician.  CT can be skipped when a previous CT result remains valid.
+A matched and willing donor undergoes CT within approximately one month. CT confirms whether the matched donor meets the appropriate donor criteria set by the JMDP. The transplantation coordinator delegated by the JMDP explains the details of the donation process and asks matched donors and their families about their willingness to donate. Thereafter, the coordinating physician conducts medical interviews, examinations, and blood tests, including those for infectious disease markers. Collection methods (bone marrow or PBSC collection) are also determined based on the preferences of the matched donor and coordinating physician. CT can be skipped when a previous CT result remains valid.
 
-Physicians can choose up to 10 potential donors to proceed to this stage simultaneously. Importantly, a matched donor cannot have access to any information about the matched patient (for example, the number of other available potential donors), nor can the potential donor obtain this information from the transplantation coordinator or coordinating physician. Physicians can select the most appropriate donor for transplantation from among the matched donors who undergo CT. Thus, it is important to increase the probability of donors reaching CT to increase the transplantation rates of registered patients.
+\revise{The patient's physician selects the optimal donor from matched donors who have reached CT. When the JMDP determines that a matched donor is eligible based on CT results, the physician receives those results and must classify the donor within 40 days into three categories: best donor, backup donor, or rejection. The physician selects only one best donor to proceed to final consent and donation, and can select up to four backup donors, who are ranked by priority. When coordination with the best donor is interrupted, the highest-priority backup donor becomes the best donor. Even after selecting a best donor, if the JMDP determines that additional matched donors are eligible, the physician must classify them within 40 days as backup donors or rejections. However, if the best donor has not yet provided final consent, the physician can change the best donor to a later-arriving matched donor.}
 
-The matched donor selected as the best donor must provide final consent after being informed of their selection by the coordinator and coordinating physician. Simultaneously, a representative of the donor's family must provide consent to the donation. After final consent is obtained, the selected donor cannot withdraw their decision to donate. They then undergo a surgical procedure to collect stem cells. The time from CT to collection is approximately three to four months.
-
+\revise{The best} donor must provide final consent after being informed of their selection by the coordinator and coordinating physician. Simultaneously, a representative of the donor's family must provide consent to the donation. After final consent is obtained, the selected donor cannot withdraw their decision to donate. They then undergo a surgical procedure to collect stem cells. The time from CT to collection is approximately three to four months. Importantly, a matched donor cannot have access to any information about the matched patient (for example, the number of other available potential donors), nor can the potential donor obtain this information from the transplantation coordinator or coordinating physician.
 
 ## Experimental Design {#design}
 
@@ -262,11 +269,19 @@ endpoint <- list(
   donate = "Donation"
 )
 
+# main sample
 rct <- rawdt$RCT()
 rct$add_intervention(intervention)
 rct$add_outcome(endpoint)
 rct$set_default_cluster("RCTweek")
 rct$set_default_se_type("stata")
+
+# robust sample (remove those who skipped the CT)
+rct_noskip <- rawdt_noskip$RCT()
+rct_noskip$add_intervention(intervention)
+rct_noskip$add_outcome(endpoint)
+rct_noskip$set_default_cluster("RCTweek")
+rct_noskip$set_default_se_type("stata")
 ```
 
 ```{r summary}
