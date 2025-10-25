@@ -56,14 +56,25 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 
-  \newcolumntype{d}{S[
-    input-open-uncertainty=,
-    input-close-uncertainty=,
-    parse-numbers = false,
-    table-align-text-pre=false,
-    table-align-text-post=false
-  ]}
+    \newcolumntype{d}{S[
+      table-align-text-before=false,
+      table-align-text-after=false,
+      input-symbols={-,\*+()}
+    ]}
   
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 
 % ------------------------------ paper information
 \title{Supplementary Material
@@ -114,11 +125,10 @@
 \renewcommand{\theHfigure}{\thesection\arabic{figure}}
 \renewcommand{\theHtable}{\thesection\arabic{table}}
 
-\hypertarget{figtab}{%
-\section{Figures and Tables}\label{figtab}}
+\section{Figures and Tables}\label{figtab}
 
 \begin{table}[H]
-
+\centering
 \caption{\label{tab:smd-balance}Assessing Balance by Standardized Mean Difference}
 \centering
 \fontsize{8}{10}\selectfont
@@ -148,7 +158,7 @@ Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-skip}Linear Probability Model of Number of Coordination and Skipping CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -179,7 +189,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:cross-table-skip}Cross-Table of Coordination Experience and Skipping CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -198,7 +208,7 @@ All & N & 10547 & 502 & 11049\\
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-test}Linear Probability Model of CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -234,7 +244,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:logit-test}Logit Model of the CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -265,15 +275,11 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
-\end{figure}
-
-\begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~4/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-coordinate}Linear Probability Model of the Coordination Processes After CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -306,7 +312,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \clearpage
 
 \begin{landscape}\begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:logit-coordinate}Logit Model of Coordination Process After CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -338,7 +344,7 @@ Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2454.591} & \num{-2410.035}
 \end{landscape}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-decompose-effect-donor-selection}Effect on Donor Selection and Dropout among Potential Donors Reaching CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -360,7 +366,7 @@ Covariates &  & X & X &  & X & X &  & X & X\\
 Month FE &  &  & X &  &  & X &  &  & X\\
 Num.Obs. & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651} & \num{2651}\\
 R2 & \num{0.001} & \num{0.020} & \num{0.023} & \num{0.001} & \num{0.036} & \num{0.038} & \num{0.000} & \num{0.088} & \num{0.089}\\
-R2 Adj. & \num{0.000} & \num{0.015} & \num{0.016} & \num{0.000} & \num{0.032} & \num{0.032} & \num{-0.001} & \num{0.084} & \num{0.083}\\
+R2 Adj. & \num{-0.000} & \num{0.015} & \num{0.016} & \num{-0.000} & \num{0.032} & \num{0.032} & \num{-0.001} & \num{0.084} & \num{0.083}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -370,7 +376,7 @@ R2 Adj. & \num{0.000} & \num{0.015} & \num{0.016} & \num{0.000} & \num{0.032} & 
 \end{table}
 
 \begin{table}[H]
-
+\centering\centering
 \caption{\label{tab:lm-who-selected-statusquo}Determination of Donor Selection and Donation among Potential Donors Reaching CT (only Status Quo Group)}
 \centering
 \fontsize{8}{10}\selectfont
@@ -414,7 +420,7 @@ R2 Adj. & \num{0.002} & \num{0.004}\\
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~2/figure-latex/lm-interaction-gender-coordination-age-1} \caption{Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and CoordinationExperience Groups. \newline \emph{Note}: The standard errors clustered by the assigned week are in parentheses. Covariates are the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and group dummies.}\label{fig:lm-interaction-gender-coordination-age}
+\includegraphics{JMDPRC~4/figure-latex/lm-interaction-gender-coordination-age-1} \caption{Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and CoordinationExperience Groups. \newline \emph{Note}: The standard errors clustered by the assigned week are in parentheses. Covariates are the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and group dummies.}\label{fig:lm-interaction-gender-coordination-age}
 \end{figure}
 
 \begin{spacing}{1}

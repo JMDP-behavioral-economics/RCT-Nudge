@@ -318,43 +318,6 @@ rct$
   column_spec(1, width = "20em")
 ```
 
-```{r speed-CT-cond-response, fig.cap = "Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \\newline \\emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.", fig.pos = "H"}
-positive_dt <- rct$data %>%
-  filter(positive == 1 & 0 < days_reply & treat == "StatusQuo")
-
-plotdt <- positive_dt %>%
-  mutate(ntile = ntile(days_reply, 20)) %>%
-  group_by(ntile) %>%
-  summarize(
-    median_day = (max(days_reply) + min(days_reply)) / 2,
-    mean_ct = mean(test)
-  )
-
-plotdt %>%
-  ggplot(aes(x = median_day, y = mean_ct)) +
-    geom_point(color = "grey40", size = 3) +
-    geom_smooth(
-      aes(x = days_reply, y = test),
-      data = positive_dt,
-      method = "glm",
-      method.args = list(family = "binomial"),
-      se = FALSE,
-      alpha = 0.2,
-      color = "black",
-      linetype = 1
-    ) +
-    geom_smooth(
-      aes(x = days_reply, y = test),
-      data = positive_dt,
-      se = FALSE,
-      alpha = 0.2,
-      color = "black",
-      linetype = 2
-    ) +
-    labs(x = "Response days", y = "Proportion of Reaching CT", shape = "Outcome") +
-    my_theme_classic(size = 25)
-```
-
 ```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
 rct$
   lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
