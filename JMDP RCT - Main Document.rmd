@@ -155,11 +155,11 @@ data_root <- "data"
 
 ## Background: Coordination Process of JMDP {#background}
 
-```{r flow-chart-coordination, fig.cap = "Flow Chart of Coordination Process with Case Counts \\newline \\emph{Note}: The numbers in this figure are based on our experimental data."}
+```{r flow-chart-coordination, fig.cap = "Flow Chart of the JMDP Coordination Process and Sample Selection \\newline \\emph{Note}: The numbers in this figure are based on our experimental data."}
 knitr::include_graphics(here("image/flowchart.pdf"))
 ```
 
-To allow readers to better understand our intervention and data, we first outline the coordination process leading to the donation of stem cells by donors registered with the JMDP (see Figure \@ref(fig:flow-chart-coordination) for a visual overview). \revise{Individuals eligible to register as donors with the JMDP must be between 18 and 54 years old and in good health.}[^weight] \revise{Individuals who can actually donate must be between 20 and 55 years old. Currently, approximately 560,000 donors are registered with the JMDP. Of these, 240,000 (42\%) are under 40 years old, and 280,000 (50\%) are male.}[^reference]
+To allow readers to better understand our intervention and data, we first outline the coordination process leading to the \revise{stem cell donation through the JMDP} (see Figure \@ref(fig:flow-chart-coordination) for a visual overview). \revise{Individuals eligible to register as donors with the JMDP must be between 18 and 54 years old and in good health.}[^weight] \revise{Individuals who can actually donate must be between 20 and 55 years old. Currently, approximately 560,000 donors are registered with the JMDP. Of these, 240,000 (42\%) are under 40 years old, and 280,000 (50\%) are male.}[^reference]
 
 [^weight]: Additionally, body weight is required. For males, the weight must be at least 45 kg. For females, the weight must be at least 40 kg. See <https://www.jmdp.or.jp/reg/requirement/> (Japanese; Accessed October 24, 2025).
 
@@ -228,6 +228,7 @@ rawdt <- RawData$new(
   treat_labels = c("StatusQuo", "MatchMessage", "CoordMessage", "BothMessage")
 )
 
+rawdt$add_cond_study_sample("prefecture != '海外'")
 rawdt$add_cond_study_sample("ongoing == 0")
 
 # robust sample (remove those who skipped the CT)

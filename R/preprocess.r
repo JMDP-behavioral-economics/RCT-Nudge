@@ -5,7 +5,7 @@ library(tidyverse)
 library(lubridate)
 
 #+ include = FALSE
-root <- "D:/JMDPフィールド実験"
+root <- "data"
 raw <- "raw.csv"
 schedule <- "schedule.csv"
 
@@ -255,7 +255,6 @@ merge_mencho <- read_csv(
 
 combine <- shape_schedule_dt %>%
   right_join(shape_rawdt, by = c("year", "month", "treat")) %>%
-  dplyr::filter(prefecture != "海外") %>%
   left_join(merge_mencho, by = "prefecture") %>%
   select(-area, -hospital, -PB_hospital, -BM_hospital, -DLI_hospital)
 
