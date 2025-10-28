@@ -144,10 +144,10 @@
 Age & -0.026 & -0.096 & -0.041\\
 Male (= 1) & 0.019 & 0.016 & -0.031\\
 Number of holidays & 0.956 & -0.129 & 0.317\\
-Number of hospitals listed with BM collection & 0.028 & 0.023 & 0.013\\
-Number of hospitals listed with PBSC collection & 0.023 & 0.019 & 0.011\\
-Number of listed hospitals & 0.024 & 0.019 & 0.015\\
-Number of past coordinations & -0.019 & 0.015 & -0.045\\
+Number of hospitals listed with BM collection &  &  & \\
+Number of hospitals listed with PBSC collection &  &  & \\
+Number of listed hospitals &  &  & \\
+Number of past coordinations & -0.019 & 0.015 & -0.044\\
 Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \bottomrule
 \end{tabular}
@@ -169,17 +169,17 @@ Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7}
   & (1) & (2) & (3) & (4) & (5) & (6)\\
 \midrule
-MatchMessage group & \num{-0.18} & \num{1.04} & \num{1.20} & \num{0.79} & \num{0.67} & \num{0.73}\\
+MatchMessage group & \num{-0.17} & \num{1.04} & \num{1.20} & \num{0.79} & \num{0.67} & \num{0.73}\\
  & (\num{1.94}) & (\num{1.71}) & (\num{1.87}) & (\num{0.74}) & (\num{0.69}) & (\num{0.57})\\
-CoordMessage group & \num{1.69} & \num{2.04} & \num{2.05} & \num{0.76} & \num{0.50} & \num{0.54}\\
+CoordMessage group & \num{1.70} & \num{2.04} & \num{2.05} & \num{0.76} & \num{0.50} & \num{0.54}\\
  & (\num{1.67}) & (\num{1.73}) & (\num{1.67}) & (\num{0.71}) & (\num{0.64}) & (\num{0.65})\\
-BothMessage group & \num{-1.91} & \num{-1.28} & \num{-1.04} & \num{1.11} & \num{1.27} & \num{1.24}\\
- & (\num{1.90}) & (\num{1.93}) & (\num{1.92}) & (\num{1.01}) & (\num{0.94}) & (\num{0.80})\\
+BothMessage group & \num{-1.89} & \num{-1.28} & \num{-1.04} & \num{1.11} & \num{1.27} & \num{1.24}\\
+ & (\num{1.90}) & (\num{1.93}) & (\num{1.92}) & (\num{1.02}) & (\num{0.94}) & (\num{0.80})\\
 \midrule
-Control average & 36.61 & 36.61 & 36.61 & 3.87 & 3.87 & 3.87\\
+Control average & 36.59 & 36.59 & 36.59 & 3.86 & 3.86 & 3.86\\
 Covariates &  & X & X &  & X & X\\
 Month FE &  &  & X &  &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Num.Obs. & \num{11050} & \num{11049} & \num{11049} & \num{11050} & \num{11049} & \num{11049}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -197,11 +197,11 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \toprule
 Coordination experience &   & Not skipped & Skipped & All\\
 \midrule
-First-time coordination & N & 7015 & 1 & 7016\\
+First-time coordination & N & 7016 & 1 & 7017\\
  & \% row & \num{99.99} & \num{0.01} & \num{100.00}\\
 Second-time or more coordination & N & 3532 & 501 & 4033\\
  & \% row & \num{87.58} & \num{12.42} & \num{100.00}\\
-All & N & 10547 & 502 & 11049\\
+All & N & 10548 & 502 & 11050\\
  & \% row & \num{95.46} & \num{4.54} & \num{100.00}\\
 \bottomrule
 \end{tabular}
@@ -219,22 +219,22 @@ All & N & 10547 & 502 & 11049\\
 \cmidrule(l{3pt}r{3pt}){2-4}
   & (1) & (2) & (3)\\
 \midrule
-MatchMessage group & \num{3.10}** & \num{2.56}* & \num{1.63}**\\
+MatchMessage group & \num{3.11}** & \num{2.62}** & \num{1.68}**\\
  & (\num{1.42}) & (\num{1.24}) & (\num{0.70})\\
-CoordMessage group & \num{1.19} & \num{0.50} & \num{0.27}\\
- & (\num{1.55}) & (\num{1.18}) & (\num{0.90})\\
-BothMessage group & \num{2.39} & \num{1.64} & \num{1.11}\\
- & (\num{1.63}) & (\num{1.65}) & (\num{0.80})\\
+CoordMessage group & \num{1.20} & \num{0.54} & \num{0.31}\\
+ & (\num{1.55}) & (\num{1.17}) & (\num{0.89})\\
+BothMessage group & \num{2.40} & \num{1.66} & \num{1.14}\\
+ & (\num{1.63}) & (\num{1.67}) & (\num{0.80})\\
 \midrule
 \addlinespace[0.3em]
 \multicolumn{4}{l}{\textit{Adjustment of p-values for multiple hypotheses testing}}\\
 \hspace{1em}MatchMessage group (adjusted p-value) & 0.021 &  & \\
 \hspace{1em}CoordMessage group (adjusted p-value) & 0.311 &  & \\
 \hspace{1em}BothMessage group (adjusted p-value) & 0.073 &  & \\
-Control average & 22.25 & 22.25 & 22.25\\
+Control average & 22.24 & 22.24 & 22.24\\
 Covariates &  & X & X\\
 Month FE &  &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
+Num.Obs. & \num{11050} & \num{11050} & \num{11050}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -255,17 +255,17 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \cmidrule(l{3pt}r{3pt}){2-4}
   & (1) & (2) & (3)\\
 \midrule
-MatchMessage group & \num{1.19} & \num{1.18} & \num{1.11}\\
+MatchMessage group & \num{1.19} & \num{1.18} & \num{1.12}\\
  & {}[\num{1.02}, \num{1.39}] & {}[\num{1.01}, \num{1.38}] & {}[\num{1.02}, \num{1.22}]\\
 CoordMessage group & \num{1.07} & \num{1.03} & \num{1.02}\\
- & {}[\num{0.90}, \num{1.27}] & {}[\num{0.88}, \num{1.21}] & {}[\num{0.91}, \num{1.15}]\\
+ & {}[\num{0.90}, \num{1.27}] & {}[\num{0.89}, \num{1.21}] & {}[\num{0.91}, \num{1.15}]\\
 BothMessage group & \num{1.14} & \num{1.11} & \num{1.07}\\
- & {}[\num{0.96}, \num{1.37}] & {}[\num{0.90}, \num{1.37}] & {}[\num{0.97}, \num{1.19}]\\
+ & {}[\num{0.96}, \num{1.37}] & {}[\num{0.90}, \num{1.38}] & {}[\num{0.97}, \num{1.19}]\\
 \midrule
 Covariates &  & X & X\\
 Month FE &  &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
+Num.Obs. & \num{11050} & \num{11050} & \num{11050}\\
+Log.Lik. & \num{-6084.035} & \num{-5315.361} & \num{-5302.457}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -275,7 +275,7 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~1/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 \begin{table}[H]
@@ -290,17 +290,17 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-MatchMessage group & \num{0.16} & \num{-0.29} & \num{-0.71}* & \num{0.26} & \num{-0.14} & \num{-0.58}** & \num{0.12} & \num{-0.12} & \num{-0.48}\\
- & (\num{0.59}) & (\num{0.56}) & (\num{0.35}) & (\num{0.56}) & (\num{0.51}) & (\num{0.28}) & (\num{0.45}) & (\num{0.47}) & (\num{0.37})\\
-CoordMessage group & \num{-0.07} & \num{-0.32} & \num{-0.39} & \num{0.06} & \num{-0.16} & \num{-0.22} & \num{0.02} & \num{-0.15} & \num{-0.20}\\
- & (\num{0.76}) & (\num{0.70}) & (\num{0.37}) & (\num{0.64}) & (\num{0.58}) & (\num{0.31}) & (\num{0.57}) & (\num{0.52}) & (\num{0.33})\\
-BothMessage group & \num{0.50} & \num{0.26} & \num{0.00} & \num{0.63} & \num{0.43} & \num{0.19} & \num{0.07} & \num{-0.08} & \num{-0.28}\\
+MatchMessage group & \num{0.16} & \num{-0.28} & \num{-0.69}* & \num{0.26} & \num{-0.13} & \num{-0.57}* & \num{0.12} & \num{-0.11} & \num{-0.47}\\
+ & (\num{0.59}) & (\num{0.57}) & (\num{0.35}) & (\num{0.56}) & (\num{0.51}) & (\num{0.28}) & (\num{0.45}) & (\num{0.47}) & (\num{0.37})\\
+CoordMessage group & \num{-0.06} & \num{-0.31} & \num{-0.38} & \num{0.06} & \num{-0.14} & \num{-0.20} & \num{0.02} & \num{-0.15} & \num{-0.19}\\
+ & (\num{0.76}) & (\num{0.71}) & (\num{0.37}) & (\num{0.64}) & (\num{0.59}) & (\num{0.31}) & (\num{0.57}) & (\num{0.52}) & (\num{0.33})\\
+BothMessage group & \num{0.50} & \num{0.26} & \num{0.00} & \num{0.63} & \num{0.43} & \num{0.19} & \num{0.08} & \num{-0.08} & \num{-0.28}\\
  & (\num{0.72}) & (\num{0.81}) & (\num{0.35}) & (\num{0.80}) & (\num{0.88}) & (\num{0.42}) & (\num{0.74}) & (\num{0.80}) & (\num{0.50})\\
 \midrule
 Control average & 6.19 & 6.19 & 6.19 & 5.44 & 5.44 & 5.44 & 4.50 & 4.50 & 4.50\\
 Covariates &  & X & X &  & X & X &  & X & X\\
 Month FE &  &  & X &  &  & X &  &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
+Num.Obs. & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -323,17 +323,17 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
-MatchMessage group & \num{1.03} & \num{0.95} & \num{0.89} & \num{1.05} & \num{0.98} & \num{0.90} & \num{1.03} & \num{0.97} & \num{0.90}\\
- & {}[\num{0.84}, \num{1.25}] & {}[\num{0.79}, \num{1.15}] & {}[\num{0.80}, \num{1.00}] & {}[\num{0.85}, \num{1.30}] & {}[\num{0.81}, \num{1.19}] & {}[\num{0.82}, \num{0.99}] & {}[\num{0.84}, \num{1.26}] & {}[\num{0.79}, \num{1.21}] & {}[\num{0.77}, \num{1.04}]\\
+MatchMessage group & \num{1.03} & \num{0.96} & \num{0.89} & \num{1.05} & \num{0.98} & \num{0.90} & \num{1.03} & \num{0.98} & \num{0.90}\\
+ & {}[\num{0.84}, \num{1.25}] & {}[\num{0.79}, \num{1.16}] & {}[\num{0.80}, \num{1.00}] & {}[\num{0.85}, \num{1.30}] & {}[\num{0.81}, \num{1.19}] & {}[\num{0.83}, \num{0.99}] & {}[\num{0.84}, \num{1.26}] & {}[\num{0.79}, \num{1.21}] & {}[\num{0.78}, \num{1.04}]\\
 CoordMessage group & \num{0.99} & \num{0.96} & \num{0.95} & \num{1.01} & \num{0.99} & \num{0.98} & \num{1.00} & \num{0.98} & \num{0.97}\\
- & {}[\num{0.76}, \num{1.28}] & {}[\num{0.75}, \num{1.22}] & {}[\num{0.84}, \num{1.08}] & {}[\num{0.79}, \num{1.29}] & {}[\num{0.79}, \num{1.23}] & {}[\num{0.87}, \num{1.10}] & {}[\num{0.77}, \num{1.30}] & {}[\num{0.77}, \num{1.23}] & {}[\num{0.84}, \num{1.12}]\\
+ & {}[\num{0.76}, \num{1.28}] & {}[\num{0.75}, \num{1.22}] & {}[\num{0.84}, \num{1.08}] & {}[\num{0.79}, \num{1.29}] & {}[\num{0.79}, \num{1.23}] & {}[\num{0.88}, \num{1.10}] & {}[\num{0.78}, \num{1.30}] & {}[\num{0.78}, \num{1.24}] & {}[\num{0.84}, \num{1.12}]\\
 BothMessage group & \num{1.09} & \num{1.06} & \num{1.02} & \num{1.12} & \num{1.10} & \num{1.06} & \num{1.02} & \num{0.99} & \num{0.96}\\
  & {}[\num{0.86}, \num{1.37}] & {}[\num{0.81}, \num{1.38}] & {}[\num{0.92}, \num{1.13}] & {}[\num{0.84}, \num{1.50}] & {}[\num{0.80}, \num{1.51}] & {}[\num{0.92}, \num{1.22}] & {}[\num{0.73}, \num{1.42}] & {}[\num{0.69}, \num{1.43}] & {}[\num{0.77}, \num{1.19}]\\
 \midrule
 Covariates &  & X & X &  & X & X &  & X & X\\
 Month FE &  &  & X &  &  & X &  &  & X\\
-Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049}\\
-Log.Lik. & \num{-2610.914} & \num{-2464.319} & \num{-2454.591} & \num{-2410.035} & \num{-2283.231} & \num{-2272.377} & \num{-2045.363} & \num{-1954.414} & \num{-1944.719}\\
+Num.Obs. & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050} & \num{11050}\\
+Log.Lik. & \num{-2610.978} & \num{-2466.172} & \num{-2456.324} & \num{-2410.091} & \num{-2285.517} & \num{-2274.552} & \num{-2045.409} & \num{-1955.767} & \num{-1946.060}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -420,7 +420,7 @@ R2 Adj. & \num{0.002} & \num{0.004}\\
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/lm-interaction-gender-coordination-age-1} \caption{Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and CoordinationExperience Groups. \newline \emph{Note}: The standard errors clustered by the assigned week are in parentheses. Covariates are the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and group dummies.}\label{fig:lm-interaction-gender-coordination-age}
+\includegraphics{JMDPRC~1/figure-latex/lm-interaction-gender-coordination-age-1} \caption{Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and CoordinationExperience Groups. \newline \emph{Note}: The standard errors clustered by the assigned week are in parentheses. Covariates are the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and group dummies.}\label{fig:lm-interaction-gender-coordination-age}
 \end{figure}
 
 \begin{spacing}{1}
