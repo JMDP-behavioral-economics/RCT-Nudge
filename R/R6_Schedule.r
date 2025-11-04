@@ -12,7 +12,7 @@ Schedule <- R6::R6Class("Schedule",
         mutate(
           date = paste(format(start_date, "%m/%d"), "to", format(end_date, "%m/%d")),
           date = paste0("(", date, ")"),
-          year_month = format(make_date(year, month), "%B, %Y")
+          year_month = format(make_date(year, month), "%B %Y")
         ) %>%
         select(year_month, week, treat, date)
 
