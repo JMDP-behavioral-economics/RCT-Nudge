@@ -4,12 +4,19 @@
 git-worktree/
 JMDP-RCT---Main-Document_cache/
 JMDP-RCT---Online-Supplementary-Material_cache/
+Associate_Editor_Comments_cache/
+Reviewer1_Comments_cache/
+Reviewer2_Comments_cache/
+Reviewer1_Comments_files/
 .vscode/c_cpp_properties.json
 
 JMDP RCT - Online Supplementary Material.pdf
 JMDP RCT - Online Supplementary Material (cluster se).pdf
 JMDP RCT - Main Document (cluster se).pdf
 JMDP RCT - Main Document.pdf
+Associate_Editor_Comments.*
+Reviewer1_Comments.*
+Reviewer2_Comments.*
 
 submission/
 IRB/

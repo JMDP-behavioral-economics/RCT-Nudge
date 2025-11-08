@@ -92,6 +92,7 @@ rawdt <- RawData$new(
 )
 
 # main sample
+rawdt$add_cond_study_sample("prefecture != '海外'")
 rawdt$add_cond_study_sample("ongoing == 0")
 
 # robust sample (remove those who skipped the CT)
