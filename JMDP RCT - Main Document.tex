@@ -304,6 +304,37 @@ In this subsection, we present the estimated effects of the intervention message
 
 There are two reasons for the low probability of reaching CT. First, only \(54.91\)\% of the donors in the StatusQuo group indicated their willingness to donate. Second, \(59.48\)\% of those who expressed a willingness to donate did not reach the CT stage (i.e., they dropped out between the response and CT stages) and 86\% of these dropouts occurred for donor-related reasons.\footnote{Thus, \(51.15\)\% (\(=59.48 \times 0.86\)) of those who expressed a willingness to donate did not reach the CT stage for donor-related reasons.} According to \citet{Hirakawa2018}, the top three donor-related reasons are health conditions such as lower back pain (imputed rates: 59\%), scheduling conflicts (imputed rates: 14\%), and the lack of family consent (imputed rates: 9\%).\footnote{\citet{Hirakawa2018} found that the top three donor-related reasons are health conditions (69\%), scheduling conflicts (16\%), and the lack of family consent (10\%). Using these values, we imputed the percentages of donor-related reasons in our data. For example, the percentage of health conditions is \(86 \times 0.69 = 48\)\%.} Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
 
+\begin{table}
+
+\caption{\label{tab:test-lm}Effect of the Intervention Messages on Reaching CT}
+\centering
+\fontsize{9}{11}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lccc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+  & (1) & (2) & (3)\\
+\midrule
+MatchMessage group & \num{3.10}** & \num{2.56}* & \num{1.63}**\\
+ & (\num{1.42}) & (\num{1.24}) & (\num{0.70})\\
+CoordMessage group & \num{1.19} & \num{0.50} & \num{0.27}\\
+ & (\num{1.55}) & (\num{1.18}) & (\num{0.90})\\
+BothMessage group & \num{2.39} & \num{1.64} & \num{1.11}\\
+ & (\num{1.63}) & (\num{1.65}) & (\num{0.80})\\
+\midrule
+Control average & 22.25 & 22.25 & 22.25\\
+Covariates &  & X & X\\
+Month FE &  &  & X\\
+Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 \begin{figure}[t]
 \includegraphics{JMDPRC~1/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Group.\newline \emph{Note}: Error bars show the standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:test-diff-mean}
 \end{figure}

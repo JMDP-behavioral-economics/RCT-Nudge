@@ -465,7 +465,7 @@ LmFit <- R6::R6Class("LmFit",
 
       plt <- ggplot(plotdt, aes(x = treat, y = mu)) +
         geom_bar(stat = "identity", fill = "grey90", color = "black") +
-        geom_errorbar(aes(ymin = mu - se, ymax = mu + se), width = 0.25) +
+        geom_errorbar(aes(ymin = mu - 1.96 * se, ymax = mu + 1.96 * se), width = 0.25) +
         geom_text(
           aes(y = avg_text_pos, label = sprintf(avg_format, mu)),
           color = "black", size = avg_text_size

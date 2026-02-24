@@ -414,25 +414,18 @@ There are two reasons for the low probability of reaching CT. First, only `r spr
 
 [^calculate-percentage]: @Hirakawa2018 found that the top three donor-related reasons are health conditions (69\%), scheduling conflicts (16\%), and the lack of family consent (10\%). Using these values, we imputed the percentages of donor-related reasons in our data. For example, the percentage of health conditions is $86 \times 0.69 = 48$\%.
 
-```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Group.\\newline \\emph{Note}: Error bars show the standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
+```{r test-lm}
 rct$
   lm_effect("test", sample_drop = FALSE)$
   fit(scale = 100)$
-  plot_ate(
-    xlab = "Experimental group",
-    ylab = "Share of participants (%)",
-    p_text_margin = 4,
-    add_segment_margin = 12,
-    segment_margin = 5,
-    show_p = 1,
-    edge_length = 2,
-    p_text_size = 7,
-    avg_text_size = 7,
-    avg_text_pos = 10,
-    avg_digit = 1,
-    base_size = 25,
-    ylim = c(0, 100),
-    ybreaks = seq(0, 100, by = 10)
+  kable_reg(
+    title = "Effect of the Intervention Messages on Reaching CT",
+    coef_map_lm = c(
+      "treatMatchMessage" = "MatchMessage group",
+      "treatCoordMessage" = "CoordMessage group",
+      "treatBothMessage" = "BothMessage group"
+    ),
+    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned."
   )
 ```
 

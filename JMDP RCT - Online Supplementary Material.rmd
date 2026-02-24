@@ -142,12 +142,7 @@ rct$
   )
 ```
 
-```{r lm-test}
-res <- rct$
-  lm_effect("test", sample_drop = FALSE)$
-  fit(scale = 100)$
-  get_est()
-
+```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Group.\\newline \\emph{Note}: Error bars show the standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week. We employed the method proposed by \\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values."}
 mha_test <- cache_rds(
   {
     rct$
@@ -158,55 +153,58 @@ mha_test <- cache_rds(
   file = "mh-adjust-test.rds"
 )
 
-mha_test_tab <- data.frame(mha_test) %>%
-  select(term = Treated.id, "(1)" = List.p) %>%
+test_mu <- rct$data %>%
+  group_by(treat) %>%
+  summarize(mu = mean(test) * 100)
+
+add_segment_margin <- 7
+segment_margin <- 1
+
+plot_mha_test <- mha_test %>%
   mutate(
-    term = paste(term, "group", "(adjusted p-value)"),
-    "(1)" = sprintf("%1.3f", `(1)`),
-    "(2)" = "",
-    "(3)" = ""
+    x_start = 1,
+    x_end = 1:n()
+  ) %>%
+  left_join(test_mu, by = c("Control.id" = "treat")) %>%
+  left_join(test_mu, by = c("Treated.id" = "treat")) %>%
+  rename(ctrl_mu = mu.x, mu = mu.y) %>%
+  rowwise() %>%
+  mutate(
+    y = max(mu, ctrl_mu),
+    y = y + segment_margin + add_segment_margin * x_end
   )
 
-add_tab <- data.frame(
-  rbind(
-    mha_test_tab,
-    c("Control average", sprintf("%1.2f", res$avg)),
-    c("Covariates", res$covariate),
-    c("Month FE", res$fe)
-  )
-)
+p_digit <- 3
+p_text_size <- 7
+p_text_margin <- 2
 
-attr(add_tab, "position") <- 7:12
-
-res %>%
-  pull(fit) %>%
-  modelsummary(
-    title = "Linear Probability Model of CT",
-    coef_map = c(
-      "treatMatchMessage" = "MatchMessage group",
-      "treatCoordMessage" = "CoordMessage group",
-      "treatBothMessage" = "BothMessage group"
+rct$
+  lm_effect("test", sample_drop = FALSE)$
+  fit(scale = 100)$
+  plot_ate(
+    xlab = "Experimental group",
+    ylab = "Share of participants (%)",
+    p_text_margin = p_text_margin,
+    add_segment_margin = add_segment_margin,
+    segment_margin = segment_margin,
+    show_p = 1,
+    edge_length = 2,
+    p_text_size = p_text_size,
+    avg_text_size = 7,
+    avg_text_pos = 10,
+    avg_digit = 1,
+    base_size = 25,
+    ylim = c(0, 50),
+    ybreaks = seq(0, 50, by = 10)
+  ) +
+  geom_text(
+    aes(
+      x = x_start + 0.4,
+      y = y + p_text_margin,
+      label = sprintf(paste0("[p = %1.", p_digit, "f]"), List.p)
     ),
-    stars = c("***" = .01, "**" = .05, "*" = .1),
-    gof_omit = "R2|AIC|BIC|Log|Std|FE|se_type|RMSE",
-    align = "lccc",
-    add_rows = add_tab,
-    fmt = 2,
-    escape = FALSE
-  ) %>%
-  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 1, "CT" = 3)) %>%
-  kableExtra::group_rows(
-    "Adjustment of p-values for multiple hypotheses testing",
-    7, 9,
-    bold = FALSE, italic = TRUE
-  ) %>%
-  kableExtra::column_spec(1, width = "20em") %>%
-  kableExtra::footnote(
-    general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are sex, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with bone marrow collection per 10 square kilometers, and a dummy indicating that a candidate can skip CT. All the covariates except the sex dummy and dummy of skipped CT were demeaned. We employed the method proposed by \\\\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.",
-    threeparttable = TRUE,
-    escape = FALSE
+    data = plot_mha_test,
+    hjust = 0, color = "black", size = p_text_size
   )
 ```
 
@@ -231,17 +229,17 @@ rct$
   plot_ate(
     xlab = "Experimental group",
     ylab = "Share of participants (%)",
-    p_text_margin = 4,
-    add_segment_margin = 12,
-    segment_margin = 5,
+    p_text_margin = 1,
+    add_segment_margin = 2,
+    segment_margin = 2,
     show_p = 1,
-    edge_length = 2,
+    edge_length = 0.25,
     p_text_size = 7,
     avg_text_pos = 2,
     avg_digit = 1,
     avg_text_size = 7,
-    ylim = c(0, 100),
-    ybreaks = seq(0, 100, by = 10),
+    ylim = c(0, 20),
+    ybreaks = seq(0, 20, by = 10),
     base_size = 25
   ) +
   theme(
