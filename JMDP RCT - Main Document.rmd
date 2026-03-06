@@ -417,7 +417,7 @@ Although most covariates were balanced across the experimental groups, a few wer
 \noindent
 where $X_{iwm}$ is a vector of observable characteristics, including donor age and the number of holidays. The parameters of interest are $(\beta_1, \beta_2, \beta_3)$.
 
-\revise{There may be intra-cluster correlation among donors matched with the same patient because multiple donors can be matched with the same patient (and physicians later select one from among those who reach CT). Therefore, it is desirable to use standard errors clustered at the \emph{patient} level or two-way at the patient and assigned week levels. However, we do not have patient IDs or information that identifies which patient each donor (or coordination) was matched with. Instead, we used standard errors clustered by the \emph{assigned week} for statistical inference, as treatment was assigned at the week level; this may also partially capture patient-level correlation when donors matched with the same patient received letters in the same week.}
+\revise{There may be within-patient correlation because multiple donors can be matched with the same patient and physicians select one from among those who reach CT. Ideally, we would cluster standard errors at the patient level (or two-way by patient and assigned week). Unfortunately, we do not have patient IDs. Instead, we clustered standard errors by the assigned week, the level of treatment assignment. This may also partially capture patient-level correlation when donors matched with the same patient received letters in the same week.}
 
 # Experimental Results {#result}
 ## Average Treatment Effects on Reaching CT {#main}
