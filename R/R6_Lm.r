@@ -244,6 +244,7 @@ LmFit <- R6::R6Class("LmFit",
     },
     get_est = function() private$est,
     kable_reg = function( title = "",
+                          outcome_label = NULL,
                           coef_map_lh = NULL,
                           coef_map_lm = c(
                             "treatB" = "Experimental group B",
@@ -304,6 +305,11 @@ LmFit <- R6::R6Class("LmFit",
           c("Covariates", res$covariate),
           c("Month FE", res$fe)
         ))
+      }
+
+      if (!is.null(outcome_label)) {
+        res <- res %>%
+          mutate(outcome = fct_recode(outcome, !!!outcome_label))
       }
 
       attr(add_tab, "position") <- seq(
