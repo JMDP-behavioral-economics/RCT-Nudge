@@ -56,25 +56,14 @@
 \usepackage{booktabs}
 \usepackage{siunitx}
 
-    \newcolumntype{d}{S[
-      table-align-text-before=false,
-      table-align-text-after=false,
-      input-symbols={-,\*+()}
-    ]}
+  \newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+  ]}
   
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{wrapfig}
-\usepackage{float}
-\usepackage{colortbl}
-\usepackage{pdflscape}
-\usepackage{tabu}
-\usepackage{threeparttable}
-\usepackage{threeparttablex}
-\usepackage[normalem]{ulem}
-\usepackage{makecell}
-\usepackage{xcolor}
 
 % ------------------------------ paper information
 \title{Exploring Information Provision to Promote Stem Cell Donation:
@@ -130,29 +119,32 @@ Evidence from a Field Experiment of the Japan Marrow Donor Program}
 
 \clearpage
 
-\section{Introduction}\label{intro}
+\hypertarget{intro}{%
+\section{Introduction}\label{intro}}
 
 Similar to organ transplantation, allogeneic hematopoietic stem cell transplantation (HSCT) faces supply shortages in many countries. To resolve this issue, particularly in the context of organ transplantation from deceased donors, many studies have examined interventions to increase donor registrations \citep[for example,][]{Kessler2012}. In addition, HSCT faces another challenge: registered donors may refuse to donate when matched with patients \citep[for example,][]{Switzer2018, Haylock2024}. Thus, developing interventions to mitigate such donor dropout is crucial. This study examines how behavioral interventions at the time of matching can prevent donor dropout and resolve the supply shortage issue.
 
 HSCT has the lowest relapse rate among all treatments for leukemia and other blood cancers. In this treatment, (1) anticancer drugs or radiation are used to kill tumor cells and (2) healthy hematopoietic stem cells are transplanted from a donor. The transplantation requires that the donor's white blood cell type (HLA) completely or partially matches the patient's HLA.\footnote{When HLA-identical or partially matched unrelated donors are unavailable, several options exist. The first option is haploidentical stem cell transplantation in which stem cells are transplanted from a close relative with semi-matched HLA. The second option is cord blood transplantation in which stem cells are transplanted from the umbilical cord or placenta of pregnant women. The HLA requirements for these transplants are weaker than those for bone marrow (or peripheral blood stem cell (PBSC)) transplants between unrelated individuals. Notably, in Japan, bone marrow and PBSC transplants between unrelated individuals accounted for 20\% of all transplants in 2021 \citep{JDCHCT2022}.} When patients cannot find a compatible donor among their relatives, who are more likely to be matched, they can search for unrelated donors through \revise{donor registries such as National Marrow Donor Program (NMDP) and Japan Marrow Donor Program (JMDP).}\footnote{While the probability of a complete match between two randomly selected individuals is less than 1\%, the probability of a full match between siblings is 30\%.}
 
-\revise{However, donor registries around the world face a common challenge of donor dropout among registered donors \citep{Switzer2004, Lown2014, Hamed2023}. Donor candidates who are matched with patients undergo confirmatory typing (CT) to assess their eligibility for transplantation. Because physicians select the most suitable donor based on the results of CT, donor dropout before CT reduces donor availability. For example, in DKMS Germany, one of the largest registries, the donor dropout rate at the CT stage is 23\% \citep{Haylock2024}. In addition, in the Japanese registry JMDP,} 56\% of transplant coordinations do not reach the CT stage for donor-related reasons \citep{Hirakawa2018}. \revise{The donor dropout prolongs the time to transplantation and, as a result, negatively affects patient outcomes \citep{Lown2013}.}\footnote{In the JMDP, between 2004 and 2013, only 60\% of the patients registered with the JMDP end up receiving transplantation. Moreover, 58\% of patients who died (or had their transplantation interrupted because of poor health) passed away within 200 days \citep{Hirakawa2018}.} Thus, we should explore and adopt interventions to increase the number of donor candidates who reach CT, thereby improving donor availability while maintaining individuals' autonomy.\footnote{\revise{One may think that expanding donor pool (i.e., recruiting new donors) is one solution. However, many registries have already undertaken such activities for a long time, so the marginal benefit of expanding the donor pool is limited.} Indeed, in the JMDP, the benefit of expanding the donor pool is limited because most patients do eventually find donor candidates \citep{Takanashi2016}.}
+\revise{However, donor registries worldwide face a common challenge: dropout among registered donors \citep{Switzer2004, Lown2014, Hamed2023}. Donor candidates matched with patients undergo confirmatory typing (CT) to assess their eligibility for transplantation. Because physicians select the most suitable donor based on CT results, dropout before CT reduces donor availability. For example, dropout at the CT stage is 23\% in DKMS Germany \citep{Haylock2024}, and} 56\% of transplant coordinations in JMDP do not reach the CT stage for donor-related reasons \citep{Hirakawa2018}. \revise{Donor dropout prolongs time to transplantation and worsens patient outcomes \citep{Lown2013}.}\footnote{In the JMDP, between 2004 and 2013, only 60\% of the patients registered with the JMDP end up receiving transplantation. Moreover, 58\% of patients who died (or had their transplantation interrupted because of poor health) passed away within 200 days \citep{Hirakawa2018}.} Thus, \revise{interventions to reduce pre-CT donor dropout are needed while preserving individual autonomy.}\footnote{\revise{One may think that expanding donor pool (i.e., recruiting new donors) is one solution. However, many registries have already undertaken such activities for a long time, so the marginal benefit of expanding the donor pool is limited.} Indeed, in the JMDP, the benefit of expanding the donor pool is limited because most patients do eventually find donor candidates \citep{Takanashi2016}.}
 
-In this study, we developed information interventions to prevent registered donor dropout, that is, increase the number of donor candidates who progress to the CT stage, in collaboration with the JMDP. The interventions added messages to the letters sent when donors are matched with patients. This letter informs matched donors that they are compatible with a specific patient requiring HSCT owing to their matching HLA and requests their participation in the transplantation coordination. Upon responding to this so-called ``HLA match letter,'' matched donors indicate their willingness to donate and proceed to the next coordination stage, namely, the CT stage. We developed two intervention messages---\emph{matching difficulty} and \emph{early coordination}---based on insights from behavioral economics, the details of which are explained in Section \ref{design}. In collaboration with the JMDP, we then conducted a field experiment to examine the effect of our intervention on progressing the CT stage. Our experimental participants comprised recipients of the 11,154 HLA match letters that were sent between September 2021 and February 2022.
+In this study, we developed information interventions to increase the number of donor candidates who progress to the CT stage, in collaboration with the JMDP. The interventions added messages to the letters sent when donors are matched with patients. This letter informs \revise{donors of their compatibility with a specific patient} and requests their participation in the transplantation coordination. Upon responding to this so-called ``HLA match letter,'' matched donors indicate their willingness to donate and proceed to the CT stage. We developed two intervention messages---\emph{matching difficulty} and \emph{early coordination}. \revise{The former emphasizes the limited number of HLA-compatible donors per patient to prevent motivational crowding-out of altruistic donors. The latter emphasizes the importance of early coordination for patient outcomes to prevent delayed response to the HLA match letter.} Our experimental participants comprised recipients of the 11,154 HLA match letters that were sent between September 2021 and February 2022.
 
-Using coordination data provided by the JMDP, we \revise{find} that our intervention increases the probability of donors reaching the CT stage. Specifically, \revise{the matching difficulty---which informs matched donors that the number of HLA-compatible donors per patient is limited and emphasizes the scarcity of compatible donors---message increased the likelihood of donors reaching CT by $7.3$\%.} A back-of-the-envelope calculation suggests that this positive effect may partially \revise{offset the future shrinkage of the donor pool due to aging} (as discussed in Section \ref{conclusion}). However, the early coordination message did not have the intended effect of increasing the probability of donors reaching the CT stage. \revise{Taken together, our field experiment suggests that perceived scarcity of compatible donors prevents motivational crowding-out of altruistic donors.}
+Using coordination data provided by the JMDP, we \revise{find} that our intervention increases the probability of donors reaching the CT stage. Specifically, \revise{the matching difficulty message increased the likelihood of donors reaching CT by $7.3$\%.} A back-of-the-envelope calculation suggests that this positive effect may partially \revise{offset the future shrinkage of the donor pool due to aging} (as discussed in Section \ref{conclusion}). However, the early coordination message did not have the intended effect of increasing the probability of donors reaching the CT stage. \revise{Taken together, our field experiment suggests that perceived scarcity of compatible donors prevents motivational crowding-out of altruistic donors.}
 
-\revise{This study makes two contributions. First, we contribute to the literature on information provision in donor engagement by adding experimental evidence from a different target population. Previous studies have aimed to increase supply quantity and examined information-provision interventions that highlight social benefits and peer effects \citep{Li2016, Sallis2018, Robitaille2021, Goette2020, Goette2024}.}\footnote{\citet{Heger2020} showed that establishing registries that collect potential donors beforehand is effective in increasing the supply of blood donation. In the case of HSCT, such registries already exist. Our motivation is to prevent dropout among registered donors when they are matched with patients.} \revise{Therefore, these studies have targeted the general population, including individuals who have not registered as donors (i.e., selfish individuals with low willingness to donate). In contrast, although our study examines an intervention similar to those in previous research, its objective is substantially different. We aim to prevent dropout among registered donors rather than increasing the total supply. Consequently, our target population only contains registered donors who have a high willingness to donate (i.e., altruistic individuals) \citep{Bergstrom2009, Ohtake2020}, and thus differs from the populations targeted in previous intervention studies.}\footnote{Previous studies have also examined the effects of behavioral interventions such as message and information provision in health and medical policy contexts, including vaccination \citep[for example,][]{Dai2021, Milkman2021}, breast cancer screening \citep{Bertoni2020}, and cord blood transplantation \citep{Grieco2018}. Unlike our study, these studies targeted the general population \revise{including peoplw with low motivation to take action}.}
+\revise{We contribute to the literature on information provision in donor engagement. The key distinction with previous studies lies in both the intervention objective and the target population. Previous studies have mainly aimed to increase total supply and targeted the general population, including individuals who have not registered as donors (i.e., individuals with lower willingness to donate) \citep{Li2016, Sallis2018, Robitaille2021, Goette2020, Goette2024}.}\footnote{\citet{Heger2020} showed that establishing registries that collect potential donors beforehand is effective in increasing the supply of blood donation. In the case of HSCT, such registries already exist. Our motivation is to prevent dropout among registered donors when they are matched with patients.} \revise{In contrast, our objective is to prevent dropout among registered donors rather than to increase the total supply. Accordingly, our target population consists of registered donors, who are more likely to have altruistic preferences \citep{Bergstrom2009, Ohtake2020}.}\footnote{Previous studies have also examined the effects of behavioral interventions such as message and information provision in health and medical policy contexts, including vaccination \citep[for example,][]{Dai2021, Milkman2021}, breast cancer screening \citep{Bertoni2020}, and cord blood transplantation \citep{Grieco2018}. Unlike our study, these studies targeted the general population \revise{including peoplw with low motivation to take action}.}
 
-\revise{However, several studies share the same intervention goal as ours. \citet{Switzer2018} examined information-provision interventions at the time of matching, but their study was not a randomized controlled trial. \citet{Haylock2024} examined the effects of commitment before matching, and thus the timing of their intervention differs from ours. To the best of our knowledge, we first document the effects of information provision at the time of matching among an altruistic population through a randomized controlled trial.}
+\revise{However, a few studies share the same intervention goal as ours. \citet{Switzer2018} examined information provision interventions at the time of matching, but their study was not a randomized controlled trial. \citet{Haylock2024} examined the effects of commitment before matching, and thus the timing of their intervention differs from ours. To the best of our knowledge, we are the first to document the effects of information provision at the time of matching among an altruistic population through a randomized controlled trial.}
 
-\revise{Second, we contribute to the literature on social norm messages by demonstrating the effectiveness of a message that is contrasted with social norm messages. Social norm messages provide information about the actions of a large majority of people and stimulate social image concerns and conformity \citep{Bernheim1994, Bursztyn2017}. In the context of monetary donations, the effectiveness of such messages has been documented \citep{Shang2009, Kessler2017}. By contrast, our message emphasizes the scarcity that only a small number of people can take action, conceptually opposite to social norm messages. According to the standard economic theory of public goods, information that many people have already taken action can suppress individual behavior. Indeed, in the context of vaccination, such information has been documented to reduce individual's willingness to be vaccinated \citep{Lau2019, Galizzi2022}. In such cases, information on scarcity or that only a few people are taking action can be more effective than social norm messages. Our experiment shows that this type of message is effective in an altruistic population.}\footnote{\citet{Brekke2011} showed that free-riding in public goods provision is eliminated when altruistic groups are formed through individual choice. \revise{This result is consistent with our finding.}}
+\revise{We also contribute to the literature on social norm messages by demonstrating the effectiveness of a message that is contrasted with social norm messages. Social norm messages describe majority behavior and can induce social image concerns and conformity \citep{Bernheim1994, Bursztyn2017}. Their effectiveness has been shown in the context of monetary donations \citep{Shang2009, Kessler2017}. By contrast, our message emphasizes that only a small number of people can act. In standard economic theory of public goods, information that many others have already acted may discourage individual behavior. In the vaccination context, such information reduces individuals' willingness to be vaccinated \citep{Lau2019, Galizzi2022}. Consistent with these findings, our experiment shows that scarcity information is effective in an altruistic population.}\footnote{\citet{Brekke2011} showed that free-riding in public goods provision is eliminated when altruistic groups are formed through individual choice. \revise{This result is consistent with our finding.}}
 
 The remainder of this paper is organized as follows. Section \ref{experiment} provides an overview of the coordination process of the JMDP and describes our field experiment. Section \ref{result} presents the results of our experiment. Section \ref{discussion} discusses the welfare implications. Finally, Section \ref{conclusion} concludes.
 
-\section{Field Experiment}\label{experiment}
+\hypertarget{experiment}{%
+\section{Field Experiment}\label{experiment}}
 
-\subsection{Background: Coordination Process of the JMDP}\label{background}
+\hypertarget{background}{%
+\subsection{Background: Coordination Process of the JMDP}\label{background}}
 
 \begin{figure}[t]
 \includegraphics{image/flowchart} \caption{Flowchart of the JMDP Coordination Process and Sample Selection \newline \emph{Note}: The numbers in this figure are based on our experimental data.}\label{fig:flow-chart-coordination}
@@ -168,10 +160,11 @@ The patient's physician selects the best donor from matched donors who have reac
 
 The best donor must provide final consent after being informed of their selection by the coordinator and coordinating physician. Simultaneously, a representative of the donor's family must provide consent to the donation. After final consent is obtained, the donor cannot withdraw their decision to donate. They then undergo a surgical procedure to collect stem cells. The time from CT to collection is approximately three to four months. Importantly, throughout the coordination process, a matched donor cannot access any information about the matched patient (e.g., the number of other available potential donors), nor can the matched donor obtain this information from the transplantation coordinator or coordinating physician.
 
-\subsection{Experimental Design}\label{design}
+\hypertarget{design}{%
+\subsection{Experimental Design}\label{design}}
 
 \begin{table}
-\centering
+
 \caption{\label{tab:list-message}List of Intervention Messages}
 \centering
 \fontsize{8}{10}\selectfont
@@ -198,7 +191,7 @@ Our intervention involved adding two messages into the HLA match letter.\footnot
 The matching difficulty message emphasizes the low number of matched donors per registered patient. If other potential donors with the same HLA type are in the pool, one donor's donation can be substituted with that of another compatible donor. Additionally, multiple matched donors (up to 10) can be simultaneously matched with a single patient. Therefore, transplantation through the JMDP represents a public good \citep{Bergstrom2009}. \revise{In this setting, self-interested individuals who do not care about the patient do not contribute, regardless of the presence of substitutable donors. By contrast, individuals with altruistic preferences exhibit two types of behavior. First, purely altruistic individuals who care about transplant outcome may crowd out their motivation by donation from substitutable donors.}\footnote{\citet{Ohtake2020} found that 22\% of registrants had pure altruistic preferences. Moreover, \citet{Kurosawa2022} interviewed previously matched donors and found that those with low donation intention felt that they were ``one of several donors.'' This implies that some potential donors with low intention recognize that their donation could be substituted by others.} \revise{Second, warm-glow individuals who derive utility from the act of giving itself may donate regardless of the presence of substitutable donors} \citep{Andreoni1990}. Thus, the matching difficulty message emphasizes the small number of possible substitutes and is expected to \revise{prevent motivational crowding-out} of purely altruistic individuals and increase their willingness to donate.\footnote{There are other two mechanisms. First, since matched donors cannot know the number of substitutable donors, this uncertainty may reduce their willingness to donate \citep{Exley2016}. The matching difficulty message reduces this uncertainty. Second, the message makes the rarity of the opportunity to donate more salient, which may change donor behavior.}
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
+\includegraphics{JMDPRC~1/figure-latex/speed-CT-cond-response-1} \caption{Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \newline \emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression.}\label{fig:speed-CT-cond-response}
 \end{figure}
 
 The early coordination message emphasizes that early coordination would increase the patient's transplantation rate. Our preliminary survey found that registered donors who place higher value on immediate outcomes (higher time discount rates) were more likely to proceed with donations \citep{Ohtake2020}. Motivated by this finding, we created a message that emphasized the value of responding now, rather than postponing the response. Conversely, this message increases the perceived cost of refusing to donate \citep{Haylock2024}.\footnote{\citet{Haylock2024} showed that notifying registries in advance of the period during which donation is possible functions as a commitment and increases the perceived cost of refusing to donate.} Furthermore, earlier responses are associated with higher rates of reaching the CT stage (Figure \ref{fig:speed-CT-cond-response}). Therefore, this message is expected to encourage early responses and increase the probability of donors undergoing CT.
@@ -206,7 +199,7 @@ The early coordination message emphasizes that early coordination would increase
 Four experimental groups were established to estimate the effects of the two intervention messages. The first group received the standard HLA match letter with neither of the intervention messages, serving as the control group (StatusQuo group). The second and third groups received the standard HLA match letter including only the matching difficulty and early coordination messages, respectively (MatchMessage and CoordMessage groups, respectively). The last group received the standard HLA match letter with both intervention messages included to test the negative effect of information overload (BothMessage group).
 
 \begin{table}
-\centering
+
 \caption{\label{tab:assignment}Assignment Schedule}
 \centering
 \fontsize{8}{10}\selectfont
@@ -235,7 +228,8 @@ The experimental participants consisted of the recipients of the 11,154 letters 
 
 Before conducting the experiment, we obtained approval from the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305) and the JMDP (approval number: JMDP2021-04) for the experimental design and empirical strategy. We did not conduct pilot studies and did not register the experiment with a pre-analysis plan.
 
-\subsection{Data and Empirical Strategy}\label{data-and-empirical-strategy}
+\hypertarget{data-and-empirical-strategy}{%
+\subsection{Data and Empirical Strategy}\label{data-and-empirical-strategy}}
 
 In the coordination data provided by the JMDP, the unit of observation was a coordination. The data included donor characteristics such as sex, age, number of coordination experiences, and prefecture-level residential area. The data on the coordination process included whether each coordination stage (response to the letter, CT, donor selection, final consent, and collection) had been completed. Additionally, the data included the number of days taken to respond to the HLA match letter and willingness to donate at the time of responding to the letter. If the coordination process was interrupted before donation, the reasons for the interruption were recorded in three categories: patient-side reasons, donor non-health reasons, and donor health reasons. Unfortunately, the data included no information on patients such as their characteristics or prognosis.
 
@@ -246,7 +240,7 @@ The analysis sample included 11,049 completed or interrupted coordinations invol
 The primary outcome was whether matched donors underwent CT. This outcome is important for two reasons. First, reaching the CT stage requires donors to respond to the HLA match letter, indicate their willingness to donate, and maintain their intentions. Additionally, late responses lead to coordination interruptions before the CT stage. Second, physicians can select the most appropriate donor for transplantation from among the matched donors who have undergone CT. Thus, showing up for CT represents both a costly prosocial behavior and an important practical indicator of coordination.
 
 \begin{table}
-\centering
+
 \caption{\label{tab:summary}Summary of the Field Experiment}
 \centering
 \fontsize{8}{10}\selectfont
@@ -300,16 +294,18 @@ where \(X_{iwm}\) is a vector of observable characteristics, including donor age
 
 \revise{There may be intra-cluster correlation among donors matched with the same patient because multiple donors can be matched with the same patient (and physicians later select one from among those who reach CT). Therefore, it is desirable to use standard errors clustered at the \emph{patient} level or two-way at the patient and assigned week levels. However, we do not have patient IDs or information that identifies which patient each donor (or coordination) was matched with. Instead, we used standard errors clustered by the \emph{assigned week} for statistical inference, as treatment was assigned at the week level; this may also partially capture patient-level correlation when donors matched with the same patient received letters in the same week.}
 
-\section{Experimental Results}\label{result}
+\hypertarget{result}{%
+\section{Experimental Results}\label{result}}
 
-\subsection{Average Treatment Effects on Reaching CT}\label{main}
+\hypertarget{main}{%
+\subsection{Average Treatment Effects on Reaching CT}\label{main}}
 
 In this subsection, we present the estimated effects of the intervention messages on reaching the CT stage. We used a dummy variable coded one if a matched donor reached the CT stage.\footnote{We also coded the CT dummy one if CT was skipped.} In the StatusQuo group, only \(22.25\)\% of matched donors underwent CT.
 
 There are two reasons for the low probability of reaching CT. First, only \(54.91\)\% of the donors in the StatusQuo group indicated their willingness to donate. Second, \(59.48\)\% of those who expressed a willingness to donate did not reach the CT stage (i.e., they dropped out between the response and CT stages) and 86\% of these dropouts occurred for donor-related reasons.\footnote{Thus, \(51.15\)\% (\(=59.48 \times 0.86\)) of those who expressed a willingness to donate did not reach the CT stage for donor-related reasons.} According to \citet{Hirakawa2018}, the top three donor-related reasons are health conditions such as lower back pain (imputed rates: 59\%), scheduling conflicts (imputed rates: 14\%), and the lack of family consent (imputed rates: 9\%).\footnote{\citet{Hirakawa2018} found that the top three donor-related reasons are health conditions (69\%), scheduling conflicts (16\%), and the lack of family consent (10\%). Using these values, we imputed the percentages of donor-related reasons in our data. For example, the percentage of health conditions is \(86 \times 0.69 = 48\)\%.} Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
 
 \begin{table}
-\centering\centering
+
 \caption{\label{tab:test-lm}Effect of the Intervention Messages on Reaching CT}
 \centering
 \fontsize{9}{11}\selectfont
@@ -342,7 +338,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049}\\
 \revise{Table \ref{tab:test-lm} shows that the MatchMessage group increased the probability of coordinations reaching the CT stage by $1.63$ percentage point. This table reports the results of regression analyses. Because we observe some imbalance in covariates, we focus on column (3), which controls for covariates and month fixed effects. In all columns, standard errors are clustered at the week level. We obtain similar results under several alternative specifications: removing covariates (columns (1) and (2)), adjusting for multiple hypotheses testing following \citet{List2019} (Figure A1 in Supplementary Material A), and using logistic regression models (Table A2 in Supplementary Material A). Therefore, including the matching difficulty message in the HLA match letter is an effective intervention to accelerate transplant coordinations.}
 
 \begin{table}
-\centering\centering
+
 \caption{\label{tab:lm-test-decompose}Decomposition of the Effect on Reaching CT}
 \centering
 \fontsize{8}{10}\selectfont
@@ -376,16 +372,17 @@ As mentioned previously, our intervention is expected to increase the probabilit
 
 However, the mechanisms differed slightly across the intervention groups. The willingness to donate increased primarily in the MatchMessage group. As shown in column (1), the willingness to donate in this group increased by \(2.31\) percentage points, statistically significant at the 10\% level. Endogenous dropout in the MatchMessage group also fell by approximately 1 percentage point, although this was not statistically significant. Combining these effects, the probability of reaching CT increased in the MatchMessage group. By contrast, the CoordMessage and BothMessage groups primarily contributed to preventing endogenous dropout. In particular, as shown in column (4), endogenous dropout fell by \(2.27\) percentage points in the BothMessage group, statistically significant at the 5\% level. However, the willingness to donate of these groups did not sufficiently increase, limiting the increase in the probability of reaching CT in both groups. Therefore, these findings suggest that the matching difficulty message may help improve the willingness to donate, while the early coordination message may prevent endogenous dropout.
 
-\subsection{Effect on Response Speed}\label{response-speed}
+\hypertarget{response-speed}{%
+\subsection{Effect on Response Speed}\label{response-speed}}
 
 The early coordination message is expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure \ref{fig:speed-CT-cond-response}). Therefore, we examined whether the CoordMessage and BothMessage groups, which did not show an overall increase in their willingness to donate, may have shown increased early responses accompanied by a willingness to donate.
 
 \begin{figure}[t]
-\includegraphics{JMDPRC~2/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped CT. We only show the cumulative response rates up to 25 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:cumulative-response}
+\includegraphics{JMDPRC~1/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Response with Positive Intention by Treatment \newline \emph{Note}: We excluded those who skipped CT. We only show the cumulative response rates up to 25 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:cumulative-response}
 \end{figure}
 
 \begin{table}
-\centering\centering
+
 \caption{\label{tab:lm-positive-time-decompose}Effect on Response Speed with Positive Intention}
 \centering
 \fontsize{8}{10}\selectfont
@@ -419,7 +416,8 @@ First, Figure \ref{fig:cumulative-response} shows the cumulative response rates 
 
 Next, we verified these findings through regression analysis. Since the JMDP requests responses within seven days, we defined early responses as responses with a willingness to donate within seven days. We created dummy variables for responses with a willingness to donate within 7 days, 8--12 days, and after 13 days. We then estimated linear probability models using these dummy variables as outcomes. Table \ref{tab:lm-positive-time-decompose} presents the estimation results. The results were consistent with the descriptive findings but the differences from the StatusQuo group were not statistically significant. Therefore, the early coordination message did not have the expected effect.
 
-\section{Policy and Welfare Implications of the Intervention}\label{discussion}
+\hypertarget{discussion}{%
+\section{Policy and Welfare Implications of the Intervention}\label{discussion}}
 
 To discuss the policy and welfare implications of the intervention, we examine treatment effects on the post-CT stages: donor selection, final consent, and collection (donation). These stages are influenced by both our intervention and patient-side demand. As a benchmark, when the JMDP sends HLA match letters to 10 donors and all reach the CT stage, selection and donation rates reach a maximum of 10\% because a physician selects one best donor.\footnote{When desirable donors are not found through the CT stage or when few matched donors complete the CT stage, a physician may be unable to find the best donor among matched donors. In this case, selection and donation rates fall below 10\%. Conversely, when the JMDP office sends HLA match letters to fewer than 10 matched donors, selection and donation rates exceed 10\%.} In the StatusQuo group, the selection and donation rates are \(6.19\)\% and \(4.5\)\%, respectively; the gap reflects dropout due to patient deterioration or failure to obtain final consent.
 
@@ -431,7 +429,8 @@ Heterogeneous treatment effects by gender, age, and past coordination experience
 
 At the same time, the MatchMessage treatment promoted older men matched for the first time and young women with past coordination experience to reach CT, but did not increase their probability of selection.\footnote{The MatchMessage group changed the behavior of both those likely to be selected as donors and those unlikely to be selected, resulting in average treatment effects on donor selection and donation close to zero. This reflects the result that the MatchMessage treatment increased coordinations interrupted for exogenous reasons (donor health reasons such as disqualification because of the CT results and patient-side reasons) among those who reached the CT stage (Table A6 in Supplementary Material A).} They may thus have wasted their time, and the intervention may have reduced donor welfare in this sense. Therefore, interventions targeting young men may be more appropriate than a uniform message to all matched donors, from the perspectives of welfare and cost-effectiveness.
 
-\section{Conclusions}\label{conclusion}
+\hypertarget{conclusion}{%
+\section{Conclusions}\label{conclusion}}
 
 This study examined how information provision at the time of matching affects donor availability in stem cell transplantation. The results of our field experiment demonstrated that providing information on the limited number of HLA-compatible donors per patient (i.e., the matching difficulty message) increased the probability of reaching CT. This result suggests that physicians can select the best donor for transplantation from a larger pool of matched donors. However, when presented simultaneously with an ineffective early coordination message, the positive effect of the matching difficulty message was diminished. We speculate this is because of the negative effect of information overload. Therefore, it is important to convey effective information in a simple manner.
 
@@ -439,7 +438,7 @@ This study examined how information provision at the time of matching affects do
 
 \revise{This equivalence has direct policy relevance. In the current JMDP donor pool, owing to the age limit for donation (54 years), $100,000$ donors in their 50s will exit the pool within the next five years.}\footnote{\url{https://www.jmdp.or.jp/about/read/number/} (Accessed December 8, 2024).} \revise{Given the message effect is equivalent to recruiting $40,880$ new donors, the matching difficulty message can therefore offset approximately $40.9\%$ ($= 40,880/100,000$) of the negative effects caused by this shrinking donor pool.}
 
-\revise{However, donor recruitment is costly. While the cost required to add one donor registration at the JMDP is unknown, the National Marrow Donor Program incurs approximately USD 150 per additional registration.}\footnote{\url{https://fundraise.nmdp.org/index.cfm?fuseaction=cms.page&id=1203&eventID=675} (Accessed March 29, 2025).} \revise{If the JMDP bears a similar cost, recruiting $40,880$ donor candidates would cost approximately USD $6.132$ million. Thus, adding the matching difficulty message could be a more cost-effective measure than recruiting new donors to address the shrinking donor pool.}
+\revise{However, donor recruitment is costly. While the cost required to add one donor registration at the JMDP is unknown, the National Marrow Donor Program incurs approximately USD 150 per additional registration.}\footnote{\url{https://fundraise.nmdp.org/index.cfm?fuseaction=cms.page\&id=1203\&eventID=675} (Accessed March 29, 2025).} \revise{If the JMDP bears a similar cost, recruiting $40,880$ donor candidates would cost approximately USD $6.132$ million. Thus, adding the matching difficulty message could be a more cost-effective measure than recruiting new donors to address the shrinking donor pool.}
 
 Finally, our intervention can be applied to contexts beyond stem cell transplantation. The essence of the matching difficulty message is to emphasize the scarcity of investors or potential cooperators for public goods. In our context, this message corrected donors' overestimation of substitutable other donors and discouraged free-riding. Alternatively, this message made the rarity of opportunities to cooperate salient. Unfortunately, our data cannot identify which mechanism drove donors. Nevertheless, communicating the scarcity of cooperators is likely to be effective in other cooperative environments such as donations of rare blood types.
 
