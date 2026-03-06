@@ -333,7 +333,7 @@ The experimental participants consisted of the recipients of the 11,154 letters 
 
 Before conducting the experiment, we obtained approval from the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305) and the JMDP (approval number: JMDP2021-04) for the experimental design and empirical strategy. We did not conduct pilot studies and did not register the experiment with a pre-analysis plan.
 
-## Data and Empirical Strategy
+## Data and Empirical Strategy {#data}
 
 In the coordination data provided by the JMDP, the unit of observation was a coordination. The data included donor characteristics such as sex, age, number of coordination experiences, and prefecture-level residential area. The data on the coordination process included whether each coordination stage (response to the letter, CT, donor selection, final consent, and collection) had been completed. Additionally, the data included the number of days taken to respond to the HLA match letter and willingness to donate at the time of responding to the letter. If the coordination process was interrupted before donation, the reasons for the interruption were recorded in three categories: patient-side reasons, donor non-health reasons, and donor health reasons. Unfortunately, the data included no information on patients such as their characteristics or prognosis.
 
@@ -365,6 +365,26 @@ ongoing_f <- rawdt$balance_attrition()
 [^detail-descriptive-stats]: Regarding geographic distribution, $17.1$\% of coordinations involved matched donors who lived in Tokyo or Osaka, where hospital density is well above the national average ($1.89$ and $1.36$, respectively compared with the national average of $0.21$).
 
 The primary outcome was whether matched donors underwent CT. This outcome is important for two reasons. First, reaching the CT stage requires donors to respond to the HLA match letter, indicate their willingness to donate, and maintain their intentions. Additionally, late responses lead to coordination interruptions before the CT stage. Second, physicians can select the most appropriate donor for transplantation from among the matched donors who have undergone CT. Thus, showing up for CT represents both a costly prosocial behavior and an important practical indicator of coordination.
+
+```{r reason-stop, include=FALSE}
+mean_test <- subset(rct$data, treat == "StatusQuo") %>%
+  with(prop.table(table(test)) * 100)
+
+mean_positive <- subset(rct$data, treat == "StatusQuo") %>%
+  with(prop.table(table(positive)) * 100)
+
+mean_test_cond <- rct$data %>%
+  filter(treat == "StatusQuo" & positive == 1) %>%
+  with(prop.table(table(test)) * 100)
+
+reason_classify <- rct$data %>%
+  filter(positive == 1 & test == 0 & treat == "StatusQuo") %>%
+  with(prop.table(table(exg_stop_test, useNA = "always")) * 100)
+```
+
+In the StatusQuo group, only `r sprintf("$%1.2f$%%", mean_test["1"])` of matched donors underwent CT. Two factors explain this low rate. First, only `r sprintf("$%1.2f$%%", mean_positive["1"])` indicated their willingness to donate. Second, `r sprintf("$%1.2f$%%", mean_test_cond["0"])` of those who expressed a willingness to donate did not reach the CT stage (i.e., dropped out between the response and CT), and `r sprintf("$%1.2f$%%", reason_classify["0"])` of these dropouts were donor-related reasons. According to @Hirakawa2018, \revise{the top donor-related reasons are health conditions such as lower back pain, scheduling conflicts, and the lack of family consent.}[^imputed-rates] \revise{Thus, major obstacles are low willingness to donate and donor-related dropout between the response and CT.}
+
+[^imputed-rates]: Using values from @Hirakawa2018, `r sprintf("$%1.2f$%%", reason_classify["0"] * 0.69)` of dropouts was due to donor health conditions, `r sprintf("$%1.2f$%%", reason_classify["0"] * 0.16)` of dropouts was due to scheduling conflicts, and `r sprintf("$%1.2f$%%", reason_classify["0"] * 0.10)` of dropouts was due to the lack of family consent.
 
 ```{r summary}
 rct$
@@ -402,31 +422,9 @@ where $X_{iwm}$ is a vector of observable characteristics, including donor age a
 # Experimental Results {#result}
 ## Average Treatment Effects on Reaching CT {#main}
 
-```{r reason-stop, include=FALSE}
-mean_test <- subset(rct$data, treat == "StatusQuo") %>%
-  with(prop.table(table(test)) * 100)
-
-mean_positive <- subset(rct$data, treat == "StatusQuo") %>%
-  with(prop.table(table(positive)) * 100)
-
-positive_clasify <- rct$data %>%
-  filter(treat == "StatusQuo" & positive == 1) %>%
-  with(prop.table(table(test, exg_stop_test)) * 100)
-
-reason_clasify <- rct$data %>%
-  filter(positive == 1 & test == 0 & treat == "StatusQuo") %>%
-  with(prop.table(table(exg_stop_test, useNA = "always")) * 100)
-```
-
-In this subsection, we present the estimated effects of the intervention messages on reaching the CT stage. We used a dummy variable coded one if a matched donor reached the CT stage.[^outcome-skipped-CT] In the StatusQuo group, only `r sprintf("$%1.2f$%%", mean_test["1"])` of matched donors underwent CT.
+In this subsection, we present the estimated effects of the intervention messages on reaching the CT stage. We used a dummy variable coded one if a matched donor reached the CT stage.[^outcome-skipped-CT] \revise{As discussed in Section \ref{data}, the main barriers are low willingness to donate and donor-related dropout between the response and CT stages. We therefore expect that our intervention messages mitigate these barriers and increase the probability of reaching the CT stage.}
 
 [^outcome-skipped-CT]: We also coded the CT dummy one if CT was skipped.
-
-There are two reasons for the low probability of reaching CT. First, only `r sprintf("$%1.2f$%%", mean_positive["1"])` of the donors in the StatusQuo group indicated their willingness to donate. Second, $59.48$\% of those who expressed a willingness to donate did not reach the CT stage (i.e., they dropped out between the response and CT stages) and 86\% of these dropouts occurred for donor-related reasons.[^endogenous-dropout-rate] According to @Hirakawa2018, the top three donor-related reasons are health conditions such as lower back pain (imputed rates: 59\%), scheduling conflicts (imputed rates: 14\%), and the lack of family consent (imputed rates: 9\%).[^calculate-percentage] Our intervention messages are expected to increase the probability of reaching CT by both improving the willingness to donate and preventing dropouts between the response and CT stages.
-
-[^endogenous-dropout-rate]: Thus, $51.15$\% ($=59.48 \times 0.86$) of those who expressed a willingness to donate did not reach the CT stage for donor-related reasons.
-
-[^calculate-percentage]: @Hirakawa2018 found that the top three donor-related reasons are health conditions (69\%), scheduling conflicts (16\%), and the lack of family consent (10\%). Using these values, we imputed the percentages of donor-related reasons in our data. For example, the percentage of health conditions is $86 \times 0.69 = 48$\%.
 
 ```{r test-lm}
 rct$
