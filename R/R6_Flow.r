@@ -188,6 +188,8 @@ Flow <- R6::R6Class("Flow",
         min(dt$days_reply, na.rm = TRUE), cut_days[1:2] + 1
       )
 
+      # start_days <- rep(min(dt$days_reply, na.rm = TRUE), 3)
+
       end_days <- c(
         cut_days[1:2], max(dt$days_reply, na.rm = TRUE)
       )
@@ -202,7 +204,7 @@ Flow <- R6::R6Class("Flow",
         select(-outcome, -value) %>%
         rename(outcome = period, value = flow_value)
 
-      Lm$new(dt2, demean_covariate, private$se, private$cluster, hide_message)
+      Lm$new(dt2, demean_covariate, private$se_type, private$cluster, hide_message)
     }
   ),
   private = list(

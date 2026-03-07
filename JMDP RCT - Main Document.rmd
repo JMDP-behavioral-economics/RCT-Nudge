@@ -458,7 +458,7 @@ rct$
       "treatCoordMessage" = "CoordMessage group",
       "treatBothMessage" = "BothMessage group"
     ),
-    notes = "Robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Donor-related dropout'' is a dummy variable that takes a value of 1 if candidates responded with a willingness to donate but did not reach the CT stage for donor-side health and non-health reasons. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that the candidate skipped CT. All the covariates except the gender dummy and dummy of skipped CT were demeaned.",
+    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Donor-related dropout'' is a dummy variable that takes a value of 1 if candidates responded with a willingness to donate but did not reach the CT stage for donor-side health and non-health reasons. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that the candidate skipped CT. All the covariates except the gender dummy and dummy of skipped CT were demeaned.",
     font_size = 8
   )
 ```
@@ -472,14 +472,14 @@ Mechanisms differed slightly across the intervention groups. \revise{In the Matc
 The early coordination message is expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure \@ref(fig:speed-CT-cond-response)). Therefore, we examined whether the CoordMessage and BothMessage groups, which did not show an overall increase in their willingness to donate, may have shown increased early responses accompanied by a willingness to donate.
 
 
-```{r cumulative-response, fig.cap = "Cumulative Rate of Response with Positive Intention by Treatment \\newline \\emph{Note}: We excluded those who skipped CT. We only show the cumulative response rates up to 25 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter."}
+```{r cumulative-response, fig.cap = "Cumulative Rate of Positive Intention at Response by Treatment \\newline \\emph{Note}: We excluded those who skipped CT. We only show the cumulative response rates up to 25 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter."}
 rct_noskip$
   flow("positive", sample_drop = FALSE)$
   plot_cumulative(
     upper_days = 25,
     xbreaks = seq(0, 100, by = 4),
     ylim = c(0, 60),
-    xlab = "Response days",
+    xlab = "Days after the HLA match letter being sent",
     ylab = "Cumulative rate of\nresponse with positive intention (%)",
     base_size = 25
   )
@@ -488,7 +488,7 @@ rct_noskip$
 ```{r lm-positive-time-decompose}
 rct$
   flow(outcome = "positive", sample_drop = FALSE)$
-  lm_time_segment(cut_days = c(7, 12))$
+  lm_time_segment(cut_days = c(7, 13))$
   fit(scale = 100)$
   kable_reg(
     title = "Effect on Response Speed with Positive Intention",
@@ -497,14 +497,14 @@ rct$
       "treatCoordMessage" = "CoordMessage group",
       "treatBothMessage" = "BothMessage group"
     ),
-    notes = "Robust standard errors are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if the candidate responded with positive intention within a specified time after the HLA match letter being sent. We excluded those who skipped CT. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with BM collection per 10 square kilometers. All the covariates were demeaned.",
+    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if the candidate responded with positive intention within a specified time window after the HLA match letter being sent. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with BM collection per 10 square kilometers. All the covariates were demeaned.",
     font_size = 8
   )
 ```
 
-First, Figure \@ref(fig:cumulative-response) shows the cumulative response rates of the willingness to donate over time for the experimental groups. We obtain two notable findings. First, up to approximately 10 days, the cumulative response rates of the intervention groups were almost identical but lower than those of the StatusQuo group. This suggests that the early coordination message may not have had the expected effect. Second, after 14 days, the cumulative response rate of the MatchMessage group became higher than that of the StatusQuo group. Thus, the willingness to donate of the MatchMessage group increased but this may have slowed response speed.
+First, Figure \@ref(fig:cumulative-response) shows the cumulative response rates of the willingness to donate over time for the experimental groups. We obtain two notable findings. First, up to \revise{14} days, the cumulative response rates of the intervention groups were almost identical but lower than those of the StatusQuo group. This suggests that the early coordination message may not have had the expected effect. Second, after 14 days, the cumulative response rate of the MatchMessage group became higher than that of the StatusQuo group. Thus, the willingness to donate of the MatchMessage group \revise{may have} increased but this may have slowed response speed.
 
-Next, we verified these findings through regression analysis. Since the JMDP requests responses within seven days, we defined early responses as responses with a willingness to donate within seven days. We created dummy variables for responses with a willingness to donate within 7 days, 8--12 days, and after 13 days. We then estimated linear probability models using these dummy variables as outcomes. Table \@ref(tab:lm-positive-time-decompose) presents the estimation results. The results were consistent with the descriptive findings but the differences from the StatusQuo group were not statistically significant. Therefore, the early coordination message did not have the expected effect.
+Next, we verified these findings through regression analysis. Since the JMDP requests responses within seven days, we defined early responses as responses with a willingness to donate within seven days. We created dummy variables for responses with a willingness to donate \revise{within 7 days, 8--13 days, and after 14 days.} We then estimated linear probability models using these dummy variables as outcomes. Table \@ref(tab:lm-positive-time-decompose) presents the estimation results. The results were consistent with the descriptive findings but the differences from the StatusQuo group were not statistically significant.
 
 # Policy and Welfare Implications of the Intervention {#discussion}
 

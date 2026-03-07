@@ -222,6 +222,18 @@ rct$
   column_spec(1, width = "20em")
 ```
 
+```{r density-response-by-intention, fig.cap = "Density of Response Speed by Intention (StatusQuo Group). \\newline \\emph{Note}: We excluded those who skipped CT."}
+rct$data %>%
+  filter(treat == "StatusQuo") %>%
+  filter(reply == 1 & !is.na(positive) & skip_test == 0) %>%
+  mutate(positive = factor(positive, levels = c(0, 1), labels = c("Negative", "Positive"))) %>%
+  ggplot(aes(x = days_reply, color = factor(positive))) +
+    geom_density() +
+    labs(x = "Days after the HLA match letter being sent", y = "Density", color = "Intention") +
+    theme_minimal(base_size = 25) +
+    theme(legend.position = "bottom")
+```
+
 ```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
 rct$
   lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
