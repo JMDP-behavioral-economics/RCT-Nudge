@@ -121,15 +121,7 @@ We \revise{found} that our intervention increases the probability of donors reac
 
 \revise{However, a few studies share the same intervention goal as ours. \citet{Switzer2018} examined information provision interventions at the time of matching, but their study was not a randomized controlled trial. \citet{Haylock2024} examined the effects of commitment before matching, and thus the timing of their intervention differs from ours. To the best of our knowledge, we are the first to document the effects of information provision at the time of matching among an altruistic population through a randomized controlled trial.}
 
-<!-- *Note：そもそも社会規範が使えないとき
-We also contribute to the literature on social norm messages. Such messages describe majority behavior (Bernheim, 1994; Bursztyn and Jensen, 2017) and have proven effective in donation contexts (Shang and Croson, 2009; Kessler, 2017). In the bone marrow donation context, however, a compatibility notice is sent only when a specific donor matches a specific patient, rendering social norm messages inapplicable. We instead develop a message emphasizing that only this individual can act for this patient, and show that this exclusivity message is effective in an altruistic population.
-
-社会規範メッセージの原動力はpublic observabilityである。
-使えないというところに着地する。
--->
-\revise{We also contribute to the literature on social norm messages by demonstrating the effectiveness of a message that is contrasted with social norm messages. Social norm messages describe majority behavior and can induce social image concerns and conformity \citep{Bernheim1994, Bursztyn2017}. Their effectiveness has been shown in the context of monetary donations \citep{Shang2009, Kessler2017}. By contrast, our message emphasizes that only a small number of people can act. In standard economic theory of public goods, information that many others have already acted may discourage individual behavior. In the vaccination context, such information reduces individuals' willingness to be vaccinated \citep{Lau2019, Galizzi2022}. Consistent with these findings, our experiment shows that scarcity information is effective in an altruistic population.}[^Brekke2011]
-
-[^Brekke2011]: \citet{Brekke2011} showed that free-riding in public goods provision is eliminated when altruistic groups are formed through individual choice. \revise{This result is consistent with our finding.}
+\revise{We contribute to the literature on social norm messages by developing an effective message with content opposite to theirs. Social norm messages work best when actions are publicly observable \citep{Bursztyn2017} and when the target population has low intrinsic motivation to act \citep{Shang2009, Kessler2017}. When intrinsic motivation is already high, invoking social image concerns---for example, through public observability---risks undermining prosocial behavior \citep{Ariely2009, Mellstrom2008, Gneezy2012a}. In the context of stem cell donation, however, neither condition holds: donations are unobservable, and the target population is altruistic individuals already motivated to donate, making social norm messages potentially counterproductive. We instead developed a scarcity message (only a small number of people can donate) and showed that it is effective in an altruistic population.}
 
 The remainder of this paper is organized as follows. Section \@ref(experiment) provides an overview of the coordination process of the JMDP and describes our field experiment. Section \@ref(result) presents the results of our experiment. Section \ref{discussion} discusses the welfare implications. Finally, Section \ref{conclusion} concludes.
 
@@ -466,25 +458,32 @@ rct$
 
 As mentioned previously, \revise{the intervention was expected to increase CT completion through two channels: increasing positive intention at response and reducing donor-related dropout (health and non-health) between the response and CT stages. We therefore decomposed the message effects into these two components (Table \ref{tab:lm-test-decompose}). Overall, the evidence is suggestive: the intervention broadly worked as expected, except for the CoordMessage group, which may have reduced the willingness to donate.}
 
-Mechanisms differed slightly across the intervention groups. \revise{In the MatchMessage group, the willingness to donate rose by $1.27$ percentage points (column (3)) and donor-related dropout fell by $0.93$ percentage points (column (6)), though neither effect was statistically significant after adjusting for covariates and month fixed effects. By contrast, the CoordMessage and BothMessage groups mainly reduced donor-related dropout. In particular, in the BothMessage group, donor-related dropout fell by $1.92$ percentage points, which was statistically significant at the 10\% level (column (6)). However, these groups did not sufficiently increase the willingness to donate, which limited the increase in the probability of reaching CT. Taken together, the matching difficulty message may help improve the willingness to donate, while the early coordination message may prevent donor-related dropout.}
+\revise{This table suggests that mechanisms differed across the intervention groups, though statistical tests are not robust. In the MatchMessage group, the willingness to donate rose by $1.27$ percentage points (column (3)) and donor-related dropout fell by $0.93$ percentage points (column (6)), with the former larger in magnitude. By contrast, the CoordMessage and BothMessage groups mainly reduced donor-related dropout (e.g., $1.92$ percentage points in the BothMessage group, significant at 10\%; column (6)) but did not sufficiently increase the willingness to donate, which limited their effect on reaching CT. Taken together, the matching difficulty message may help improve the willingness to donate, while the early coordination message may prevent donor-related dropout.}
 
 ## Effect on Response Speed {#response-speed}
 
-The early coordination message is expected to increase the CT completion rate by encouraging early responses. Among donors who indicated a willingness to donate, those who responded earlier had a higher probability of reaching CT (see Figure \@ref(fig:speed-CT-cond-response)). Therefore, we examined whether the CoordMessage and BothMessage groups, which did not show an overall increase in their willingness to donate, may have shown increased early responses accompanied by a willingness to donate.
-
+\revise{Given that early responses accompanied by positive intention to donate had a higher probability of reaching CT (see Figure \ref{fig:speed-CT-cond-response}), we examined how our intervention messages affected the response speed. In particular, we asked whether the early coordination message—received by the CoordMessage and BothMessage groups—would at least encourage earlier responses, even though those groups did not show an overall increase in willingness to donate.}
 
 ```{r cumulative-response, fig.cap = "Cumulative Rate of Positive Intention at Response by Treatment \\newline \\emph{Note}: We excluded those who skipped CT. We only show the cumulative response rates up to 25 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter."}
 rct_noskip$
   flow("positive", sample_drop = FALSE)$
   plot_cumulative(
     upper_days = 25,
-    xbreaks = seq(0, 100, by = 4),
-    ylim = c(0, 60),
+    xbreaks = seq(0, 100, by = 7),
+    ylim = c(0, 55),
     xlab = "Days after the HLA match letter being sent",
-    ylab = "Cumulative rate of\nresponse with positive intention (%)",
+    ylab = "Cumulative rate of\npositive intention at response (%)",
     base_size = 25
   )
 ```
+
+\revise{We obtain two findings about timing of positive intention expression from Figure \ref{fig:cumulative-response}. First, through the first two weeks (within and shortly after the JMDP's requested 7-day response period), the cumulative rates of the intervention groups were almost identical but lower than those of the StatusQuo group. This suggests that the early coordination message may not have had the expected effect. Second, after 14 days, the cumulative rates of the MatchMessage group became higher than that of the StatusQuo group. Thus, the willingness to donate of the MatchMessage group may have increased but this may have slowed response speed.}
+
+\revise{To explain this, Figure A2 in Supplementary Material A shows how the timing of intention expression differs between the StatusQuo and MatchMessage groups. In the MatchMessage group, fewer declined within 0--7 days and more expressed positive intention after 7 days; slightly more also declined after 7 days.}[^another-dist] \revise{This pattern suggests that some candidates who would have declined early without the intervention had intentions that were changeable in response to it; after coordinating with family or workplace, they later expressed willingness to donate. A response delayed by about 7 days relative to the JMDP's requested window is unlikely to affect transplant outcomes, given a median of 125 days from the HLA match letter to donation \citep{Hirakawa2018}.}[^another-evidence]
+
+[^another-dist]: Compared with the StatusQuo group, the distributions of the CoordMessage and BothMessage groups also change similarly, but the change is less pronounced than in the MatchMessage group (Figures A3 and A4 in Supplementary Material A).
+
+[^another-evidence]: Given that 58\% of coordinations interrupted by patient death occur within 200 days \citep{Hirakawa2018}, the impact of response delay seems to be small.
 
 ```{r lm-positive-time-decompose}
 rct$
@@ -503,14 +502,8 @@ rct$
   )
 ```
 
-First, Figure \@ref(fig:cumulative-response) shows the cumulative response rates of the willingness to donate over time for the experimental groups. We obtain two notable findings. First, up to \revise{14} days, the cumulative response rates of the intervention groups were almost identical but lower than those of the StatusQuo group. This suggests that the early coordination message may not have had the expected effect. Second, after 14 days, the cumulative response rate of the MatchMessage group became higher than that of the StatusQuo group. Thus, the willingness to donate of the MatchMessage group \revise{may have} increased but this may have slowed response speed.
+\revise{We verified these findings by regression (Table \ref{tab:lm-positive-time-decompose}). In all intervention groups, positive intention was lower in the 0--7 day window but higher in the 8--13 day window than in the StatusQuo group; the sum of these effects is close to zero, suggesting no difference in cumulative rate up to 14 days. The MatchMessage group showed an increase in the 14+ day window, consistent with Figure \ref{fig:cumulative-response}. Although none of these differences were statistically significant, the pattern of point estimates suggests that the early coordination message did not have the intended effect on response speed, and that the matching difficulty message may have increased willingness but at the cost of slower response.}
 
-Next, we verified these findings through regression analysis. Since the JMDP requests responses within seven days, we defined early responses as responses with a willingness to donate within seven days. We created dummy variables for responses with a willingness to donate \revise{within 7 days, 8--13 days, and after 14 days.} We then estimated linear probability models using these dummy variables as outcomes. Table \@ref(tab:lm-positive-time-decompose) presents the estimation results. The results were consistent with the descriptive findings but the differences from the StatusQuo group were not statistically significant.
-
-<!-- *NOTE
-このセクションでのメッセージが見えづらいことが本質。
-段落の組み替えも含めて検討する。
--->
 # Policy and Welfare Implications of the Intervention {#discussion}
 
 To discuss the policy and welfare implications of the intervention, we examine treatment effects on the post-CT stages: donor selection, final consent, and collection (donation). Because a physician selects one best donor from all who reach CT, welfare depends on both the number and the quality of donors in the pool. We argue that the intervention may have improved transplant quality despite null quantity effects and that targeting clinically valuable donors could improve welfare.
