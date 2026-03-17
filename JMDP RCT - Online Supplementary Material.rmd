@@ -236,11 +236,6 @@ plotdt <- rct_noskip$data %>%
   mutate(prop = 100 * n / n_total)
 
 plotdt %>%
-  filter(days_reply <= 13 & 7 < days_reply & positive == 1) %>%
-  group_by(treat) %>%
-  summarize(prop = sum(prop))
-
-plotdt %>%
   ggplot(aes(x = days_reply, y = prop, color = treat)) +
   geom_line(linewidth = 1) +
   labs(x = "Days after the HLA match letter being sent", y = "Proportion of sample (%)", color = "Experimental group") +
