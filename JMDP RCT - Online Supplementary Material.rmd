@@ -232,14 +232,18 @@ plotdt <- rct_noskip$data %>%
   filter(reply == 1) %>%
   group_by(treat, days_reply, positive) %>%
   summarize(n = n()) %>%
+  ungroup() %>%
   left_join(n_data, by = "treat") %>%
-  mutate(prop = 100 * n / n_total)
+  mutate(
+    prop = 100 * n / n_total,
+    positive = factor(positive, levels = c(1, 0), labels = c("Positive intention", "Negative intention"))
+  )
 
 plotdt %>%
   ggplot(aes(x = days_reply, y = prop, color = treat)) +
   geom_line(linewidth = 1) +
   labs(x = "Days after the HLA match letter being sent", y = "Proportion of sample (%)", color = "Experimental group") +
-  facet_wrap(~ positive, labeller = labeller(positive = c("0" = "Negative intention", "1" = "Positive intention")), scales = "free_y") +
+  facet_wrap(~ positive, scales = "free_y") +
   scale_x_continuous(breaks = seq(0, 100, by = 7), limits = c(0, 40)) +
   my_theme_classic(size = 25) +
   theme(legend.position = "bottom")
@@ -255,8 +259,12 @@ rct$data %>%
   filter(reply == 1 & skip_test == 0) %>%
   group_by(treat, days_reply, positive) %>%
   summarize(n = n()) %>%
+  ungroup() %>%
   left_join(n_data, by = "treat") %>%
-  mutate(prop = 100 * n / n_total) %>%
+  mutate(
+    prop = 100 * n / n_total,
+    positive = factor(positive, levels = c(1, 0), labels = c("Positive intention", "Negative intention"))
+  ) %>%
   ggplot(aes(x = days_reply, y = prop, color = treat)) +
     geom_line(linewidth = 1) +
     labs(x = "Days after the HLA match letter being sent", y = "Proportion of sample (%)", color = "Experimental group") +
@@ -277,7 +285,10 @@ rct$data %>%
   group_by(treat, days_reply, positive) %>%
   summarize(n = n()) %>%
   left_join(n_data, by = "treat") %>%
-  mutate(prop = 100 * n / n_total) %>%
+  mutate(
+    prop = 100 * n / n_total,
+    positive = factor(positive, levels = c(1, 0), labels = c("Positive intention", "Negative intention"))
+  ) %>%
   ggplot(aes(x = days_reply, y = prop, color = treat)) +
     geom_line(linewidth = 1) +
     labs(x = "Days after the HLA match letter being sent", y = "Proportion of sample (%)", color = "Experimental group") +

@@ -54,6 +54,14 @@
 
 % ------------------------------ other packages
 \usepackage{booktabs}
+\usepackage{siunitx}
+
+    \newcolumntype{d}{S[
+      table-align-text-before=false,
+      table-align-text-after=false,
+      input-symbols={-,\*+()}
+    ]}
+  
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
@@ -67,14 +75,6 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
-\usepackage{siunitx}
-
-    \newcolumntype{d}{S[
-      table-align-text-before=false,
-      table-align-text-after=false,
-      input-symbols={-,\*+()}
-    ]}
-  
 
 % ------------------------------ paper information
 \title{Supplementary Material
