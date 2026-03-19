@@ -121,7 +121,14 @@ We \revise{found} that our intervention increases the probability of donors reac
 
 \revise{However, a few studies share the same intervention goal as ours. \citet{Switzer2018} examined information provision interventions at the time of matching, but their study was not a randomized controlled trial. \citet{Haylock2024} examined the effects of commitment before matching, and thus the timing of their intervention differs from ours. To the best of our knowledge, we are the first to document the effects of information provision at the time of matching among an altruistic population through a randomized controlled trial.}
 
-\revise{We also contribute to the literature on social norm messages by developing an effective message with content opposite to theirs. Social norm messages work best when actions are publicly observable \citep{Bursztyn2017} and when the target population has low intrinsic motivation \citep{Shang2009, Kessler2017}. When intrinsic motivation is already high, invoking social image concerns risks undermining prosocial behavior \citep{Ariely2009, Mellstrom2008, Gneezy2012a}. In the context of stem cell donation, however, neither condition holds: donations are unobservable, and the target population is altruistic individuals already motivated to donate, making social norm messages potentially counterproductive. We instead developed a scarcity message (only a small number of people can donate) and showed that it is effective in an altruistic population.}
+<!--
+我々は社会規範メッセージが機能しづらい状況のもとで有効なメッセージを開発することで、社会規範メッセージの研究にも貢献する。社会規範メッセージは多数派の行動を記述し、社会的イメージを刺激する\citep{Bursztyn2017}。社会規範メッセージが機能しやすい状況とは、(1)行動が他者に観察される場合や(2)ターゲットが行動に対して低い内発的動機を持つ場合である\citep{Shang2009, Kessler2017}。幹細胞提供の文脈では、二つの条件が満たされず、社会規範メッセージが機能しない可能性が高い。特に、社会的イメージの想起は、寄付への高い内発的動機を持つ利他的な個人（我々のターゲット）の行動を抑制する恐れがある\citep{Allcott2011, Gneezy2012a}。[^detail] 我々は代わりに社会規範メッセージの中身と逆の希少性メッセージ（少数の人しか寄付できない）を開発し、利他的な集団でそれが有効であることを示した。
+
+[^detail]: \citet{Allcott2011}は社会規範メッセージの効果がもともと電力消費の少ない家庭に限定的であることを示した。\citet{Gneezy2012a}は、Pay What You Wantの文脈で、社会的イメージの喚起が「自分は道徳的・利他的である」という自己イメージの価値をクラウドアウトさせ、財の支払意思額を低下させることを示した。
+-->
+\revise{We also contribute to the literature on social norm messages by developing an effective message in contexts where social norm messages are likely to be ineffective. Social norm messages describe majority behavior and stimulate social image concerns \citep{Bursztyn2017}. Thus, the messages work best when (1) actions are observable to others or (2) the target population has low intrinsic motivation for the action \citep{Shang2009, Kessler2017}. In the context of stem cell donation, neither condition holds: donations are unobservable to other donors and patients, and our target population is altruistic.}[^detail] \revise{We instead developed a scarcity message (only a small number of people can donate), with content opposite to that of social norm messages, and showed that it is effective in this altruistic population.}
+
+[^detail]: \revise{In particular, invoking social image can undermine the behavior of our target population. \citet{Allcott2011} showed that the effect of social norm messages is limited to households that already had low electricity consumption. \citet{Gneezy2012a} showed that in a Pay What You Want context, invoking social image crowds out the value of the self-image of being moral and altruistic and reduces willingness to pay for the good.}
 
 The remainder of this paper is organized as follows. Section \@ref(experiment) provides an overview of the coordination process of the JMDP and describes our field experiment. Section \@ref(result) presents the results of our experiment. Section \ref{discussion} discusses the welfare implications. Finally, Section \ref{conclusion} concludes.
 
@@ -204,6 +211,7 @@ Our intervention involved adding two messages into the HLA match letter.[^pressu
 
 [^ref-handbook]: The handbook can be found at [https://www.jmdp.or.jp/pdf/en/DonorHandBook201708.pdf](https://www.jmdp.or.jp/pdf/en/DonorHandBook201708.pdf) (Accessed December 9, 2024).
 
+<!-- TODO：最後の文章を二文目にする。次にどうしてを説明する。利己的・warm-glowは脚注にする。 -->
 The matching difficulty message emphasizes the low number of matched donors per registered patient. If other potential donors with the same HLA type are in the pool, one donor's donation can be substituted with that of another compatible donor, and up to 10 donors can be simultaneously matched with a single patient. Therefore, transplantation through the JMDP represents a public good [@Bergstrom2009]. \revise{In this setting, self-interested individuals who do not care about the patient do not contribute. By contrast, individuals with altruistic preferences exhibit two types of behavior. First, purely altruistic individuals who care about transplant outcome may crowd out their motivation by donation from substitutable donors.}[^some-fact] \revise{Second, warm-glow individuals, who derive utility from the act of giving itself, may donate regardless of substitutable donors} [@Andreoni1990]. Thus, the matching difficulty message emphasizes the small number of possible substitutes and is expected to \revise{reduce motivational crowding-out} of purely altruistic individuals, thereby increasing their willingness to donate.[^other-mechanism]
 
 [^some-fact]: \citet{Ohtake2020} found that 22\% of registrants had pure altruistic preferences. Moreover, @Kurosawa2022 interviewed previously matched donors and found that those with low donation intention felt that they were "one of several donors." This implies that some potential donors with low intention recognize that their donation could be substituted by others.
@@ -294,6 +302,7 @@ plotdt %>%
     my_theme_classic(size = 25)
 ```
 
+<!-- TODO：二文目をwe designed ...にする。現在バイアスによる先延ばしを回避するという目的がある。事前サーベイの結果は脚注に入れる -->
 \revise{The early coordination message emphasizes that responding early can increase the patient's transplantation rate. Motivated by our preliminary finding that registered donors with present bias (placing higher value on immediate outcomes) are more likely to proceed with donations \citep{Ohtake2020}, we designed a message that highlights the value of responding now rather than postponing the response.}[^perceived-cost] \revise{Because earlier responses are associated with higher rates of reaching the CT stage (Figure \ref{fig:speed-CT-cond-response}), we expect this message to encourage early responses and increase the probability of donors undergoing CT.}
 
 [^perceived-cost]: \citet{Haylock2024} showed that notifying registries in advance of the period during which donation is possible functions as a commitment and increases the perceived cost of refusing to donate. \revise{This message may also increase the perceived cost of refusing to donate by emphasizing the value of responding now.}
@@ -470,6 +479,8 @@ rct_noskip$
     base_size = 25
   )
 ```
+
+<!-- TODO: まずpositive intentionの分布の説明をして、返信が遅れたことによるものでなく、純粋に増えたことを説明する。次に、negative intentionの分布を説明して、早期に断る人が行動変容したことを説明する。-->
 
 \revise{We obtain two findings about timing of positive intention expression from Figure \ref{fig:cumulative-response}. First, through the first two weeks (within and shortly after the JMDP's requested 7-day response period), the cumulative rates of the intervention groups were almost identical but lower than those of the StatusQuo group. This suggests that the early coordination message may not have had the expected effect. Second, after 14 days, the cumulative rates of the MatchMessage group became higher than that of the StatusQuo group. Thus, the willingness to donate of the MatchMessage group may have increased but this may have slowed response speed.}
 
