@@ -211,13 +211,27 @@ Our intervention involved adding two messages into the HLA match letter.[^pressu
 
 [^ref-handbook]: The handbook can be found at [https://www.jmdp.or.jp/pdf/en/DonorHandBook201708.pdf](https://www.jmdp.or.jp/pdf/en/DonorHandBook201708.pdf) (Accessed December 9, 2024).
 
-<!-- TODO：最後の文章を二文目にする。次にどうしてを説明する。利己的・warm-glowは脚注にする。 -->
-The matching difficulty message emphasizes the low number of matched donors per registered patient. If other potential donors with the same HLA type are in the pool, one donor's donation can be substituted with that of another compatible donor, and up to 10 donors can be simultaneously matched with a single patient. Therefore, transplantation through the JMDP represents a public good [@Bergstrom2009]. \revise{In this setting, self-interested individuals who do not care about the patient do not contribute. By contrast, individuals with altruistic preferences exhibit two types of behavior. First, purely altruistic individuals who care about transplant outcome may crowd out their motivation by donation from substitutable donors.}[^some-fact] \revise{Second, warm-glow individuals, who derive utility from the act of giving itself, may donate regardless of substitutable donors} [@Andreoni1990]. Thus, the matching difficulty message emphasizes the small number of possible substitutes and is expected to \revise{reduce motivational crowding-out} of purely altruistic individuals, thereby increasing their willingness to donate.[^other-mechanism]
+<!--
+Matching difficulty messageは、登録患者当たりのマッチドナーが少数であることを強調することで、純粋に利他的な個人の動機的なクラウドアウトを減らす。移植はプールにいる同じHLA型の他の潜在的なドナーによって代替できるので、JMDPを通じた移植は公共財の一種である\citep{Bergstrom2009}。[^another-example]この場合、代替可能な寄付者の存在は移植アウトカムをケアする純粋利他的な個人の動機をクラウドアウトするかもしれない。[^other-preference]したがって、Matching difficulty messageは、自分が提供しなければ患者のアウトカムが損なわれるという認識を強める。[^another-fact][^other-mechanism]
 
-[^some-fact]: \citet{Ohtake2020} found that 22\% of registrants had pure altruistic preferences. Moreover, @Kurosawa2022 interviewed previously matched donors and found that those with low donation intention felt that they were "one of several donors." This implies that some potential donors with low intention recognize that their donation could be substituted by others.
+[^another-example]: 最大10人の候補者が同時に一人の患者とマッチする。
+
+[^other-preference]: \citet{Ohtake2020} found that 22\% of registrants had pure altruistic preferences.残りは患者をケアしない利己的な人か寄付行動自体に価値を感じるwarm-glowな人（あるいはwarm-glowとpure altruisticの両方を持つinpure altruisticな人）に分類される[@Andreoni1990]。前者は貢献しない。また、warm-glowな人やimpure altruisticな人は代替可能な寄付者に関わらず寄付をするかもしれない[@Andreoni1990]。
+
+[^another-fact]: @Kurosawa2022 interviewed previously matched donors and found that those with low donation intention felt that they were "one of several donors." This implies that some potential donors with low intention recognize that their donation could be substituted by others.
 
 [^other-mechanism]: There are two additional mechanisms. First, since matched donors cannot know the number of substitutable donors, this uncertainty may reduce their willingness to donate [@Exley2016]. The matching difficulty message reduces this uncertainty. Second, the message makes the rarity of the opportunity to donate more salient, which may change donor behavior.
+-->
 
+\revise{The matching difficulty message can reduce motivational crowding out among purely altruistic individuals by emphasizing the low number of matched donors per registered patient. Transplantation through the JMDP is a kind of public good because a transplant can be provided by other potential donors in the pool with the same HLA type \citep{Bergstrom2009}.}[^another-example] \revise{Then, the presence of substitutable donors may crowd out the motivation of purely altruistic individuals who care about transplant outcomes.}[^other-preference] \revise{Thus, the matching difficulty message strengthens the perception that the patient's outcome will worsen if they do not donate.}[^another-fact] [^other-mechanism]
+
+[^another-example]: \revise{Up to 10 candidates can be simultaneously matched with a single patient.}
+
+[^other-preference]: \revise{\citet{Ohtake2020} found that 22\% of registrants had pure altruistic preferences. The remainder can be classified as selfish individuals who do not care about the patient or as warm-glow individuals who derive utility from the act of giving itself (or as impure altruists who have both warm-glow and pure altruistic preferences) \citep{Andreoni1990}. The former do not contribute, and warm-glow and impure altruistic individuals may choose to donate regardless of the number of substitutable donors.}
+
+[^another-fact]: @Kurosawa2022 interviewed previously matched donors and found that those with low donation intention felt that they were "one of several donors." This implies that some potential donors with low intention recognize that their donation could be substituted by others.
+
+[^other-mechanism]: There are two additional mechanisms. First, since matched donors cannot know the number of substitutable donors, this uncertainty may reduce their willingness to donate [@Exley2016]. The matching difficulty message reduces this uncertainty. Second, the message makes the rarity of the opportunity to donate more salient, which may change donor behavior.
 
 ```{r experiment-data, include=FALSE}
 rawdt <- RawData$new(
@@ -302,10 +316,19 @@ plotdt %>%
     my_theme_classic(size = 25)
 ```
 
-<!-- TODO：二文目をwe designed ...にする。現在バイアスによる先延ばしを回避するという目的がある。事前サーベイの結果は脚注に入れる -->
-\revise{The early coordination message emphasizes that responding early can increase the patient's transplantation rate. Motivated by our preliminary finding that registered donors with present bias (placing higher value on immediate outcomes) are more likely to proceed with donations \citep{Ohtake2020}, we designed a message that highlights the value of responding now rather than postponing the response.}[^perceived-cost] \revise{Because earlier responses are associated with higher rates of reaching the CT stage (Figure \ref{fig:speed-CT-cond-response}), we expect this message to encourage early responses and increase the probability of donors undergoing CT.}
+<!--
+Early coordination messageは、返信を先延ばすよりも今返信することの価値を強調することで、現在バイアスによる先延ばしを軽減する。現在バイアスを持つドナーは返信を先延ばしにする可能性がある。なぜなら、ドナーは、将来の移植アウトカムの割り引かれた便益を得るために、即時コスト（家族や職場との相談など）を支払う必要があるからである。したがって、即時の便益を強調することは先延ばしを防ぐ方法の一つである。[^commitment]事実、即時返信は高いCT到達率と相関する（Figure \@ref(fig:speed-CT-cond-response)）。このように、このメッセージは今すぐ役に立てるという認識を強める。[^Ohtake2020]
 
-[^perceived-cost]: \citet{Haylock2024} showed that notifying registries in advance of the period during which donation is possible functions as a commitment and increases the perceived cost of refusing to donate. \revise{This message may also increase the perceived cost of refusing to donate by emphasizing the value of responding now.}
+[^commitment]: コミットメントは先延ばしを防ぐ代表的な解決策である。例えば、ドナーが将来の利用可能性を前もって知らせることはコミットメントの一種である\citep{Haylock2024}。
+
+[^Ohtake2020]: 我々の事前調査では、今すぐ役に立ちたいと考えている人ほど提供しやすいということを発見した\citep{Ohtake2020}。
+-->
+
+\revise{The early coordination message mitigates procrastination driven by present bias by emphasizing the value of responding now rather than postponing the response. Donors with present bias may postpone their response to the HLA match letter because they need to incur immediate costs (such as consulting family members or colleagues at work) to obtain the discounted benefits of future transplant outcomes. Therefore, emphasizing immediate benefits is one way to reduce procrastination.}[^commitment] \revise{Indeed, earlier responses are associated with higher rates of reaching the CT stage (Figure \ref{fig:speed-CT-cond-response}). In this way, this message strengthens the perception that donors can help immediately.}[^Ohtake2020]
+
+[^commitment]: \revise{Commitment is a representative solution to procrastination. For example, informing the registry in advance about periods during which donation is possible is one form of commitment \citep{Haylock2024}.}
+
+[^Ohtake2020]: \revise{In our preliminary survey, we found that registrants who reported wanting to help immediately were more likely to donate \citep{Ohtake2020}.}
 
 Four experimental groups were established to estimate the effects of the two intervention messages. The first group received the standard HLA match letter with neither of the intervention messages, serving as the control group (StatusQuo group). \revise{The second and third groups received the standard HLA match letter including only the matching difficulty (MatchMessage group) and early coordination (CoordMessage group) messages, respectively.} The last group received the standard HLA match letter with both intervention messages included to test the negative effect of information overload (BothMessage group).
 
