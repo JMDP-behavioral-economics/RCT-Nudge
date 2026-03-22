@@ -222,7 +222,7 @@ rct$
   column_spec(1, width = "20em")
 ```
 
-```{r density-response-by-intention-1, fig.cap = "Distribution of Response Speed by Intention (StatusQuo Group vs. MatchMessage Group). \\newline \\emph{Note}: We excluded those who skipped CT. We only show the density up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.", fig.width = 20}
+```{r density-response-by-intention-1, fig.cap = "Distribution of Response Speed by Intention (StatusQuo Group vs. MatchMessage Group). \\newline \\emph{Note}: We excluded those who skipped CT. In the left (right) panel, we plot the proportion of responses with (without) an intention to donate at each time point, with the experimental group's sample size as the denominator. We only show the distribution up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.", fig.width = 20}
 n_data <- rct_noskip$data %>%
   group_by(treat) %>%
   summarize(n_total = n())
@@ -249,7 +249,7 @@ plotdt %>%
   theme(legend.position = "bottom")
 ```
 
-```{r density-response-by-intention-2, fig.cap = "Distribution of Response Speed by Intention (StatusQuo Group vs. CoordMessage Group). \\newline \\emph{Note}: We excluded those who skipped CT. We only show the density up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.", fig.width = 20}
+```{r density-response-by-intention-2, fig.cap = "Distribution of Response Speed by Intention (StatusQuo Group vs. CoordMessage Group). \\newline \\emph{Note}: We excluded those who skipped CT. In the left (right) panel, we plot the proportion of responses with (without) an intention to donate at each time point, with the experimental group's sample size as the denominator. We only show the distribution up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.", fig.width = 20}
 n_data <- rct$data %>%
   group_by(treat) %>%
   summarize(n_total = n())
@@ -274,7 +274,7 @@ rct$data %>%
     theme(legend.position = "bottom")
 ```
 
-```{r density-response-by-intention-3, fig.cap = "Distribution of Response Speed by Intention (StatusQuo Group vs. BothMessage Group). \\newline \\emph{Note}: We excluded those who skipped CT. We only show the density up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.", fig.width = 20}
+```{r density-response-by-intention-3, fig.cap = "Distribution of Response Speed by Intention (StatusQuo Group vs. BothMessage Group). \\newline \\emph{Note}: We excluded those who skipped CT. In the left (right) panel, we plot the proportion of responses with (without) an intention to donate at each time point, with the experimental group's sample size as the denominator. We only show the distribution up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.", fig.width = 20}
 n_data <- rct$data %>%
   group_by(treat) %>%
   summarize(n_total = n())
