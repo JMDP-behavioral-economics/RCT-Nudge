@@ -1,6 +1,5 @@
 *.log
 *.docx
-250508 revision policy.md
 
 git-worktree/
 JMDP-RCT---Main-Document_cache/
@@ -23,3 +22,4 @@ submission/
 IRB/
 data/
 cache/
+docs/
