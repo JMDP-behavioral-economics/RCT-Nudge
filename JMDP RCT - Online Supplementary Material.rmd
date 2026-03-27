@@ -103,7 +103,7 @@ rawdt_noskip$add_cond_study_sample("reply == 0 | days_reply > 0")
 ```{r set-rct-class, include=FALSE}
 intervention <- list(
   "Standard message" = c(StatusQuo = "X", MatchMessage = "X", CoordMessage = "X", BothMessage = "X"),
-  "\\revise{Matching difficulty} message" = c(StatusQuo = "", MatchMessage = "X", CoordMessage = "", BothMessage = "X"),
+  "Matching difficulty message" = c(StatusQuo = "", MatchMessage = "X", CoordMessage = "", BothMessage = "X"),
   "Early coordination message" = c(StatusQuo = "", MatchMessage = "", CoordMessage = "X", BothMessage = "X")
 )
 
