@@ -210,18 +210,6 @@ Our intervention involved adding two messages into the HLA match letter.[^pressu
 
 [^ref-handbook]: The handbook can be found at [https://www.jmdp.or.jp/pdf/en/DonorHandBook201708.pdf](https://www.jmdp.or.jp/pdf/en/DonorHandBook201708.pdf) (Accessed December 9, 2024).
 
-<!--
-Matching difficulty messageは、登録患者当たりのマッチドナーが少数であることを強調することで、純粋に利他的な個人の動機的なクラウドアウトを減らす。移植はプールにいる同じHLA型の他の潜在的なドナーによって代替できるので、JMDPを通じた移植は公共財の一種である\citep{Bergstrom2009}。[^another-example]この場合、代替可能な寄付者の存在は移植アウトカムをケアする純粋利他的な個人の動機をクラウドアウトするかもしれない。[^other-preference]したがって、Matching difficulty messageは、自分が提供しなければ患者のアウトカムが損なわれるという認識を強める。[^another-fact][^other-mechanism]
-
-[^another-example]: 最大10人の候補者が同時に一人の患者とマッチする。
-
-[^other-preference]: \citet{Ohtake2020} found that 22\% of registrants had pure altruistic preferences.残りは患者をケアしない利己的な人か寄付行動自体に価値を感じるwarm-glowな人（あるいはwarm-glowとpure altruisticの両方を持つinpure altruisticな人）に分類される[@Andreoni1990]。前者は貢献しない。また、warm-glowな人やimpure altruisticな人は代替可能な寄付者に関わらず寄付をするかもしれない[@Andreoni1990]。
-
-[^another-fact]: @Kurosawa2022 interviewed previously matched donors and found that those with low donation intention felt that they were "one of several donors." This implies that some potential donors with low intention recognize that their donation could be substituted by others.
-
-[^other-mechanism]: There are two additional mechanisms. First, since matched donors cannot know the number of substitutable donors, this uncertainty may reduce their willingness to donate [@Exley2016]. The matching difficulty message reduces this uncertainty. Second, the message makes the rarity of the opportunity to donate more salient, which may change donor behavior.
--->
-
 The matching difficulty message can reduce motivational crowding out among purely altruistic individuals by emphasizing the low number of matched donors per registered patient. Transplantation through the JMDP is a kind of public good because a transplant can be provided by other potential donors in the pool with the same HLA type \citep{Bergstrom2009}.[^another-example] Then, the presence of substitutable donors can crowd out the motivation of purely altruistic individuals who care about transplant outcomes, consistent with qualitative evidence from interviews with previously matched donors \citep{Kurosawa2022}.[^other-preference] Thus, the matching difficulty message makes the donor's pivotal role more salient.[^other-mechanism]
 
 [^another-example]: Up to 10 candidates can be simultaneously matched with a single patient.
@@ -229,14 +217,6 @@ The matching difficulty message can reduce motivational crowding out among purel
 [^other-preference]: \citet{Ohtake2020} estimated that 22\% of registrants had purely altruistic preferences, while the remaining donors had selfish or warm-glow preferences. Donors with warm-glow preferences, who derive utility from the act of giving, may choose to donate regardless of the presence of substitutable donors \citep{Andreoni1990}.
 
 [^other-mechanism]: Two other potential mechanisms may operate. First, the message may reduce the decision-related uncertainty among matched donors [@Exley2016]. Second, the message may make the rarity of the opportunity to donate more salient, which may change donor behavior.
-
-<!--
-Early coordination messageは、返信を先延ばすよりも今返信することの価値を強調することで、現在バイアスによる先延ばしを軽減する。現在バイアスを持つドナーは返信を先延ばしにする可能性がある。なぜなら、ドナーは、将来の移植アウトカムの割り引かれた便益を得るために、即時コスト（家族や職場との相談など）を支払う必要があるからである。したがって、即時の便益を強調することは先延ばしを防ぐ方法の一つである。[^commitment]事実、即時返信は高いCT到達率と相関する（Figure \@ref(fig:speed-CT-cond-response)）。このように、このメッセージは今すぐ役に立てるという認識を強める。[^Ohtake2020]
-
-[^commitment]: コミットメントは先延ばしを防ぐ代表的な解決策である。例えば、ドナーが将来の利用可能性を前もって知らせることはコミットメントの一種である\citep{Haylock2024}。
-
-[^Ohtake2020]: 我々の事前調査では、今すぐ役に立ちたいと考えている人ほど提供しやすいということを発見した\citep{Ohtake2020}。
--->
 
 The early coordination message emphasizes the value of not postponing the response to mitigate procrastination due to present bias. Donors with present bias may postpone their response to the HLA match letter because they incur immediate costs (e.g., consulting family members or colleagues) while they discount the future benefits of improved transplant outcomes. Highlighting the value of responding promptly may therefore reduce procrastination.[^commitment]
 
@@ -496,18 +476,6 @@ rct_noskip$
     base_size = 25
   )
 ```
-
-<!--
-時間を通じた提供意向の累積比率を示すFigure \ref{fig:cumulative-response}は、少なくとも送付後最初の2週間までに、どの介入も早期に提供意向を示す効果がなかったことを示している。さらに、matching difficulty messageは2週間以降に提供意向の累積比率がStatusQuo群よりも増えた。まとめると、介入は早期返信の促進を実現せず、matching difficulty messageだけがむしろ後から提供意向を押し上げた。
-
-matching difficulty message に伴う応答の遅れは、提供意向のある者の先延ばしではない。むしろ、早期に断っていた一部が、後から提供意向を表明するよう変化した結果である。Supplementary Material A の Figure A2 の左パネルは、送付から10日以内の意向表明率が StatusQuo 群と MatchMessage 群でほぼ同程度である一方、MatchMessage 群では10--17日目の意向表明率が高いことを示している。[^corresponding-to-cumulative]右パネルは、MatchMessage 群で7日以内に提供を断る比率が StatusQuo 群より低いことを示している。[^another-dist]したがって、matching difficulty message は、早期に断る者の一部の行動変容を通じて、提供意向を示す者の割合を押し上げた可能性がある。[^implication]
-
-[^corresponding-to-cumulative]: Figure A2 の各区間比率を順に足すと Figure \ref{fig:cumulative-response} の累積になる。左パネルでは10--13日目でMatchMessageが高いが、それ以前の区間が若干低く相殺され、2週間までの累積はほぼ同程度となる。結果として、MatchMessage の優位は14日以降の累積として現れる。
-
-[^another-dist]: Compared with the StatusQuo group, the distributions of the CoordMessage and BothMessage groups also change similarly, but the change is less pronounced than in the MatchMessage group (Figures A3 and A4 in Supplementary Material A).
-
-[^implication]: 返信の遅れは家族や職場との調整などで生じ得る。さらに、患者死亡による中断の約42\%が200日より後に生じること\citep{Hirakawa2018}から、数日程の応答遅れが患者アウトカムに与える影響は限定的と示唆される。
--->
 
 Figure \ref{fig:cumulative-response} plots the cumulative rate of willingness to donate over time. At least through the first two weeks after the letter was sent, none of the interventions increased willingness to donate early. Moreover, the matching difficulty message increased the cumulative rate of willingness to donate relative to the StatusQuo group after two weeks. Taken together, while the interventions did not promote earlier responses, only the matching difficulty message increased willingness to donate later.
 
