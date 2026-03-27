@@ -317,7 +317,7 @@ The sample included 11,049 completed or interrupted coordinations involving matc
 ongoing_f <- rawdt$balance_attrition()
 ```
 
-[^exclude]: One coordination involved a matched donor who lived abroad. There were 104 coordinations ongoing at the time of data collection, and their proportion was balanced across the experimental groups (`r ongoing_f[[2]]`).
+[^exclude]: One coordination involved a matched donor who lived abroad. There were 104 coordinations ongoing at the time of data collection, and their proportion was balanced across the experimental groups (`r ongoing_f[[2]]`). We exclude these cases from the analysis.
 
 [^detail-descriptive-stats]: Altogether, $17.1$\% of coordinations involved matched donors living in Tokyo or Osaka, where hospital density is above the national average of $0.21$ ($1.89$ and $1.36$, respectively).
 
