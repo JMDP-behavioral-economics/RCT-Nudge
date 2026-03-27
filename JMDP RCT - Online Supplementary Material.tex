@@ -193,15 +193,15 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \end{table}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/density-response-by-intention-1-1} \caption{Distribution of Response Speed by Intention (StatusQuo Group vs. MatchMessage Group). \newline \emph{Note}: We excluded those who skipped CT. We only show the density up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:density-response-by-intention-1}
+\includegraphics{JMDPRC~4/figure-latex/density-response-by-intention-1-1} \caption{Distribution of Response Speed by Intention (StatusQuo Group vs. MatchMessage Group). \newline \emph{Note}: We excluded those who skipped CT. In the left (right) panel, we plot the proportion of responses with (without) an intention to donate at each time point, with the experimental group's sample size as the denominator. We only show the distribution up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:density-response-by-intention-1}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/density-response-by-intention-2-1} \caption{Distribution of Response Speed by Intention (StatusQuo Group vs. CoordMessage Group). \newline \emph{Note}: We excluded those who skipped CT. We only show the density up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:density-response-by-intention-2}
+\includegraphics{JMDPRC~4/figure-latex/density-response-by-intention-2-1} \caption{Distribution of Response Speed by Intention (StatusQuo Group vs. CoordMessage Group). \newline \emph{Note}: We excluded those who skipped CT. In the left (right) panel, we plot the proportion of responses with (without) an intention to donate at each time point, with the experimental group's sample size as the denominator. We only show the distribution up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:density-response-by-intention-2}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/density-response-by-intention-3-1} \caption{Distribution of Response Speed by Intention (StatusQuo Group vs. BothMessage Group). \newline \emph{Note}: We excluded those who skipped CT. We only show the density up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:density-response-by-intention-3}
+\includegraphics{JMDPRC~4/figure-latex/density-response-by-intention-3-1} \caption{Distribution of Response Speed by Intention (StatusQuo Group vs. BothMessage Group). \newline \emph{Note}: We excluded those who skipped CT. In the left (right) panel, we plot the proportion of responses with (without) an intention to donate at each time point, with the experimental group's sample size as the denominator. We only show the distribution up to 40 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:density-response-by-intention-3}
 \end{figure}
 
 \begin{figure}[H]
@@ -352,6 +352,24 @@ R2 Adj. & \num{-0.000} & \num{0.015} & \num{0.016} & \num{-0.000} & \num{0.032} 
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\section{Calculation of Cost-Effectiveness}\label{calculation-of-cost-effectiveness}
+
+To evaluate cost-effectiveness, we translate the effect of the matching difficulty message into an equivalent number of additional donor registrations. First, we show how to estimate the number of additional donor registrations from the message effect on the CT completion rate. Let \(N_m\) be the number of registrants who start the coordination process (rather than the total number of registrants). Let \(N_1(d)\) be the number of potential donors who reach CT under treatment \(d\). Then, \(N_1(d) = p(d)N_m\) holds, where \(p(d)\) is the probability of reaching CT under treatment \(d\). \(d = 1\) and \(d = 0\) represent the treatment and control groups, respectively. The additional number of registrants who start the coordination process, \(\Delta N_m\), needed to obtain the same number of donors reaching CT as in the treatment group while using the control group's CT completion rate \(p(0)\), can be calculated as follows:
+\begin{equation*}
+\begin{split}
+  N_1(1) &= p(0)[N_m + \Delta N_m] \\
+  \Delta N_m &= \frac{N_1(1) - p(0)N_m}{p(0)} \\
+  &= \frac{p(1)N_m - p(0)N_m}{p(0)} \\
+  &= \frac{p(1) - p(0)}{p(0)}N_m \\
+  &= \tau_{\%} N_m
+\end{split}
+\end{equation*}
+where \(\tau_{\%}\) is the percent effect of the message on the CT completion rate (7.3\% for the matching difficulty message).
+
+Next, we estimate \(N_m\) from the JMDP's public data. The cumulative number of registrants since the JMDP's establishment is \(980,000\). Among these registrants, \(390,000\) have become matched donors who started the coordination process. Therefore, 40\% of registrants become matched donors. Applying this rate to the current \(560,000\) registrants, we estimate that \(224,000\) registrants are matched donors (i.e., \(N_m = 224,000\)).\footnote{Data source: \url{https://www.bs.jrc.or.jp/bmdc/donorregistrant/m2_03_00_statistics.html} (Accessed December 8, 2024).}
+
+Finally, the matching difficulty message effect implies an increase of \(16,352\) (\(= 224,000 \times 0.073\)) in matched donors (\(\Delta N_m = 16,352\)) or an increase of \(40,880\) (\(= 560,000 \times 0.073\)) in registrants.
 
 \begin{spacing}{1}
   \bibliography{biblio.bib}

@@ -572,6 +572,26 @@ fit_models %>%
   )
 ```
 
+# Calculation of Cost-Effectiveness
+
+To evaluate cost-effectiveness, we translate the effect of the matching difficulty message into an equivalent number of additional donor registrations. First, we show how to estimate the number of additional donor registrations from the message effect on the CT completion rate. Let $N_m$ be the number of registrants who start the coordination process (rather than the total number of registrants). Let $N_1(d)$ be the number of potential donors who reach CT under treatment $d$. Then, $N_1(d) = p(d)N_m$ holds, where $p(d)$ is the probability of reaching CT under treatment $d$. $d = 1$ and $d = 0$ represent the treatment and control groups, respectively. The additional number of registrants who start the coordination process, $\Delta N_m$, needed to obtain the same number of donors reaching CT as in the treatment group while using the control group's CT completion rate $p(0)$, can be calculated as follows:
+\begin{equation*}
+\begin{split}
+  N_1(1) &= p(0)[N_m + \Delta N_m] \\
+  \Delta N_m &= \frac{N_1(1) - p(0)N_m}{p(0)} \\
+  &= \frac{p(1)N_m - p(0)N_m}{p(0)} \\
+  &= \frac{p(1) - p(0)}{p(0)}N_m \\
+  &= \tau_{\%} N_m
+\end{split}
+\end{equation*}
+where $\tau_{\%}$ is the percent effect of the message on the CT completion rate (7.3% for the matching difficulty message).
+
+Next, we estimate $N_m$ from the JMDP's public data. The cumulative number of registrants since the JMDP's establishment is $980,000$. Among these registrants, $390,000$ have become matched donors who started the coordination process. Therefore, 40\% of registrants become matched donors. Applying this rate to the current $560,000$ registrants, we estimate that $224,000$ registrants are matched donors (i.e., $N_m = 224,000$).[^source1]
+
+Finally, the matching difficulty message effect implies an increase of $16,352$ ($= 224,000 \times 0.073$) in matched donors ($\Delta N_m = 16,352$) or an increase of $40,880$ ($= 560,000 \times 0.073$) in registrants.
+
+[^source1]: Data source: <https://www.bs.jrc.or.jp/bmdc/donorregistrant/m2_03_00_statistics.html> (Accessed December 8, 2024).
+
 <!---
 # Economic Models for Predictions
 
