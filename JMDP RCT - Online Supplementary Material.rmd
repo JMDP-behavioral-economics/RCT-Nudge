@@ -142,7 +142,7 @@ rct$
   )
 ```
 
-```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Group.\\newline \\emph{Note}: Error bars show the standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week. We employed the method proposed by \\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values."}
+```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Group.\\newline \\emph{Note}: Error bars show the 95 percent confidence intervals of the mean. For the statistical test, we used standard errors clustered by the assigned week. We employed the method proposed by \\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values."}
 mha_test <- cache_rds(
   {
     rct$
@@ -298,7 +298,7 @@ rct$data %>%
     theme(legend.position = "bottom")
 ```
 
-```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show standard errors of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
+```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show the 95 percent confidence intervals of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
 rct$
   lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
   fit(scale = 100)$
