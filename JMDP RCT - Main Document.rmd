@@ -61,7 +61,7 @@ output:
     toc: false
     number_sections: true
     citation_package: natbib
-base-strech: 2
+base-stretch: 2
 fontsize: 12pt
 ---
 
@@ -101,7 +101,7 @@ HSCT transplants healthy hematopoietic stem cells from a donor into a patient af
 
 [^match-probability]: While the probability of a complete match between two randomly selected individuals is less than 1\%, the probability of a full match between siblings is 30\%.
 
-However, donor registries worldwide face dropout among registered donors \citep{Switzer2004, Lown2014, Hamed2023}. Donor candidates matched with patients undergo confirmatory typing (CT) to assess their eligibility for transplantation. Because physicians select the most suitable donor from those who complete CT, dropout before CT reduces donor availability. Dropout before CT is substantial across registries. For example, 56% of transplant coordinations in the JMDP do not reach the CT stage for donor-related reasons \citep{Hirakawa2018}[^DKMS-dropout] Such dropout prolongs the time to transplantation and worsens patient outcomes \citep{Lown2013}.[^fact] Thus, interventions to reduce pre-CT dropout are needed while preserving individual autonomy.[^donor-quantity]
+However, donor registries worldwide face dropout among registered donors \citep{Switzer2004, Lown2014, Hamed2023}. Donor candidates matched with patients undergo confirmatory typing (CT) to assess their eligibility for transplantation. Because physicians select the most suitable donor from those who complete CT, dropout before CT reduces donor availability. Dropout before CT is substantial across registries. For example, 56% of transplant coordinations in the JMDP do not reach the CT stage for donor-related reasons \citep{Hirakawa2018}.[^DKMS-dropout] Such dropout prolongs the time to transplantation and worsens patient outcomes \citep{Lown2013}.[^fact] Thus, interventions to reduce pre-CT dropout are needed while preserving individual autonomy.[^donor-quantity]
 
 [^DKMS-dropout]: As another example, in DKMS Germany, 23% of donors do not reach the CT stage \citep{Haylock2024}.
 
@@ -454,7 +454,7 @@ rct$
   column_spec(1, width = "5cm")
 ```
 
-Table \ref{tab:test-lm} shows that the MatchMessage group increased the probability of coordinations reaching the CT stage by $1.63$ percentage point, controlling for covariates and month fixed effects (column (3)). We obtain similar results under several alternative specifications: removing covariates and month fixed effects, adjusting for multiple hypotheses testing following \citet{List2019} (Figure A1 in Supplementary Material A), and using logistic regression (Table A2 in Supplementary Material A). Therefore, including the matching difficulty message in the HLA match letter is an effective intervention to accelerate transplant coordinations.
+Table \ref{tab:test-lm} shows that the MatchMessage group increased the probability of coordinations reaching the CT stage by $1.63$ percentage points, controlling for covariates and month fixed effects (column (3)). We obtain similar results under several alternative specifications: removing covariates and month fixed effects, adjusting for multiple hypotheses testing following \citet{List2019} (Figure A1 in Supplementary Material A), and using logistic regression (Table A2 in Supplementary Material A). Therefore, including the matching difficulty message in the HLA match letter is an effective intervention to accelerate transplant coordinations.
 
 ```{r lm-test-decompose}
 rct$
@@ -491,7 +491,7 @@ rct_noskip$
     upper_days = 25,
     xbreaks = seq(0, 100, by = 7),
     ylim = c(0, 55),
-    xlab = "Days after the HLA match letter being sent",
+    xlab = "Days after the HLA match letter was sent",
     ylab = "Cumulative rate of\npositive intention at response (%)",
     base_size = 25
   )
@@ -562,7 +562,7 @@ Simultaneously, the MatchMessage treatment promoted older men matched for the fi
 
 Our field experiment showed that the matching difficulty message increased the probability of reaching CT by $1.63$ percentage points after adjusting for covariates and month fixed effects. Given the baseline CT completion rate of $22.25$\% in the StatusQuo group, this implies a $7.3\% (= 1.63/22.25)$ increase. This result is robust to several other checks (e.g., adjusting for multiple hypotheses testing across treatment groups and using logistic regression) albeit without a prior pilot study or preregistration. Overall, the message expands the pool from which physicians can select the best donor.
 
-To evaluate cost-effectiveness, we estimated that the message effect is equivalent to recruiting $40,880$ registrants (see Supplementary Material B for details). Since $100,000$ donors in their 50s will exit within the next five years because of the age limit for donation (54 years), the message effect can offset approximately $40.9$% of the negative impact of this donor pool shrinkage.[^source1] Meanwhile, donor recruitment is costly. If the JMDP bears a similar cost to the NMDP (USD 150 per added registration), recruiting $40,880$ registrants would cost approximately USD $6.132$ million.[^source2] Thus, adding the matching difficulty message could be a more cost-effective measure than recruiting new donors to address the shrinking donor pool.
+To evaluate cost-effectiveness, we estimated that the message effect is equivalent to recruiting $40,880$ registrants (see Supplementary Material B for details). Since $100,000$ donors in their 50s will exit within the next five years because of the age limit for donation (54 years), the message effect can offset approximately $40.9$\% of the negative impact of this donor pool shrinkage.[^source1] Meanwhile, donor recruitment is costly. If the JMDP bears a similar cost to the NMDP (USD 150 per added registration), recruiting $40,880$ registrants would cost approximately USD $6.132$ million.[^source2] Thus, adding the matching difficulty message could be a more cost-effective measure than recruiting new donors to address the shrinking donor pool.
 
 [^source1]: Data source: <https://www.jmdp.or.jp/about/read/number/> (Accessed December 8, 2024).
 

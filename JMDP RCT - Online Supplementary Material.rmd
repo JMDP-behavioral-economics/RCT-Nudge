@@ -34,7 +34,7 @@ output:
     toc: false
     number_sections: true
     citation_package: natbib
-base-strech: 1.5
+base-stretch: 1.5
 fontsize: 12pt
 ---
 
@@ -242,7 +242,7 @@ plotdt <- rct_noskip$data %>%
 plotdt %>%
   ggplot(aes(x = days_reply, y = prop, color = treat)) +
   geom_line(linewidth = 1) +
-  labs(x = "Days after the HLA match letter being sent", y = "Proportion of sample (%)", color = "Experimental group") +
+  labs(x = "Days after the HLA match letter was sent", y = "Proportion of sample (%)", color = "Experimental group") +
   facet_wrap(~ positive, scales = "free_y") +
   scale_x_continuous(breaks = seq(0, 100, by = 7), limits = c(0, 40)) +
   my_theme_classic(size = 25) +
@@ -267,7 +267,7 @@ rct$data %>%
   ) %>%
   ggplot(aes(x = days_reply, y = prop, color = treat)) +
     geom_line(linewidth = 1) +
-    labs(x = "Days after the HLA match letter being sent", y = "Proportion of sample (%)", color = "Experimental group") +
+    labs(x = "Days after the HLA match letter was sent", y = "Proportion of sample (%)", color = "Experimental group") +
     facet_wrap(~ positive, labeller = labeller(positive = c("0" = "Negative intention", "1" = "Positive intention")), scales = "free_y") +
     scale_x_continuous(breaks = seq(0, 100, by = 7), limits = c(0, 40)) +
     my_theme_classic(size = 25) +
@@ -291,7 +291,7 @@ rct$data %>%
   ) %>%
   ggplot(aes(x = days_reply, y = prop, color = treat)) +
     geom_line(linewidth = 1) +
-    labs(x = "Days after the HLA match letter being sent", y = "Proportion of sample (%)", color = "Experimental group") +
+    labs(x = "Days after the HLA match letter was sent", y = "Proportion of sample (%)", color = "Experimental group") +
     facet_wrap(~ positive, labeller = labeller(positive = c("0" = "Negative intention", "1" = "Positive intention")), scales = "free_y") +
     scale_x_continuous(breaks = seq(0, 100, by = 7), limits = c(0, 40)) +
     my_theme_classic(size = 25) +
@@ -363,12 +363,12 @@ rct3$data <- rct3$data %>%
   mutate(
     young = if_else(age <= 39, 1, 0),
     group = case_when(
-      male == 1 & coordinate1 == 1 & young == 1 ~ "Flesh male (20--39)",
-      male == 1 & coordinate1 == 1 & young == 0 ~ "Flesh male (39--54)",
+      male == 1 & coordinate1 == 1 & young == 1 ~ "Fresh male (20--39)",
+      male == 1 & coordinate1 == 1 & young == 0 ~ "Fresh male (39--54)",
       male == 1 & coordinate1 == 0 & young == 1 ~ "Experienced male (20--39)",
       male == 1 & coordinate1 == 0 & young == 0 ~ "Experienced male (39--54)",
-      male == 0 & coordinate1 == 1 & young == 1 ~ "Flesh female (20--39)",
-      male == 0 & coordinate1 == 1 & young == 0 ~ "Flesh female (39--54)",
+      male == 0 & coordinate1 == 1 & young == 1 ~ "Fresh female (20--39)",
+      male == 0 & coordinate1 == 1 & young == 0 ~ "Fresh female (39--54)",
       male == 0 & coordinate1 == 0 & young == 1 ~ "Experienced female (20--39)",
       male == 0 & coordinate1 == 0 & young == 0 ~ "Experienced female (39--54)",
     )
@@ -409,14 +409,14 @@ coef_dt <- est_hetero3 %>%
     group = case_when(
       !str_detect(term, "\\+") ~ "Experienced female",
       str_detect(term, "Experienced female") ~ "Experienced female",
-      str_detect(term, "Flesh female") ~ "Flesh female",
+      str_detect(term, "Fresh female") ~ "Fresh female",
       str_detect(term, "Experienced male") ~ "Experienced male",
-      str_detect(term, "Flesh male") ~ "Flesh male"
+      str_detect(term, "Fresh male") ~ "Fresh male"
     ),
     outcome = factor(outcome, levels = c("CT", "Donor selection", "Donation")),
     treat = factor(treat, levels = c("MatchMessage", "CoordMessage", "BothMessage")),
     age = factor(age, levels = c("20--39", "39+")),
-    group = factor(group, levels = c("Flesh male", "Flesh female", "Experienced male", "Experienced female"))
+    group = factor(group, levels = c("Fresh male", "Fresh female", "Experienced male", "Experienced female"))
   )
 
 coef_dt %>%
@@ -501,7 +501,7 @@ fit_mods %>%
   kableExtra::add_header_above(c(" " = 1, "Donor selection" = 1, "Donation" = 1)) %>%
   kableExtra::footnote(
     general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. We estimated the linear probability model. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. Reseponse days are days that passed between the date of receiving the HLA match letter and the date of responding to the letter. We demeaned covariates except male dummy, dummy of first-time coordination, and dummy of skipped CT.",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. We estimated the linear probability model. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. Response days are days that have passed between the date of sending the HLA match letter and the date of responding to the letter. We demeaned covariates except male dummy, dummy of first-time coordination, and dummy of skipped CT.",
     threeparttable = TRUE,
     escape = FALSE
   )
@@ -563,10 +563,10 @@ fit_models %>%
     add_rows = add_table
   ) %>%
   kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
-  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 3, "Exogenous dropout" = 3, "Endogenous dropout" = 3)) %>%
+  kableExtra::add_header_above(c(" " = 1, "Donor selection" = 3, "Dropout (donor health and patient reasons)" = 3, "Dropout (donor reasons other than health)" = 3)) %>%
   kableExtra::footnote(
     general_title = "",
-    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to exogenous reasons (reasons related with donor health and patient) between CT and donor selection. The outcome ``Endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to endogenous reasons (donor reasons other than health) between CT and donor selection. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     threeparttable = TRUE,
     escape = FALSE
   )

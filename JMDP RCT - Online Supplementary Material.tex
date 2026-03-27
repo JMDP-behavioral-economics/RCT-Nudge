@@ -316,7 +316,7 @@ R2 Adj. & \num{0.002} & \num{0.004}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. We estimated the linear probability model. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. Reseponse days are days that passed between the date of receiving the HLA match letter and the date of responding to the letter. We demeaned covariates except male dummy, dummy of first-time coordination, and dummy of skipped CT.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. We estimated the linear probability model. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used potential donors who completed the CT in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers. Response days are days that have passed between the date of sending the HLA match letter and the date of responding to the letter. We demeaned covariates except male dummy, dummy of first-time coordination, and dummy of skipped CT.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -329,7 +329,7 @@ R2 Adj. & \num{0.002} & \num{0.004}\\
 \begin{threeparttable}
 \begin{tabular}[t]{lccccccccc}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Donor selection} & \multicolumn{3}{c}{Exogenous dropout} & \multicolumn{3}{c}{Endogenous dropout} \\
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Donor selection} & \multicolumn{3}{c}{Dropout (donor health and patient reasons)} & \multicolumn{3}{c}{Dropout (donor reasons other than health)} \\
 \cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-7} \cmidrule(l{3pt}r{3pt}){8-10}
   & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9)\\
 \midrule
@@ -348,7 +348,7 @@ R2 Adj. & \num{-0.000} & \num{0.015} & \num{0.016} & \num{-0.000} & \num{0.032} 
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Exogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to exogenous reasons (reasons related with donor health and patient) between CT and donor selection. The outcome ``Endogenous dropout'' is a dummy variable that takes a value of 1 if coordination was interrupted due to endogenous reasons (donor reasons other than health) between CT and donor selection. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
