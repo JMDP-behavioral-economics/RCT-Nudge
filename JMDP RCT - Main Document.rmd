@@ -499,7 +499,7 @@ rct$
       "treatCoordMessage" = "CoordMessage group",
       "treatBothMessage" = "BothMessage group"
     ),
-    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if the candidate responded with positive intention within a specified time window after the HLA match letter being sent. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with BM collection per 10 square kilometers. All the covariates were demeaned.",
+    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome is a dummy variable that takes a value of 1 if the candidate responded with positive intention within a specified time window after the HLA match letter is sent. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, and the number of hospitals with BM collection per 10 square kilometers. All the covariates were demeaned.",
     font_size = 8
   )
 ```
