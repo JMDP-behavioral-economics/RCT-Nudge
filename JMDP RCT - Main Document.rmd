@@ -301,25 +301,67 @@ As additional data, we used the list of medical institutions on the JMDP website
 [^ref]: Data source: <https://www.jmdp.or.jp/hospitals/view2/> (Accessed August 4, 2022). This list includes complete addresses, the availability of bone marrow collection, and the availability of PBSC collection.
 
 ```{r descriptive-stats, include=FALSE}
-with(rct$data, prop.table(table(donate)))
-with(rct$data, summary(age))
-with(rct$data, prop.table(table(age < 40)))
-with(rct$data, prop.table(table(male)))
-with(rct$data, prop.table(table(coordinate1)))
-with(rct$data, prop.table(table(prefecture)[order(table(prefecture))]))
-with(subset(rct$data, prefecture %in% c("東京都", "大阪府")), table(prefecture, hospital_per_area))
-with(rct$data, mean(unique(hospital_per_area)))
+# N (Experimental subjects and analysis sample)
+nrow(rawdt$data)
+n_analysis <- format(nrow(rct$data), big.mark = ",", scientific = FALSE, trim = TRUE)
+
+# Positive intention
+with(rct$data, table(positive))
+
+# Dropout at positive intention: not respond & respond but refused to donate
+with(rct$data, sum(reply == 0))
+with(rct$data, sum(reply == 1 & positive == 0))
+
+# CT cond. positive intention
+with(subset(rct$data, positive == 1), table(test, exg_stop_test))
+
+# Selection cond. CT
+with(subset(rct$data, positive == 1 & test == 1), table(candidate))
+
+# Donation cond. selection
+with(subset(rct$data, positive == 1 & test == 1 & candidate == 1), table(donate))
+
+# Dropout at donation
+with(subset(rct$data, positive == 1 & test == 1 & candidate == 1 & donate == 0), table(consent))
+
+# Donation rate
+donation_rate <- trunc(with(rct$data, mean(donate) * 100) * 10) / 10
+
+# First-time coordination rate
+first_time_rate <- trunc(with(rct$data, mean(coordinate1) * 100) * 10) / 10
+
+# Mean and median age
+mean_age <- trunc(with(rct$data, mean(age)) * 10) / 10
+median_age <- trunc(with(rct$data, median(age)))
+
+# Male
+male <- trunc(with(rct$data, mean(male) * 100) * 10) / 10
 ```
 
-The sample included 11,049 completed or interrupted coordinations involving matched donors in Japan.[^exclude] Of these coordinations, $4.6$\% resulted in donation and $63.5$\% involved matched donors coordinating for the first time. The mean age of matched donors was 39 years (median $37.98$) and $62.4$\% of coordinations involved male donors. The sample included slightly more young and male donors than the overall donor pool.[^detail-descriptive-stats]
+The sample included `r sprintf("$%s$", n_analysis)` completed or interrupted coordinations involving matched donors in Japan.[^exclude] Of these coordinations, `r sprintf("$%s$%%", donation_rate)` resulted in donation and `r sprintf("$%s$%%", first_time_rate)` involved matched donors coordinating for the first time. The mean age of matched donors was `r sprintf("$%s$", mean_age)` years (median `r median_age`) and `r sprintf("$%s$%%", male)` of coordinations involved male donors. The sample included slightly more young and male donors than the overall donor pool.[^detail-descriptive-stats]
 
 ```{r ongoing-balance, include=FALSE}
+# N (living abroad)
+with(rawdt$data, sum(prefecture == "海外"))
+
+# N (ongoing)
+n_ongoing <- with(rawdt$data, sum(ongoing == 1))
 ongoing_f <- rawdt$balance_attrition()
 ```
 
-[^exclude]: One coordination involved a matched donor who lived abroad. There were 104 coordinations ongoing at the time of data collection, and their proportion was balanced across the experimental groups (`r ongoing_f[[2]]`). We exclude these cases from the analysis.
+[^exclude]: One coordination involved a matched donor who lived abroad. There were `r n_ongoing` coordinations ongoing at the time of data collection, and their proportion was balanced across the experimental groups (`r ongoing_f[[2]]`). We exclude these cases from the analysis.
 
-[^detail-descriptive-stats]: Altogether, $17.1$\% of coordinations involved matched donors living in Tokyo or Osaka, where hospital density is above the national average of $0.21$ ($1.89$ and $1.36$, respectively).
+```{r descriptive-stats-2, include=FALSE}
+# Tokyo or Osaka
+tky_osk <- trunc(with(rct$data, mean(prefecture %in% c("東京都", "大阪府")) * 100) * 10) / 10
+
+# hospital density
+national_mean <- trunc(with(rct$data, mean(unique(hospital_per_area))) * 100) / 100
+tky_density <- trunc(with(subset(rct$data, prefecture == "東京都"), mean(unique(hospital_per_area))) * 100) / 100
+osk_density <- trunc(with(subset(rct$data, prefecture == "大阪府"), mean(unique(hospital_per_area))) * 100) / 100
+```
+
+[^detail-descriptive-stats]: Altogether, `r sprintf("$%s$%%", tky_osk)` of coordinations involved matched donors living in Tokyo or Osaka, where hospital density is above the national average of `r sprintf("$%s$", national_mean)` (`r sprintf("$%s$", tky_density)` and `r sprintf("$%s$", osk_density)`, respectively).
 
 ```{r speed-CT-cond-response, fig.cap = "Binned Scatter Plot of CT vs. Response Speed among Those Who Responded with Positive Intention. \\newline \\emph{Note}: We used those who responded with positive intention to donate in the control group (StatusQuo group). The dashed line represents nonparametric fitting. The solid line represents a fitted line of the logistic regression."}
 positive_dt <- rct$data %>%
