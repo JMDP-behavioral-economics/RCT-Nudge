@@ -142,7 +142,45 @@ rct$
   )
 ```
 
-```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Group.\\newline \\emph{Note}: Error bars show the 95 percent confidence intervals of the mean. For the statistical test, we used standard errors clustered by the assigned week. We employed the method proposed by \\citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values."}
+```{r covariates-effect}
+est <- lm_robust(
+  I(test * 100) ~ male + age + coordinate + skip_test +
+    holidays + PB_per_area + BM_per_area + hospital_per_area,
+  data = subset(rct$data, treat == "StatusQuo"),
+  se_type = "stata",
+  clusters = RCTweek
+)
+
+list(est) %>%
+  modelsummary(
+    title = "Effect of Covariates on CT in the StatusQuo Group",
+    coef_map = c(
+      "(Intercept)" = "(Intercept)",
+      "male" = "Male",
+      "age" = "Age",
+      "coordinate" = "Number of past coordinations",
+      "hospital_per_area" = "Number of listed hospitals",
+      "PB_per_area" = "Number of listed hospitals with PBSC collection",
+      "BM_per_area" = "Number of listed hospitals with BM collection",
+      "holidays" = "Number of holidays",
+      "skip_test" = "Skipped CT"
+    ),
+    gof_omit = "AIC|BIC|RMSE|Std.Errors",
+    stars = c("***" = 0.01, "**" = 0.05, "*" = 0.1),
+    escape = FALSE,
+    fmt = 2
+  ) %>%
+  kableExtra::kable_styling(font_size = 8, latex_options = "HOLD_position") %>%
+  kableExtra::add_header_above(c(" " = 1, "CT" = 1)) %>%
+  kableExtra::footnote(
+    general_title = "",
+    general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. We estimated the linear probability model. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used sample in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.",
+    threeparttable = TRUE,
+    escape = FALSE
+  )
+```
+
+```{r test-diff-mean, fig.height=10, fig.cap = "Sample Proportion of Reaching CT by Experimental Group.\\newline \\emph{Note}: Error bars show the 95 percent confidence intervals for the proportion. For the statistical test, we used standard errors clustered by the assigned week. The p-values in square brackets represent the adjusted p-values for multiple testing, following the method of \\citet{List2019}. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values."}
 mha_test <- cache_rds(
   {
     rct$
@@ -298,7 +336,7 @@ rct$data %>%
     theme(legend.position = "bottom")
 ```
 
-```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show the 95 percent confidence intervals of the mean. For the statistical test, we used standard errors clustered by the assigned week."}
+```{r coordinate-diff-mean, fig.height=10, fig.cap = "Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\\newline \\emph{Note}: Error bars show the 95 percent confidence intervals for the proportion. For the statistical test, we used standard errors clustered by the assigned week."}
 rct$
   lm_effect(c("candidate", "consent", "donate"), sample_drop = FALSE)$
   fit(scale = 100)$
@@ -507,6 +545,8 @@ fit_mods %>%
   )
 ```
 
+\clearpage
+
 ```{r lm-decompose-effect-donor-selection}
 test_dt <- rct$data %>%
   filter(test == 1) %>%
@@ -569,7 +609,8 @@ fit_models %>%
     general = "\\\\emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. The standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. Covariates are gender, age, its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that candidate can have skipped the CT. All covariates except gender dummy and dummy of skipped CT were demeaned.",
     threeparttable = TRUE,
     escape = FALSE
-  )
+  ) %>%
+  landscape()
 ```
 
 # Calculation of Cost-Effectiveness

@@ -157,8 +157,50 @@ Skipped CT (= 1) & 0.039 & 0.038 & 0.054\\
 \end{threeparttable}
 \end{table}
 
+\begin{table}[H]
+\centering\centering
+\caption{\label{tab:covariates-effect}Effect of Covariates on CT in the StatusQuo Group}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{threeparttable}
+\begin{tabular}[t]{lc}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{1}{c}{CT} \\
+\cmidrule(l{3pt}r{3pt}){2-2}
+  & (1)\\
+\midrule
+(Intercept) & \num{14.10}*\\
+ & (\num{5.58})\\
+Male & \num{1.57}\\
+ & (\num{1.39})\\
+Age & \num{-0.03}\\
+ & (\num{0.10})\\
+Number of past coordinations & \num{1.29}\\
+ & (\num{0.83})\\
+Number of listed hospitals & \num{-1.81}\\
+ & (\num{5.65})\\
+Number of listed hospitals with PBSC collection & \num{-31.27}*\\
+ & (\num{14.35})\\
+Number of listed hospitals with BM collection & \num{26.53}\\
+ & (\num{16.35})\\
+Number of holidays & \num{0.55}\\
+ & (\num{1.05})\\
+Skipped CT & \num{78.61}***\\
+ & (\num{2.08})\\
+\midrule
+Num.Obs. & \num{2535}\\
+R2 & \num{0.145}\\
+R2 Adj. & \num{0.142}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \emph{Note}: * $p < 0.1$, ** $p < 0.05$, *** $p < 0.01$. We estimated the linear probability model. The standard errors clustered by the assigned week are in parentheses. The unit of coefficients is a percentage point. We used sample in the control group. The number of holidays is the sum of the number of holidays in the assigned week and the following week. The number of listed hospitals is per 10 square kilometers.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Group.\newline \emph{Note}: Error bars show the 95 percent confidence intervals of the mean. For the statistical test, we used standard errors clustered by the assigned week. We employed the method proposed by \citet{List2019} to adjust the p-values for multiple testing. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.}\label{fig:test-diff-mean}
+\includegraphics{JMDPRC~4/figure-latex/test-diff-mean-1} \caption{Sample Proportion of Reaching CT by Experimental Group.\newline \emph{Note}: Error bars show the 95 percent confidence intervals for the proportion. For the statistical test, we used standard errors clustered by the assigned week. The p-values in square brackets represent the adjusted p-values for multiple testing, following the method of \citet{List2019}. We used bootstrapping with 3,000 bootstrap samples to calculate the adjusted p-values.}\label{fig:test-diff-mean}
 \end{figure}
 
 \begin{table}[H]
@@ -205,7 +247,7 @@ Log.Lik. & \num{-6083.783} & \num{-5306.181} & \num{-5293.272}\\
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics{JMDPRC~4/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show the 95 percent confidence intervals of the mean. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
+\includegraphics{JMDPRC~4/figure-latex/coordinate-diff-mean-1} \caption{Sample Averages of Donor Selection, Final Consent, and Donation by Experimental Groups.\newline \emph{Note}: Error bars show the 95 percent confidence intervals for the proportion. For the statistical test, we used standard errors clustered by the assigned week.}\label{fig:coordinate-diff-mean}
 \end{figure}
 
 \begin{table}[H]
@@ -321,7 +363,9 @@ R2 Adj. & \num{0.002} & \num{0.004}\\
 \end{threeparttable}
 \end{table}
 
-\begin{table}[H]
+\clearpage
+
+\begin{landscape}\begin{table}[H]
 \centering\centering
 \caption{\label{tab:lm-decompose-effect-donor-selection}Effect on Donor Selection and Dropout among Potential Donors Reaching CT}
 \centering
@@ -352,6 +396,7 @@ R2 Adj. & \num{-0.000} & \num{0.015} & \num{0.016} & \num{-0.000} & \num{0.032} 
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+\end{landscape}
 
 \section{Calculation of Cost-Effectiveness}\label{calculation-of-cost-effectiveness}
 
