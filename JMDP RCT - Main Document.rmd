@@ -403,24 +403,24 @@ plotdt %>%
 The primary outcome was whether matched donors underwent CT. Reaching the CT stage requires donors to respond to the HLA match letter, indicate their willingness to donate, and maintain their intentions. Additionally, late responses are associated with coordination interruptions before the CT stage (Figure \ref{fig:speed-CT-cond-response}). Further, physicians can select the most appropriate donor for transplantation from among the matched donors who have undergone CT. Thus, showing up for CT represents both a costly prosocial behavior and an important practical indicator of coordination.
 
 ```{r reason-stop, include=FALSE}
-mean_test <- subset(rct$data, treat == "StatusQuo") %>%
-  with(prop.table(table(test)) * 100)
+# mean CT in StatusQuo group
+mean_test <- with(subset(rct$data, treat == "StatusQuo"), mean(test) * 100)
 
-mean_positive <- subset(rct$data, treat == "StatusQuo") %>%
-  with(prop.table(table(positive)) * 100)
+# mean intention in StatusQuo group
+mean_positive <- with(subset(rct$data, treat == "StatusQuo"), mean(positive) * 100)
 
-mean_test_cond <- rct$data %>%
-  filter(treat == "StatusQuo" & positive == 1) %>%
-  with(prop.table(table(test)) * 100)
+# dropout rate cond. intention in StatusQuo group
+dropout_cond <- with(subset(rct$data, treat == "StatusQuo" & positive == 1), mean(test == 0) * 100)
 
-reason_classify <- rct$data %>%
+# donor-related dropout rate
+donor_dropout_rate <- rct$data %>%
   filter(positive == 1 & test == 0 & treat == "StatusQuo") %>%
-  with(prop.table(table(exg_stop_test, useNA = "always")) * 100)
+  with(mean(exg_stop_test == 0) * 100)
 ```
 
-Two obstacles explain why only `r sprintf("$%1.2f$%%", mean_test["1"])` in the StatusQuo group reached CT. First, only `r sprintf("$%1.2f$%%", mean_positive["1"])` indicated their willingness to donate. Second, `r sprintf("$%1.2f$%%", mean_test_cond["0"])` of willing donors did not reach the CT stage (i.e., dropped out between the response and CT). Of these dropouts, `r sprintf("$%1.2f$%%", reason_classify["0"])` were for donor-related reasons: health conditions such as lower back pain, scheduling conflicts, and the lack of family consent \citep{Hirakawa2018}.[^imputed-rates] To examine how our intervention messages mitigate each obstacle, we construct two secondary outcomes: "positive intention at response" and "donor-related dropout".
+Two obstacles explain why only `r sprintf("$%1.2f$%%", mean_test)` in the StatusQuo group reached CT. First, only `r sprintf("$%1.2f$%%", mean_positive)` indicated their willingness to donate. Second, `r sprintf("$%1.2f$%%", dropout_cond)` of willing donors did not reach the CT stage (i.e., dropped out between the response and CT). Of these dropouts, `r sprintf("$%1.2f$%%", donor_dropout_rate)` were for donor-related reasons: health conditions such as lower back pain, scheduling conflicts, and the lack of family consent \citep{Hirakawa2018}.[^imputed-rates] To examine how our intervention messages mitigate each obstacle, we construct two secondary outcomes: "positive intention at response" and "donor-related dropout".
 
-[^imputed-rates]: Using values from @Hirakawa2018, `r sprintf("$%1.2f$%%", reason_classify["0"] * 0.69)` of dropouts were for donor health conditions, `r sprintf("$%1.2f$%%", reason_classify["0"] * 0.16)` scheduling conflicts, and `r sprintf("$%1.2f$%%", reason_classify["0"] * 0.10)` the lack of family consent.
+[^imputed-rates]: Using values from @Hirakawa2018, `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.69)` of dropouts were for donor health conditions, `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.16)` scheduling conflicts, and `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.10)` the lack of family consent.
 
 ```{r summary}
 rct$
