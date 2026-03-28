@@ -418,7 +418,7 @@ est_hetero3 <- rct3$
   get_est()
 
 coef_dt <- est_hetero3 %>%
-  filter(model == 2) %>%
+  filter(model == 3) %>%
   select(outcome, fit) %>%
   mutate(
     coef = map(fit, function(x) {
