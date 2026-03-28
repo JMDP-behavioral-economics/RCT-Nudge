@@ -394,7 +394,7 @@ rct$
   landscape()
 ```
 
-```{r lm-interaction-gender-coordination-age, fig.width = 15, fig.height = 15, fig.cap = "Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and CoordinationExperience Groups. \\newline \\emph{Note}: The standard errors clustered by the assigned week are in parentheses. Covariates are the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled cross terms of each covariate and group dummies.", fig.pos = "H"}
+```{r lm-interaction-gender-coordination-age, fig.width = 15, fig.height = 15, fig.cap = "Heterogeneous Treatment Effects on CT, Donor Selection, and Donation by Sex, Age, and CoordinationExperience Groups. \\newline \\emph{Note}: The standard errors clustered by the assigned week are in parentheses. Covariates are the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers and the number of hospitals with BM collection per 10 square kilometers. All covariates were demeaned. We also controlled month fixed effects and cross terms of each covariate and group dummies.", fig.pos = "H"}
 rct3 <- rct$clone()
 
 rct3$data <- rct3$data %>%
