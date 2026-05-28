@@ -254,6 +254,9 @@ rawdt <- RawData$new(
   treat_labels = c("StatusQuo", "MatchMessage", "CoordMessage", "BothMessage")
 )
 
+rawdt$data <- rawdt$data %>%
+  rename(exg_stop_test = exg2_stop_test)
+
 rawdt$add_cond_study_sample("prefecture != '海外'")
 rawdt$add_cond_study_sample("ongoing == 0")
 
@@ -415,12 +418,25 @@ dropout_cond <- with(subset(rct$data, treat == "StatusQuo" & positive == 1), mea
 # donor-related dropout rate
 donor_dropout_rate <- rct$data %>%
   filter(positive == 1 & test == 0 & treat == "StatusQuo") %>%
+  with(mean(exg1_stop_test == 0) * 100)
+
+# donor-related dropout rate (excluding health reasons)
+donor_dropout_rate_wo_health <- rct$data %>%
+  filter(positive == 1 & test == 0 & treat == "StatusQuo") %>%
   with(mean(exg_stop_test == 0) * 100)
 ```
 
-Two obstacles explain why only `r sprintf("$%1.2f$%%", mean_test)` in the StatusQuo group reached CT. First, only `r sprintf("$%1.2f$%%", mean_positive)` indicated their willingness to donate. Second, `r sprintf("$%1.2f$%%", dropout_cond)` of willing donors did not reach the CT stage (i.e., dropped out between the response and CT). Of these dropouts, `r sprintf("$%1.2f$%%", donor_dropout_rate)` were for donor-related reasons: health conditions such as lower back pain, scheduling conflicts, and the lack of family consent \citep{Hirakawa2018}.[^imputed-rates] To examine how our intervention messages mitigate each obstacle, we construct two secondary outcomes: "positive intention at response" and "donor-related dropout".
+<!-- Two obstacles explain why only `r sprintf("$%1.2f$%%", mean_test)` in the StatusQuo group reached CT. First, only `r sprintf("$%1.2f$%%", mean_positive)` indicated their willingness to donate. Second, `r sprintf("$%1.2f$%%", dropout_cond)` of willing donors did not reach the CT stage (i.e., dropped out between the response and CT). Of these dropouts, `r sprintf("$%1.2f$%%", donor_dropout_rate)` were for donor-related reasons: health conditions such as lower back pain, scheduling conflicts, and the lack of family consent \citep{Hirakawa2018}.[^imputed-rates] To examine how our intervention messages mitigate each obstacle, we construct two secondary outcomes: "positive intention at response" and "donor-related dropout".
 
-[^imputed-rates]: Using values from @Hirakawa2018, `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.69)` of dropouts were for donor health conditions, `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.16)` scheduling conflicts, and `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.10)` the lack of family consent.
+[^imputed-rates]: Using values from @Hirakawa2018, `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.69)` of dropouts were for donor health conditions, `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.16)` scheduling conflicts, and `r sprintf("$%1.2f$%%", donor_dropout_rate * 0.10)` the lack of family consent. -->
+
+<!--
+StatusQuo群では、`r sprintf("$%1.2f$%%", mean_test)`のドナーがCTに到達した。これを分解すると、`r sprintf("$%1.2f$%%", mean_positive)`のドナーが返信時に提供意向を示した。また、`r sprintf("$%1.2f$%%", 100 - dropout_cond)`の意向を示したドナーがCTに到達した（すなわち、`r sprintf("$%1.2f$%%", dropout_cond)`の意向を示したドナーが返信とCTの間で脱落した）。これらの値はCT到達の障害が低い提供意向と返信とCTの間の脱落の二つであることを示している。特に、`r sprintf("$%1.2f$%%", donor_dropout_rate)`の脱落がドナー関連によるものである：腰痛などの健康理由（`r sprintf("$%1.2f$%%", donor_dropout_rate - donor_dropout_rate_wo_health)`）とスケジュールの衝突や家族同意の欠如といった非健康理由（`r sprintf("$%1.2f$%%", donor_dropout_rate_wo_health)`）がある（\citet{Hirakawa2018}）。[^hirakawa-values] 健康理由は介入と無関係に生じやすく、それ以外の要因はドナーの調整や意思決定により影響を受けやすく、介入によって変えられる可能性が高い。したがって、我々の介入が提供意向と非健康理由によるドナー脱落という二つの障害を緩和しているかを検証するために、二次的なアウトカムとして「返信時の提供意向」と「非健康理由によるドナー脱落」を構築する。
+-->
+
+In the StatusQuo group, `r sprintf("$%1.2f$%%", mean_test)` reached CT. Breaking this down, `r sprintf("$%1.2f$%%", mean_positive)` indicated willingness to donate, and `r sprintf("$%1.2f$%%", 100 - dropout_cond)` of willing donors reached CT (i.e., `r sprintf("$%1.2f$%%", dropout_cond)` of willing donors dropped out between response and CT). These figures highlight two obstacles to reaching CT: low willingness to donate at response and dropout between response and CT. Of these dropouts, `r sprintf("$%1.2f$%%", donor_dropout_rate)` were for donor-related reasons: health conditions such as lower back pain (`r sprintf("$%1.2f$%%", donor_dropout_rate - donor_dropout_rate_wo_health)`) and non-health reasons such as scheduling conflicts and the lack of family consent (`r sprintf("$%1.2f$%%", donor_dropout_rate_wo_health)`).[^hirakawa-values] Health reasons are less likely to be directly affected by our intervention, whereas non-health reasons are more plausibly influenced by donors' coordination and decision-making and thus may be more responsive to our intervention. To examine whether our messages mitigate these obstacles, we construct two secondary outcomes: "positive intention at response" and "donor-related dropout for non-health reasons."
+
+[^hirakawa-values]: \citet{Hirakawa2018} reports that, among donor-related dropouts, approximately 69\% are due to donor health conditions, 16\% to scheduling conflicts, and 10\% to the lack of family consent. In our classification, the latter two are grouped as non-health reasons.
 
 ```{r summary}
 rct$
@@ -486,21 +502,32 @@ rct$
     title = "Decomposition of the Effect on Reaching CT",
     outcome_label = c(
       "Positive intention at response" = "Positive intention",
-      "Donor-related dropout" = "Endogenous dropout"
+      "Donor-related dropout for non-health reasons" = "Endogenous dropout"
     ),
     coef_map_lm = c(
       "treatMatchMessage" = "MatchMessage group",
       "treatCoordMessage" = "CoordMessage group",
       "treatBothMessage" = "BothMessage group"
     ),
-    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Donor-related dropout'' is a dummy variable that takes a value of 1 if candidates responded with a willingness to donate but did not reach the CT stage for donor-side health and non-health reasons. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that the candidate skipped CT. All the covariates except the gender dummy and dummy of skipped CT were demeaned.",
+    notes = "Standard errors clustered by the assigned week are in parentheses. The unit of treatment effect is a percentage point. The outcome ``Donor-related dropout for non-health reasons'' is a dummy variable that takes a value of 1 if candidates responded with a willingness to donate but did not reach the CT stage for donor-side non-health reasons such as scheduling conflicts or the lack of family consent. Covariates are gender, age and its squared term, the number of past coordinations, the number of public holidays in the assigned week and the following week, the number of hospitals per 10 square kilometers, the number of hospitals with PBSC collection per 10 square kilometers, the number of hospitals with BM collection per 10 square kilometers, and a dummy indicating that the candidate skipped CT. All the covariates except the gender dummy and dummy of skipped CT were demeaned.",
     font_size = 8
-  )
+  ) %>%
+  column_spec(-1, width = "5.5em")
 ```
 
-As the intervention was expected to increase CT completion by both increasing positive intention at response and reducing donor-related dropout (health and non-health) between the response and CT stages, we decomposed the message effects into these two components (Table \ref{tab:lm-test-decompose}). The evidence suggests that the intervention is broadly consistent with working as expected, except for the CoordMessage group, which may have reduced the willingness to donate.
+<!-- As the intervention was expected to increase CT completion by both increasing positive intention at response and reducing donor-related dropout with non-health reasons between the response and CT stages, we decomposed the message effects into these two components (Table \ref{tab:lm-test-decompose}).The evidence suggests that the intervention is broadly consistent with working as expected, except for the CoordMessage group, which may have reduced the willingness to donate.
 
-This table suggests that the mechanisms differed across the intervention groups, although statistical tests are not robust. In the MatchMessage group, the willingness to donate rose by $1.27$ percentage points (column (3)) and donor-related dropout fell by $0.93$ percentage points (column (6)), with the former larger in magnitude. By contrast, the CoordMessage and BothMessage groups mainly reduced donor-related dropout (e.g., $1.92$ percentage points in the BothMessage group, which is statistically significant at the 10\% level; column (6)) but did not sufficiently increase the willingness to donate, which limited their effect on reaching CT. Together, the matching difficulty message may help improve the willingness to donate, while the early coordination message may prevent donor-related dropout.
+This table suggests that the mechanisms differed across the intervention groups, although statistical tests are not robust. In the MatchMessage group, the willingness to donate rose by $1.27$ percentage points (column (3)) and donor-related dropout fell by $0.93$ percentage points (column (6)), with the former larger in magnitude. By contrast, the CoordMessage and BothMessage groups mainly reduced donor-related dropout (e.g., $1.92$ percentage points in the BothMessage group, which is statistically significant at the 10\% level; column (6)) but did not sufficiently increase the willingness to donate, which limited their effect on reaching CT. Together, the matching difficulty message may help improve the willingness to donate, while the early coordination message may prevent donor-related dropout. -->
+
+<!--
+我々はCT到達率の増加はドナーの提供意向の増加と非健康理由のドナーの脱落の減少によって生じると予想している。具体的には、Matching difficulty messageは非健康理由のドナーの脱落を減らした可能性がある。Table \ref{tab:lm-test-decompose}の主仕様（共変量と月固定効果を制御）では、MatchMessageグループは非健康理由のドナーの脱落を$0.61$ポイント減らし、これは統計的に10%水準で有意である（column (6)）。一方で、提供意向への効果は統計的に有意でなかった（column (3)）。ただし、モデルの特定化によって統計的有意性は変動する。たとえば、月固定効果を除いた回帰分析はMatchMessage群が提供意向を高め、これは統計的に10%水準で有意である（column (1) and (2)）。以上より、少なくとも主仕様では、MatchMessage群における非健康理由のドナー脱落の減少はCT到達率の増加を部分的に説明することを示唆しているにとどまる。
+
+BothMessage群がCT到達率を高める効果を持つことを発見できなかったが、非健康理由のドナー脱落を減らした。Table \ref{tab:lm-test-decompose}の主仕様では、BothMessageグループは非健康理由のドナー脱落を$0.61$ポイント低下させた（column (6)）。これはMatchMessage群と同程度の効果である。それにもかかわらず、BothMessage群のCT到達率への効果が限定的である一つの可能性は、返信時の提供意向を高めなかったからである。事実、BothMessage群がすべての仕様で提供意向を増やす効果を持つことを発見できなかった（column (1)-(3)）。また、CoordMessage群について、提供意向の増加とドナー脱落の減少効果を両方とも確認できなかった。以上より、BothMessage群では非健康理由のドナー脱落は低下したが、提供意向の増加は見られず、CT到達率の改善にはつながらなかった可能性がある。
+-->
+
+\revise{We expect that the increase in reaching CT occurs via two channels: (i) an increase in willingness to donate at response and (ii) a decrease in donor-related dropout for non-health reasons. In the preferred specification (with covariates and month fixed effects) in Table \ref{tab:lm-test-decompose}, the MatchMessage group reduced donor-related dropout for non-health reasons by $0.61$ percentage points, which is statistically significant at the 10\% level (column (6)). By contrast, we did not find a statistically significant effect on willingness to donate (column (3)). Statistical significance varies with model specification; for example, without month fixed effects, the estimated effect on willingness to donate is statistically significant at the 10\% level (columns (1) and (2)). Taken together, at least in our preferred specification, the reduction in donor-related dropout for non-health reasons in the MatchMessage group may partly account for the increase in the probability of reaching CT.}
+
+\revise{We did not find an effect of the BothMessage group on reaching CT. However, this group decreased donor-related dropout for non-health reasons by $0.61$ percentage points in the preferred specification (column (6) of Table \ref{tab:lm-test-decompose}), which is statistically significant at the 5\% level and similar in magnitude to the MatchMessage group. One possible reason why the effect on reaching CT is limited is that the BothMessage group did not increase willingness to donate at response. In fact, we did not find a statistically significant effect of the BothMessage group on willingness to donate in any specification (columns (1)--(3)). For the CoordMessage group, we did not find effects on either willingness to donate or donor-related dropout for non-health reasons. Taken together, these results indicate that reductions in donor-related dropout for non-health reasons may not translate into a higher probability of reaching CT when willingness to donate does not increase.}
 
 ## Effect on the Response Speed {#response-speed}
 

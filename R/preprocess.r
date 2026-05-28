@@ -102,7 +102,7 @@ shape_rawdt <- rawdt %>%
     #   TRUE ~ 0
     # ),
     exg_stop_intention = exg_stop_reply,
-    exg_stop_test = case_when(
+    exg1_stop_test = case_when(
       test == 1 ~ 0,
       reply == 0 ~ exg_stop_reply,
       reply == 1 & intention == 0 ~ 1,
@@ -111,9 +111,19 @@ shape_rawdt <- rawdt %>%
       reasonPB == "患者理由" & reasonBM == "患者理由" ~ 1,
       TRUE ~ 0
     ),
+    exg2_stop_test = case_when(
+      test == 1 ~ 0,
+      reply == 0 ~ exg_stop_reply,
+      reply == 1 & intention == 0 ~ 1,
+      method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
+      method == "BM" & (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
+      (reasonPB == "患者理由" | reasonPB == "健康上理由") &
+        (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
+      TRUE ~ 0
+    ),
     exg_stop_candidate = case_when(
       candidate == 1 ~ 0,
-      test == 0 ~ exg_stop_test,
+      test == 0 ~ exg2_stop_test,
       method == "PB" & (reasonPB == "患者理由" | reasonPB == "健康上理由") ~ 1,
       method == "BM" & (reasonBM == "患者理由" | reasonBM == "健康上理由") ~ 1,
       (reasonPB == "患者理由" | reasonPB == "健康上理由") &
@@ -166,7 +176,8 @@ shape_rawdt <- rawdt %>%
     stage,
     exg_stop_reply,
     exg_stop_intention,
-    exg_stop_test,
+    exg1_stop_test,
+    exg2_stop_test,
     exg_stop_candidate,
     exg_stop_consent,
     exg_stop_donate,
