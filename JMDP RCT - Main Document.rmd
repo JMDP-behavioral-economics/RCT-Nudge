@@ -5,29 +5,27 @@ title: |
 author:
   - name: Hiroki Kato
     affil-id: a
-    note: "Corresponding author. E-mail address: hkato.econ@aoyamagakuin.jp"
+    note: "Corresponding author. E-mail address: hkato.econ@cider.osaka-u.ac.jp"
   - name: Fumio Ohtake
-    affil-id: b
+    affil-id: a
     note: "E-mail address: ohtake@cider.osaka-u.ac.jp"
   - name: Saiko Kurosawa
-    affil-id: c
+    affil-id: b
     note: "E-mail address: skurosaw@inahp.jp"
   - name: Kazuhiro Yoshiuchi
-    affil-id: d
+    affil-id: c
     note: "E-mail address: kyoshiuc-tky@umin.ac.jp "
   - name: Takahiro Fukuda
-    affil-id: e
+    affil-id: d
     note: "E-mail address: tafukuda@ncc.go.jp"
 affiliations:
   - id: a
-    name: School of International Politics, Economics and Communication, Aoyama Gakuin University, 4-4-25 Shibuya, Shibuya-ku, Tokyo 150-8366, Japan
+    name: Center for Infectious Disease Education and Research, The University of Osaka, 1-10 Yamadaoka, Suita, Osaka 565-0871, Japan​
   - id: b
-    name: Center for Infectious Disease Education and Research (CiDER), Osaka University, 1-10 Yamadaoka, Suita, Osaka 565-0871, Japan​
-  - id: c
     name: Department of Oncology, Ina Central Hospital, 1313-1, Koshirokubo, Ina, Nagano 396-8555, Japan
-  - id: d
+  - id: c
     name: Graduate School of Medicine, The University of Tokyo, 7-3-1 Hongo, Bunkyo, Tokyo 113-8655, Japan
-  - id: e
+  - id: d
     name: Department of Hematopoietic Stem Cell Transplantation, National Cancer Center Hospital, 5-1-1 Tsukiji, Chuo-ku, Tokyo 104-0045, Japan
 abstract: |
   Registered potential donors in stem cell transplantation may refuse to donate when matched with patients, causing supply shortages. To reduce such donor dropout, we developed behavioral interventions comprising messages added into the letters sent when donors are matched with patients in Japan, and conducted a field experiment to evaluate the effect of our intervention. The results demonstrate that the inclusion of our messages can reduce donor dropout and increase donor availability for transplantation. Specifically, the message emphasizing the limited number of compatible donors per patient increased the probability of donors completing the confirmatory typing stage by $7.3$%. Since physicians can choose the best donor for proceeding to donation from those who complete confirmatory typing, this message increases donor availability for transplantation.
@@ -44,7 +42,7 @@ acknowledgements: |
 
   \vspace{0.5em}
   \noindent
-  Funding: This work was supported by the Japan Society for the Promotion of Science [grant number 20H05632] and the Ministry of Health, Labour and Welfare [grant number 19FF1001].
+  Funding: This work was supported by the Japan Society for the Promotion of Science [grant number 20H05632; 25K24681] and the Ministry of Health, Labour and Welfare [grant number 19FF1001].
 
   \vspace{0.5em}
   \noindent
