@@ -54,16 +54,6 @@
 
 % ------------------------------ other packages
 \usepackage{booktabs}
-\usepackage{siunitx}
-
-  \newcolumntype{d}{S[
-    input-open-uncertainty=,
-    input-close-uncertainty=,
-    parse-numbers = false,
-    table-align-text-pre=false,
-    table-align-text-post=false
-  ]}
-  
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
@@ -77,6 +67,16 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
+\usepackage{siunitx}
+
+  \newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+  ]}
+  
 
 % ------------------------------ paper information
 \title{Exploring Information Provision to Promote Stem Cell Donation:
@@ -398,7 +398,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \includegraphics{JMDPRC~1/figure-latex/cumulative-response-1} \caption{Cumulative Rate of Positive Intention at Response by Treatment \newline \emph{Note}: We excluded those who skipped CT. We only show the cumulative response rates up to 25 days after the HLA match letter was sent because there was no remarkable change in the response rate thereafter.}\label{fig:cumulative-response}
 \end{figure}
 
-Figure \ref{fig:cumulative-response} plots the cumulative rate of willingness to donate over time. At least through the first two weeks after the letter was sent, none of the interventions increased willingness to donate. Moreover, the matching difficulty message \revise{appears to have} increased the cumulative rate of willingness to donate relative to the StatusQuo group after the first two weeks. Taken together, while the interventions did not promote earlier responses, only the matching difficulty message increased willingness to donate later.
+Figure \ref{fig:cumulative-response} plots the cumulative rate of willingness to donate over time. At least through the first two weeks after the letter was sent, none of the interventions increased willingness to donate. Moreover, the matching difficulty message increased the cumulative rate of willingness to donate relative to the StatusQuo group after the first two weeks. Taken together, while the interventions did not promote earlier responses, only the matching difficulty message increased willingness to donate later.
 
 Delays in responses associated with the matching difficulty message are not procrastination by donors who already intended to donate. Rather, they reflect that some candidates who had declined early expressed willingness to donate later. The left panel of Figure A2 in Supplementary Material A shows that the rate of expressing willingness within 10 days in the MatchMessage group was similar to that of the StatusQuo group (or slightly lower), but the MatchMessage group's rate was higher on days 10--17.\footnote{Summing rates at each time point in Figure A2 (in chronological order) yields the cumulative distribution in Figure \ref{fig:cumulative-response}. In the left panel of Figure A2, the MatchMessage group had higher rates of expressing willingness to donate on days 10--17, but this was offset by slightly lower rates in earlier intervals. Once the rates were summed over the first two weeks for each group, the MatchMessage group had similar cumulative rates to those in the StatusQuo group. From day 14 onward, cumulative rates were higher in the MatchMessage group.} The right panel shows that the MatchMessage group had a lower rate of declining donation within 7 days than the StatusQuo group.\footnote{Compared with the StatusQuo group, the distributions of the CoordMessage and BothMessage groups also changed similarly, but the change was less pronounced than in the MatchMessage group (Figures A3 and A4 in Supplementary Material A).} \revise{We expect that this pattern reflects increased positive intention to donate through behavioral change among those who had declined early.}
 
@@ -433,7 +433,7 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 \end{threeparttable}
 \end{table}
 
-\revise{To test formally, Table \ref{tab:lm-positive-time-decompose} reports treatment effects on positive intention within non-overlapping time windows: 0--9 days, 10--17 days, and 18--85 days. We do not find statistically significant effects for any intervention group in any of these time windows, including the window of 10--17 days for the MatchMessage group. Thus, although the descriptive patterns above are suggestive of later conversion to willingness to donate among early decliners, we cannot establish this timing effect.\footnote{\revise{Even if some donors responded later, increasing the share of donors who express willingness to donate at response may matter more for patients than accelerating response speed. The time to transplantation depends not only on when the donor replies but also on scheduling by the registry and hospitals (including CT and collection dates), which adds further delays. The median time from patient registration to transplantation is 146 days \citep{Hirakawa2018}. A response 10--17 days later is therefore modest relative to this overall timeline. Coordinating with other matched candidates after an early decline may be more burdensome for patients than a moderately delayed positive response.}}}
+\revise{To test formally, Table \ref{tab:lm-positive-time-decompose} reports treatment effects on positive intention within non-overlapping time windows: 0--9 days, 10--17 days, and 18--85 days. We do not find statistically significant effects for the MatchMessage and CoordMessage groups in any of these time windows. For the BothMessage group, the estimated effect in the 10--17 day window is positive and statistically significant at the 10\% level in our preferred specification (column (6)), but this result is not robust across alternative specifications (columns (4)--(5)). Thus, although the descriptive patterns above are suggestive of later conversion to willingness to donate among early decliners in the MatchMessage group, we cannot establish this timing effect for the MatchMessage group.\footnote{\revise{Even if some donors responded later, increasing the share of donors who express willingness to donate at response may matter more for patients than accelerating response speed. The time to transplantation depends not only on when the donor replies but also on scheduling by the registry and hospitals (including CT and collection dates), which adds further delays. The median time from patient registration to transplantation is 146 days \citep{Hirakawa2018}. A response 10--17 days later is therefore modest relative to this overall timeline. Coordinating with other matched candidates after an early decline may be more burdensome for patients than a moderately delayed positive response.}}}
 
 \hypertarget{discussion}{%
 \section{Policy and Welfare Implications of the Intervention}\label{discussion}}
