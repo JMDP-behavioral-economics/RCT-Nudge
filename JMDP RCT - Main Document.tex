@@ -54,6 +54,16 @@
 
 % ------------------------------ other packages
 \usepackage{booktabs}
+\usepackage{siunitx}
+
+  \newcolumntype{d}{S[
+    input-open-uncertainty=,
+    input-close-uncertainty=,
+    parse-numbers = false,
+    table-align-text-pre=false,
+    table-align-text-post=false
+  ]}
+  
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{multirow}
@@ -67,14 +77,6 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
-\usepackage{siunitx}
-
-    \newcolumntype{d}{S[
-      table-align-text-before=false,
-      table-align-text-after=false,
-      input-symbols={-,\*+()}
-    ]}
-  
 
 % ------------------------------ paper information
 \title{Exploring Information Provision to Promote Stem Cell Donation:
@@ -129,7 +131,8 @@ Evidence from a Field Experiment of the Japan Marrow Donor Program}
 
 \clearpage
 
-\section{Introduction}\label{intro}
+\hypertarget{intro}{%
+\section{Introduction}\label{intro}}
 
 Allogeneic hematopoietic stem cell transplantation (HSCT), a treatment with low relapse rates for leukemia and other blood cancers, faces supply shortages in many countries. Existing evidence---especially from organ transplantation---has focused on increasing the number of registered donors \citep[e.g.,][]{Kessler2012}. In allogeneic HSCT, however, there is an additional challenge: even registered donors may refuse to donate once they are matched with a patient \citep[e.g.,][]{Switzer2018, Haylock2024}. Mitigating such donor dropout is therefore crucial to stem cell supply. This study examines how behavioral interventions delivered upon matching can prevent donor dropout and alleviate supply shortages.
 
@@ -151,9 +154,11 @@ We also contribute to the literature on social norm messages, which tend to be e
 
 The remainder of this paper is organized as follows. Section \ref{experiment} provides an overview of the coordination process of the JMDP and describes our field experiment. Section \ref{result} presents the results of our experiment. Section \ref{discussion} discusses the welfare implications. Finally, Section \ref{conclusion} concludes.
 
-\section{Field Experiment}\label{experiment}
+\hypertarget{experiment}{%
+\section{Field Experiment}\label{experiment}}
 
-\subsection{Background: Coordination Process of the JMDP}\label{background}
+\hypertarget{background}{%
+\subsection{Background: Coordination Process of the JMDP}\label{background}}
 
 \begin{figure}[t]
 \includegraphics{image/flowchart} \caption{Flowchart of the JMDP Coordination Process and Sample Selection \newline \emph{Note}: Numbers based on our experimental data.}\label{fig:flow-chart-coordination}
@@ -169,7 +174,8 @@ The patient's physician selects the best donor from matched donors who have reac
 
 The best donor must provide final consent after being informed of their selection by the coordinator and coordinating physician. Simultaneously, a representative of the donor's family must provide consent to the donation. After final consent is obtained, the donor cannot withdraw their decision to donate. They then undergo a surgical procedure to collect stem cells.\footnote{Collection methods (bone marrow (BM) or peripheral blood stem cell (PBSC) collection) are determined based on the preferences of the matched donor and coordinating physician.} The time from CT to collection is three to four months. Importantly, throughout the coordination process, a matched donor cannot access any information about the matched patient.
 
-\subsection{Experimental Design}\label{design}
+\hypertarget{design}{%
+\subsection{Experimental Design}\label{design}}
 
 \begin{table}
 \centering
@@ -232,7 +238,8 @@ We assigned the HLA match letters to the four experimental groups using weekly c
 
 Before conducting the experiment, we obtained approval from the institutional review boards of the Graduate School of Economics, Osaka University (approval number: R030305) and the JMDP (approval number: JMDP2021-04) for the experimental design and empirical strategy. We did not conduct pilot studies and did not register the experiment with a pre-analysis plan.
 
-\subsection{Data and Empirical Strategy}\label{data}
+\hypertarget{data}{%
+\subsection{Data and Empirical Strategy}\label{data}}
 
 The coordination data provided by the JMDP included donor characteristics (sex, age, coordination experience, and residential prefecture) and information on the coordination process such as stages completed (response to the letter, CT, donor selection, final consent, and collection), days to respond to the HLA match letter, and willingness to donate.\footnote{The unit of observation was a coordination.} If the coordination process was interrupted before donation, the reasons were recorded as patient-side reasons, donor non-health reasons, and donor health reasons. Unfortunately, the data contained no patient information on characteristics or prognosis.
 
@@ -303,9 +310,11 @@ where \(X_{iwm}\) is a vector of observable characteristics, including donor age
 
 There may be within-patient correlation because multiple donors can be matched with the same patient and physicians select one from among those who reach CT. Ideally, we would cluster standard errors at the patient level (or two-way by patient and the assigned week) but we do not have patient IDs. Instead, we cluster standard errors by the assigned week, the level of treatment assignment, which can also partially capture patient-level correlation when donors matched with the same patient receive letters in the same week.
 
-\section{Experimental Results}\label{result}
+\hypertarget{result}{%
+\section{Experimental Results}\label{result}}
 
-\subsection{Average Treatment Effects on Reaching CT}\label{main}
+\hypertarget{main}{%
+\subsection{Average Treatment Effects on Reaching CT}\label{main}}
 
 We used a dummy variable coded one if a matched donor reached the CT stage.\footnote{We also coded the CT dummy one if CT was skipped.} As discussed in Section \ref{data}, the main barriers are low willingness to donate and donor-related dropout between the response and CT stages. We therefore expect that our intervention messages mitigate these barriers and increase the probability of reaching the CT stage.
 
@@ -377,7 +386,8 @@ As the intervention was expected to increase CT completion by both increasing po
 
 We did not find a statistically significant effect of the BothMessage group on CT, although this group reduced donor-related dropout for non-health reasons to the same magnitude as the MatchMessage group. Our data cannot make a definitive conclusion on this paradox. Nevertheless, one hypothesis is the difference in point estimates of positive intention at response: \(1.27\) percentage points in the MatchMessage group versus \(0.12\) percentage points in the BothMessage group (column (3)). Since neither estimate is statistically significant, we cannot establish this hypothesis.\footnote{When we exclude month fixed effects from the specification, the positive effect of the MatchMessage group on positive intention is statistically significant at the 10\% level.}
 
-\subsection{Effect on the Response Speed}\label{response-speed}
+\hypertarget{response-speed}{%
+\subsection{Effect on the Response Speed}\label{response-speed}}
 
 Although we did not find that the early coordination message increased positive intention at response overall (Table \ref{tab:lm-test-decompose}), we expect that this message reduces procrastination (see Section \ref{design}). In this subsection, we examine whether our interventions reduce delayed responses and increase early responses with positive intention.
 
@@ -422,7 +432,8 @@ Num.Obs. & \num{11049} & \num{11049} & \num{11049} & \num{11049} & \num{11049} &
 
 To test formally, Table \ref{tab:lm-positive-time-decompose} reports treatment effects on positive intention within non-overlapping time windows: 0--9 days, 10--17 days, and 18--85 days. We do not find statistically significant effects for the MatchMessage and CoordMessage groups in any of these time windows. For the BothMessage group, the estimated effect in the 10--17 day window is positive and statistically significant at the 10\% level in our preferred specification (column (6)), but this result is not robust across alternative specifications (columns (4)--(5)). Thus, although the descriptive patterns above are consistent with later conversion to willingness to donate among early decliners in the MatchMessage group, we cannot establish this timing effect for the MatchMessage group.\footnote{Even if some donors responded one to two weeks later, the adverse consequences for patients are likely to be limited. The median interval from patient registration to transplantation is 146 days \citep{Hirakawa2018}, making a 10--17-day delay in donor response relatively small in the context of the overall transplantation process. Moreover, downstream coordination steps---such as CT, final consent, and collection scheduling---introduce additional variability into the timeline, and the registry and hospitals may be able to adjust these steps to partly offset differences in initial response time of this magnitude. Consequently, increasing the share of donors who express willingness to donate and proceed to CT may be more important for patients than accelerating initial response speed.}
 
-\section{Policy and Welfare Implications of the Intervention}\label{discussion}
+\hypertarget{discussion}{%
+\section{Policy and Welfare Implications of the Intervention}\label{discussion}}
 
 To discuss the policy and welfare implications of the intervention, we examine the treatment effects on the post-CT stages: donor selection, final consent, and collection (donation). Because a physician selects the best donor from all who reach CT, welfare depends on both the number and the quality of donors in the pool. We argue that the intervention may have improved transplant quality despite the null quantity effects and that targeting clinically valuable donors could still improve welfare.
 
@@ -434,11 +445,12 @@ This view is supported by the heterogeneous treatment effects by sex, age, and p
 
 Simultaneously, the MatchMessage treatment promoted older men matched for the first time (6 percentage points; \(p = 0.0152\)) and women with past coordination experience to reach CT (8 percentage points; \(p = 0.0903\) for young women and \(p = 0.0345\) for older women), but did not increase their probability of selection, suggesting welfare costs for these donors.\footnote{The MatchMessage treatment changed the behavior of both those likely to be selected as donors and those unlikely to be selected, resulting in average treatment effects on donor selection and donation that were close to zero. This reflects that, among those who reached CT, the MatchMessage treatment increased coordinations interrupted for donor health reasons (mainly disqualification based on the CT results) or for patient-side reasons (Table A7 in Supplementary Material A).} From the perspectives of welfare and cost-effectiveness, interventions targeting young men may therefore be more appropriate than a uniform message to all matched donors.
 
-\section{Conclusions}\label{conclusion}
+\hypertarget{conclusion}{%
+\section{Conclusions}\label{conclusion}}
 
 Our field experiment showed that the matching difficulty message increased the probability of reaching CT by \(1.63\) percentage points after adjusting for covariates and month fixed effects. Given the baseline CT completion rate of \(22.25\)\% in the StatusQuo group, this implies a \(7.3\% (= 1.63/22.25)\) increase. This result is robust to several other checks (adjusting for multiple hypotheses testing across treatment groups and using logistic regression) albeit without a prior pilot study or preregistration. Overall, the matching difficulty message expands the pool from which physicians can select the best donor.
 
-To evaluate cost-effectiveness, we estimated that the message effect is equivalent to recruiting \(40,880\) registrants (see Supplementary Material B for details). Since \(100,000\) donors in their 50s will exit within the next five years because of the age limit for donation (55 years), the message effect can offset approximately \(40.9\)\% of the negative impact of this donor pool shrinkage.\footnote{Data source: \url{https://www.jmdp.or.jp/about/read/number/} (Accessed December 8, 2024).} Meanwhile, donor recruitment is costly. If the JMDP bears a similar cost to the NMDP (USD 150 per added registration), recruiting \(40,880\) registrants would cost approximately USD \(6.132\) million.\footnote{Data source: \url{https://fundraise.nmdp.org/index.cfm?fuseaction=cms.page&id=1203&eventID=675} (Accessed March 29, 2025).} Thus, adding the matching difficulty message could be a more cost-effective measure than recruiting new donors to address the shrinking donor pool.
+To evaluate cost-effectiveness, we estimated that the message effect is equivalent to recruiting \(40,880\) registrants (see Supplementary Material B for details). Since \(100,000\) donors in their 50s will exit within the next five years because of the age limit for donation (55 years), the message effect can offset approximately \(40.9\)\% of the negative impact of this donor pool shrinkage.\footnote{Data source: \url{https://www.jmdp.or.jp/about/read/number/} (Accessed December 8, 2024).} Meanwhile, donor recruitment is costly. If the JMDP bears a similar cost to the NMDP (USD 150 per added registration), recruiting \(40,880\) registrants would cost approximately USD \(6.132\) million.\footnote{Data source: \url{https://fundraise.nmdp.org/index.cfm?fuseaction=cms.page\&id=1203\&eventID=675} (Accessed March 29, 2025).} Thus, adding the matching difficulty message could be a more cost-effective measure than recruiting new donors to address the shrinking donor pool.
 
 The effectiveness of the matching difficulty message was attenuated when we simultaneously presented the early coordination message, possibly due to information overload. This suggests that effective behavioral information should be conveyed simply. Moreover, given that the matching difficulty message may have encouraged young men to reach CT and increased their likelihood of selection, targeted interventions directed at this subgroup may be more cost-effective than a uniform intervention.
 
